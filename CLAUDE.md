@@ -44,6 +44,14 @@ Login is optional; without it nothing loads from the network and the app is loca
 - "מחיקת כל הנתונים" when signed in: "device only" clears local data and signs out. "Also cloud" overwrites the row with an empty state (newer `updatedAt`), so other signed-in devices also clear on their next pull.
 - Verified in production: first upload, a second device loading cloud data, edit-and-refocus sync, offline edit then sync, sign out clearing local data, and the conflict prompt on first sign-in.
 
+## Domain move (temporary)
+
+The app moved from `clean-time-eight.vercel.app` to `https://clean-time.app`. localStorage is per origin, so a marked block in `index.html` ("Domain move (TEMPORARY)") hands data over:
+
+- On an `OLD_HOSTS` host (exact hostname, so preview deployments are unaffected), `moveOut()` runs at the end of Init. No data: redirect to the new origin (keeping a magic-link hash). Signed in and synced: a modal says to sign in on the new domain with the same email. Otherwise: a modal button opens `NEW_ORIGIN/#import=<base64url JSON of S>`. Both modals also say to reinstall the app from the new domain.
+- On any other host, `#import=` is decoded before the first render, the URL is cleaned, and the data replaces `S` (after a confirm if local data exists) via `normalize()` and `save()`.
+- Remove the whole block and the `moveOut()` call once the old domain redirects to the new one. After that redirect, old-origin localStorage can no longer be read.
+
 ## Deploy & layout
 
 - Deployed on Vercel. Every push to `main` redeploys production automatically.

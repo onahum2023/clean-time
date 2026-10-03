@@ -14,7 +14,7 @@ Status: [ ] open, [x] done, [?] needs a decision
 - [ ] **Custom SMTP.** Built-in mailer allows only a few emails per hour.
 - [ ] **CAPTCHA on magic link.** Turnstile or hCaptcha via Supabase Auth, to stop abuse of open signup.
 - [ ] **RLS test.** With a second account, confirm it cannot select, update or delete another user's row.
-- [ ] **Domain.** Neutral name, connected to Vercel, added to Supabase redirect URLs. Add the app link to the README.
+- [x] **Domain.** clean-time.app, connected to Vercel, linked from the README. The old host hands local data over (see "Domain move" in CLAUDE.md). Remaining: redirect clean-time-eight.vercel.app to the new domain later, then remove the move code.
 - [ ] **Privacy page (Hebrew).** What is stored, where, who can read it, how to delete. Short.
 - [x] **License.** AGPL-3.0 (see `LICENSE`).
 

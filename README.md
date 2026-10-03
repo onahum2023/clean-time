@@ -4,6 +4,8 @@
 
 A free Hebrew app for people in recovery from addiction. It counts your clean time and helps you take it one day at a time. No ads, no tracking, no account needed.
 
+**Open the app: https://clean-time.app**
+
 > Not affiliated with or endorsed by Narcotics Anonymous or NA Israel.
 > This app is not a medical or emergency service. NA Israel info line: 033-747474.
 
