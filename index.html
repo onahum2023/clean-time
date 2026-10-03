@@ -39,7 +39,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 html,body{margin:0;height:100%}
 body{overscroll-behavior-y:none;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent}
-button,input{font:inherit;color:inherit}
+button,input,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
 
 .app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 20px calc(88px + env(safe-area-inset-bottom,0px))}
@@ -93,12 +93,31 @@ ul.list li time{display:block;font-size:.8rem;color:var(--muted)}
 .swatches{display:flex;gap:12px;flex-wrap:wrap}
 .swatch{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;box-shadow:inset 0 0 0 2px var(--bg)}
 .swatch[aria-checked=true]{border-color:var(--ink)}
+/* Planner */
+.plan-item .check{flex:none;width:26px;height:26px;margin-top:1px;border-radius:50%;border:2px solid var(--line);background:none;cursor:pointer;display:grid;place-items:center;color:#fff;padding:0}
+.plan-item .check svg{width:15px;height:15px;opacity:0}
+.plan-item .txt{cursor:pointer;overflow-wrap:anywhere}
+.plan-item.done .check{background:var(--accent);border-color:var(--accent)}
+.plan-item.done .check svg{opacity:1}
+.plan-item.done .txt{text-decoration:line-through;color:var(--muted)}
+
+/* Journal */
+.j-item .txt{cursor:pointer;min-width:0}
+.j-item .prev{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line;overflow-wrap:anywhere}
+.editor{position:fixed;inset:0;z-index:10;background:var(--bg);display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.editor .bar{max-width:520px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 20px;border-bottom:1px solid var(--line)}
+.editor .bar time{color:var(--muted);font-size:.9rem;flex:1;text-align:center}
+.editor .bar .btn.danger{border:0;padding:8px 4px;min-height:0}
+.editor textarea{flex:1;max-width:520px;width:100%;margin:0 auto;display:block;border:0;resize:none;background:none;padding:18px 20px;font-size:1.1rem;line-height:1.7}
+.editor textarea:focus{outline:none}
+.saved{color:var(--muted);font-size:.8rem;text-align:center;padding:4px 0 8px;min-height:1.6em}
+
 .settings-foot{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px;align-items:flex-start}
 
 /* Tabs */
 nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
 nav.tabs .inner{max-width:520px;margin:0 auto;display:flex}
-nav.tabs button{flex:1;background:none;border:0;padding:12px 4px 14px;cursor:pointer;color:var(--muted);font-size:.9rem;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav.tabs button{flex:1;min-width:0;background:none;border:0;padding:12px 2px 14px;cursor:pointer;color:var(--muted);font-size:.85rem;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:3px}
 nav.tabs button[aria-selected=true]{color:var(--accent);font-weight:700}
 nav.tabs svg{width:22px;height:22px}
 </style>
@@ -119,6 +138,25 @@ nav.tabs svg{width:22px;height:22px}
     <div class="dots" id="dots"><span></span><span></span><span></span></div>
     <div class="since" id="since"></div>
     <div class="hint">הקשה על המספר משנה תצוגה</div>
+  </section>
+
+  <!-- Planner -->
+  <section id="planner" hidden>
+    <h2>רק להיום תהיה לי תכנית</h2>
+    <p class="sub" id="pDate"></p>
+    <form class="row" id="pForm" onsubmit="return false">
+      <input type="text" id="pInput" placeholder="מה אני רוצה לעשות היום?" maxlength="200" aria-label="משימה חדשה">
+      <button class="btn" id="pAdd" type="submit">הוספה</button>
+    </form>
+    <ul class="list" id="pList"></ul>
+  </section>
+
+  <!-- Journal -->
+  <section id="journal" hidden>
+    <h2>ככה זה עכשיו</h2>
+    <p class="sub">מחשבות, תובנות, רעיונות וזיכרונות. רק בשבילך.</p>
+    <button class="btn" id="jNew" style="width:100%">+ רשומה חדשה</button>
+    <ul class="list" id="jList"></ul>
   </section>
 
   <!-- Gratitude -->
@@ -165,12 +203,26 @@ nav.tabs svg{width:22px;height:22px}
   </section>
 </div>
 
+<div class="editor" id="jEditor" hidden role="dialog" aria-label="רשומה ביומן">
+  <div class="bar">
+    <button class="btn ghost" id="jDone">סיום</button>
+    <time id="jWhen"></time>
+    <button class="btn danger" id="jDel">מחיקה</button>
+  </div>
+  <textarea id="jText" placeholder="מה עובר עליי עכשיו..." aria-label="טקסט הרשומה"></textarea>
+  <div class="saved" id="jSaved"></div>
+</div>
+
 <nav class="tabs" id="tabs">
   <div class="inner" role="tablist">
     <button role="tab" data-tab="counter" aria-selected="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>זמן נקי</button>
+    <button role="tab" data-tab="planner" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4.5" width="14" height="16.5" rx="2"/><path d="M9.5 3h5v3h-5zM9 13l2 2 4-4"/></svg>תכנית</button>
+    <button role="tab" data-tab="journal" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4zM13.5 6.5l4 4"/></svg>יומן</button>
     <button role="tab" data-tab="gratitude" aria-selected="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>הכרת תודה</button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>תודה</button>
     <button role="tab" data-tab="readings" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6zM12 6v14.5"/></svg>קריאות</button>
   </div>
@@ -181,7 +233,7 @@ nav.tabs svg{width:22px;height:22px}
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#2E7D78',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
-const DEFAULT={name:'',date:'',time:'',from:'',color:'teal',mode:0,gratitude:[],
+const DEFAULT={name:'',date:'',time:'',from:'',color:'teal',mode:0,gratitude:[],plans:{},journal:[],
   links:[
     {id:1,title:'רק להיום',url:'https://www.naisrael.org.il/just-for-today/'},
     {id:2,title:'פגישות אנ-איי',url:'https://www.naisrael.org.il/meetings/'},
@@ -197,7 +249,8 @@ function load(){
   try{
     const r=localStorage.getItem(KEY);
     if(r){
-      const d=Object.assign({},DEFAULT,JSON.parse(r));
+      /* deep copy so new keys never share references with DEFAULT */
+      const d=Object.assign(JSON.parse(JSON.stringify(DEFAULT)),JSON.parse(r));
       if(!d.linksV){
         const defs=JSON.parse(JSON.stringify(DEFAULT.links)), defUrls=defs.map(l=>l.url);
         const own=(d.links||[]).filter(l=>!OLD_LINKS.includes(l.url)&&!defUrls.includes(l.url))
@@ -217,10 +270,11 @@ const $=id=>document.getElementById(id);
 let current='counter';
 function show(tab){
   current=tab;
-  ['counter','gratitude','readings','settings'].forEach(t=>$(t).hidden=(t!==tab));
+  ['counter','planner','journal','gratitude','readings','settings'].forEach(t=>$(t).hidden=(t!==tab));
   document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
   if(tab==='settings')fillSettings();else applyColor();
   if(tab==='counter')render();
+  if(tab==='planner')renderP();
   window.scrollTo(0,0);
 }
 document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.tab));
@@ -285,7 +339,7 @@ $('count').onclick=()=>{
   S.mode=(S.mode+1)%3; save(); render();
   const c=$('count'); c.classList.remove('anim'); void c.offsetWidth; c.classList.add('anim');
 };
-setInterval(()=>{if(current==='counter')render();},1000);
+setInterval(()=>{if(current==='counter')render();if(planDay!==todayKey())renderP();},1000);
 
 /* ---------- Gratitude ---------- */
 function renderG(){
@@ -305,6 +359,85 @@ $('gAdd').onclick=()=>{
   const v=$('gInput').value.trim(); if(!v)return;
   S.gratitude.push({id:Date.now(),text:v,ts:Date.now()}); save(); $('gInput').value=''; renderG();
 };
+
+/* ---------- Planner ---------- */
+let lastId=0;
+const uid=()=>(lastId=Math.max(Date.now(),lastId+1));
+const todayKey=()=>{const n=new Date();return n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());};
+let planDay='';
+function renderP(){
+  planDay=todayKey();
+  $('pDate').textContent=new Date().toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'long'});
+  const items=S.plans[planDay]||[], ul=$('pList');
+  if(!items.length){ul.innerHTML='<li class="empty" style="border:0;display:block">מה דבר אחד שאני רוצה לעשות היום? אפשר להתחיל ממשהו קטן.</li>';return;}
+  ul.innerHTML='';
+  items.forEach(p=>{
+    const li=document.createElement('li');li.className='plan-item'+(p.done?' done':'');
+    const toggle=()=>{p.done=!p.done;save();renderP();};
+    const ck=document.createElement('button');ck.className='check';ck.setAttribute('role','checkbox');ck.setAttribute('aria-checked',p.done);ck.setAttribute('aria-label',p.text);
+    ck.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+    ck.onclick=toggle;
+    const t=document.createElement('div');t.className='txt';t.textContent=p.text;t.onclick=toggle;
+    const del=document.createElement('button');del.className='del';del.innerHTML='&times;';del.setAttribute('aria-label','מחיקה');
+    del.onclick=()=>{const k=planDay;S.plans[k]=(S.plans[k]||[]).filter(x=>x.id!==p.id);if(!S.plans[k].length)delete S.plans[k];save();renderP();};
+    li.append(ck,t,del);ul.appendChild(li);
+  });
+}
+$('pAdd').onclick=()=>{
+  const v=$('pInput').value.trim(); if(!v)return;
+  const k=todayKey(); (S.plans[k]=S.plans[k]||[]).push({id:uid(),text:v,done:false});
+  save(); $('pInput').value=''; renderP();
+};
+
+/* ---------- Journal ---------- */
+const fmtWhen=ts=>new Date(ts).toLocaleString('he-IL',{weekday:'short',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+let jCur=null, jTimer=null;
+function renderJ(){
+  const ul=$('jList');
+  if(!S.journal.length){ul.innerHTML='<li class="empty" style="border:0;display:block">עוד אין רשומות. אפשר לכתוב כמה מילים על איך שזה עכשיו.</li>';return;}
+  ul.innerHTML='';
+  S.journal.slice().sort((a,b)=>b.created-a.created).forEach(e=>{
+    const li=document.createElement('li');li.className='j-item';
+    const t=document.createElement('div');t.className='txt';t.setAttribute('role','button');t.tabIndex=0;
+    const tm=document.createElement('time');tm.textContent=fmtWhen(e.created);
+    const pv=document.createElement('div');pv.className='prev';pv.textContent=e.text.trim();
+    t.append(tm,pv);
+    t.onclick=()=>openJ(e); t.onkeydown=ev=>{if(ev.key==='Enter')openJ(e);};
+    li.appendChild(t);ul.appendChild(li);
+  });
+}
+function openJ(entry){
+  jCur=entry||{id:uid(),text:'',created:Date.now(),updated:Date.now()};
+  $('jText').value=jCur.text; $('jWhen').textContent=fmtWhen(jCur.created); $('jSaved').textContent='';
+  $('jEditor').hidden=false;
+  try{history.pushState({j:1},'');}catch(e){}
+  if(!entry)$('jText').focus();
+}
+/* saves the open entry; an empty entry is removed instead */
+function commitJ(){
+  clearTimeout(jTimer); jTimer=null;
+  if(!jCur)return;
+  const t=$('jText').value, i=S.journal.findIndex(e=>e.id===jCur.id);
+  if(!t.trim()){if(i>=0){S.journal.splice(i,1);save();}return;}
+  if(i<0||t!==jCur.text){
+    jCur.text=t; jCur.updated=Date.now();
+    if(i<0)S.journal.push(jCur);
+    save(); $('jSaved').textContent='נשמר';
+  }
+}
+function closeJ(){commitJ();jCur=null;$('jEditor').hidden=true;renderJ();}
+function leaveJ(){if(history.state&&history.state.j)history.back();else closeJ();}
+$('jNew').onclick=()=>openJ(null);
+$('jText').oninput=()=>{$('jSaved').textContent='';clearTimeout(jTimer);jTimer=setTimeout(commitJ,600);};
+$('jDone').onclick=leaveJ;
+$('jDel').onclick=()=>{
+  if(!confirm('למחוק את הרשומה?'))return;
+  S.journal=S.journal.filter(e=>e.id!==jCur.id); save(); $('jText').value=''; leaveJ();
+};
+/* Android back button closes the editor instead of leaving the app */
+window.addEventListener('popstate',()=>{if(!$('jEditor').hidden)closeJ();});
+window.addEventListener('pagehide',commitJ);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)commitJ();else if(planDay!==todayKey())renderP();});
 
 /* ---------- Readings ---------- */
 let editing=false;
@@ -362,11 +495,11 @@ $('saveSettings').onclick=()=>{
 $('reset').onclick=()=>{
   if(!confirm('למחוק את כל הנתונים מהמכשיר?'))return;
   try{localStorage.removeItem(KEY);}catch(e){}
-  S=JSON.parse(JSON.stringify(DEFAULT));applyColor();renderG();renderL();show('settings');
+  S=JSON.parse(JSON.stringify(DEFAULT));applyColor();renderG();renderL();renderP();renderJ();show('settings');
 };
 
 /* ---------- Init ---------- */
-applyColor();renderG();renderL();
+applyColor();renderG();renderL();renderP();renderJ();
 show(S.date?'counter':'settings');
 })();
 </script>
