@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="זמן נקי">
+<title>זמן נקי</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#2E7D78">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F5F7; --surface:#FFFFFF; --ink:#1B2830; --muted:#5D6E79; --line:#D9E1E6;
+  --accent:#2E7D78; --accent-soft:color-mix(in srgb,var(--accent) 12%,var(--bg));
+  --serif:"Frank Ruhl Libre","David Libre","Times New Roman",serif;
+  --sans:"Assistant","Segoe UI",Arial,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#11181D; --surface:#19232A; --ink:#E6EDF0; --muted:#93A3AD; --line:#2A3740;
+    --accent-soft:color-mix(in srgb,var(--accent) 22%,var(--bg));
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11181D; --surface:#19232A; --ink:#E6EDF0; --muted:#93A3AD; --line:#2A3740;
+  --accent-soft:color-mix(in srgb,var(--accent) 22%,var(--bg));
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0;height:100%}
+body{overscroll-behavior-y:none;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+.app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 20px calc(88px + env(safe-area-inset-bottom,0px))}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 6px}
+header h1{font-family:var(--serif);font-weight:500;font-size:1.35rem;margin:0}
+.icon-btn{background:none;border:0;padding:8px;border-radius:50%;cursor:pointer;color:var(--muted);display:grid;place-items:center}
+.icon-btn:hover{color:var(--ink)}
+
+[hidden]{display:none!important}
+.row>.field{min-width:0}
+
+/* Counter */
+#counter{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px 0 12px}
+.from-chip{font-size:.95rem;color:var(--accent);background:var(--accent-soft);padding:4px 14px;border-radius:999px;margin-bottom:28px}
+.count{background:none;border:0;cursor:pointer;padding:12px;display:flex;gap:22px;justify-content:center;align-items:flex-end;flex-wrap:wrap}
+.unit{display:flex;flex-direction:column;align-items:center;min-width:64px}
+.num{font-family:var(--serif);font-weight:300;line-height:.95;font-size:clamp(4rem,22vw,7.5rem);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.count.single .num{font-size:clamp(5rem,30vw,10rem)}
+.count.small .num{font-size:clamp(2.6rem,13vw,4.4rem)}
+.lbl{font-size:1rem;color:var(--muted);margin-top:6px}
+.since{color:var(--muted);margin-top:26px;font-size:1rem}
+.hint{color:var(--muted);font-size:.85rem;opacity:.75;margin-top:6px}
+.dots{display:flex;gap:6px;margin-top:18px}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.dots span.on{background:var(--accent)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.count.anim{animation:rise .35s ease-out}
+@media (prefers-reduced-motion:reduce){.count.anim{animation:none}}
+
+/* Lists & forms */
+h2{font-family:var(--serif);font-weight:500;font-size:1.6rem;margin:18px 0 4px}
+.sub{color:var(--muted);margin:0 0 18px;font-size:.95rem}
+.row{display:flex;gap:8px}
+.field{display:block;margin-bottom:16px}
+.field span{display:block;font-size:.9rem;color:var(--muted);margin-bottom:6px}
+input[type=text],input[type=date],input[type=time],input[type=url]{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-height:46px}
+input:focus{outline:none;border-color:var(--accent)}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:600;cursor:pointer;white-space:nowrap;min-height:46px}
+.btn.ghost{background:none;color:var(--accent);padding:8px 4px;min-height:0}
+.btn.danger{background:none;color:#B3413B;border:1px solid currentColor}
+ul.list{list-style:none;padding:0;margin:20px 0 0}
+ul.list li{display:flex;align-items:flex-start;gap:10px;padding:14px 0;border-bottom:1px solid var(--line)}
+ul.list li .txt{flex:1}
+ul.list li time{display:block;font-size:.8rem;color:var(--muted)}
+.del{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.3rem;line-height:1;padding:2px 6px}
+.empty{color:var(--muted);padding:28px 0;text-align:center}
+.link-item a{color:var(--ink);text-decoration:none;font-weight:600;flex:1}
+.link-item a small{display:block;font-weight:400;color:var(--muted);font-size:.8rem;direction:ltr;text-align:right;overflow-wrap:anywhere}
+.link-edit{display:grid;gap:8px;flex:1}
+.note{font-size:.85rem;color:var(--muted);margin-top:16px}
+.swatches{display:flex;gap:12px;flex-wrap:wrap}
+.swatch{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;box-shadow:inset 0 0 0 2px var(--bg)}
+.swatch[aria-checked=true]{border-color:var(--ink)}
+.settings-foot{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+
+/* Tabs */
+nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav.tabs .inner{max-width:520px;margin:0 auto;display:flex}
+nav.tabs button{flex:1;background:none;border:0;padding:12px 4px 14px;cursor:pointer;color:var(--muted);font-size:.9rem;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav.tabs button[aria-selected=true]{color:var(--accent);font-weight:700}
+nav.tabs svg{width:22px;height:22px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1 id="greet">זמן נקי</h1>
+    <button class="icon-btn" id="openSettings" aria-label="הגדרות">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <!-- Counter -->
+  <section id="counter">
+    <div class="from-chip" id="fromChip" hidden></div>
+    <button class="count" id="count" aria-live="polite" aria-label="זמן נקי, הקשה משנה תצוגה"></button>
+    <div class="dots" id="dots"><span></span><span></span><span></span></div>
+    <div class="since" id="since"></div>
+    <div class="hint">הקשה על המספר משנה תצוגה</div>
+  </section>
+
+  <!-- Gratitude -->
+  <section id="gratitude" hidden>
+    <h2>הכרת תודה</h2>
+    <p class="sub">דבר אחד קטן בכל יום מספיק.</p>
+    <form class="row" id="gForm" onsubmit="return false">
+      <input type="text" id="gInput" placeholder="על מה אני מודה היום?" maxlength="200" aria-label="פריט חדש">
+      <button class="btn" id="gAdd" type="submit">הוספה</button>
+    </form>
+    <ul class="list" id="gList"></ul>
+  </section>
+
+  <!-- Readings -->
+  <section id="readings" hidden>
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <h2>קריאות</h2>
+      <button class="btn ghost" id="editLinks">עריכה</button>
+    </div>
+    <p class="sub">קישורים לקריאה היומית ולקריאות הפתיחה של הפגישה.</p>
+    <ul class="list" id="lList"></ul>
+    <button class="btn ghost" id="addLink" hidden>+ הוספת קישור</button>
+    <p class="note">הקישורים כרגע לגרסאות באנגלית. אפשר להחליף אותם בקישורים בעברית דרך "עריכה".</p>
+  </section>
+
+  <!-- Settings -->
+  <section id="settings" hidden>
+    <h2 id="setTitle">הגדרות</h2>
+    <p class="sub">הכול נשמר רק במכשיר הזה.</p>
+    <label class="field"><span>שם</span><input type="text" id="sName" maxlength="40"></label>
+    <div class="row">
+      <label class="field" style="flex:2"><span>תאריך הניקיון</span><input type="date" id="sDate"></label>
+      <label class="field" style="flex:1"><span>שעה (לא חובה)</span><input type="time" id="sTime"></label>
+    </div>
+    <label class="field"><span>החלמה מ־</span>
+      <input type="text" id="sFrom" list="fromOpts" placeholder="למשל: סמים" maxlength="40">
+      <datalist id="fromOpts"><option value="סמים"><option value="אלכוהול"><option value="הימורים"><option value="אכילת יתר"><option value="עישון"></datalist>
+    </label>
+    <div class="field"><span>צבע</span><div class="swatches" id="swatches" role="radiogroup" aria-label="צבע"></div></div>
+    <button class="btn" id="saveSettings" style="width:100%;margin-top:8px">שמירה</button>
+    <div class="settings-foot" id="settingsFoot">
+      <button class="btn danger" id="reset">מחיקת כל הנתונים</button>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs" id="tabs">
+  <div class="inner" role="tablist">
+    <button role="tab" data-tab="counter" aria-selected="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>זמן נקי</button>
+    <button role="tab" data-tab="gratitude" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>הכרת תודה</button>
+    <button role="tab" data-tab="readings" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6zM12 6v14.5"/></svg>קריאות</button>
+  </div>
+</nav>
+
+<script>
+(function(){
+const KEY='cleantime-he-v1';
+const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
+const COLORS={teal:'#2E7D78',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
+const DEFAULT={name:'',date:'',time:'',from:'',color:'teal',mode:0,gratitude:[],
+  links:[
+    {id:1,title:'רק להיום (אנגלית)',url:'https://jftna.org/jft/'},
+    {id:2,title:'עיקרון רוחני ליום (אנגלית)',url:'https://spadna.org/'}
+  ]};
+let S=load();
+
+function load(){
+  try{const r=localStorage.getItem(KEY);if(r)return Object.assign({},DEFAULT,JSON.parse(r));}catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT));
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const $=id=>document.getElementById(id);
+
+/* ---------- Tabs ---------- */
+let current='counter';
+function show(tab){
+  current=tab;
+  ['counter','gratitude','readings','settings'].forEach(t=>$(t).hidden=(t!==tab));
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
+  if(tab==='settings')fillSettings();else applyColor();
+  if(tab==='counter')render();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.tab));
+$('openSettings').onclick=()=>show(current==='settings'&&S.date?'counter':'settings');
+
+/* ---------- Theme ---------- */
+function applyColor(){document.documentElement.style.setProperty('--accent',COLORS[S.color]||COLORS.teal);}
+
+/* ---------- Time math ---------- */
+function startDate(){
+  if(!S.date)return null;
+  const [y,m,d]=S.date.split('-').map(Number);
+  const [hh,mm]=(S.time||'00:00').split(':').map(Number);
+  return new Date(y,m-1,d,hh||0,mm||0,0);
+}
+function ymd(s,n){
+  let y=n.getFullYear()-s.getFullYear(), m=n.getMonth()-s.getMonth(), d=n.getDate()-s.getDate();
+  const sT=s.getHours()*3600+s.getMinutes()*60, nT=n.getHours()*3600+n.getMinutes()*60+n.getSeconds();
+  if(nT<sT)d--;
+  if(d<0){m--;d+=new Date(n.getFullYear(),n.getMonth(),0).getDate();}
+  if(m<0){y--;m+=12;}
+  return {y,m,d};
+}
+function totalDays(s,n){
+  let days=Math.round((Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())-Date.UTC(s.getFullYear(),s.getMonth(),s.getDate()))/864e5);
+  const sT=s.getHours()*60+s.getMinutes(), nT=n.getHours()*60+n.getMinutes();
+  if(nT<sT)days--;
+  return Math.max(0,days);
+}
+const fmt=n=>n.toLocaleString('he-IL');
+const pad=n=>String(n).padStart(2,'0');
+const unit=(n,label)=>`<span class="unit"><span class="num">${n}</span><span class="lbl">${label}</span></span>`;
+
+/* ---------- Counter render ---------- */
+function render(){
+  $('greet').textContent=S.name?`שלום, ${S.name}`:'זמן נקי';
+  const chip=$('fromChip');
+  chip.hidden=!S.from; chip.textContent=S.from?`החלמה מ${S.from}`:'';
+  const s=startDate(), n=new Date(), c=$('count');
+  document.querySelectorAll('#dots span').forEach((el,i)=>el.classList.toggle('on',i===S.mode));
+  if(!s){c.className='count';c.innerHTML='';$('since').textContent='';return;}
+  $('since').textContent='מאז '+s.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'});
+  if(n<s){c.className='count small';c.innerHTML='<span class="lbl" style="font-size:1.2rem">התאריך שנבחר עוד לא הגיע</span>';return;}
+  let html='',cls='count';
+  if(S.mode===0){
+    const t=ymd(s,n); const parts=[];
+    if(t.y)parts.push(unit(t.y,t.y===1?'שנה':'שנים'));
+    if(t.y||t.m)parts.push(unit(t.m,t.m===1?'חודש':'חודשים'));
+    parts.push(unit(t.d,t.d===1?'יום':'ימים'));
+    html=parts.join(''); if(parts.length===1)cls+=' single';
+  }else if(S.mode===1){
+    const d=totalDays(s,n);
+    html=unit(fmt(d),d===1?'יום נקי':'ימים נקיים'); cls+=' single';
+  }else{
+    const sec=Math.floor((n-s)/1000);
+    html=unit(fmt(Math.floor(sec/3600)),'שעות')+unit(pad(Math.floor(sec%3600/60)),'דקות')+unit(pad(sec%60),'שניות');
+    cls+=' small';
+  }
+  c.className=cls; c.innerHTML=html;
+}
+$('count').onclick=()=>{
+  S.mode=(S.mode+1)%3; save(); render();
+  const c=$('count'); c.classList.remove('anim'); void c.offsetWidth; c.classList.add('anim');
+};
+setInterval(()=>{if(current==='counter')render();},1000);
+
+/* ---------- Gratitude ---------- */
+function renderG(){
+  const ul=$('gList');
+  if(!S.gratitude.length){ul.innerHTML='<li class="empty" style="border:0;display:block">עוד אין כאן כלום. אפשר להתחיל מדבר אחד קטן.</li>';return;}
+  ul.innerHTML='';
+  S.gratitude.slice().sort((a,b)=>b.ts-a.ts).forEach(g=>{
+    const li=document.createElement('li');
+    const t=document.createElement('div');t.className='txt';t.textContent=g.text;
+    const tm=document.createElement('time');tm.textContent=new Date(g.ts).toLocaleDateString('he-IL',{day:'numeric',month:'long'});t.appendChild(tm);
+    const del=document.createElement('button');del.className='del';del.innerHTML='&times;';del.setAttribute('aria-label','מחיקה');
+    del.onclick=()=>{S.gratitude=S.gratitude.filter(x=>x.id!==g.id);save();renderG();};
+    li.append(t,del);ul.appendChild(li);
+  });
+}
+$('gAdd').onclick=()=>{
+  const v=$('gInput').value.trim(); if(!v)return;
+  S.gratitude.push({id:Date.now(),text:v,ts:Date.now()}); save(); $('gInput').value=''; renderG();
+};
+
+/* ---------- Readings ---------- */
+let editing=false;
+function renderL(){
+  const ul=$('lList'); ul.innerHTML='';
+  $('editLinks').textContent=editing?'סיום':'עריכה';
+  $('addLink').hidden=!editing;
+  if(!S.links.length&&!editing){ul.innerHTML='<li class="empty" style="border:0;display:block">אין קישורים. אפשר להוסיף דרך "עריכה".</li>';return;}
+  S.links.forEach(l=>{
+    const li=document.createElement('li');li.className='link-item';
+    if(editing){
+      const w=document.createElement('div');w.className='link-edit';
+      const ti=document.createElement('input');ti.type='text';ti.value=l.title;ti.placeholder='כותרת';ti.setAttribute('aria-label','כותרת');
+      const ui=document.createElement('input');ui.type='url';ui.value=l.url;ui.placeholder='https://';ui.dir='ltr';ui.setAttribute('aria-label','כתובת');
+      ti.oninput=()=>{l.title=ti.value;save();}; ui.oninput=()=>{l.url=ui.value.trim();save();};
+      const del=document.createElement('button');del.className='del';del.innerHTML='&times;';del.setAttribute('aria-label','מחיקת קישור');
+      del.onclick=()=>{S.links=S.links.filter(x=>x.id!==l.id);save();renderL();};
+      w.append(ti,ui);li.append(w,del);
+    }else{
+      const a=document.createElement('a');a.href=l.url;a.target='_blank';a.rel='noopener';
+      a.textContent=l.title||l.url;
+      const sm=document.createElement('small');sm.textContent=l.url.replace(/^https?:\/\//,'');a.appendChild(sm);
+      li.appendChild(a);
+    }
+    ul.appendChild(li);
+  });
+}
+$('editLinks').onclick=()=>{editing=!editing;if(!editing)S.links=S.links.filter(l=>l.url);save();renderL();};
+$('addLink').onclick=()=>{S.links.push({id:Date.now(),title:'',url:''});save();renderL();};
+
+/* ---------- Settings ---------- */
+let pickColor=S.color;
+function fillSettings(){
+  $('setTitle').textContent=S.date?'הגדרות':'בואו נתחיל';
+  $('settingsFoot').hidden=!S.date;
+  $('sName').value=S.name;$('sDate').value=S.date;$('sTime').value=S.time;$('sFrom').value=S.from;
+  pickColor=S.color; renderSwatches();
+}
+function renderSwatches(){
+  const box=$('swatches');box.innerHTML='';
+  Object.entries(COLORS).forEach(([k,v])=>{
+    const b=document.createElement('button');b.className='swatch';b.style.background=v;
+    b.setAttribute('role','radio');b.setAttribute('aria-checked',k===pickColor);b.setAttribute('aria-label',CNAMES[k]);
+    b.onclick=()=>{pickColor=k;document.documentElement.style.setProperty('--accent',v);renderSwatches();};
+    box.appendChild(b);
+  });
+}
+$('saveSettings').onclick=()=>{
+  if(!$('sDate').value){$('sDate').focus();$('sDate').style.borderColor='#B3413B';return;}
+  $('sDate').style.borderColor='';
+  S.name=$('sName').value.trim();S.date=$('sDate').value;S.time=$('sTime').value;S.from=$('sFrom').value.trim();S.color=pickColor;
+  save();applyColor();show('counter');
+};
+$('reset').onclick=()=>{
+  if(!confirm('למחוק את כל הנתונים מהמכשיר?'))return;
+  try{localStorage.removeItem(KEY);}catch(e){}
+  S=JSON.parse(JSON.stringify(DEFAULT));applyColor();renderG();renderL();show('settings');
+};
+
+/* ---------- Init ---------- */
+applyColor();renderG();renderL();
+show(S.date?'counter':'settings');
+})();
+</script>
+</body>
+</html>
