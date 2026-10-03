@@ -14,7 +14,8 @@ Tab labels are short so five fit at 360px. The full name is the screen heading.
 - **Counter** (`#counter`): clean time since `date`/`time`. Tapping it cycles `mode` (0 y/m/d, 1 days, 2 h/m/s).
 - **Planner** "רק להיום תהיה לי תכנית" (`#planner`): today's to-do list only. A new local date starts empty. A 1s timer and `visibilitychange` switch it to the new day after midnight without a reload.
 - **Journal** "ככה זה עכשיו" (`#journal`): entries newest first. The full-screen editor (`#jEditor`) autosaves while typing (debounced) and also saves on close, `pagehide` and when the app is hidden. Empty entries are discarded. It pushes a history state so Android back closes the editor instead of leaving the app.
-- **Gratitude** "הכרת תודה" (`#gratitude`), **Readings** "קריאות" (`#readings`), **Settings** (`#settings`, includes "מחיקת כל הנתונים").
+- **Gratitude** "הכרת תודה" (`#gratitude`), **Readings** "קריאות" (`#readings`), **Settings** (`#settings`, includes "מחיקת כל הנתונים", and an "אודות" block at the bottom with the disclaimer, tap-to-call help numbers, privacy summary, GitHub and feedback links, and the version line rendered from `APP_VERSION`).
+- Bump `APP_VERSION` (`YYYY.MM.DD`, near the top of the script) with each user-facing change.
 
 ## Data keys (inside `cleantime-he-v1`)
 

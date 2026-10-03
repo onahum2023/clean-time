@@ -128,6 +128,15 @@ h3{font-family:var(--serif);font-weight:500;font-size:1.25rem;margin:0 0 4px}
 .modal .btn{white-space:normal;width:100%}
 
 .settings-foot{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.about{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem}
+.about h3{color:var(--ink);font-size:1rem;margin:0 0 8px}
+.about h4{color:var(--ink);font-size:.9rem;margin:18px 0 4px}
+.about p{margin:0 0 8px}
+.about a{color:var(--accent)}
+.about .help{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:8px}
+.about .help a{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:46px;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;font-size:.95rem}
+.about .help b{color:var(--accent);direction:ltr;white-space:nowrap}
+.about .ver{margin-top:18px;font-size:.8rem;opacity:.8}
 
 /* Tabs */
 nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
@@ -231,6 +240,24 @@ nav.tabs svg{width:22px;height:22px}
     <div class="settings-foot" id="settingsFoot">
       <button class="btn danger" id="reset">מחיקת כל הנתונים</button>
     </div>
+    <div class="about" id="about">
+      <h3>אודות</h3>
+      <p>זמן נקי היא אפליקציה חינמית למי שנמצא/ת בהחלמה. בלי פרסומות ובלי מעקב.</p>
+      <p>האפליקציה אינה קשורה לאנ-איי (מכורים אנונימיים) ואינה מטעמם. הקישורים לאנ-איי ישראל מופיעים לנוחות בלבד.</p>
+      <p>זו לא אפליקציה רפואית ולא שירות חירום.<br>צריכים עזרה עכשיו?</p>
+      <ul class="help">
+        <li><a href="tel:033747474">קו המידע של אנ-איי <b>033-747474</b></a></li>
+        <li><a href="tel:1201">ער"ן, עזרה נפשית ראשונה <b>1201</b></a></li>
+        <li><a href="tel:101">מד"א <b>101</b></a></li>
+      </ul>
+      <h4>פרטיות</h4>
+      <p>בלי התחברות, כל הנתונים נשמרים רק בטלפון הזה.<br>עם התחברות, הנתונים מגובים בשרת כדי שאפשר יהיה לשחזר אותם או להשתמש בכמה מכשירים. כרגע הגיבוי אינו מוצפן, ולכן מי שמנהל את השרת יכול טכנית לראות אותו.<br>אפשר למחוק את כל הנתונים בכל רגע, כאן בהגדרות.</p>
+      <h4>קוד פתוח</h4>
+      <p>הקוד של האפליקציה פתוח לכולם ב-<a href="https://github.com/onahum2023/clean-time" target="_blank" rel="noopener">GitHub</a>.</p>
+      <h4>משוב</h4>
+      <p>נשמח לשמוע מה עובד ומה חסר: <a href="mailto:onahum@gmail.com" dir="ltr">onahum@gmail.com</a></p>
+      <p class="ver" id="appVer"></p>
+    </div>
   </section>
 </div>
 
@@ -265,6 +292,7 @@ nav.tabs svg{width:22px;height:22px}
 
 <script>
 (function(){
+const APP_VERSION='2026.10.03';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#2E7D78',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -307,6 +335,7 @@ function writeLocal(d){try{localStorage.setItem(KEY,JSON.stringify(d||S));}catch
 /* every data change goes through save(): it stamps updatedAt and queues a cloud push */
 function save(){S.updatedAt=Date.now();writeLocal();queuePush();}
 const $=id=>document.getElementById(id);
+$('appVer').textContent='גרסה '+APP_VERSION;
 
 /* ---------- Tabs ---------- */
 let current='counter';
