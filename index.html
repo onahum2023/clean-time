@@ -75,7 +75,7 @@ h2{font-family:var(--serif);font-weight:500;font-size:1.6rem;margin:18px 0 4px}
 .row{display:flex;gap:8px}
 .field{display:block;margin-bottom:16px}
 .field span{display:block;font-size:.9rem;color:var(--muted);margin-bottom:6px}
-input[type=text],input[type=date],input[type=time],input[type=url]{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-height:46px}
+input[type=text],input[type=date],input[type=time],input[type=url],input[type=email]{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-height:46px}
 input:focus{outline:none;border-color:var(--accent)}
 .btn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:600;cursor:pointer;white-space:nowrap;min-height:46px}
 .btn.ghost{background:none;color:var(--accent);padding:8px 4px;min-height:0}
@@ -111,6 +111,21 @@ ul.list li time{display:block;font-size:.8rem;color:var(--muted)}
 .editor textarea{flex:1;max-width:520px;width:100%;margin:0 auto;display:block;border:0;resize:none;background:none;padding:18px 20px;font-size:1.1rem;line-height:1.7}
 .editor textarea:focus{outline:none}
 .saved{color:var(--muted);font-size:.8rem;text-align:center;padding:4px 0 8px;min-height:1.6em}
+
+/* Sync */
+.sync{margin-top:28px;padding-top:20px;border-top:1px solid var(--line)}
+h3{font-family:var(--serif);font-weight:500;font-size:1.25rem;margin:0 0 4px}
+.sync .sub{margin-bottom:12px}
+.sync form{display:grid;gap:8px}
+.sync .who{margin:0 0 2px;overflow-wrap:anywhere}
+.msg{font-size:.9rem;margin:10px 0 0;color:var(--accent)}
+.msg.err{color:#B3413B}
+.msg:empty{display:none}
+.modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px}
+.modal .box{background:var(--surface);border-radius:14px;padding:20px;width:100%;max-width:420px}
+.modal p{margin:6px 0 18px;color:var(--muted);white-space:pre-line}
+.modal .acts{display:grid;gap:8px}
+.modal .btn{white-space:normal;width:100%}
 
 .settings-foot{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px;align-items:flex-start}
 
@@ -185,7 +200,7 @@ nav.tabs svg{width:22px;height:22px}
   <!-- Settings -->
   <section id="settings" hidden>
     <h2 id="setTitle">הגדרות</h2>
-    <p class="sub">הכול נשמר רק במכשיר הזה.</p>
+    <p class="sub" id="setSub">הכול נשמר רק במכשיר הזה.</p>
     <label class="field"><span>שם</span><input type="text" id="sName" maxlength="40"></label>
     <div class="row">
       <label class="field" style="flex:2"><span>תאריך הניקיון</span><input type="date" id="sDate"></label>
@@ -197,6 +212,22 @@ nav.tabs svg{width:22px;height:22px}
     </label>
     <div class="field"><span>צבע</span><div class="swatches" id="swatches" role="radiogroup" aria-label="צבע"></div></div>
     <button class="btn" id="saveSettings" style="width:100%;margin-top:8px">שמירה</button>
+    <div class="sync" id="sync">
+      <h3>גיבוי וסנכרון</h3>
+      <div id="syncOut">
+        <p class="sub">אפשר להתחבר עם מייל כדי לגבות את הנתונים ולסנכרן בין מכשירים. בלי התחברות הכול נשמר רק במכשיר הזה.</p>
+        <form id="loginForm" onsubmit="return false" novalidate>
+          <input type="email" id="lEmail" placeholder="כתובת מייל" autocomplete="email" dir="ltr" maxlength="200" aria-label="כתובת מייל">
+          <button class="btn" id="lSend" type="submit">שליחת קישור</button>
+        </form>
+      </div>
+      <div id="syncIn" hidden>
+        <p class="who">חשבון: <b id="sEmail" dir="ltr"></b></p>
+        <p class="sub" id="syncStatus"></p>
+        <button class="btn danger" id="signOut">התנתקות</button>
+      </div>
+      <p class="msg" id="syncMsg" role="status"></p>
+    </div>
     <div class="settings-foot" id="settingsFoot">
       <button class="btn danger" id="reset">מחיקת כל הנתונים</button>
     </div>
@@ -211,6 +242,10 @@ nav.tabs svg{width:22px;height:22px}
   </div>
   <textarea id="jText" placeholder="מה עובר עליי עכשיו..." aria-label="טקסט הרשומה"></textarea>
   <div class="saved" id="jSaved"></div>
+</div>
+
+<div class="modal" id="ask" hidden role="dialog" aria-modal="true" aria-labelledby="askT">
+  <div class="box"><h3 id="askT"></h3><p id="askP"></p><div class="acts" id="askB"></div></div>
 </div>
 
 <nav class="tabs" id="tabs">
@@ -245,25 +280,32 @@ const DEFAULT={name:'',date:'',time:'',from:'',color:'teal',mode:0,gratitude:[],
 const OLD_LINKS=['https://jftna.org/jft/','https://spadna.org/'];
 let S=load();
 
+/* merges saved data (local or from the cloud) over DEFAULT and migrates older shapes */
+function normalize(saved){
+  /* deep copy so new keys never share references with DEFAULT */
+  const d=Object.assign(JSON.parse(JSON.stringify(DEFAULT)),JSON.parse(JSON.stringify(saved)));
+  if(!d.linksV){
+    const defs=JSON.parse(JSON.stringify(DEFAULT.links)), defUrls=defs.map(l=>l.url);
+    const own=(d.links||[]).filter(l=>!OLD_LINKS.includes(l.url)&&!defUrls.includes(l.url))
+      .map((l,i)=>l.id<=defs.length?Object.assign({},l,{id:Date.now()+i}):l);
+    d.links=defs.concat(own); d.linksV=2;
+  }
+  return d;
+}
 function load(){
   try{
     const r=localStorage.getItem(KEY);
     if(r){
-      /* deep copy so new keys never share references with DEFAULT */
-      const d=Object.assign(JSON.parse(JSON.stringify(DEFAULT)),JSON.parse(r));
-      if(!d.linksV){
-        const defs=JSON.parse(JSON.stringify(DEFAULT.links)), defUrls=defs.map(l=>l.url);
-        const own=(d.links||[]).filter(l=>!OLD_LINKS.includes(l.url)&&!defUrls.includes(l.url))
-          .map((l,i)=>l.id<=defs.length?Object.assign({},l,{id:Date.now()+i}):l);
-        d.links=defs.concat(own); d.linksV=2;
-        try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}
-      }
+      const raw=JSON.parse(r), d=normalize(raw);
+      if(!raw.linksV)writeLocal(d);
       return d;
     }
   }catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT));
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function writeLocal(d){try{localStorage.setItem(KEY,JSON.stringify(d||S));}catch(e){}}
+/* every data change goes through save(): it stamps updatedAt and queues a cloud push */
+function save(){S.updatedAt=Date.now();writeLocal();queuePush();}
 const $=id=>document.getElementById(id);
 
 /* ---------- Tabs ---------- */
@@ -336,7 +378,7 @@ function render(){
   c.className=cls; c.innerHTML=html;
 }
 $('count').onclick=()=>{
-  S.mode=(S.mode+1)%3; save(); render();
+  S.mode=(S.mode+1)%3; writeLocal(); render(); /* UI-only: no updatedAt, no sync */
   const c=$('count'); c.classList.remove('anim'); void c.offsetWidth; c.classList.add('anim');
 };
 setInterval(()=>{if(current==='counter')render();if(planDay!==todayKey())renderP();},1000);
@@ -419,10 +461,12 @@ function commitJ(){
   if(!jCur)return;
   const t=$('jText').value, i=S.journal.findIndex(e=>e.id===jCur.id);
   if(!t.trim()){if(i>=0){S.journal.splice(i,1);save();}return;}
-  if(i<0||t!==jCur.text){
-    jCur.text=t; jCur.updated=Date.now();
-    if(i<0)S.journal.push(jCur);
-    save(); $('jSaved').textContent='נשמר';
+  /* use the entry in S, which may be a fresh object after a cloud pull */
+  const e=i>=0?S.journal[i]:jCur;
+  if(i<0||t!==e.text){
+    e.text=t; e.updated=Date.now();
+    if(i<0)S.journal.push(e);
+    jCur=e; save(); $('jSaved').textContent='נשמר';
   }
 }
 function closeJ(){commitJ();jCur=null;$('jEditor').hidden=true;renderJ();}
@@ -473,6 +517,7 @@ $('addLink').onclick=()=>{S.links.push({id:Date.now(),title:'',url:''});save();r
 let pickColor=S.color;
 function fillSettings(){
   $('setTitle').textContent=S.date?'הגדרות':'בואו נתחיל';
+  renderSync();
   $('settingsFoot').hidden=!S.date;
   $('sName').value=S.name;$('sDate').value=S.date;$('sTime').value=S.time;$('sFrom').value=S.from;
   pickColor=S.color; renderSwatches();
@@ -492,15 +537,238 @@ $('saveSettings').onclick=()=>{
   S.name=$('sName').value.trim();S.date=$('sDate').value;S.time=$('sTime').value;S.from=$('sFrom').value.trim();S.color=pickColor;
   save();applyColor();show('counter');
 };
-$('reset').onclick=()=>{
-  if(!confirm('למחוק את כל הנתונים מהמכשיר?'))return;
+function resetLocal(){
   try{localStorage.removeItem(KEY);}catch(e){}
   S=JSON.parse(JSON.stringify(DEFAULT));applyColor();renderG();renderL();renderP();renderJ();show('settings');
+}
+$('reset').onclick=async()=>{
+  if(!signedIn()){
+    if(!confirm('למחוק את כל הנתונים מהמכשיר?'))return;
+    resetLocal();return;
+  }
+  const where=await ask('מחיקת כל הנתונים','מהמכשיר בלבד: הנתונים יימחקו מהמכשיר הזה והחשבון יתנתק. העותק בענן יישאר.\nגם מהענן: הנתונים יימחקו מהמכשיר ומהענן, ולא יהיה אפשר לשחזר אותם.',
+    [{label:'מהמכשיר הזה בלבד',value:'device',cls:'danger'},{label:'גם מהענן',value:'cloud',cls:'danger'},{label:'ביטול',value:null,cls:'ghost'}]);
+  if(where==='device'){await signOutNow();return;}
+  if(where==='cloud')await wipeCloud();
 };
+
+/* ---------- Cloud backup & sync (optional) ----------
+   localStorage stays the working copy. The whole state (minus LOCAL_ONLY) is one row
+   per user in public.user_data; the side with the newer updatedAt wins. */
+const SUPA_URL='https://aefhjgmiwgajdhgyhelm.supabase.co';
+const SUPA_KEY='sb_publishable_0R5rSCEhM5INCy-5zLwGsA_j51Ty39v';
+const SUPA_JS='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js';
+const SUPA_SRI='sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok';
+const AUTH_KEY='cleantime-he-auth', SYNC_KEY='cleantime-he-sync';
+const LOCAL_ONLY=['mode']; /* UI-only fields, never synced */
+let sb=null, sbLoading=null, sbReady=false, user=null, pushTimer=null, busy=false, again=false, syncErr='';
+/* M: sync bookkeeping for this device. uid = account this device last synced with */
+let M=(()=>{try{return JSON.parse(localStorage.getItem(SYNC_KEY))||{};}catch(e){return {};}})();
+function saveMeta(){try{localStorage.setItem(SYNC_KEY,JSON.stringify(M));}catch(e){}}
+const signedIn=()=>!!(user||(M.uid&&!sbReady));
+const hasData=d=>!!(d&&(d.date||d.name||(d.gratitude||[]).length||(d.journal||[]).length||Object.keys(d.plans||{}).length));
+
+function loadSupabase(){
+  if(sbLoading)return sbLoading;
+  sbLoading=new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src=SUPA_JS; s.integrity=SUPA_SRI; s.crossOrigin='anonymous';
+    s.onload=res; s.onerror=()=>{s.remove();rej(new Error('Failed to fetch'));};
+    document.head.appendChild(s);
+  }).then(()=>{
+    sb=supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{flowType:'implicit',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true,storageKey:AUTH_KEY}});
+    sb.auth.onAuthStateChange((ev,session)=>{
+      user=session?session.user:null;
+      /* never call supabase from inside this callback */
+      setTimeout(()=>{renderSync();if(ev==='SIGNED_IN')sync();},0);
+    });
+    return sb;
+  },e=>{sbLoading=null;throw e;});
+  return sbLoading;
+}
+
+const isNetErr=e=>!navigator.onLine||!e||e.name==='AuthRetryableFetchError'||e.status===0||/fetch|network|load failed/i.test(e.message||'');
+function errText(e){
+  const code=typeof e==='string'?e:(e&&(e.code||e.error_code))||'';
+  if(typeof e!=='string'&&isNetErr(e))return 'אין חיבור לאינטרנט. כדאי לבדוק את החיבור ולנסות שוב.';
+  if(/otp_expired|access_denied|bad_jwt|flow_state/.test(code))return 'הקישור פג תוקף או שכבר נעשה בו שימוש. אפשר לשלוח קישור חדש.';
+  if(/email_address_invalid|validation_failed|invalid_email/.test(code))return 'כתובת המייל לא תקינה.';
+  if(/rate_limit/.test(code)||(e&&e.status===429))return 'נשלחו יותר מדי קישורים. אפשר לנסות שוב בעוד כמה דקות.';
+  return 'משהו השתבש. אפשר לנסות שוב.';
+}
+function setMsg(text,err){const m=$('syncMsg');m.textContent=text||'';m.classList.toggle('err',!!err);}
+
+/* Login. Step 1 emails a magic link. A 6-digit code flow would add a second step here:
+   sb.auth.verifyOtp({email,token,type:'email'}) */
+async function sendLogin(email){
+  await loadSupabase();
+  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin}});
+  if(error)throw error;
+}
+$('lSend').onclick=async()=>{
+  const inp=$('lEmail'), email=inp.value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setMsg(errText('invalid_email'),true);inp.focus();return;}
+  $('lSend').disabled=true; setMsg('שולח...');
+  try{await sendLogin(email);setMsg('שלחנו קישור למייל. כדאי לפתוח אותו בטלפון הזה, בדפדפן Chrome.');}
+  catch(e){setMsg(errText(e),true);}
+  $('lSend').disabled=false;
+};
+
+function renderSync(){
+  const on=signedIn();
+  $('syncOut').hidden=on; $('syncIn').hidden=!on;
+  $('setSub').textContent=on?'הנתונים נשמרים במכשיר ומגובים בענן.':'הכול נשמר רק במכשיר הזה.';
+  if(!on)return;
+  $('sEmail').textContent=(user&&user.email)||M.email||'';
+  let st;
+  if(syncErr==='offline')st='אין חיבור. השינויים יגובו כשהחיבור יחזור.';
+  else if(syncErr)st='הסנכרון נכשל. ננסה שוב כשהאפליקציה תיפתח מחדש.';
+  else if(M.dirty)st='יש שינויים שממתינים לגיבוי...';
+  else if(M.lastSync)st='סנכרון אחרון: '+new Date(M.lastSync).toLocaleString('he-IL',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+  else st='מסנכרן...';
+  $('syncStatus').textContent=st;
+}
+
+/* a modal with buttons; resolves with the chosen button's value */
+function ask(title,text,buttons){
+  return new Promise(res=>{
+    $('askT').textContent=title; $('askP').textContent=text;
+    const box=$('askB'); box.innerHTML='';
+    buttons.forEach(b=>{
+      const el=document.createElement('button');el.className='btn'+(b.cls?' '+b.cls:'');el.textContent=b.label;
+      el.onclick=()=>{$('ask').hidden=true;res(b.value);};
+      box.appendChild(el);
+    });
+    $('ask').hidden=false; box.firstChild.focus();
+  });
+}
+
+/* replaces S with cloud data, normalized like local data; keeps this device's UI-only fields */
+function applyRemote(data,t){
+  const keep={}; LOCAL_ONLY.forEach(k=>keep[k]=S[k]);
+  S=Object.assign(normalize(data),keep); S.updatedAt=t;
+  writeLocal();
+  if(current!=='settings')applyColor();
+  renderG();renderL();renderP();render();
+  if($('jEditor').hidden)renderJ();
+  if(current==='settings'&&!$('settings').contains(document.activeElement))fillSettings();
+}
+async function upload(){
+  const data=JSON.parse(JSON.stringify(S)); LOCAL_ONLY.forEach(k=>delete data[k]);
+  if(!data.updatedAt)data.updatedAt=S.updatedAt=Date.now();
+  const {error}=await sb.from('user_data').upsert({user_id:user.id,data,updated_at:new Date(data.updatedAt).toISOString()},{onConflict:'user_id'});
+  if(error)throw error;
+  return data.updatedAt;
+}
+/* pull the row, then apply it or push, by updatedAt. Runs one at a time. */
+async function sync(){
+  if(busy){again=true;return;}
+  if(!sbReady){if(M.uid||sbLoading)startSync();return;}
+  if(!user)return;
+  if(!navigator.onLine){syncErr='offline';renderSync();return;}
+  busy=true;
+  try{
+    do{
+      again=false;
+      const {data:row,error}=await sb.from('user_data').select('data,updated_at').eq('user_id',user.id).maybeSingle();
+      if(error)throw error;
+      const remote=row&&row.data, rT=remote?(remote.updatedAt||Date.parse(row.updated_at)||0):0;
+      if(M.uid!==user.id){
+        /* first sign-in on this device: never silently overwrite either side */
+        if(hasData(remote)&&hasData(S)){
+          const pick=await ask('נמצאו נתונים בשני המקומות','יש נתונים גם במכשיר הזה וגם בענן. אילו נתונים לשמור? הנתונים האחרים יוחלפו.',
+            [{label:'לשמור את הנתונים מהמכשיר הזה',value:'local'},{label:'לטעון את הנתונים מהענן',value:'cloud',cls:'ghost'}]);
+          if(pick==='cloud')applyRemote(remote,rT);else{S.updatedAt=Date.now();writeLocal();}
+        }else if(hasData(remote))applyRemote(remote,rT);
+        else if(remote)S.updatedAt=Math.max(Date.now(),rT+1);
+        M.uid=user.id;
+      }
+      M.email=user.email;
+      const lT=S.updatedAt||0;
+      let synced=lT;
+      if(rT>lT)applyRemote(remote,rT);
+      else if(lT>rT||(!remote&&hasData(S)))synced=await upload();
+      M.dirty=(S.updatedAt||0)!==synced; M.lastSync=Date.now(); syncErr='';
+      saveMeta();
+    }while(again);
+  }catch(e){
+    syncErr=isNetErr(e)?'offline':'error';
+    console.warn('sync failed',e);
+  }
+  busy=false; renderSync();
+}
+function queuePush(){
+  if(!M.uid)return;
+  M.dirty=true; saveMeta(); renderSync();
+  clearTimeout(pushTimer); pushTimer=setTimeout(()=>{pushTimer=null;sync();},2000);
+}
+function flushPush(){if(pushTimer){clearTimeout(pushTimer);pushTimer=null;sync();}}
+
+/* loads the library and restores the session (or finishes a magic-link sign-in) */
+async function startSync(){
+  try{await loadSupabase();}catch(e){syncErr='offline';renderSync();return;}
+  if(sbReady)return sync();
+  const {data,error}=await sb.auth.getSession();
+  sbReady=true;
+  user=data&&data.session?data.session.user:null;
+  if(fromLink){
+    fromLink=false; cleanUrl();
+    if(!user)setMsg(errText(error||'otp_expired'),true);
+    show('settings');
+  }
+  renderSync();
+  if(user)sync();
+}
+
+async function signOutNow(){
+  try{if(sb)await sb.auth.signOut({scope:'local'});}catch(e){}
+  try{localStorage.removeItem(AUTH_KEY);localStorage.removeItem(SYNC_KEY);}catch(e){}
+  clearTimeout(pushTimer); M={}; user=null; syncErr='';
+  resetLocal(); setMsg('');
+}
+$('signOut').onclick=async()=>{
+  if(!confirm('התנתקות תמחק את כל הנתונים מהמכשיר הזה.\nהעותק בענן יישאר, ואפשר לטעון אותו שוב בהתחברות מחדש.\n\nלהתנתק?'))return;
+  if(M.dirty){
+    clearTimeout(pushTimer); await sync();
+    if(M.dirty&&!confirm('יש שינויים שעוד לא גובו לענן, והם יימחקו. להתנתק בכל זאת?'))return;
+  }
+  await signOutNow();
+};
+/* overwrites the cloud row with empty data, so other signed-in devices also clear on their next pull */
+async function wipeCloud(){
+  if(!sbReady)await startSync();
+  if(!user){setMsg('אין חיבור לענן, ולכן שום דבר לא נמחק. אפשר לנסות שוב כשהחיבור יחזור.',true);return;}
+  try{
+    clearTimeout(pushTimer);
+    resetLocal(); S.updatedAt=Date.now(); writeLocal();
+    await upload();
+    M.dirty=false; M.lastSync=Date.now(); syncErr=''; saveMeta();
+    setMsg('הנתונים נמחקו מהמכשיר ומהענן.');
+  }catch(e){
+    M.dirty=true; saveMeta();
+    setMsg('המחיקה מהענן לא הושלמה. היא תושלם כשהחיבור יחזור.',true);
+  }
+  renderSync();
+}
+
+/* magic-link return: tokens (or an error) arrive in the URL hash */
+const urlP=new URLSearchParams(location.hash.slice(1)+'&'+location.search.slice(1));
+let fromLink=urlP.has('access_token');
+function cleanUrl(){try{history.replaceState(null,'',location.pathname);}catch(e){}}
+
+window.addEventListener('online',sync);
+window.addEventListener('focus',sync);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flushPush();else sync();});
+window.addEventListener('pagehide',flushPush);
 
 /* ---------- Init ---------- */
 applyColor();renderG();renderL();renderP();renderJ();
 show(S.date?'counter':'settings');
+if(urlP.has('error_code')||urlP.has('error')){
+  cleanUrl(); show('settings'); setMsg(errText(urlP.get('error_code')||urlP.get('error')),true);
+}
+let hasSession=false; try{hasSession=!!localStorage.getItem(AUTH_KEY);}catch(e){}
+if(fromLink||M.uid||hasSession)startSync();
 })();
 </script>
 </body>
