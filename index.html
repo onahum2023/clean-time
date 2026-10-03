@@ -141,7 +141,7 @@ nav.tabs svg{width:22px;height:22px}
     <p class="sub">קישורים לקריאה היומית ולקריאות הפתיחה של הפגישה.</p>
     <ul class="list" id="lList"></ul>
     <button class="btn ghost" id="addLink" hidden>+ הוספת קישור</button>
-    <p class="note">הקישורים כרגע לגרסאות באנגלית. אפשר להחליף אותם בקישורים בעברית דרך "עריכה".</p>
+    <p class="note">הקישורים מהאתר הרשמי של מכורים אנונימיים ישראל. אפשר לשנות או להוסיף דרך "עריכה".</p>
   </section>
 
   <!-- Settings -->
@@ -183,13 +183,31 @@ const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'�
 const COLORS={teal:'#2E7D78',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
 const DEFAULT={name:'',date:'',time:'',from:'',color:'teal',mode:0,gratitude:[],
   links:[
-    {id:1,title:'רק להיום (אנגלית)',url:'https://jftna.org/jft/'},
-    {id:2,title:'עיקרון רוחני ליום (אנגלית)',url:'https://spadna.org/'}
+    {id:1,title:'רק להיום',url:'https://www.naisrael.org.il/just-for-today/'},
+    {id:2,title:'פגישות אנ-איי',url:'https://www.naisrael.org.il/meetings/'},
+    {id:3,title:'ספרות להורדה',url:'https://www.naisrael.org.il/literature-downloads/'},
+    {id:4,title:'קו המידע של אנ-איי',url:'tel:033747474'},
+    {id:5,title:'עיקרון רוחני ליום (אנגלית)',url:'https://spadna.org/'}
   ]};
+/* linksV is intentionally not in DEFAULT, so saved data without it gets migrated */
+const OLD_LINKS=['https://jftna.org/jft/','https://spadna.org/'];
 let S=load();
 
 function load(){
-  try{const r=localStorage.getItem(KEY);if(r)return Object.assign({},DEFAULT,JSON.parse(r));}catch(e){}
+  try{
+    const r=localStorage.getItem(KEY);
+    if(r){
+      const d=Object.assign({},DEFAULT,JSON.parse(r));
+      if(!d.linksV){
+        const defs=JSON.parse(JSON.stringify(DEFAULT.links)), defUrls=defs.map(l=>l.url);
+        const own=(d.links||[]).filter(l=>!OLD_LINKS.includes(l.url)&&!defUrls.includes(l.url))
+          .map((l,i)=>l.id<=defs.length?Object.assign({},l,{id:Date.now()+i}):l);
+        d.links=defs.concat(own); d.linksV=2;
+        try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}
+      }
+      return d;
+    }
+  }catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT));
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
@@ -306,9 +324,10 @@ function renderL(){
       del.onclick=()=>{S.links=S.links.filter(x=>x.id!==l.id);save();renderL();};
       w.append(ti,ui);li.append(w,del);
     }else{
-      const a=document.createElement('a');a.href=l.url;a.target='_blank';a.rel='noopener';
+      const a=document.createElement('a');a.href=l.url;
+      if(!/^tel:/i.test(l.url)){a.target='_blank';a.rel='noopener';}
       a.textContent=l.title||l.url;
-      const sm=document.createElement('small');sm.textContent=l.url.replace(/^https?:\/\//,'');a.appendChild(sm);
+      const sm=document.createElement('small');sm.textContent=l.url.replace(/^(https?:\/\/|tel:)/i,'').replace(/^www\./i,'').replace(/\/$/,'');a.appendChild(sm);
       li.appendChild(a);
     }
     ul.appendChild(li);
