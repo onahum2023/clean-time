@@ -41,17 +41,7 @@ Login is optional; without it nothing loads from the network and the app is loca
 - First sign-in on a device (`M.uid` differs from the user): if both sides have data, a modal asks "לשמור את הנתונים מהמכשיר הזה" / "לטעון את הנתונים מהענן". If only one side has data, that side is used.
 - Sign out: confirm, try to flush pending changes, then clear all local data. The cloud copy stays.
 - "מחיקת כל הנתונים" when signed in: "device only" clears local data and signs out. "Also cloud" overwrites the row with an empty state (newer `updatedAt`), so other signed-in devices also clear on their next pull.
-
-### Not yet tested
-
-Supabase's email rate limit stopped testing partway. These sync paths have not been verified yet:
-
-- A second browser signing in and loading the cloud data
-- Editing in one browser, refocusing the other, and seeing the change
-- Sign out clearing local data
-- The conflict prompt on first sign-in when both sides have data
-
-Tested: local-only behavior, first upload from a fresh browser, debounced push, offline edit then sync, Hebrew errors (invalid email, expired link, rate limit), 360px layout.
+- Verified in production: first upload, a second device loading cloud data, edit-and-refocus sync, offline edit then sync, sign out clearing local data, and the conflict prompt on first sign-in.
 
 ## Deploy & layout
 
