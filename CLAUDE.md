@@ -34,7 +34,7 @@ Login is optional; without it nothing loads from the network and the app is loca
 
 - Supabase project `aefhjgmiwgajdhgyhelm`, publishable key in `index.html`. supabase-js 2.117.2 from jsDelivr, pinned with an SRI hash. It loads only when a session exists, when returning from a magic link, or when "שליחת קישור" is tapped.
 - Login: email magic link (`signInWithOtp` with `emailRedirectTo: location.origin`). The client uses `flowType: 'implicit'` so a link opened in a different browser still works (PKCE would fail). On return, the token is read from the URL hash, the URL is cleaned and Settings opens. Link errors (`#error_code=otp_expired`) show a Hebrew message. Switching to a 6-digit code means adding a `verifyOtp({email, token, type:'email'})` step next to `sendLogin()`.
-- Every origin used (production, `http://localhost:8765`, `http://127.0.0.1:8765`) must be in Supabase → Auth → Redirect URLs.
+- Every origin used (production `https://www.clean-time.app`, the old `https://clean-time-eight.vercel.app` until it redirects, `http://localhost:8765`, `http://127.0.0.1:8765`) must be in Supabase → Auth → Redirect URLs.
 - Supabase's built-in mailer allows only a few emails per hour. Set up custom SMTP before relying on it.
 - Table `public.user_data(user_id uuid pk, data jsonb, updated_at timestamptz)`, RLS own row only. One row per user holds all of `S` except `LOCAL_ONLY` fields (`mode`).
 - `localStorage` stays the working copy. `sync()` pulls the row and compares `updatedAt`: remote newer → `applyRemote()` (normalized, keeps local `mode`); local newer → upsert. Runs on app open, sign-in, `focus`/`visibilitychange`, `online`, and 2s after each `save()` (flushed immediately when the app is hidden). Only one `sync()` runs at a time.
@@ -46,7 +46,10 @@ Login is optional; without it nothing loads from the network and the app is loca
 
 ## Domain move (temporary)
 
-The app moved from `clean-time-eight.vercel.app` to `https://clean-time.app`. localStorage is per origin, so a marked block in `index.html` ("Domain move (TEMPORARY)") hands data over:
+The app moved from `clean-time-eight.vercel.app` to `https://clean-time.app`. localStorage is per origin, so a marked block in `index.html` ("Domain move (TEMPORARY)") hands data over.
+
+In Vercel, `clean-time.app` 308-redirects to `www.clean-time.app`, so `www` is the origin that actually holds users' data and receives magic links. Keep `www` as the primary domain: making the apex primary later would strand data on `www` and need another move.
+
 
 - On an `OLD_HOSTS` host (exact hostname, so preview deployments are unaffected), `moveOut()` runs at the end of Init. No data: redirect to the new origin (keeping a magic-link hash). Signed in and synced: a modal says to sign in on the new domain with the same email. Otherwise: a modal button opens `NEW_ORIGIN/#import=<base64url JSON of S>`. Both modals also say to reinstall the app from the new domain.
 - On any other host, `#import=` is decoded before the first render, the URL is cleaned, and the data replaces `S` (after a confirm if local data exists) via `normalize()` and `save()`.
@@ -54,5 +57,5 @@ The app moved from `clean-time-eight.vercel.app` to `https://clean-time.app`. lo
 
 ## Deploy & layout
 
-- Deployed on Vercel. Every push to `main` redeploys production automatically.
+- Deployed on Vercel (project `clean-time`). Production: `https://www.clean-time.app` (`clean-time.app` redirects there). Every push to `main` redeploys production automatically.
 - The main user is on Android, so the UI must work well at 360px width. Check layout at that width before committing.
