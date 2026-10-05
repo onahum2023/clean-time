@@ -69,6 +69,7 @@ async(page)=>{
  check(await s.p.locator('#recoveryOutput').getAttribute('dir')==='ltr'&&(await s.p.locator('#recoveryGenerated').innerText()).includes('אינו סיסמת'),'LTR recovery key and passwordless explanation');
  await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('גיבוי מוצפן פעיל'));
  check(s.calls.uploads.length===1&&s.cloud().data.v===1&&s.cloud().data.alg==='A256GCM','New account creates versioned AES-256-GCM envelope');
+ check(s.cloud().data.kdf.name==='HKDF'&&s.cloud().data.kdf.hash==='SHA-256'&&s.cloud().data.kdf.info==='clean-time/v1/recovery-kek/A256GCM'&&!('iterations' in s.cloud().data.kdf),'HKDF profile has explicit KEK domain separation and no work factor');
  const plain=await s.plain();check(same(plain,cloudState(await read(s.p))),'Encrypted upload representation round trip restores identical whole state');
  check(Object.keys(s.cloud()).sort().join(',')==='data,updated_at,user_id'&&Object.keys(s.cloud().data).sort().join(',')==='alg,ciphertext,iv,kdf,v,wrapIv,wrappedKey','Cloud row contains only minimal sync/envelope metadata');
  const encoded=JSON.stringify(s.cloud());
@@ -99,7 +100,7 @@ async(page)=>{
  check((await stored(s.p)).confirmed,'New device retains verified usable DEK');await s.c.close();
  // Pure Web Crypto integrity checks, using runtime-generated material.
  s=await scenario({row,material});
- const cryptoChecks=await s.p.evaluate(async({row,material,plain})=>{
+ const cryptoChecks=await s.p.evaluate(async({row,material,plain,recovery})=>{
   const key=await SyncCrypto.importDek(material.raw),t=row.updated_at;
   const a=await SyncCrypto.encrypt(plain,key,material,material.uid,t),b=await SyncCrypto.encrypt(plain,key,material,material.uid,t);
   async function rejected(fn){try{await fn();return false;}catch{return true;}}
@@ -109,9 +110,15 @@ async(page)=>{
    await rejected(()=>SyncCrypto.decrypt(row.data,key,material.uid,new Date(Date.parse(t)+1).toISOString())),
    await rejected(()=>SyncCrypto.decrypt({...row.data,v:2},key,material.uid,t)),
    await rejected(()=>SyncCrypto.decrypt({...row.data,kdf:{...row.data.kdf,iterations:1}},key,material.uid,t)),
-   await rejected(()=>SyncCrypto.decrypt({...row.data,journal:'unexpected'},key,material.uid,t))];
- },{row,material,plain});
- ['Fresh random 96-bit IV on repeated encryption','Tampered ciphertext fails authentication','AAD binds account identity','AAD binds sync timestamp','Unknown version fails closed','Unsupported KDF parameters fail closed','Extra plaintext envelope fields rejected'].forEach((label,i)=>check(cryptoChecks[i],label));
+   await rejected(()=>SyncCrypto.decrypt({...row.data,journal:'unexpected'},key,material.uid,t)),
+   await rejected(()=>SyncCrypto.unlock({...row.data,kdf:{...row.data.kdf,info:'another-purpose'}},recovery,material.uid,t)),
+   await rejected(()=>SyncCrypto.unlock({...row.data,kdf:{...row.data.kdf,hash:'SHA-512'}},recovery,material.uid,t)),
+   await rejected(()=>SyncCrypto.unlock({...row.data,kdf:{name:'PBKDF2',hash:'SHA-256',salt:row.data.kdf.salt,iterations:600000}},recovery,material.uid,t)),
+   await rejected(()=>SyncCrypto.unlock(row.data,recovery,'another-synthetic-account',t)),
+   await rejected(()=>SyncCrypto.unlock({...row.data,kdf:{...row.data.kdf,salt:(row.data.kdf.salt.startsWith('A')?'B':'A')+row.data.kdf.salt.slice(1)}},recovery,material.uid,t)),
+   await rejected(()=>SyncCrypto.encrypt(plain,key,{...material,kdf:{name:'PBKDF2',hash:'SHA-256',salt:material.kdf.salt,iterations:600000}},material.uid,t))];
+ },{row,material,plain,recovery});
+ ['Fresh random 96-bit IV on repeated encryption','Tampered ciphertext fails authentication','AAD binds account identity','AAD binds sync timestamp','Unknown version fails closed','Unsupported KDF parameters fail closed','Extra plaintext envelope fields rejected','Wrong HKDF purpose rejected','Unsupported HKDF hash rejected','Unreleased PBKDF2 profile rejected','KEK unwrap binds account identity','Changed HKDF salt fails unwrap authentication','Stale PBKDF2 device wrapper rejected before upload'].forEach((label,i)=>check(cryptoChecks[i],label));
  await s.c.close();
  // Both timestamp directions on existing encrypted accounts.
  for(const direction of ['local','remote']){
@@ -165,6 +172,7 @@ async(page)=>{
  check(s.calls.uploads.length===0&&same(s.cloud(),downgrade)&&(await read(s.p)).time===full.time&&!(await status(s.p)).includes('גיבוי מוצפן פעיל'),'Trusted cache refuses plaintext downgrade on reopening');await s.c.close();
  s=await scenario({row:migrated,material:{...migratedMaterial,uid:'other-account'}});
  check((await status(s.p)).includes('מפתח שחזור נדרש')&&s.calls.uploads.length===0,'Keys from another account are ignored');await s.c.close();
+ check(require('node:fs').readFileSync('index.html','utf8').includes('אינו קריא מתוך Supabase בלבד')&&!require('node:fs').readFileSync('index.html','utf8').includes('אינה יכולה לקרוא'),'Privacy copy limits guarantee to stored cloud copy');
  check(!/type=["']password|signInWithPassword|resetPasswordForEmail|updateUser\(/.test(require('node:fs').readFileSync('index.html','utf8')),'No password input/login/reset introduced');
  return {passed:results.length,results};
 }
