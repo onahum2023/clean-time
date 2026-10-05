@@ -179,7 +179,7 @@ nav.tabs svg{width:22px;height:22px}
 .inline-edit{display:flex;flex-wrap:wrap;gap:8px;width:100%}
 .inline-edit textarea{width:100%;min-height:90px}
 textarea,select{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font:inherit;color:inherit}
-textarea{resize:vertical;min-height:110px;line-height:1.7}
+textarea{max-width:100%;min-width:0;resize:vertical;min-height:110px;line-height:1.7}
 summary{cursor:pointer;min-height:48px;padding:12px 0;color:var(--muted)}
 select{min-height:46px}
 #about{margin-top:0;padding-top:0;border:0;font-size:1rem;color:var(--ink)}
@@ -384,11 +384,10 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   <section id="inventory" hidden>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M91 8C46 24 38 66 77 90 29 101 1 64 17 34M18 112h107M30 127h83M44 142h55"/></svg>
     <div class="page-heading"><h2>חשבון נפש יומי / צעד 10</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg></div>
-    <p class="sub">רגע להתבוננות בסוף היום. השאלות הסופיות עדיין בהכנה; השדות הזמניים הם רשות.</p>
+    <p class="sub">רגע להתבוננות בסוף היום. אפשר לכתוב כאן סיכום חופשי של היום ומחשבות לסוף היום.</p>
     <label class="field"><span>יום ההתבוננות</span><input type="date" id="iDay" required></label>
     <label class="field"><span>ימים שמורים</span><select id="iHistory" aria-label="ימי חשבון נפש שמורים"></select></label>
     <label class="field"><span>סיכום היום / מחשבות לסוף היום</span><textarea id="iSummary" placeholder="אפשר לכתוב כאן כמה מילים..."></textarea></label>
-    <details id="iPlaceholders"><summary>שדות לשאלות עתידיות (רשות)</summary><div id="iQuestions"></div></details>
     <p class="msg" id="iStatus" role="status"></p>
   </section>
 
@@ -451,6 +450,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       </form>
     </div>
     <p class="msg" id="syncMsg" role="status"></p>
+    <button class="btn secondary" id="authCreate" hidden>יצירת חשבון חדש</button>
     <button class="btn ghost" id="authBack">חזרה</button>
   </section>
   <section class="about" id="about" hidden>
@@ -499,7 +499,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 
 <script>
 (function(){
-const APP_VERSION='2026.10.05.8';
+const APP_VERSION='2026.10.05.9';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -562,10 +562,13 @@ $('appVer').textContent='גרסה '+APP_VERSION;
 /* ---------- Tabs ---------- */
 let current='counter';
 const SCREENS=['counter','planner','journal','gratitude','readings','bookmarks','settings','tools','about','onboarding','meditation','inventory','auth','account'];
-function show(tab){
+function show(tab,record=true){
+  if(!SCREENS.includes(tab))return;
   if(tab==='counter'&&!S.date)tab=signedIn()?'settings':'onboarding';
   if(tab==='onboarding'&&signedIn())tab='settings';
+  if(record&&(tab!==current||(tab==='auth'&&history.state?.authMode!==authMode)))history.pushState({screen:tab,authMode:tab==='auth'?authMode:null},'');
   current=tab;
+  if(!record)history.replaceState({...history.state,screen:tab},'');
   SCREENS.forEach(t=>$(t).hidden=(t!==tab));
   const active=tab==='about'?'about':['counter','onboarding','settings','auth','account'].includes(tab)?'counter':'tools';
   document.querySelectorAll('nav.tabs button').forEach(b=>{
@@ -584,7 +587,7 @@ function show(tab){
 document.querySelectorAll('[data-tab],[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.tab||b.dataset.go));
 $('openSettings').onclick=()=>show(current==='settings'?(S.date?'counter':'onboarding'):'settings');
 let authMode='create';
-function openAuth(mode){
+function openAuth(mode,record=true){
   authMode=mode;
   const create=mode==='create',convert=mode==='convert';
   $('authTitle').textContent=create?'יצירת חשבון':convert?'יצירת חשבון והפעלת גיבוי':'כבר יש לי חשבון';
@@ -593,8 +596,11 @@ function openAuth(mode){
   $('authNameField').hidden=!(create||(convert&&!S.name));
   $('aName').value=S.name;$('aDate').value=S.date;$('aTime').value=S.time;$('aFrom').value=S.from;pickColor=S.color;renderSwatches('aSwatches');
   $('lEmail').value='';$('lSend').textContent=mode==='login'?'שליחת קישור כניסה למייל':'יצירת חשבון ושליחת קישור למייל';
-  setMsg('');show('auth');
+  $('authCreate').hidden=mode!=='login';
+  $('aDateError').hidden=true;$('aDateError').textContent='';$('aDate').removeAttribute('aria-invalid');
+  setMsg('');show('auth',record);
 }
+$('authCreate').onclick=()=>openAuth(S.date?'convert':'create');
 $('onboardingAccount').onclick=()=>openAuth('create');
 $('onboardingLogin').onclick=()=>openAuth('login');
 $('createAccount').onclick=()=>openAuth(hasData(S)?'convert':'create');
@@ -604,10 +610,27 @@ $('authBack').onclick=()=>show(S.date?'settings':'onboarding');
 $('backToOnboarding').onclick=()=>show('onboarding');
 $('guestForm').onsubmit=ev=>{
   ev.preventDefault();
-  if(!$('guestForm').reportValidity())return;
+  if(!validateRecoveryDate('oDate')||!$('guestForm').reportValidity())return;
   S.date=$('oDate').value;S.from=$('oFrom').value;
   if(save())show('counter');
 };
+
+function validateRecoveryDate(id,focus=true){
+  const input=$(id),message=$(id+'Error');
+  const future=input.value&&input.value>todayKey();
+  const invalid=!input.value||!input.validity.valid;
+  const text=future?'תאריך תחילת ההחלמה לא יכול להיות בעתיד.':invalid?'יש לבחור תאריך תקין.':'';
+  message.textContent=text;message.hidden=!text;input.setAttribute('aria-invalid',String(!!text));
+  if(text&&focus)input.focus();
+  return !text;
+}
+for(const id of ['oDate','aDate','sDate']){
+  const input=$(id),message=document.createElement('span');
+  message.id=id+'Error';message.className='msg err';message.setAttribute('role','alert');message.hidden=true;
+  input.setAttribute('aria-describedby',message.id);input.after(message);
+  input.addEventListener('invalid',()=>validateRecoveryDate(id,false));
+  input.addEventListener('input',()=>validateRecoveryDate(id,false));
+}
 
 /* ---------- Theme ---------- */
 function applyColor(){document.documentElement.style.setProperty('--accent',COLORS[S.color]||COLORS.teal);}
@@ -750,8 +773,7 @@ $('pForm').onsubmit=ev=>{
   planSelected=k;save();$('pInput').value='';renderP();$('pInput').focus();
 };
 
-/* ---------- Step 10: temporary slots, final questions pending ---------- */
-const INVENTORY_SLOTS=['placeholder_1','placeholder_2','placeholder_3'];
+/* ---------- Step 10: free reflection; retain legacy answer fields ---------- */
 let inventoryDay='';
 function inventoryHistory(){
   const select=$('iHistory');select.replaceChildren();
@@ -760,20 +782,13 @@ function inventoryHistory(){
 }
 function openInventory(key){
   inventoryDay=key;$('iDay').value=key;$('iDay').max=todayKey();
-  const entry=S.inventory[key]||{};const box=$('iQuestions');box.replaceChildren();
-  INVENTORY_SLOTS.forEach((id,index)=>{
-    const label=document.createElement('label');label.className='field';const title=document.createElement('span');
-    title.textContent='שאלה זמנית '+(index+1)+' — הנוסח יתווסף בהמשך (רשות)';
-    const input=document.createElement('textarea');input.dataset.slot=id;input.value=(entry.answers||{})[id]||'';input.oninput=saveInventory;
-    label.append(title,input);box.append(label);
-  });
+  const entry=S.inventory[key]||{};
   $('iSummary').value=entry.summary||'';$('iStatus').textContent=entry.updated?'נשמר במכשיר':'';inventoryHistory();
 }
 function saveInventory(){
-  const answers={};document.querySelectorAll('[data-slot]').forEach(el=>answers[el.dataset.slot]=el.value);
   const existing=S.inventory[inventoryDay]||{};
   // Retain unknown fields and future question answers when revisiting a day.
-  S.inventory[inventoryDay]={...existing,questionnaireVersion:existing.questionnaireVersion||'placeholder-v1',answers:{...(existing.answers||{}),...answers},summary:$('iSummary').value,created:existing.created||Date.now(),updated:Date.now()};
+  S.inventory[inventoryDay]={...existing,questionnaireVersion:existing.questionnaireVersion||'placeholder-v1',answers:{...(existing.answers||{})},summary:$('iSummary').value,created:existing.created||Date.now(),updated:Date.now()};
   const ok=save();$('iStatus').textContent=ok?'נשמר במכשיר':'לא נשמר במכשיר';inventoryHistory();
 }
 $('iSummary').oninput=saveInventory;
@@ -831,7 +846,7 @@ function openJ(entry){
   jCur=entry||{id:uid(),text:'',created:Date.now(),updated:Date.now()};
   $('jText').value=jCur.text; $('jWhen').textContent=fmtWhen(jCur.created); $('jSaved').textContent='';
   $('jEditor').hidden=false;
-  try{history.pushState({j:1},'');}catch(e){}
+  try{history.pushState({screen:'journal',j:1,entryId:jCur.id},'');}catch(e){}
   if(!entry)$('jText').focus();
 }
 /* saves the open entry; an empty entry is removed instead */
@@ -858,7 +873,16 @@ $('jDel').onclick=()=>{
   S.journal=S.journal.filter(e=>e.id!==jCur.id); save(); $('jText').value=''; leaveJ();
 };
 /* Android back button closes the editor instead of leaving the app */
-window.addEventListener('popstate',()=>{if(!$('jEditor').hidden)closeJ();});
+window.addEventListener('popstate',ev=>{
+  if(!$('jEditor').hidden)closeJ();
+  const state=ev.state;
+  const tab=state&&SCREENS.includes(state.screen)?state.screen:(S.date?'counter':'onboarding');
+  if(tab==='auth')openAuth(state.authMode||'login',false);else show(tab,false);
+  if(tab==='journal'&&state&&state.j){
+    const entry=S.journal.find(e=>e.id===state.entryId);
+    if(entry){jCur=entry;$('jText').value=entry.text;$('jWhen').textContent=fmtWhen(entry.created);$('jSaved').textContent='';$('jEditor').hidden=false;}
+  }
+});
 window.addEventListener('pagehide',commitJ);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)commitJ();else if(planDay!==todayKey())renderP();});
 
@@ -967,6 +991,7 @@ function fillSettings(){
   $('settingsFoot').hidden=!S.date||signedIn();
   $('sName').closest('label').hidden=signedIn();
   $('backToOnboarding').hidden=!!S.date||signedIn();
+  $('sDateError').hidden=true;$('sDateError').textContent='';$('sDate').removeAttribute('aria-invalid');
   $('sName').value=S.name;$('sDate').value=S.date;$('sTime').value=S.time;$('sFrom').value=S.from;
   pickColor=S.color; renderSwatches();
 }
@@ -980,8 +1005,7 @@ function renderSwatches(boxId='swatches'){
   });
 }
 $('saveSettings').onclick=()=>{
-  if(!$('sDate').value||!$('sDate').checkValidity()){$('sDate').focus();$('sDate').style.borderColor='#B3413B';return;}
-  $('sDate').style.borderColor='';
+  if(!validateRecoveryDate('sDate'))return;
   if(!signedIn())S.name=$('sName').value.trim();S.date=$('sDate').value;S.time=$('sTime').value;S.from=$('sFrom').value.trim();S.color=pickColor;
   if(save()){applyColor();show('counter');}
 };
@@ -1048,14 +1072,15 @@ function errText(e){
 function setMsg(text,err){for(const id of ['syncMsg','accountMsg']){const m=$(id);m.textContent=text||'';m.classList.toggle('err',!!err);}}
 
 /* Passwordless access: email is both account and sync identity. */
-async function sendLogin(email){
+async function sendLogin(email,mode){
   await loadSupabase();
-  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin}});
+  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin,shouldCreateUser:mode!=='login'}});
   if(error)throw error;
 }
 $('loginForm').onsubmit=async ev=>{
   ev.preventDefault();
   const inp=$('lEmail'),email=inp.value.trim();
+  if(authMode==='create'&&!validateRecoveryDate('aDate'))return;
   if(!$('loginForm').reportValidity())return;
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setMsg(errText('invalid_email'),true);inp.focus();return;}
   // Persist the complete local profile before sending; it survives a reload or link return.
@@ -1065,8 +1090,8 @@ $('loginForm').onsubmit=async ev=>{
     if(!save())return;
   }else if(authMode==='convert'&&!S.name){S.name=$('aName').value.trim();if(!save())return;}
   $('lSend').disabled=true;setMsg('שולח...');
-  try{await sendLogin(email);setMsg('שלחנו קישור למייל. פתיחת הקישור משלימה את הכניסה והפעלת הגיבוי.');}
-  catch(e){setMsg(errText(e),true);}
+  try{await sendLogin(email,authMode);setMsg('שלחנו קישור למייל. פתיחת הקישור משלימה את הכניסה והפעלת הגיבוי. לא הגיע? כדאי לבדוק גם בדואר זבל / Spam.');}
+  catch(e){setMsg(authMode==='login'&&/otp_disabled|signup_disabled|user_not_found/.test(e.code||'')?'לא מצאנו חשבון עם כתובת המייל הזו. אפשר ליצור חשבון חדש.':errText(e),true);}
   $('lSend').disabled=false;
 };
 
@@ -1272,7 +1297,8 @@ if(!onOldHost&&urlP.has('import')){
 /* ---------- Init ---------- */
 applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();storageNotice(storageError);
 $('oDate').max=todayKey();$('sDate').max=todayKey();$('aDate').max=todayKey();
-show(S.date?'counter':'onboarding');
+history.replaceState({screen:S.date?'counter':'onboarding'},'');
+show(S.date?'counter':'onboarding',false);
 if(urlP.has('error_code')||urlP.has('error')){
   cleanUrl(); openAuth('login'); setMsg(errText(urlP.get('error_code')||urlP.get('error')),true);
 }

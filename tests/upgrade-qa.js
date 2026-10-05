@@ -71,6 +71,13 @@ async(page)=>{
  check(s.calls.clientOptions.every(o=>o.auth.storageKey===AUTH&&o.auth.persistSession&&o.auth.flowType==='implicit'),'Existing Supabase auth storage/config preserved');
  await s.p.locator('#openSettings').click();check(await s.p.locator('#myAccount').isVisible()&&!await s.p.locator('#createAccount').isVisible(),'Existing account recognized in settings without registration CTA');
  await s.p.locator('#myAccount').click();
+ await s.p.goBack();await s.p.waitForFunction(()=>!document.getElementById('settings').hidden);
+ check(await s.p.locator('#settings').isVisible(),'Registered My Account Back restores Settings');
+ await s.p.goBack();await s.p.waitForFunction(()=>!document.getElementById('counter').hidden);
+ check(await s.p.locator('#counter').isVisible(),'Registered Settings Back restores Today');
+ await s.p.goForward();await s.p.waitForFunction(()=>!document.getElementById('settings').hidden);
+ await s.p.goForward();await s.p.waitForFunction(()=>!document.getElementById('account').hidden);
+ check(await s.p.locator('#account').isVisible(),'Registered Forward restores Settings and My Account');
  check(await s.p.locator('#accountName').innerText()===full.name&&await s.p.locator('#sEmail').innerText()===identity.email,'My Account shows existing name and authenticated email');
  check((await s.p.locator('#accountState').innerText()).includes('חשבון רשום')&&(await s.p.locator('#syncStatus').innerText()).includes('סנכרון אחרון'),'Existing account and sync status work normally');
  // A normal recovery preference edit must preserve every recovery collection/unknown key.

@@ -13,7 +13,7 @@ Checkmarks in this section mean implemented and tested locally, pending PR revie
 - [x] **#3 Gratitude log.** Separate entries grouped by calendar day, newest first, with add/edit/delete and retained history.
 - [x] **#4 Daily plan checklist.** Daily add/edit/delete/check, persistent completion and accessible previous days.
 - [x] **#5 Meditation timer.** Deadline-based start/pause/resume/reset and local start/end gong; physical screen-lock/audio checks remain manual.
-- [x] **#6 Daily inventory / Step 10 structure.** Autosaved daily summary, history and clearly temporary optional question slots.
+- [x] **#6 Daily inventory / Step 10 structure.** Autosaved daily summary, history; unfinished question UI removed while saved answers remain compatible.
 - [?] **Final Step 10 questions.** Product-owner content remains to be supplied; existing placeholder answers must be preserved.
 - [x] **#7 Guest-first onboarding.** Minimum start date/recovery type, with optional existing magic-link account flow.
 - [x] **Visual warmth and thematic treatment.** Self-hosted Assistant, warm shared components, page-specific decorative icons/backgrounds and light/dark treatment.
@@ -28,6 +28,18 @@ Checkmarks in this section mean implemented and tested locally, pending PR revie
 - [x] Recovery settings cleanup and synthetic 360px account-flow QA. See [account QA notes](ACCOUNT-QA.md).
 - [ ] Live magic-link and physical Android checks; no production deployment in this change.
 - [ ] **#9 Encryption.** Separate work: no key generation, recovery-key UI or encrypted sync in #10. A recovery key will not be an account password.
+
+## P0: Production UAT UX fixes — pending review and release
+
+- [x] Returning-account login cannot create users; missing-account feedback and Create Account route.
+- [x] Internal browser Back/Forward, including Journal editor and Settings/My Account.
+- [x] Step 10 summary-only UI with preserved legacy answers and narrow-width layout checks.
+- [x] Hebrew inline recovery-date errors for guest, registered onboarding and settings.
+- [x] Magic-link waiting guidance mentions Spam; provider settings unchanged.
+- [x] Synthetic registered-user upgrade and unchanged storage/sync compatibility coverage.
+- [ ] Physical Android and live delivery recheck after an explicitly authorized release.
+
+See [UAT regression evidence](UAT-REGRESSION.md). Encryption PR #13 remains separate and untouched. No merge or deployment in this task.
 
 ## P0: Before sharing beyond family
 

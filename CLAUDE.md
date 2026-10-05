@@ -15,14 +15,16 @@ A small Hebrew (RTL) web app: a clean time counter for someone in NA recovery.
 - **Planner** (`#planner`): today's checklist; add/edit/delete/check. Past plans are accessible via a selector which appears only when there is history. Only today accepts new items. Local midnight starts a fresh day without removing old plans.
 - **Gratitude** (`#gratitude`): each item is an entry, grouped by calendar day, newest first. Inline edit preserves its timestamp and original day. Legacy entries derive the grouping day from `ts` without rewriting them.
 - **Meditation** (`#meditation`): deadline-based countdown, pause/resume/reset, `assets/gong.wav` at start/end. Ephemeral state, no statistics or persistence. Visibility/focus reconciles the deadline; browsers may defer screen-lock audio until resume.
-- **Inventory** (`#inventory`): daily summary autosaved synchronously via `save()`, with date/history access. Optional placeholder slots are collapsed by default. Final Step 10 content is pending; use stable replacement IDs and preserve old answers.
+- **Inventory** (`#inventory`): daily summary autosaved synchronously via `save()`, with date/history access. Only free-text reflection is exposed. Legacy placeholder answers, questionnaire version and unknown fields remain stored; final prompts can use stable replacement IDs later.
 - **Journal** (`#journal`): retained full-screen autosaving editor and Android back behavior.
 - **Resources** (`#readings`): existing editable recovery links.
 - **Personal links** (`#bookmarks`): initially empty flat list under Tools; explicit add/edit/save/cancel/delete, title + URL + optional note. Stored in `bookmarks` and included in the existing cloud JSON. Shared `safeLinkUrl()` permits only validated `https:` and numeric `tel:` URLs; unsafe imported links are retained but not clickable.
 - **About** (`#about`): normal navigation; purpose, free/noncommercial model, guest/optional account storage, existing help links and honest cloud privacy disclosure.
 - **Settings** (`#settings`): recovery preferences with an explicit save label. Guests get Create account / backup and Already have an account entries. Registered users get a My Account entry.
-- **Account access** (`#auth`): create (optional name, email, recovery profile), convert guest (email and optional missing name), or returning email-only login. Creation saves the complete profile locally before sending the link; no cloud writes until authentication and conflict resolution.
+- **Account access** (`#auth`): create (optional name, email, recovery profile), convert guest (email and optional missing name), or returning email-only login. Returning login sets `shouldCreateUser:false`, reports missing accounts in Hebrew and offers Create Account. Create/convert set `shouldCreateUser:true`. Creation saves the complete profile locally before sending the link; no cloud writes until authentication and conflict resolution.
 - **My Account** (`#account`): name, email, account/sync state, last sync, sign-out and existing device/cloud data deletion. Identity deletion still requires backend work; copy states this explicitly. Future #9 encryption status belongs here, separate from recovery settings.
+- Internal screen transitions push History API state; initial rendering replaces state, and Back/Forward restore screens without pushing. Journal adds an editor entry; Back commits/closes it before returning through screens. History state holds screen/auth mode/editor ID only, no recovery content or tokens. Reload retains the normal Today/onboarding landing behavior.
+- Recovery-date inputs retain native pickers with Hebrew inline missing/invalid and future-date feedback. Successful magic-link requests include subtle Spam guidance.
 - Bump `APP_VERSION` (`YYYY.MM.DD`, near the top of the script) with each user-facing change.
 
 ## Data keys (inside `cleantime-he-v1`)
@@ -77,3 +79,7 @@ See `docs/UX-1.0-UAT.md` for the additive data evolution, product decisions, bro
 ## Account-model UX (#10)
 
 See `docs/ACCOUNT-QA.md` for synthetic account-flow QA and manual checks, and `docs/UPGRADE-COMPATIBILITY.md` for the current-production active-user compatibility pass. The JSON/localStorage schema and whole-state sync are unchanged. An explicit local conflict choice stamps newer than both clocks, so a future cloud timestamp cannot undo that choice. No encryption or recovery-key UX (#9) is implemented.
+
+## Production UAT fixes
+
+See `docs/UAT-REGRESSION.md` for synthetic-only regression coverage, compatibility and deferred manual checks. No merge, deployment, SMTP change or encryption work is part of this change.
