@@ -9,7 +9,7 @@ A small Hebrew (RTL) web app: a clean time counter for someone in NA recovery.
 
 ## Screens (bottom navigation: היום | כלים | אודות; settings from the gear)
 
-- **Onboarding** (`#onboarding`): guest start date and recovery type only; an equally available optional account path opens the existing magic-link UI. Existing users with a date go straight to Today.
+- **Onboarding** (`#onboarding`): guest start date and recovery type; separate Create account (complete profile + email) and Already have an account (email only) paths. Existing users with a date go straight to Today.
 - **Today** (`#counter`): clean-time counter and direct links to plan, gratitude, meditation, Step 10 and resources. Tapping the counter still cycles `mode` (0 y/m/d, 1 days, 2 h/m/s).
 - **Tools** (`#tools`): all recovery tools, including the retained journal.
 - **Planner** (`#planner`): today's checklist; add/edit/delete/check. Past plans are accessible via a selector which appears only when there is history. Only today accepts new items. Local midnight starts a fresh day without removing old plans.
@@ -20,7 +20,9 @@ A small Hebrew (RTL) web app: a clean time counter for someone in NA recovery.
 - **Resources** (`#readings`): existing editable recovery links.
 - **Personal links** (`#bookmarks`): initially empty flat list under Tools; explicit add/edit/save/cancel/delete, title + URL + optional note. Stored in `bookmarks` and included in the existing cloud JSON. Shared `safeLinkUrl()` permits only validated `https:` and numeric `tel:` URLs; unsafe imported links are retained but not clickable.
 - **About** (`#about`): normal navigation; purpose, free/noncommercial model, guest/optional account storage, existing help links and honest cloud privacy disclosure.
-- **Settings** (`#settings`): existing optional personal preferences, cloud login/sync, sign-out and deletion.
+- **Settings** (`#settings`): recovery preferences with an explicit save label. Guests get Create account / backup and Already have an account entries. Registered users get a My Account entry.
+- **Account access** (`#auth`): create (optional name, email, recovery profile), convert guest (email and optional missing name), or returning email-only login. Creation saves the complete profile locally before sending the link; no cloud writes until authentication and conflict resolution.
+- **My Account** (`#account`): name, email, account/sync state, last sync, sign-out and existing device/cloud data deletion. Identity deletion still requires backend work; copy states this explicitly. Future #9 encryption status belongs here, separate from recovery settings.
 - Bump `APP_VERSION` (`YYYY.MM.DD`, near the top of the script) with each user-facing change.
 
 ## Data keys (inside `cleantime-he-v1`)
@@ -41,9 +43,9 @@ New ids come from `uid()`, which is unique even within one millisecond. Delete-b
 Login is optional; without it the app requests only its own local assets. Assistant is self-hosted from assets/fonts; no remote font requests. There are no guest third-party requests.
 
 - Supabase project `aefhjgmiwgajdhgyhelm`, publishable key in `index.html`. supabase-js 2.117.2 from jsDelivr, pinned with an SRI hash. It loads only when a session exists, when returning from a magic link, or when "שליחת קישור" is tapped.
-- Login: email magic link (`signInWithOtp` with `emailRedirectTo: location.origin`). The client uses `flowType: 'implicit'` so a link opened in a different browser still works (PKCE would fail). On return, the token is read from the URL hash, the URL is cleaned and Settings opens. Link errors (`#error_code=otp_expired`) show a Hebrew message. Switching to a 6-digit code means adding a `verifyOtp({email, token, type:'email'})` step next to `sendLogin()`.
+- Login: email magic link (`signInWithOtp` with `emailRedirectTo: location.origin`). The client uses `flowType: 'implicit'` so a link opened in a different browser still works (PKCE would fail). On return, the token is read from the URL hash, the URL is cleaned and the app opens after sync. Failed/expired links open email-only retry. Link errors (`#error_code=otp_expired`) show a Hebrew message. Access remains email magic-link only; do not add passwords or alternate auth paths.
 - Every origin used (production `https://www.clean-time.app`, the old `https://clean-time-eight.vercel.app` until it redirects, `http://localhost:8765`, `http://127.0.0.1:8765`) must be in Supabase → Auth → Redirect URLs.
-- Supabase's built-in mailer allows only a few emails per hour. Set up custom SMTP before relying on it.
+- Production SMTP is configured separately; this account UX change does not modify it.
 - Table `public.user_data(user_id uuid pk, data jsonb, updated_at timestamptz)`, RLS own row only. One row per user holds all of `S` except `LOCAL_ONLY` fields (`mode`).
 - `localStorage` stays the working copy. `sync()` pulls the row and compares `updatedAt`: remote newer → `applyRemote()` (normalized, keeps local `mode`); local newer → upsert. Runs on app open, sign-in, `focus`/`visibilitychange`, `online`, and 2s after each `save()` (flushed immediately when the app is hidden). Only one `sync()` runs at a time.
 - Other localStorage keys: `cleantime-he-auth` (Supabase session) and `cleantime-he-sync` (`uid`, `email`, `lastSync`, `dirty`).
@@ -71,3 +73,7 @@ In Vercel, `clean-time.app` 308-redirects to `www.clean-time.app`, so `www` is t
 ## Local 1.0 review
 
 See `docs/UX-1.0-UAT.md` for the additive data evolution, product decisions, browser QA and remaining physical-device/live-auth checks. Malformed local JSON/top-level collection shapes are retained and protected against overwrite; storage write failures show a visible alert.
+
+## Account-model UX (#10)
+
+See `docs/ACCOUNT-QA.md` for synthetic account-flow QA and manual checks, and `docs/UPGRADE-COMPATIBILITY.md` for the current-production active-user compatibility pass. The JSON/localStorage schema and whole-state sync are unchanged. An explicit local conflict choice stamps newer than both clocks, so a future cloud timestamp cannot undo that choice. No encryption or recovery-key UX (#9) is implemented.
