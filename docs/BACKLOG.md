@@ -26,19 +26,19 @@ GitHub Issues are the source of truth for active work. This file is a compact ro
 - [ ] **#17 Real account/cloud deletion:** remove the user's cloud row and Auth identity, not only replace recovery state with an encrypted empty state.
 - [ ] **#18 Production security headers:** CSP, frame protection, referrer policy and nosniff without breaking auth/sync/PWA behavior.
 - [ ] **#19 Production auth/SMTP/RLS verification:** live delivery/redirect checks and cross-account isolation using test accounts only.
-- [ ] Physical Android checks for meditation/background audio and installed-PWA behavior.
-- [ ] Decide when to retire the temporary old-origin data-handoff code after the legacy Vercel host is redirected.
+- [ ] **#21 Physical Android/PWA validation.**
+- [ ] **#22 Retire legacy Vercel-origin handoff safely.**
 
 ## P1 — soon after
 
-- [ ] Offline app-shell support/service worker.
-- [ ] Export all recovery data as JSON.
+- [ ] **#23 Offline app-shell support.**
+- [ ] **#24 Export all recovery data as JSON.**
 - [ ] Supabase plan/backup operational review.
-- [ ] Gentle reset flow when the clean date changes.
-- [ ] Recovery milestones without streak pressure.
-- [ ] In-app feedback.
-- [ ] Optional local PIN lock.
-- [ ] Privacy-safe error monitoring.
+- [ ] **#25 Gentle clean-date reset flow.**
+- [ ] **#26 Recovery milestones without streak pressure.**
+- [ ] **#27 In-app feedback entry point.**
+- [ ] **#28 Optional local PIN lock.**
+- [ ] **#29 Privacy-safe error monitoring.**
 
 ## P2 — later
 
