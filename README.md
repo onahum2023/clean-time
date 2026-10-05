@@ -23,7 +23,7 @@ A free Hebrew app for people in recovery from addiction. It counts your clean ti
 
 **Meditation (מדיטציה).** A simple countdown with pause, resume, reset and a local gong at the start and end. No content library or history.
 
-**Daily inventory / Step 10 (חשבון נפש יומי / צעד 10).** An autosaved daily reflection with previous-day access. Final questions are pending; optional question slots are explicitly temporary.
+**Daily inventory / Step 10 (חשבון נפש יומי / צעד 10).** An autosaved daily reflection with previous-day access. The current release uses a concise free-text reflection; the final structured question set is still being designed.
 
 **About (אודות).** Purpose, guest mode, optional backup, and privacy, accessible from the main navigation.
 
@@ -34,10 +34,10 @@ A free Hebrew app for people in recovery from addiction. It counts your clean ti
 ## Your privacy
 
 - You don't need an account. Guest onboarding asks only for a start date and recovery type. Without an account, data stays in this device's browser.
-- Registered accounts use email magic links. Once you save your recovery key and activate encrypted backup, the complete recovery state is encrypted on your device before sync. The stored cloud copy is not readable from Supabase alone without the encryption key. This guarantee excludes device compromise or malicious JavaScript delivered in the future. Email and minimal authentication/sync metadata remain available. Legacy backups remain in their previous format until migration is completed.
+- Registered accounts use email magic links. Once you save your recovery key and activate encrypted backup, the complete recovery state is encrypted on your device before sync. The stored cloud copy is not readable from Supabase alone without the encryption key. This guarantee excludes device compromise or malicious JavaScript delivered in the future. Email and minimal authentication/sync metadata remain available. Existing legacy backups are migrated only through the guarded recovery-key flow.
 - New devices need the recovery key. Clean Time cannot recover encrypted cloud content without it or a working trusted device. Local data and the trusted device key remain stored on your device for this release.
 - There are no ads, no analytics and nothing is sold or shared.
-- Device and cloud-data deletion are available from settings/My Account. Cloud deletion requires an unlocked backup and writes an encrypted empty state; it does not delete the login account. See [encryption and migration notes](docs/ENCRYPTION-QA.md) for release status and limitations.
+- Device and cloud-data deletion are available from settings/My Account. Cloud deletion requires an unlocked backup and writes an encrypted empty state; it does not delete the login account. See [encryption and migration notes](docs/ENCRYPTION-QA.md) for design, migration and limitations.
 
 ## How to use it
 
