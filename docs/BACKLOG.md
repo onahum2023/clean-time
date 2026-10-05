@@ -20,6 +20,15 @@ Checkmarks in this section mean implemented and tested locally, pending PR revie
 - [x] **Personal links / bookmarks.** Private flat list with title, URL and optional note; guest-local persistence and existing registered sync.
 - [ ] **Manual UAT.** Product-owner review, live Supabase account sync and physical Android/mobile screen-lock/audio behavior.
 
+## P0: Account model (#10) — implemented locally, pending review
+
+- [x] First-class guest onboarding, complete account creation, and returning email-only magic-link login.
+- [x] Guest conversion preserves local recovery data and explicit local/cloud conflict protection.
+- [x] Separate My Account with identity, sync state, sign-out and existing data deletion entry.
+- [x] Recovery settings cleanup and synthetic 360px account-flow QA. See [account QA notes](ACCOUNT-QA.md).
+- [ ] Live magic-link and physical Android checks; no production deployment in this change.
+- [ ] **#9 Encryption.** Separate work: no key generation, recovery-key UI or encrypted sync in #10. A recovery key will not be an account password.
+
 ## P0: Before sharing beyond family
 
 - [?] **Journal privacy decision.** Today journal, gratitude and plans sync to Supabase as plain JSON, readable by the project owner. Options: (a) encrypt on the device with a user passphrase before sync, (b) keep journal local-only and sync only counter and settings. Blocks the privacy page.

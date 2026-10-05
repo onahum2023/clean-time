@@ -21,7 +21,7 @@ async (page) => {
   await seed(null);
   await page.locator('#onboardingAccount').click();
   check(await page.locator('#syncOut').isVisible(),'Optional account path exposes existing magic-link UI');
-  await page.locator('#backToOnboarding').click();
+  await page.locator('#authBack').click();
   check(await page.locator('#onboarding').isVisible(),'Account path returns to guest onboarding');
   for(const from of ['אלכוהול','סמים','עישון','אוכל','אחר']){
     await seed(null);
