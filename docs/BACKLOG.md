@@ -4,22 +4,28 @@ Goal: turn זמן נקי from a personal app into a free, private, public servic
 
 Status: [ ] open, [x] done, [?] needs a decision
 
-## P0: Clean Time 1.0 product & UX
+## P0: Clean Time 1.0 product & UX — implemented locally, pending merge
 
-- [ ] **Home page / Today experience.** Redesign the main screen to reduce clutter and guide the user toward the most relevant recovery actions for today. Keep clean time prominent, then provide simple access to today's plan, gratitude, Step 10, meditation and recovery resources without turning the home screen into a busy dashboard.
-- [ ] **About Clean Time.** Add a clearly visible About section outside Settings. Explain what Clean Time is, why it exists, its privacy-first approach, guest vs registered use, and that it is free with no commercial pressure.
-- [ ] **Gratitude log.** Replace the current gratitude-entry flow with a chronological log. Users can add any number of separate gratitude items throughout the day. Entries are grouped by calendar day, with today at the top and previous days visible below as history. Newest entries appear first within each day. Adding gratitude creates an item in today's group; there is no separate "create daily entry" action.
-- [ ] **Daily plan checklist.** Treat each day as a simple to-do list rather than a stream of separate plan records. Users can add multiple items for today and mark each item complete with a checkbox. Support adding, editing and deleting items.
-- [ ] **Meditation timer.** Simple duration-based timer with start, pause/resume and reset. Play a gong at the start and when the timer finishes. No music, voice, guided meditation, content library, streaks or meditation statistics for 1.0. Keep timing accurate when the app is backgrounded or the screen locks where the platform permits.
-- [?] **Daily inventory / Step 10.** Add a separate daily reflection page for Step 10 / חשבון נפש יומי: a short set of questions and an end-of-day reflection. Define the page structure now; final question content is still to be supplied.
-- [ ] **First-run experience.** Make it obvious that a user can start immediately as a guest. Capture only the minimum needed to establish clean time and recovery context, including what the user is recovering from (alcohol, drugs, smoking, food or other). Registration remains optional.
+Checkmarks in this section mean implemented and tested locally, pending PR review and merge. They do not indicate a production release or issue closure. See [implementation, compatibility and QA notes](UX-1.0-UAT.md).
+
+- [x] **#1 Home / Today.** Prominent clean-time counter and direct access to daily recovery tools.
+- [x] **#2 About Clean Time.** Main navigation section with purpose, free/noncommercial use and guest/account privacy disclosure.
+- [x] **#3 Gratitude log.** Separate entries grouped by calendar day, newest first, with add/edit/delete and retained history.
+- [x] **#4 Daily plan checklist.** Daily add/edit/delete/check, persistent completion and accessible previous days.
+- [x] **#5 Meditation timer.** Deadline-based start/pause/resume/reset and local start/end gong; physical screen-lock/audio checks remain manual.
+- [x] **#6 Daily inventory / Step 10 structure.** Autosaved daily summary, history and clearly temporary optional question slots.
+- [?] **Final Step 10 questions.** Product-owner content remains to be supplied; existing placeholder answers must be preserved.
+- [x] **#7 Guest-first onboarding.** Minimum start date/recovery type, with optional existing magic-link account flow.
+- [x] **Visual warmth and thematic treatment.** Self-hosted Assistant, warm shared components, page-specific decorative icons/backgrounds and light/dark treatment.
+- [x] **Personal links / bookmarks.** Private flat list with title, URL and optional note; guest-local persistence and existing registered sync.
+- [ ] **Manual UAT.** Product-owner review, live Supabase account sync and physical Android/mobile screen-lock/audio behavior.
 
 ## P0: Before sharing beyond family
 
 - [?] **Journal privacy decision.** Today journal, gratitude and plans sync to Supabase as plain JSON, readable by the project owner. Options: (a) encrypt on the device with a user passphrase before sync, (b) keep journal local-only and sync only counter and settings. Blocks the privacy page.
-- [ ] **Self-host fonts.** Remove Google Fonts so a logged-out user makes no third-party requests.
+- [x] **Self-host fonts (implemented locally, pending merge).** Assistant is bundled with its OFL license; Google Fonts requests removed.
 - [ ] **Security headers.** Add `vercel.json` with CSP (self, cdn.jsdelivr.net, *.supabase.co), `frame-ancestors 'none'`, `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`.
-- [ ] **Safe reading links.** Only allow `https:` and `tel:` URLs in user-edited links.
+- [x] **Safe reading links (implemented locally, pending merge).** Shared `https:` / numeric `tel:` validation for resources and bookmarks; unsafe imported links remain visible but cannot open. See [bookmark review](BOOKMARKS-REVIEW.md).
 - [ ] **Real cloud deletion.** Delete the `user_data` row and the auth user (Edge Function with service key), not just overwrite with an empty state.
 - [?] **Custom SMTP verification.** Custom SMTP is believed to be configured for Supabase Auth; verify it is active and working before public release.
 - [ ] **RLS test.** With a second account, confirm it cannot select, update or delete another user's row.
