@@ -1,3 +1,5 @@
+> Issue #9 follow-up: encrypted sync now replaces plaintext uploads after explicit saved-key acknowledgement. This document records the account-model baseline; current encryption behavior and synthetic QA are in [ENCRYPTION-QA.md](ENCRYPTION-QA.md). Auth/session/local recovery schema remain compatible.
+
 # PR #11: active registered-user compatibility pass
 
 Date: 2026-10-05. Synthetic accounts and recovery data only. No production Supabase operations, real email, merge or deployment.

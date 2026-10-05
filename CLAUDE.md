@@ -2,7 +2,7 @@
 
 A small Hebrew (RTL) web app: a clean time counter for someone in NA recovery.
 
-- Single static `index.html` with inline CSS/JS. No build step. The only dependency is supabase-js for the optional cloud sync, loaded on demand from jsDelivr (see below).
+- Static `index.html` with inline CSS/JS and the self-hosted `assets/sync-crypto.js` Web Crypto boundary. No build step. The only dependency is supabase-js for the optional cloud sync, loaded on demand from jsDelivr (see below).
 - `manifest.webmanifest` plus icons (`icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`) enable Android "Install app".
 - All user data lives in `localStorage` under the key `cleantime-he-v1`. Changing the shape of saved data needs backward-compatible evolution in `normalize()`, which merges saved data over a deep copy of `DEFAULT`. `load()` and cloud pulls both go through it. A version flag such as `linksV` must not go in `DEFAULT`, or the migration never runs.
 - Every data change must go through `save()`, which stamps `updatedAt` and queues a cloud push. UI-only changes (counter `mode`) use `writeLocal()` instead.
@@ -18,11 +18,11 @@ A small Hebrew (RTL) web app: a clean time counter for someone in NA recovery.
 - **Inventory** (`#inventory`): daily summary autosaved synchronously via `save()`, with date/history access. Only free-text reflection is exposed. Legacy placeholder answers, questionnaire version and unknown fields remain stored; final prompts can use stable replacement IDs later.
 - **Journal** (`#journal`): retained full-screen autosaving editor and Android back behavior.
 - **Resources** (`#readings`): existing editable recovery links.
-- **Personal links** (`#bookmarks`): initially empty flat list under Tools; explicit add/edit/save/cancel/delete, title + URL + optional note. Stored in `bookmarks` and included in the existing cloud JSON. Shared `safeLinkUrl()` permits only validated `https:` and numeric `tel:` URLs; unsafe imported links are retained but not clickable.
-- **About** (`#about`): normal navigation; purpose, free/noncommercial model, guest/optional account storage, existing help links and honest cloud privacy disclosure.
+- **Personal links** (`#bookmarks`): initially empty flat list under Tools; explicit add/edit/save/cancel/delete, title + URL + optional note. Stored in `bookmarks` and included in the encrypted whole-state payload. Shared `safeLinkUrl()` permits only validated `https:` and numeric `tel:` URLs; unsafe imported links are retained but not clickable.
+- **About** (`#about`): normal navigation; purpose, free/noncommercial model, guest/optional account storage, existing help links and device-encryption/recovery-key privacy disclosure, including pending legacy migration.
 - **Settings** (`#settings`): recovery preferences with an explicit save label. Guests get Create account / backup and Already have an account entries. Registered users get a My Account entry.
 - **Account access** (`#auth`): create (optional name, email, recovery profile), convert guest (email and optional missing name), or returning email-only login. Returning login sets `shouldCreateUser:false`, reports missing accounts in Hebrew and offers Create Account. Create/convert set `shouldCreateUser:true`. Creation saves the complete profile locally before sending the link; no cloud writes until authentication and conflict resolution.
-- **My Account** (`#account`): name, email, account/sync state, last sync, sign-out and existing device/cloud data deletion. Identity deletion still requires backend work; copy states this explicitly. Future #9 encryption status belongs here, separate from recovery settings.
+- **My Account** (`#account`): name, email, account/sync state, last sync, sign-out and existing device/cloud data deletion. Identity deletion still requires backend work; copy states this explicitly. Encryption setup, saved-key acknowledgement and new-device unlock live here, separate from recovery settings.
 - Internal screen transitions push History API state; initial rendering replaces state, and Back/Forward restore screens without pushing. Journal adds an editor entry; Back commits/closes it before returning through screens. History state holds screen/auth mode/editor ID only, no recovery content or tokens. Reload retains the normal Today/onboarding landing behavior.
 - Recovery-date inputs retain native pickers with Hebrew inline missing/invalid and future-date feedback. Successful magic-link requests include subtle Spam guidance.
 - Bump `APP_VERSION` (`YYYY.MM.DD`, near the top of the script) with each user-facing change.
@@ -35,7 +35,7 @@ A small Hebrew (RTL) web app: a clean time counter for someone in NA recovery.
 - `links`: `[{id, title, url}]`, plus `linksV` (currently 2; not in `DEFAULT`)
 - `plans`: `{ "YYYY-MM-DD": [{id, text, done}] }`, keyed by the phone's local date. Past days are kept and accessible from history. Only today accepts new items. A day's key is removed when its list becomes empty.
 - `journal`: `[{id, text, created, updated}]`, timestamps in ms
-- `inventory`: `{ "YYYY-MM-DD": {questionnaireVersion:"placeholder-v1", answers:{placeholder_1,placeholder_2,placeholder_3}, summary, created, updated} }`; additive default `{}`, included in the existing cloud JSON.
+- `inventory`: `{ "YYYY-MM-DD": {questionnaireVersion:"placeholder-v1", answers:{placeholder_1,placeholder_2,placeholder_3}, summary, created, updated} }`; additive default `{}`, included in the encrypted whole-state payload.
 - `updatedAt`: ms timestamp of the last `save()`, used for sync conflicts
 
 New ids come from `uid()`, which is unique even within one millisecond. Delete-by-id depends on this.
@@ -48,12 +48,13 @@ Login is optional; without it the app requests only its own local assets. Assist
 - Login: email magic link (`signInWithOtp` with `emailRedirectTo: location.origin`). The client uses `flowType: 'implicit'` so a link opened in a different browser still works (PKCE would fail). On return, the token is read from the URL hash, the URL is cleaned and the app opens after sync. Failed/expired links open email-only retry. Link errors (`#error_code=otp_expired`) show a Hebrew message. Access remains email magic-link only; do not add passwords or alternate auth paths.
 - Every origin used (production `https://www.clean-time.app`, the old `https://clean-time-eight.vercel.app` until it redirects, `http://localhost:8765`, `http://127.0.0.1:8765`) must be in Supabase → Auth → Redirect URLs.
 - Production SMTP is configured separately; this account UX change does not modify it.
-- Table `public.user_data(user_id uuid pk, data jsonb, updated_at timestamptz)`, RLS own row only. One row per user holds all of `S` except `LOCAL_ONLY` fields (`mode`).
-- `localStorage` stays the working copy. `sync()` pulls the row and compares `updatedAt`: remote newer → `applyRemote()` (normalized, keeps local `mode`); local newer → upsert. Runs on app open, sign-in, `focus`/`visibilitychange`, `online`, and 2s after each `save()` (flushed immediately when the app is hidden). Only one `sync()` runs at a time.
+- Table `public.user_data(user_id uuid pk, data jsonb, updated_at timestamptz)`, RLS own row only. One row per user holds a versioned encrypted envelope of all of `S` except `LOCAL_ONLY` fields (`mode`). Legacy plaintext is read only until acknowledged migration. No plaintext uploads from this client.
+- `localStorage` stays the working copy. `sync()` pulls the row and compares `updatedAt`: remote newer → `applyRemote()` (normalized, keeps local `mode`); local newer → encrypt and conditional update (or insert for an absent row). Runs on app open, sign-in, `focus`/`visibilitychange`, `online`, and 2s after each `save()` (flushed immediately when the app is hidden). Only one `sync()` runs at a time.
+- Key cache: `cleantime-he-crypto` holds account-scoped usable DEK, wrapper and confirmed flag; it never holds the recovery key. Explicit sign-out/device deletion clears it. A missing/mismatched cache requires recovery-key entry before cloud data or conflict selection.
 - Other localStorage keys: `cleantime-he-auth` (Supabase session) and `cleantime-he-sync` (`uid`, `email`, `lastSync`, `dirty`).
 - First sign-in on a device (`M.uid` differs from the user): if both sides have data, a modal asks "לשמור את הנתונים מהמכשיר הזה" / "לטעון את הנתונים מהענן". If only one side has data, that side is used.
-- Sign out: confirm, try to flush pending changes, then clear all local data. The cloud copy stays.
-- "מחיקת כל הנתונים" when signed in: "device only" clears local data and signs out. "Also cloud" overwrites the row with an empty state (newer `updatedAt`), so other signed-in devices also clear on their next pull.
+- Sign out: confirm with recovery-key reminder, try to flush pending changes, then clear all local data and encryption material. The cloud copy stays.
+- "מחיקת כל הנתונים" when signed in: "device only" clears local data and signs out. "Also cloud" writes and verifies an encrypted empty state (newer `updatedAt`) before clearing local data; requires an unlocked key, so other signed-in devices also clear on their next pull.
 - Verified in production: first upload, a second device loading cloud data, edit-and-refocus sync, offline edit then sync, sign out clearing local data, and the conflict prompt on first sign-in.
 
 ## Domain move (temporary)
@@ -78,8 +79,17 @@ See `docs/UX-1.0-UAT.md` for the additive data evolution, product decisions, bro
 
 ## Account-model UX (#10)
 
-See `docs/ACCOUNT-QA.md` for synthetic account-flow QA and manual checks, and `docs/UPGRADE-COMPATIBILITY.md` for the current-production active-user compatibility pass. The JSON/localStorage schema and whole-state sync are unchanged. An explicit local conflict choice stamps newer than both clocks, so a future cloud timestamp cannot undo that choice. No encryption or recovery-key UX (#9) is implemented.
+See `docs/ACCOUNT-QA.md` for synthetic account-flow QA and manual checks, and `docs/UPGRADE-COMPATIBILITY.md` for the current-production active-user compatibility pass. The JSON/localStorage schema and whole-state sync are unchanged. An explicit local conflict choice stamps newer than both clocks, so a future cloud timestamp cannot undo that choice. Issue #9 adds encrypted sync; see `docs/ENCRYPTION-QA.md` for the format, migration, guard SQL and release checks. Account authentication remains email-only.
+
+
+## Encrypted cloud sync (#9) — pending PR/release
+
+- Web Crypto AES-256-GCM DEK; 256-bit random recovery key; PBKDF2-HMAC-SHA-256 KEK (600,000 iterations, 128-bit random salt); AES-GCM DEK wrapping. Both wrapping and each payload use independent random 96-bit IVs, 128-bit tags. Envelope `v:1`, `alg:A256GCM`; binary fields use standard Base64.
+- AAD binds DEK wrapping to account ID, and payload to account ID plus canonical ISO timestamp. Strict format/KDF validation rejects unsupported/tampered envelopes before normalize/applyRemote. JSONB key order and equivalent PostgreSQL timestamp spellings are supported.
+- Legacy rows follow the existing first-sign-in conflict/newer-state rules, then pause for explicit saved-key acknowledgement. Keys are persisted before a conditional encrypted write; a read-back/decrypt comparison confirms migration. Failed writes preserve the legacy row and local content; interrupted verification retains usable material for retry. Migration advances the timestamp at least 1ms past the read row to protect concurrent setup. Normal sync keeps whole-state/newer-timestamp semantics and its existing triggers.
+- **Release prerequisite:** manually apply `docs/migrations/009-encrypted-sync-guard.sql` before releasing this client. It adds an UPDATE trigger without rewriting rows, columns, auth or RLS. Legacy clients may write legacy rows, but may not downgrade encrypted rows or replace their wrapper. Not applied by this branch. Never roll back to a plaintext writer after migration.
+- Local data and cached DEK remain readable to device scripts for P0. Encryption protects persisted cloud content, not a compromised browser, malicious delivered JavaScript or previously taken plaintext backups. Recovery-key rotation and lost-key cloud reset are deferred. No PIN, passwords, new tables, export, analytics or third-party crypto dependency.
 
 ## Production UAT fixes
 
-See `docs/UAT-REGRESSION.md` for synthetic-only regression coverage, compatibility and deferred manual checks. No merge, deployment, SMTP change or encryption work is part of this change.
+See `docs/UAT-REGRESSION.md` for synthetic-only regression coverage, compatibility and deferred manual checks. The refreshed encryption branch retains these fixes. No merge, deployment or SMTP change is performed.

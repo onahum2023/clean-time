@@ -416,7 +416,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       <button class="btn danger" id="reset">מחיקת כל הנתונים</button>
     </div>
   </section>
-  <!-- Account identity is separate from recovery preferences. Future #9 status belongs here. -->
+  <!-- Account identity and encryption status are separate from recovery preferences. -->
   <section id="account" hidden>
     <h2>החשבון שלי</h2>
     <div id="syncIn" hidden>
@@ -425,6 +425,26 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       <p id="accountState"></p>
       <p class="sub" id="syncStatus" role="status"></p>
       <p class="msg" id="accountMsg" role="status"></p>
+      <div id="encryptionArea">
+        <p id="encryptionStatus" role="status"></p>
+        <div id="encryptionSetup" hidden>
+          <p class="note">הגיבוי יוצפן במכשיר לפני שיישלח לענן. תחילה צריך לשמור מפתח שחזור.</p>
+          <button class="btn secondary" id="makeRecoveryKey">יצירת מפתח שחזור</button>
+          <div id="recoveryGenerated" hidden>
+            <p class="note">המפתח נדרש בחיבור מכשיר חדש. זמן נקי לא יכולה לשחזר את הגיבוי המוצפן בלעדיו. זה אינו סיסמת כניסה לחשבון.</p>
+            <label class="field"><span>מפתח השחזור — לשמור במקום בטוח</span><textarea id="recoveryOutput" dir="ltr" readonly rows="3" autocomplete="off" spellcheck="false" style="overflow-wrap:anywhere;font-family:monospace"></textarea></label>
+            <label class="field"><span><input type="checkbox" id="recoverySaved"> שמרתי את מפתח השחזור במקום בטוח</span></label>
+            <button class="btn" id="activateEncryption" disabled>הפעלת גיבוי מוצפן</button>
+          </div>
+        </div>
+        <form id="recoveryForm" hidden>
+          <p class="note">כדי לפתוח את הגיבוי במכשיר הזה, צריך את מפתח השחזור שנשמר בעת הפעלת ההצפנה. בלי המפתח או מכשיר שכבר מחובר, אי אפשר לשחזר את התוכן המוצפן. אפשר להמשיך להשתמש בנתונים המקומיים.</p>
+          <label class="field"><span>מפתח שחזור</span><textarea id="recoveryInput" dir="ltr" rows="3" autocomplete="off" autocapitalize="characters" spellcheck="false" required></textarea></label>
+          <button class="btn" type="submit" id="unlockRecovery">פתיחת הגיבוי המוצפן</button>
+        </form>
+        <p class="msg" id="encryptionMsg" role="status" aria-live="polite"></p>
+        <button class="btn ghost" id="retryEncryption" hidden>ניסיון סנכרון נוסף</button>
+      </div>
       <button class="btn danger" id="signOut">התנתקות</button>
       <div class="settings-foot">
         <button class="btn danger" id="accountDelete">מחיקת נתונים מהמכשיר / מהענן</button>
@@ -466,7 +486,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
         <li><a href="tel:101">מד"א <b>101</b></a></li>
       </ul>
       <h4>פרטיות</h4>
-      <p>בלי התחברות, כל הנתונים נשמרים רק במכשיר ובדפדפן הזה.<br>עם התחברות, הנתונים מגובים בשרת כדי שאפשר יהיה לשחזר אותם או להשתמש בכמה מכשירים. כרגע הגיבוי אינו מוצפן, ולכן מי שמנהל את השרת יכול טכנית לראות אותו.<br>אפשר למחוק את כל הנתונים בכל רגע, דרך ההגדרות.</p>
+      <p>בלי התחברות, כל הנתונים נשמרים רק במכשיר ובדפדפן הזה.<br>בחשבון רשום, לאחר הפעלת הגיבוי המוצפן, נתוני ההחלמה מוצפנים במכשיר לפני הסנכרון. זמן נקי אינה יכולה לקרוא את תוכן הגיבוי המוצפן. המייל ומידע טכני מינימלי נשארים זמינים לצורך כניסה וסנכרון. אובדן מפתח השחזור עלול למנוע שחזור בענן. גיבויים ישנים יישארו במתכונת הקודמת עד להפעלת ההצפנה בחשבון.<br>אפשר למחוק את כל הנתונים בכל רגע, דרך ההגדרות.</p>
       <h4>קוד פתוח</h4>
       <p>הקוד של האפליקציה פתוח לכולם ב-<a href="https://github.com/onahum2023/clean-time" target="_blank" rel="noopener">GitHub</a>.</p>
       <h4>משוב</h4>
@@ -497,6 +517,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   </div>
 </nav>
 
+<script src="assets/sync-crypto.js"></script>
 <script>
 (function(){
 const APP_VERSION='2026.10.05.9';
@@ -591,7 +612,7 @@ function openAuth(mode,record=true){
   authMode=mode;
   const create=mode==='create',convert=mode==='convert';
   $('authTitle').textContent=create?'יצירת חשבון':convert?'יצירת חשבון והפעלת גיבוי':'כבר יש לי חשבון';
-  $('authSub').textContent='הכניסה תמיד דרך קישור למייל. המייל מזהה את החשבון והגיבוי.'+(convert?' הנתונים במכשיר יישמרו.':'')+' כרגע הגיבוי בענן אינו מוצפן ומנהל השרת יכול טכנית לראות אותו.';
+  $('authSub').textContent='הכניסה תמיד דרך קישור למייל. המייל מזהה את החשבון והגיבוי.'+(convert?' הנתונים במכשיר יישמרו.':'')+' הגיבוי יופעל לאחר שמירת מפתח שחזור להצפנה במכשיר. המפתח אינו סיסמת הכניסה.';
   $('authProfile').hidden=!create;$('aDate').required=create;$('aFrom').required=create;
   $('authNameField').hidden=!(create||(convert&&!S.name));
   $('aName').value=S.name;$('aDate').value=S.date;$('aTime').value=S.time;$('aFrom').value=S.from;pickColor=S.color;renderSwatches('aSwatches');
@@ -1032,8 +1053,9 @@ const SUPA_URL='https://aefhjgmiwgajdhgyhelm.supabase.co';
 const SUPA_KEY='sb_publishable_0R5rSCEhM5INCy-5zLwGsA_j51Ty39v';
 const SUPA_JS='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js';
 const SUPA_SRI='sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok';
-const AUTH_KEY='cleantime-he-auth', SYNC_KEY='cleantime-he-sync';
+const AUTH_KEY='cleantime-he-auth', SYNC_KEY='cleantime-he-sync', CRYPTO_KEY='cleantime-he-crypto';
 const LOCAL_ONLY=['mode']; /* UI-only fields, never synced */
+let keyMaterial=null, dataKey=null, pendingKey=null, cryptoState='', lockedRow=null, cryptoEpoch=0;
 let sb=null, sbLoading=null, sbReady=false, user=null, pushTimer=null, busy=false, again=false, syncErr='';
 /* M: sync bookkeeping for this device. uid = account this device last synced with */
 let M=(()=>{try{return JSON.parse(localStorage.getItem(SYNC_KEY))||{};}catch(e){return {};}})();
@@ -1051,9 +1073,11 @@ function loadSupabase(){
   }).then(()=>{
     sb=supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{flowType:'implicit',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true,storageKey:AUTH_KEY}});
     sb.auth.onAuthStateChange((ev,session)=>{
-      user=session?session.user:null;
+      const next=session?session.user:null;
+      if(user?.id!==next?.id)clearEncryption();
+      user=next;
       /* never call supabase from inside this callback */
-      setTimeout(async()=>{renderSync();if(ev==='SIGNED_IN'){await sync();if(current==='auth')show(S.date?'counter':'account');}},0);
+      setTimeout(async()=>{renderSync();if(ev==='SIGNED_IN'){await sync();if(current==='auth')show(cryptoState==='locked'||cryptoState==='setup'?'account':S.date?'counter':'account');}},0);
     });
     return sb;
   },e=>{sbLoading=null;throw e;});
@@ -1100,12 +1124,15 @@ function renderSync(){
   $('syncOut').hidden=on; $('syncIn').hidden=!on;
   $('createAccount').hidden=on;$('settingsLogin').hidden=on;$('myAccount').hidden=!on;
   $('accountName').textContent=S.name||'לא צוין';
-  $('accountState').textContent=user?'חשבון רשום · גיבוי וסנכרון פעילים':'חשבון רשום · בודקים את החיבור';
+  $('accountState').textContent=user?'חשבון רשום · כניסה דרך קישור למייל':'חשבון רשום · בודקים את החיבור';
+  renderEncryption();
   $('setSub').textContent=on?'הנתונים נשמרים במכשיר ומגובים בענן.':'הכול נשמר רק במכשיר הזה.';
   if(!on)return;
   $('sEmail').textContent=(user&&user.email)||M.email||'';
   let st;
-  if(syncErr==='offline')st='אין חיבור. השינויים יגובו כשהחיבור יחזור.';
+  if(cryptoState==='setup')st='הגיבוי ממתין לשמירת מפתח שחזור. הנתונים המקומיים נשמרים כרגיל.';
+  else if(cryptoState==='locked')st='מפתח שחזור נדרש כדי לסנכרן במכשיר הזה.';
+  else if(syncErr==='offline')st='אין חיבור. השינויים יגובו כשהחיבור יחזור.';
   else if(syncErr)st='הסנכרון נכשל. ננסה שוב כשהאפליקציה תיפתח מחדש.';
   else if(M.dirty)st='יש שינויים שממתינים לגיבוי...';
   else if(M.lastSync)st='סנכרון אחרון: '+new Date(M.lastSync).toLocaleString('he-IL',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
@@ -1139,49 +1166,165 @@ function applyRemote(data,t){
   if($('jEditor').hidden)renderJ();
   if(current==='settings'&&!$('settings').contains(document.activeElement))fillSettings();
 }
-async function upload(){
-  const data=JSON.parse(JSON.stringify(S)); LOCAL_ONLY.forEach(k=>delete data[k]);
-  if(!data.updatedAt)data.updatedAt=S.updatedAt=Date.now();
-  const {error}=await sb.from('user_data').upsert({user_id:user.id,data,updated_at:new Date(data.updatedAt).toISOString()},{onConflict:'user_id'});
-  if(error)throw error;
-  return data.updatedAt;
+/* Encryption material is scoped to the authenticated account; the recovery key is
+   only shown during setup and is never persisted or sent to the SDK. */
+function renderEncryption(){
+  $('encryptionStatus').textContent=cryptoState==='active'?'גיבוי מוצפן פעיל · מפתח ההצפנה שמור במכשיר הזה':cryptoState==='locked'?'מפתח שחזור נדרש במכשיר הזה':cryptoState==='setup'?'הגיבוי המוצפן עדיין לא הופעל':'בודקים את מצב הגיבוי המוצפן';
+  $('encryptionSetup').hidden=cryptoState!=='setup'||!!dataKey;
+  $('recoveryForm').hidden=cryptoState!=='locked';
+  $('retryEncryption').hidden=!syncErr||cryptoState==='locked';
 }
-/* pull the row, then apply it or push, by updatedAt. Runs one at a time. */
+function encryptionMessage(text){$('encryptionMsg').textContent=text||'';}
+function clearEncryption(){
+  cryptoEpoch++;keyMaterial=null;dataKey=null;pendingKey=null;lockedRow=null;cryptoState='';
+  $('recoveryOutput').value='';$('recoveryInput').value='';$('recoverySaved').checked=false;
+  $('recoveryGenerated').hidden=true;$('makeRecoveryKey').hidden=false;$('activateEncryption').disabled=true;encryptionMessage('');
+}
+function storeMaterial(material){
+  // Persist before cloud writes: if storage is blocked, migration cannot strand this device.
+  localStorage.setItem(CRYPTO_KEY,JSON.stringify(material));
+}
+async function loadMaterial(id,envelope){
+  const epoch=cryptoEpoch;
+  if(keyMaterial?.uid===id&&(!envelope||SyncCrypto.sameWrapper(keyMaterial,envelope)))return true;
+  dataKey=null;keyMaterial=null;
+  try{
+    const m=JSON.parse(localStorage.getItem(CRYPTO_KEY)||'null');
+    if(m?.uid!==id||envelope&&!SyncCrypto.sameWrapper(m,envelope))return false;
+    const imported=await SyncCrypto.importDek(m.raw);
+    if(epoch!==cryptoEpoch||user?.id!==id)return false;
+    dataKey=imported;keyMaterial=m;return true;
+  }catch(e){return false;}
+}
+$('makeRecoveryKey').onclick=async()=>{
+  if(!user||busy||pendingKey)return;
+  const id=user.id,epoch=cryptoEpoch;$('makeRecoveryKey').disabled=true;
+  try{
+    const made=await SyncCrypto.create(id);
+    if(epoch!==cryptoEpoch||user?.id!==id)return;
+    pendingKey=made;$('makeRecoveryKey').hidden=true;$('recoveryOutput').value=made.recovery;
+    $('recoveryGenerated').hidden=false;encryptionMessage('');
+  }catch(e){encryptionMessage('לא הצלחנו ליצור מפתח. הנתונים לא השתנו. אפשר לנסות שוב בדפדפן עם תמיכה בהצפנה ובחיבור מאובטח.');}
+  finally{$('makeRecoveryKey').disabled=false;}
+};
+$('recoverySaved').onchange=()=>{$('activateEncryption').disabled=!$('recoverySaved').checked;};
+$('activateEncryption').onclick=async()=>{
+  if(!pendingKey||!user||pendingKey.material.uid!==user.id||!$('recoverySaved').checked)return;
+  try{
+    storeMaterial(pendingKey.material);keyMaterial=pendingKey.material;dataKey=pendingKey.key;
+    pendingKey=null;$('recoveryOutput').value='';$('recoveryGenerated').hidden=true;
+    encryptionMessage('');await sync();
+  }catch(e){encryptionMessage('מפתח ההצפנה לא נשמר במכשיר. הגיבוי בענן לא השתנה. אפשר לנסות שוב.');}
+};
+$('recoveryForm').onsubmit=async ev=>{
+  ev.preventDefault();if(!user||!lockedRow||busy)return;
+  const id=user.id,epoch=cryptoEpoch,row=lockedRow,input=$('recoveryInput').value;
+  $('recoveryInput').value='';$('unlockRecovery').disabled=true;
+  try{
+    const opened=await SyncCrypto.unlock(row.data,input,id,row.updated_at);
+    if(epoch!==cryptoEpoch||user?.id!==id)return;
+    storeMaterial(opened.material);keyMaterial=opened.material;dataKey=opened.key;
+    encryptionMessage('');await sync();
+  }catch(e){encryptionMessage('המפתח שגוי, הגיבוי פגום או שלא ניתן לשמור את המפתח במכשיר. הנתונים במכשיר ובענן לא השתנו. אפשר לנסות שוב.');}
+  finally{$('unlockRecovery').disabled=false;}
+};
+$('retryEncryption').onclick=()=>sync();
+function syncedState(){
+  const data=JSON.parse(JSON.stringify(S));LOCAL_ONLY.forEach(k=>delete data[k]);
+  if(!data.updatedAt)data.updatedAt=S.updatedAt=Date.now();return data;
+}
+async function readRow(id){
+  const {data,error}=await sb.from('user_data').select('data,updated_at').eq('user_id',id).maybeSingle();
+  if(error)throw error;return data;
+}
+const canonicalState=value=>JSON.stringify(value,(_,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,v[k]])):v);
+async function upload(previous,state=syncedState()){
+  const id=user?.id,epoch=cryptoEpoch;
+  if(!id||!dataKey||keyMaterial?.uid!==id)throw new Error('Encryption required');
+  const timestamp=new Date(state.updatedAt).toISOString();
+  const envelope=await SyncCrypto.encrypt(state,dataKey,keyMaterial,id,timestamp);
+  if(user?.id!==id||epoch!==cryptoEpoch)throw new Error('Account changed');
+  const row={user_id:id,data:envelope,updated_at:timestamp};
+  // Compare-and-set avoids overwriting concurrent edits or another device's DEK.
+  const query=previous?sb.from('user_data').update(row).eq('user_id',id).eq('updated_at',previous.updated_at):sb.from('user_data').insert(row);
+  const {data,error}=await query.select('user_id');
+  if(error||!data?.length)throw new Error('Cloud write not confirmed');
+  // Verify the stored envelope and plaintext round trip before marking migration complete.
+  const stored=await readRow(id);
+  if(!stored||Date.parse(stored.updated_at)!==Date.parse(timestamp)||JSON.stringify(stored.data)!==JSON.stringify(envelope)){
+    // JSONB key order is not guaranteed; compare explicit envelope fields instead.
+    if(!stored||Date.parse(stored.updated_at)!==Date.parse(timestamp)||stored.data?.iv!==envelope.iv||stored.data?.ciphertext!==envelope.ciphertext||!SyncCrypto.sameWrapper(stored.data,envelope))throw new Error('Cloud verification failed');
+  }
+  const restored=await SyncCrypto.decrypt(stored.data,dataKey,id,stored.updated_at);
+  if(canonicalState(restored)!==canonicalState(state))throw new Error('Cloud verification failed');
+  if(user?.id!==id||epoch!==cryptoEpoch)throw new Error('Account changed');
+  keyMaterial.confirmed=true;storeMaterial(keyMaterial);
+  cryptoState='active';return state.updatedAt;
+}
+/* Pull/decrypt before normalizing or conflict resolution. Runs one at a time. */
 async function sync(){
   if(busy){again=true;return;}
   if(!sbReady){if(M.uid||sbLoading)return startSync();return;}
   if(!user)return;
+  if(storageError){encryptionMessage('יש בעיה בנתונים המקומיים. הסנכרון נעצר כדי לשמור עליהם.');renderSync();return;}
   if(!navigator.onLine){syncErr='offline';renderSync();return;}
-  busy=true;
+  busy=true;const id=user.id,epoch=cryptoEpoch;
   try{
     do{
       again=false;
-      const {data:row,error}=await sb.from('user_data').select('data,updated_at').eq('user_id',user.id).maybeSingle();
-      if(error)throw error;
-      const remote=row&&row.data, rT=remote?(remote.updatedAt||Date.parse(row.updated_at)||0):0;
-      if(M.uid!==user.id){
-        /* first sign-in on this device: never silently overwrite either side */
+      const row=await readRow(id);
+      if(user?.id!==id||epoch!==cryptoEpoch)break;
+      const encrypted=row&&SyncCrypto.isEnvelope(row.data);
+      let remote=row&&row.data;
+      if(encrypted){
+        SyncCrypto.validate(remote);
+        if(!await loadMaterial(id,remote)){
+          lockedRow=row;cryptoState='locked';syncErr='';show('account');break;
+        }
+        remote=await SyncCrypto.decrypt(remote,dataKey,id,row.updated_at);
+        if(user?.id!==id||epoch!==cryptoEpoch)break;
+        keyMaterial.confirmed=true;storeMaterial(keyMaterial);cryptoState='active';lockedRow=null;
+      }else if(cryptoState==='active'||(await loadMaterial(id)&&keyMaterial.confirmed)){
+        // A trusted device must never silently accept a downgrade or missing encrypted row.
+        throw new Error('Encrypted row changed');
+      }
+      if(user?.id!==id||epoch!==cryptoEpoch)break;
+      const rT=remote?(encrypted?Date.parse(row.updated_at):(remote.updatedAt||Date.parse(row.updated_at)||0)):0;
+      if(M.uid!==id){
         if(hasData(remote)&&hasData(S)){
           const pick=await ask('נמצאו נתונים בשני המקומות','יש נתונים גם במכשיר הזה וגם בענן. אילו נתונים לשמור? הנתונים האחרים יוחלפו.',
             [{label:'לשמור את הנתונים מהמכשיר הזה',value:'local'},{label:'לטעון את הנתונים מהענן',value:'cloud',cls:'ghost'}]);
+          if(user?.id!==id||epoch!==cryptoEpoch)break;
           if(pick==='cloud')applyRemote(remote,rT);else{S.updatedAt=Math.max(Date.now(),rT+1);writeLocal();}
         }else if(hasData(remote))applyRemote(remote,rT);
         else if(remote)S.updatedAt=Math.max(Date.now(),rT+1);
-        M.uid=user.id;
+        M.uid=id;
       }
       M.email=user.email;
       const lT=S.updatedAt||0;
       let synced=lT;
       if(rT>lT){applyRemote(remote,rT);synced=rT;}
-      else if(lT>rT||(!remote&&hasData(S)))synced=await upload();
-      M.dirty=(S.updatedAt||0)!==synced; M.lastSync=Date.now(); syncErr='';
-      saveMeta();
+      if(!encrypted){
+        cryptoState='setup';
+        if(!await loadMaterial(id)){
+          // Keep legacy/local state; user initiates setup from My Account.
+          M.dirty=true;saveMeta();syncErr='';show('account');break;
+        }
+        if(keyMaterial.confirmed)throw new Error('Encrypted row changed');
+        S.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1,(Date.parse(row?.updated_at)||0)+1);
+        if(!writeLocal())throw new Error('Local write failed');
+        synced=await upload(row); // migrate even when timestamps are identical
+      }else if(lT>rT||(!remote&&hasData(S)))synced=await upload(row);
+      M.dirty=(S.updatedAt||0)!==synced;M.lastSync=Date.now();syncErr='';encryptionMessage('');saveMeta();
     }while(again);
   }catch(e){
-    syncErr=isNetErr(e)?'offline':'error';
-    console.warn('sync failed',e);
+    if(user?.id===id&&epoch===cryptoEpoch){
+      syncErr=isNetErr(e)?'offline':'error';
+      encryptionMessage('הסנכרון המוצפן לא הושלם. הנתונים המקומיים נשמרו. אפשר לנסות שוב.');
+      // Never log SDK errors, payloads or cryptographic material.
+    }
   }
-  busy=false; renderSync();
+  busy=false;renderSync();
 }
 function queuePush(){
   if(!M.uid)return;
@@ -1202,17 +1345,18 @@ async function startSync(){
     if(!user){openAuth('login');setMsg(errText(error||'otp_expired'),true);}
   }
   renderSync();
-  if(user){await sync();if(current==='auth'||current==='onboarding')show(S.date?'counter':'account');}
+  if(user){await sync();if(current==='auth'||current==='onboarding')show(cryptoState==='locked'||cryptoState==='setup'?'account':S.date?'counter':'account');}
 }
 
 async function signOutNow(){
   try{if(sb)await sb.auth.signOut({scope:'local'});}catch(e){}
-  try{localStorage.removeItem(AUTH_KEY);localStorage.removeItem(SYNC_KEY);}catch(e){}
+  clearEncryption();
+  try{localStorage.removeItem(AUTH_KEY);localStorage.removeItem(SYNC_KEY);localStorage.removeItem(CRYPTO_KEY);}catch(e){}
   clearTimeout(pushTimer); M={}; user=null; syncErr='';
   resetLocal(); setMsg('');
 }
 $('signOut').onclick=async()=>{
-  if(!confirm('התנתקות תמחק את כל הנתונים מהמכשיר הזה.\nהעותק בענן יישאר, ואפשר לטעון אותו שוב בהתחברות מחדש.\n\nלהתנתק?'))return;
+  if(!confirm('התנתקות תמחק את כל הנתונים מהמכשיר הזה.\nהעותק בענן יישאר. כדי לפתוח גיבוי מוצפן לאחר כניסה מחדש צריך את מפתח השחזור. יש לשמור אותו לפני ההתנתקות.\n\nלהתנתק?'))return;
   if(M.dirty){
     clearTimeout(pushTimer); await sync();
     if(M.dirty&&!confirm('יש שינויים שעוד לא גובו לענן, והם יימחקו. להתנתק בכל זאת?'))return;
@@ -1221,19 +1365,23 @@ $('signOut').onclick=async()=>{
 };
 /* overwrites the cloud row with empty data, so other signed-in devices also clear on their next pull */
 async function wipeCloud(){
+  if(busy){setMsg('הסנכרון עדיין פועל. אפשר לנסות שוב בעוד רגע.',true);return;}
   if(!sbReady)await startSync();
-  if(!user){setMsg('אין חיבור לענן, ולכן שום דבר לא נמחק. אפשר לנסות שוב כשהחיבור יחזור.',true);return;}
+  if(!user||!dataKey||cryptoState!=='active'){setMsg('כדי למחוק את הגיבוי המוצפן צריך תחילה לפתוח אותו עם מפתח השחזור. שום דבר לא נמחק.',true);return;}
+  busy=true;
   try{
     clearTimeout(pushTimer);
-    resetLocal(); S.updatedAt=Date.now(); writeLocal();
-    await upload();
-    M.dirty=false; M.lastSync=Date.now(); syncErr=''; saveMeta();
+    const row=await readRow(user.id);
+    if(!row||!SyncCrypto.isEnvelope(row.data)||!SyncCrypto.sameWrapper(keyMaterial,row.data))throw new Error('Cloud changed');
+    await SyncCrypto.decrypt(row.data,dataKey,user.id,row.updated_at);
+    const empty=JSON.parse(JSON.stringify(DEFAULT));delete empty.mode;
+    empty.updatedAt=Math.max(Date.now(),Date.parse(row.updated_at)+1,S.updatedAt+1);
+    await upload(row,empty); // Only clear local data after verified encrypted tombstone.
+    resetLocal();S.updatedAt=empty.updatedAt;writeLocal();
+    M.dirty=false;M.lastSync=Date.now();syncErr='';saveMeta();
     setMsg('הנתונים נמחקו מהמכשיר ומהענן.');
-  }catch(e){
-    M.dirty=true; saveMeta();
-    setMsg('המחיקה מהענן לא הושלמה. היא תושלם כשהחיבור יחזור.',true);
-  }
-  show('account');renderSync();
+  }catch(e){setMsg('המחיקה מהענן לא הושלמה. הנתונים במכשיר נשמרו. אפשר לנסות שוב.',true);}
+  busy=false;show('account');renderSync();
 }
 
 /* magic-link return: tokens (or an error) arrive in the URL hash */
