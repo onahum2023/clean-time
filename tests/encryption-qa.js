@@ -218,7 +218,7 @@ async(page)=>{
  check(s.calls.uploads.length===0&&same(s.cloud(),downgrade)&&(await read(s.p)).time===full.time&&!(await status(s.p)).includes('גיבוי מוצפן פעיל'),'Trusted cache refuses plaintext downgrade on reopening');await s.c.close();
  s=await scenario({row:migrated,material:{...migratedMaterial,uid:'other-account'}});
  check((await status(s.p)).includes('מפתח שחזור נדרש')&&s.calls.uploads.length===0,'Keys from another account are ignored');await s.c.close();
- check(require('node:fs').readFileSync('index.html','utf8').includes('אינו קריא מתוך Supabase בלבד')&&!require('node:fs').readFileSync('index.html','utf8').includes('אינה יכולה לקרוא'),'Privacy copy limits guarantee to stored cloud copy');
+ check(require('node:fs').readFileSync('index.html','utf8').includes('נתוני ההחלמה מוצפנים במכשיר לפני שהם נשמרים בגיבוי בענן')&&require('node:fs').readFileSync('index.html','utf8').includes('המידע במכשיר עצמו נשאר זמין לאפליקציה בזמן השימוש'),'Privacy copy describes encrypted cloud backup and local availability');
  check(!/type=["']password|signInWithPassword|resetPasswordForEmail|updateUser\(/.test(require('node:fs').readFileSync('index.html','utf8')),'No password input/login/reset introduced');
  return {passed:results.length,results};
 }

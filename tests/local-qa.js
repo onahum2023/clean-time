@@ -61,7 +61,7 @@ async (page) => {
   await page.locator('#iHistory').selectOption(oldDay);check(await page.locator('#iSummary').inputValue()==='יום קודם','Inventory revisits prior day');
   await go('journal');await page.locator('#jNew').click();await page.locator('#jText').fill('יומן בדיקה');await page.locator('#jDone').click();
   check((await read()).journal[0].text==='יומן בדיקה','Existing journal remains usable');
-  await page.locator('[data-tab="about"]').click();check((await page.locator('#about').innerText()).includes('מוצפנים במכשיר לפני הסנכרון'),'About discloses device encryption and recovery-key privacy model');
+  await page.locator('[data-tab="about"]').click();check((await page.locator('#about').innerText()).includes('מוצפנים במכשיר לפני שהם נשמרים בגיבוי בענן'),'About discloses device encryption and recovery-key privacy model');
   await go('meditation');
   await page.evaluate(()=>{
     window.gongEvents=[];
