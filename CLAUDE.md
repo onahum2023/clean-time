@@ -4,33 +4,41 @@ A small Hebrew (RTL) web app: a clean time counter for someone in NA recovery.
 
 - Single static `index.html` with inline CSS/JS. No build step. The only dependency is supabase-js for the optional cloud sync, loaded on demand from jsDelivr (see below).
 - `manifest.webmanifest` plus icons (`icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`) enable Android "Install app".
-- All user data lives in `localStorage` under the key `cleantime-he-v1`. Changing the shape of saved data needs a migration in `normalize()`, which merges saved data over a deep copy of `DEFAULT`. `load()` and cloud pulls both go through it. A version flag such as `linksV` must not go in `DEFAULT`, or the migration never runs.
+- All user data lives in `localStorage` under the key `cleantime-he-v1`. Changing the shape of saved data needs backward-compatible evolution in `normalize()`, which merges saved data over a deep copy of `DEFAULT`. `load()` and cloud pulls both go through it. A version flag such as `linksV` must not go in `DEFAULT`, or the migration never runs.
 - Every data change must go through `save()`, which stamps `updatedAt` and queues a cloud push. UI-only changes (counter `mode`) use `writeLocal()` instead.
 
-## Screens (bottom tabs: זמן נקי | תכנית | יומן | תודה | קריאות, plus settings from the gear icon)
+## Screens (bottom navigation: היום | כלים | אודות; settings from the gear)
 
-Tab labels are short so five fit at 360px. The full name is the screen heading.
-
-- **Counter** (`#counter`): clean time since `date`/`time`. Tapping it cycles `mode` (0 y/m/d, 1 days, 2 h/m/s).
-- **Planner** "רק להיום תהיה לי תכנית" (`#planner`): today's to-do list only. A new local date starts empty. A 1s timer and `visibilitychange` switch it to the new day after midnight without a reload.
-- **Journal** "ככה זה עכשיו" (`#journal`): entries newest first. The full-screen editor (`#jEditor`) autosaves while typing (debounced) and also saves on close, `pagehide` and when the app is hidden. Empty entries are discarded. It pushes a history state so Android back closes the editor instead of leaving the app.
-- **Gratitude** "הכרת תודה" (`#gratitude`), **Readings** "קריאות" (`#readings`), **Settings** (`#settings`, includes "מחיקת כל הנתונים", and an "אודות" block at the bottom with the disclaimer, tap-to-call help numbers, privacy summary, GitHub and feedback links, and the version line rendered from `APP_VERSION`).
+- **Onboarding** (`#onboarding`): guest start date and recovery type only; an equally available optional account path opens the existing magic-link UI. Existing users with a date go straight to Today.
+- **Today** (`#counter`): clean-time counter and direct links to plan, gratitude, meditation, Step 10 and resources. Tapping the counter still cycles `mode` (0 y/m/d, 1 days, 2 h/m/s).
+- **Tools** (`#tools`): all recovery tools, including the retained journal.
+- **Planner** (`#planner`): today's checklist; add/edit/delete/check. Past plans are accessible via a selector which appears only when there is history. Only today accepts new items. Local midnight starts a fresh day without removing old plans.
+- **Gratitude** (`#gratitude`): each item is an entry, grouped by calendar day, newest first. Inline edit preserves its timestamp and original day. Legacy entries derive the grouping day from `ts` without rewriting them.
+- **Meditation** (`#meditation`): deadline-based countdown, pause/resume/reset, `assets/gong.wav` at start/end. Ephemeral state, no statistics or persistence. Visibility/focus reconciles the deadline; browsers may defer screen-lock audio until resume.
+- **Inventory** (`#inventory`): daily summary autosaved synchronously via `save()`, with date/history access. Optional placeholder slots are collapsed by default. Final Step 10 content is pending; use stable replacement IDs and preserve old answers.
+- **Journal** (`#journal`): retained full-screen autosaving editor and Android back behavior.
+- **Resources** (`#readings`): existing editable recovery links.
+- **Personal links** (`#bookmarks`): initially empty flat list under Tools; explicit add/edit/save/cancel/delete, title + URL + optional note. Stored in `bookmarks` and included in the existing cloud JSON. Shared `safeLinkUrl()` permits only validated `https:` and numeric `tel:` URLs; unsafe imported links are retained but not clickable.
+- **About** (`#about`): normal navigation; purpose, free/noncommercial model, guest/optional account storage, existing help links and honest cloud privacy disclosure.
+- **Settings** (`#settings`): existing optional personal preferences, cloud login/sync, sign-out and deletion.
 - Bump `APP_VERSION` (`YYYY.MM.DD`, near the top of the script) with each user-facing change.
 
 ## Data keys (inside `cleantime-he-v1`)
 
 - `name`, `date` (YYYY-MM-DD), `time`, `from`, `color`, `mode`
-- `gratitude`: `[{id, text, ts}]`
+- `gratitude`: `[{id, text, ts, day?}]`; new items save their local calendar day; legacy timestamps remain unchanged.
+- `bookmarks`: `[{id, title, url, note?}]`; additive empty default, no resource-link migration. Counts as user data for first-sign-in conflicts and is refreshed by `applyRemote()`.
 - `links`: `[{id, title, url}]`, plus `linksV` (currently 2; not in `DEFAULT`)
-- `plans`: `{ "YYYY-MM-DD": [{id, text, done}] }`, keyed by the phone's local date. Past days are kept but only today is shown. A day's key is removed when its list becomes empty.
+- `plans`: `{ "YYYY-MM-DD": [{id, text, done}] }`, keyed by the phone's local date. Past days are kept and accessible from history. Only today accepts new items. A day's key is removed when its list becomes empty.
 - `journal`: `[{id, text, created, updated}]`, timestamps in ms
+- `inventory`: `{ "YYYY-MM-DD": {questionnaireVersion:"placeholder-v1", answers:{placeholder_1,placeholder_2,placeholder_3}, summary, created, updated} }`; additive default `{}`, included in the existing cloud JSON.
 - `updatedAt`: ms timestamp of the last `save()`, used for sync conflicts
 
 New ids come from `uid()`, which is unique even within one millisecond. Delete-by-id depends on this.
 
 ## Cloud backup & sync (optional)
 
-Login is optional; without it nothing loads from the network and the app is local only.
+Login is optional; without it the app requests only its own local assets. Assistant is self-hosted from assets/fonts; no remote font requests. There are no guest third-party requests.
 
 - Supabase project `aefhjgmiwgajdhgyhelm`, publishable key in `index.html`. supabase-js 2.117.2 from jsDelivr, pinned with an SRI hash. It loads only when a session exists, when returning from a magic link, or when "שליחת קישור" is tapped.
 - Login: email magic link (`signInWithOtp` with `emailRedirectTo: location.origin`). The client uses `flowType: 'implicit'` so a link opened in a different browser still works (PKCE would fail). On return, the token is read from the URL hash, the URL is cleaned and Settings opens. Link errors (`#error_code=otp_expired`) show a Hebrew message. Switching to a 6-digit code means adding a `verifyOtp({email, token, type:'email'})` step next to `sendLogin()`.
@@ -59,3 +67,7 @@ In Vercel, `clean-time.app` 308-redirects to `www.clean-time.app`, so `www` is t
 
 - Deployed on Vercel (project `clean-time`). Production: `https://www.clean-time.app` (`clean-time.app` redirects there). Every push to `main` redeploys production automatically.
 - The main user is on Android, so the UI must work well at 360px width. Check layout at that width before committing.
+
+## Local 1.0 review
+
+See `docs/UX-1.0-UAT.md` for the additive data evolution, product decisions, browser QA and remaining physical-device/live-auth checks. Malformed local JSON/top-level collection shapes are retained and protected against overwrite; storage write failures show a visible alert.

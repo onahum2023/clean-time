@@ -13,24 +13,44 @@ A free Hebrew app for people in recovery from addiction. It counts your clean ti
 
 **Clean time (זמן נקי).** Your clean time since the date you choose. Tap the counter to switch between years, months and days, total days, or hours, minutes and seconds.
 
-**Just for today (רק להיום תהיה לי תכנית).** A short list of what you want to do today. Each new day starts with a clean page.
+**Today (היום).** The clean-time counter and direct access to your daily recovery tools.
+
+**Daily plan (התכנית שלי להיום).** One checklist per calendar day. Add, edit, delete and check items. Each new day starts empty; previous plans remain accessible.
 
 **Journal (ככה זה עכשיו).** A private place to write how things are right now. It saves as you type.
 
-**Gratitude (הכרת תודה).** A growing list of things you're grateful for.
+**Gratitude (הכרת תודה).** Individual entries grouped by day, newest first. Add throughout the day, edit or delete, and revisit earlier days.
+
+**Meditation (מדיטציה).** A simple countdown with pause, resume, reset and a local gong at the start and end. No content library or history.
+
+**Daily inventory / Step 10 (חשבון נפש יומי / צעד 10).** An autosaved daily reflection with previous-day access. Final questions are pending; optional question slots are explicitly temporary.
+
+**About (אודות).** Purpose, guest mode, optional backup, and privacy, accessible from the main navigation.
 
 **Readings (קריאות).** Quick links to the daily reading, NA Israel meetings, literature and the NA info line. You can add your own links.
 
+**Personal links (הקישורים שלי).** A private, flat list under Tools. Save a title, an HTTPS or telephone URL, and an optional note; edit, delete or open each link. Guest bookmarks stay on the device; signed-in bookmarks use the existing personal backup.
+
 ## Your privacy
 
-- You don't need an account. Without one, everything stays on your phone.
-- If you choose to log in with your email, your data is backed up so you can use it on more than one device or restore it later.
+- You don't need an account. Guest onboarding asks only for a start date and recovery type. Without an account, data stays in this device's browser.
+- If you choose to log in with your email, your data is backed up so you can use it on more than one device or restore it later. The current cloud JSON is not end-to-end encrypted and is technically readable by the server administrator.
 - There are no ads, no analytics and nothing is sold or shared.
 - You can delete all your data at any time from the settings.
 
 ## How to use it
 
 Open the app in your phone's browser. On Android, choose "Install app" (התקנת אפליקציה) to add it to your home screen.
+
+## Local review
+
+No build or new dependencies are required. From the repository:
+
+```sh
+python3 -m http.server 8765 --bind 127.0.0.1
+```
+
+Open `http://127.0.0.1:8765`. See [the UX update and UAT report](docs/UX-1.0-UAT.md) for storage changes, automated QA, and remaining manual checks.
 
 ## Feedback
 

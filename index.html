@@ -9,59 +9,67 @@
 <meta name="apple-mobile-web-app-title" content="זמן נקי">
 <title>זמן נקי</title>
 <link rel="manifest" href="/manifest.webmanifest">
-<meta name="theme-color" content="#2E7D78">
+<meta name="theme-color" content="#F7F5F0">
 <link rel="icon" href="/icon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
+@font-face{
+  font-family:"Assistant";
+  src:url("/assets/fonts/Assistant-Variable.ttf") format("truetype");
+  font-style:normal;
+  font-weight:200 800;
+  font-display:swap;
+}
 :root{
-  --bg:#F2F5F7; --surface:#FFFFFF; --ink:#1B2830; --muted:#5D6E79; --line:#D9E1E6;
-  --accent:#2E7D78; --accent-soft:color-mix(in srgb,var(--accent) 12%,var(--bg));
-  --serif:"Frank Ruhl Libre","David Libre","Times New Roman",serif;
-  --sans:"Assistant","Segoe UI",Arial,sans-serif;
+  --bg:#F7F5F0; --surface:#FFFFFF; --ink:#26302D; --muted:#66736F; --line:#D9DED9;
+  --accent:#477E72; --accent-ink:var(--action);
+  --action:color-mix(in srgb,var(--accent) 84%,#00251E);
+  --accent-soft:color-mix(in srgb,var(--accent) 9%,var(--bg));
+  --sans:"Assistant",Arial,sans-serif;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#11181D; --surface:#19232A; --ink:#E6EDF0; --muted:#93A3AD; --line:#2A3740;
+    --bg:#191E1B; --surface:#232A26; --ink:#EDF0E9; --muted:#A6B3AA; --line:#3E4941;
+    --accent-ink:color-mix(in srgb,var(--accent) 55%,#FFFFFF);
     --accent-soft:color-mix(in srgb,var(--accent) 22%,var(--bg));
   }
 }
 :root[data-theme="dark"]{
-  --bg:#11181D; --surface:#19232A; --ink:#E6EDF0; --muted:#93A3AD; --line:#2A3740;
+  --bg:#191E1B; --surface:#232A26; --ink:#EDF0E9; --muted:#A6B3AA; --line:#3E4941;
+  --accent-ink:color-mix(in srgb,var(--accent) 55%,#FFFFFF);
   --accent-soft:color-mix(in srgb,var(--accent) 22%,var(--bg));
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 html,body{margin:0;height:100%}
-body{overscroll-behavior-y:none;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+body{overscroll-behavior-y:none;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-tap-highlight-color:transparent}
 button,input,textarea{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+:focus-visible{outline:2px solid var(--accent-ink);outline-offset:3px;border-radius:6px}
 
 .app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 20px calc(88px + env(safe-area-inset-bottom,0px))}
-header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 6px}
-header h1{font-family:var(--serif);font-weight:500;font-size:1.35rem;margin:0}
+header{display:flex;align-items:center;justify-content:space-between;padding:20px 0 10px}
+header h1{font-family:var(--sans);font-weight:600;font-size:1.35rem;margin:0}
 .icon-btn{background:none;border:0;padding:8px;border-radius:50%;cursor:pointer;color:var(--muted);display:grid;place-items:center}
 .icon-btn:hover{color:var(--ink)}
+.icon-btn{min-width:44px;min-height:44px}
 
 [hidden]{display:none!important}
 .row>.field{min-width:0}
 
 /* Counter */
 #counter{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px 0 12px}
-.from-chip{font-size:.95rem;color:var(--accent);background:var(--accent-soft);padding:4px 14px;border-radius:999px;margin-bottom:28px}
+.from-chip{font-weight:500;font-size:.9rem;color:var(--accent-ink);background:var(--accent-soft);padding:5px 14px;border-radius:12px;margin-bottom:28px}
 .count{background:none;border:0;cursor:pointer;padding:12px;display:flex;gap:22px;justify-content:center;align-items:flex-end;flex-wrap:wrap}
 .unit{display:flex;flex-direction:column;align-items:center;min-width:64px}
-.num{font-family:var(--serif);font-weight:300;line-height:.95;font-size:clamp(4rem,22vw,7.5rem);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.num{font-family:var(--sans);font-weight:600;line-height:.95;font-size:clamp(4rem,22vw,7.5rem);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .count.single .num{font-size:clamp(5rem,30vw,10rem)}
 .count.small .num{font-size:clamp(2.6rem,13vw,4.4rem)}
 .lbl{font-size:1rem;color:var(--muted);margin-top:6px}
 .since{color:var(--muted);margin-top:26px;font-size:1rem}
-.hint{color:var(--muted);font-size:.85rem;opacity:.75;margin-top:6px}
+.hint{color:var(--muted);font-size:.8rem;margin-top:8px}
 .dots{display:flex;gap:6px;margin-top:18px}
 .dots span{width:6px;height:6px;border-radius:50%;background:var(--line)}
 .dots span.on{background:var(--accent)}
@@ -70,15 +78,16 @@ header h1{font-family:var(--serif);font-weight:500;font-size:1.35rem;margin:0}
 @media (prefers-reduced-motion:reduce){.count.anim{animation:none}}
 
 /* Lists & forms */
-h2{font-family:var(--serif);font-weight:500;font-size:1.6rem;margin:18px 0 4px}
-.sub{color:var(--muted);margin:0 0 18px;font-size:.95rem}
+h2{font-family:var(--sans);font-weight:600;font-size:1.6rem;line-height:1.3;margin:20px 0 8px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:.9rem}
 .row{display:flex;gap:8px}
-.field{display:block;margin-bottom:16px}
-.field span{display:block;font-size:.9rem;color:var(--muted);margin-bottom:6px}
-input[type=text],input[type=date],input[type=time],input[type=url],input[type=email]{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-height:46px}
-input:focus{outline:none;border-color:var(--accent)}
-.btn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:600;cursor:pointer;white-space:nowrap;min-height:46px}
-.btn.ghost{background:none;color:var(--accent);padding:8px 4px;min-height:0}
+.field{display:block;margin-bottom:18px}
+.field span{display:block;font-size:.9rem;font-weight:500;color:var(--ink);margin-bottom:7px}
+input[type=text],input[type=date],input[type=time],input[type=url],input[type=email]{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px;min-height:46px}
+input:focus{border-color:var(--accent-ink)}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}
+.btn{background:var(--action);color:#fff;border:0;border-radius:12px;padding:11px 18px;font-weight:600;cursor:pointer;white-space:nowrap;min-height:46px}
+.btn.ghost{background:none;color:var(--accent-ink);padding:8px 4px;min-height:44px}
 .btn.danger{background:none;color:#B3413B;border:1px solid currentColor}
 ul.list{list-style:none;padding:0;margin:20px 0 0}
 ul.list li{display:flex;align-items:flex-start;gap:10px;padding:14px 0;border-bottom:1px solid var(--line)}
@@ -86,12 +95,14 @@ ul.list li .txt{flex:1}
 ul.list li time{display:block;font-size:.8rem;color:var(--muted)}
 .del{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.3rem;line-height:1;padding:2px 6px}
 .empty{color:var(--muted);padding:28px 0;text-align:center}
+.link-item > span{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:600}
+.link-item > span small{display:block;direction:ltr;text-align:right;font-weight:400;color:var(--muted);font-size:.8rem}
 .link-item a{color:var(--ink);text-decoration:none;font-weight:600;flex:1}
 .link-item a small{display:block;font-weight:400;color:var(--muted);font-size:.8rem;direction:ltr;text-align:right;overflow-wrap:anywhere}
 .link-edit{display:grid;gap:8px;flex:1}
 .note{font-size:.85rem;color:var(--muted);margin-top:16px}
 .swatches{display:flex;gap:12px;flex-wrap:wrap}
-.swatch{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;box-shadow:inset 0 0 0 2px var(--bg)}
+.swatch{width:44px;height:44px;border-radius:50%;border:3px solid transparent;cursor:pointer;box-shadow:inset 0 0 0 2px var(--bg)}
 .swatch[aria-checked=true]{border-color:var(--ink)}
 /* Planner */
 .plan-item .check{flex:none;width:26px;height:26px;margin-top:1px;border-radius:50%;border:2px solid var(--line);background:none;cursor:pointer;display:grid;place-items:center;color:#fff;padding:0}
@@ -114,7 +125,7 @@ ul.list li time{display:block;font-size:.8rem;color:var(--muted)}
 
 /* Sync */
 .sync{margin-top:28px;padding-top:20px;border-top:1px solid var(--line)}
-h3{font-family:var(--serif);font-weight:500;font-size:1.25rem;margin:0 0 4px}
+h3{font-family:var(--sans);font-weight:600;font-size:1.25rem;margin:0 0 4px}
 .sync .sub{margin-bottom:12px}
 .sync form{display:grid;gap:8px}
 .sync .who{margin:0 0 2px;overflow-wrap:anywhere}
@@ -122,7 +133,7 @@ h3{font-family:var(--serif);font-weight:500;font-size:1.25rem;margin:0 0 4px}
 .msg.err{color:#B3413B}
 .msg:empty{display:none}
 .modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px}
-.modal .box{background:var(--surface);border-radius:14px;padding:20px;width:100%;max-width:420px}
+.modal .box{background:var(--surface);border-radius:18px;padding:24px;width:100%;max-width:420px}
 .modal p{margin:6px 0 18px;color:var(--muted);white-space:pre-line}
 .modal .acts{display:grid;gap:8px}
 .modal .btn{white-space:normal;width:100%}
@@ -134,16 +145,105 @@ h3{font-family:var(--serif);font-weight:500;font-size:1.25rem;margin:0 0 4px}
 .about p{margin:0 0 8px}
 .about a{color:var(--accent)}
 .about .help{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:8px}
-.about .help a{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:46px;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;font-size:.95rem}
-.about .help b{color:var(--accent);direction:ltr;white-space:nowrap}
+.about .help a{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:46px;padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);text-decoration:none;font-size:.95rem}
+.about .help b{color:var(--accent-ink);direction:ltr;white-space:nowrap}
 .about .ver{margin-top:18px;font-size:.8rem;opacity:.8}
 
 /* Tabs */
-nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
 nav.tabs .inner{max-width:520px;margin:0 auto;display:flex}
 nav.tabs button{flex:1;min-width:0;background:none;border:0;padding:12px 2px 14px;cursor:pointer;color:var(--muted);font-size:.85rem;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:3px}
-nav.tabs button[aria-selected=true]{color:var(--accent);font-weight:700}
+nav.tabs button{position:relative;font-weight:600}
+nav.tabs button[aria-current=page]{color:var(--accent-ink);font-weight:600}
+nav.tabs button[aria-current=page]::before{content:"";position:absolute;top:0;width:28px;height:3px;background:var(--accent);border-radius:0 0 3px 3px}
 nav.tabs svg{width:22px;height:22px}
+/* Today and recovery tools */
+#counter{justify-content:flex-start;padding-top:18px}
+#counter .from-chip{margin-bottom:16px}
+#counter .since{margin-top:16px}
+#counter .count.single .num{font-size:clamp(4rem,24vw,7rem)}
+#counter .num{font-size:clamp(3rem,17vw,5.5rem)}
+.today-actions{width:100%;text-align:right;margin-top:32px}
+.today-actions h2{font-size:1.4rem;margin:0 0 12px}
+.tool-links{display:grid;gap:0;width:100%;padding:0 14px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.tool-links button:last-child{border-bottom:0}
+.tool-links button{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:54px;text-align:right;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer;padding:12px 4px;color:var(--ink)}
+.tool-links button::after{content:'‹';color:var(--accent-ink);font-size:1.5rem}
+.tool-links .primary{color:var(--accent-ink);font-weight:600}
+.del,.edit-btn{min-width:44px;min-height:44px;padding:8px;border:0;background:none;cursor:pointer;color:var(--muted)}
+.edit-btn{font-size:.85rem}
+.plan-item .check{width:44px;height:44px;border-radius:12px}
+.list .txt{white-space:pre-wrap;overflow-wrap:anywhere;min-width:0}
+.day-heading{border:0!important;padding:24px 0 4px!important}
+.day-heading h3{font-family:var(--sans);font-size:1rem;font-weight:600;margin:0}
+.inline-edit{display:flex;flex-wrap:wrap;gap:8px;width:100%}
+.inline-edit textarea{width:100%;min-height:90px}
+textarea,select{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font:inherit;color:inherit}
+textarea{resize:vertical;min-height:110px;line-height:1.7}
+summary{cursor:pointer;min-height:48px;padding:12px 0;color:var(--muted)}
+select{min-height:46px}
+#about{margin-top:0;padding-top:0;border:0;font-size:1rem;color:var(--ink)}
+#about h2{margin-bottom:16px}
+#about p{margin-bottom:14px}
+#meditation{text-align:center}
+.timer{font-size:clamp(3.5rem,22vw,6rem);font-variant-numeric:tabular-nums;line-height:1.3;margin:28px 0;direction:ltr}
+.timer-actions{display:flex;gap:12px;justify-content:center}
+.timer-actions .btn{min-width:100px}
+#onboarding{padding-top:24px}
+#onboarding .btn{width:100%;margin-bottom:12px;white-space:normal}
+.btn.secondary{background:var(--surface);color:var(--accent-ink);border:1px solid var(--line)}
+#onboarding h2{margin-top:0}
+#onboarding .sub{margin-bottom:24px}
+#storageMsg{margin:8px 0;color:#B3413B;font-size:.9rem}
+nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
+@media(max-width:380px){.app{padding-inline:16px}.count{gap:12px}.list li{gap:4px}.edit-btn{padding-inline:4px}}
+
+/* Personal page cues: decorative, compact, and independent of saved color preferences. */
+.page-heading{--page-tone:#647D69;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:76px;margin:16px 0 12px;padding:12px 16px;border-radius:20px 20px 8px 20px;background:color-mix(in srgb,var(--page-tone) 8%,var(--bg));text-align:start}
+.page-heading h2,#about .page-heading h2{margin:0;flex:1;min-width:0;font-size:1.5rem}
+.page-art{display:block;flex:none;width:44px;height:44px;color:color-mix(in srgb,var(--page-tone) 75%,var(--ink));fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#gratitude .page-heading{--page-tone:#7E8B68}
+#planner .page-heading{--page-tone:#78826A}
+#meditation .page-heading{--page-tone:#62877F}
+#meditation .page-art{width:64px;height:56px}
+#inventory .page-heading{--page-tone:#547571}
+#about .page-heading{--page-tone:#A08A6C}
+#readings .page-heading{--page-tone:#758174}
+#journal .page-heading{--page-tone:#8A8175}
+#counter .daybreak{width:68px;height:32px;margin:0 0 12px;color:color-mix(in srgb,#9B8564 70%,var(--ink))}
+#counter{padding-top:8px}
+#counter .today-actions{margin-top:26px}
+.readings-heading{display:flex;align-items:center;gap:12px}
+.readings-heading .page-heading{flex:1}
+#meditation .field{text-align:start}
+@media(max-width:380px){.page-heading{padding:12px;gap:8px}.page-heading h2{font-size:1.4rem}}
+
+/* Same home, different rooms: a single quiet motif confined to each page's top. */
+:is(#counter,#planner,#gratitude,#meditation,#inventory,#about,#readings,#journal){position:relative;isolation:isolate}
+.page-atmosphere{position:absolute;inset:0 0 auto;width:100%;height:170px;z-index:-1;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;color:var(--room-tone);opacity:.18;pointer-events:none;user-select:none;mask-image:linear-gradient(to bottom,#000 0px,#000 30px,transparent 90px)}
+#counter{--room-tone:#9B8564}
+#planner{--room-tone:#78826A}
+#gratitude{--room-tone:#7E8B68}
+#meditation{--room-tone:#62877F}
+#inventory{--room-tone:#547571}
+#about{--room-tone:#A08A6C}
+#readings{--room-tone:#758174}
+#journal{--room-tone:#8A8175}
+/* Translucent header surfaces let the corner linework read as part of the room. */
+.page-heading{background:color-mix(in srgb,var(--page-tone) 8%,transparent)}
+#counter .page-atmosphere{height:230px;opacity:.16;mask-image:linear-gradient(to bottom,#000 0%,#000 48%,transparent 100%)}
+
+/* Personal bookmarks use the shared form/list language, with wrapping at phone widths. */
+#bookmarks .page-heading{--page-tone:#758174}
+#bForm{margin-top:20px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+#bForm h3{margin:0 0 16px;font-size:1.15rem}
+#bUrlHelp{margin:-10px 0 18px}
+.bookmark-item{flex-wrap:wrap}
+.bookmark-content{flex:1 1 100%;min-width:0;overflow-wrap:anywhere}
+.bookmark-content a,.bookmark-content .blocked-link{display:block;font-weight:600;color:var(--ink);min-height:44px;padding-block:4px}
+.bookmark-content small{display:block;direction:ltr;text-align:start;font-weight:400;color:var(--muted);font-size:.85rem;overflow-wrap:anywhere}
+.bookmark-note{margin:8px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.bookmark-actions{display:flex;gap:16px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -155,19 +255,50 @@ nav.tabs svg{width:22px;height:22px}
     </button>
   </header>
 
+  <p id="storageMsg" role="alert" hidden></p>
+  <section id="onboarding" hidden>
+    <h2>ברוכים הבאים לזמן נקי</h2>
+    <p class="sub">מרחב פשוט וחינמי ליום שלך בהחלמה. אפשר להתחיל בלי חשבון.</p>
+    <form id="guestForm">
+      <label class="field"><span>תאריך תחילת הניקיון / ההחלמה</span><input type="date" id="oDate" required></label>
+      <label class="field"><span>החלמה מ־</span><select id="oFrom" required>
+        <option value="" disabled selected>בחירה</option><option>אלכוהול</option><option>סמים</option><option>עישון</option><option>אוכל</option><option>אחר</option>
+      </select></label>
+      <button class="btn" type="submit">המשך כאורח/ת</button>
+    </form>
+    <p class="sub">בלי מייל או טלפון. הנתונים נשמרים רק במכשיר ובדפדפן הזה.</p>
+    <button class="btn secondary" id="onboardingAccount">יצירת חשבון / התחברות</button>
+    <p class="note">חשבון הוא אפשרות לגיבוי ולסנכרון בין מכשירים. אפשר לבחור בו גם בהמשך.</p>
+    <button class="btn ghost" data-go="about">אודות זמן נקי ופרטיות</button>
+  </section>
+
   <!-- Counter -->
   <section id="counter">
+    <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M15 101h450M130 101a110 110 0 0 1 220 0M160 101a80 80 0 0 1 160 0M190 101a50 50 0 0 1 100 0M44 120h392M84 139h312"/></svg>
+    <svg class="page-art daybreak" viewBox="0 0 68 34" aria-hidden="true" focusable="false"><path d="M4 26h60M23 26a11 11 0 0 1 22 0M34 3v5M13 12l4 4m38-4-4 4M12 31h44"/></svg>
     <div class="from-chip" id="fromChip" hidden></div>
     <button class="count" id="count" aria-live="polite" aria-label="זמן נקי, הקשה משנה תצוגה"></button>
     <div class="dots" id="dots"><span></span><span></span><span></span></div>
     <div class="since" id="since"></div>
     <div class="hint">הקשה על המספר משנה תצוגה</div>
+    <div class="today-actions">
+      <h2>רק להיום</h2>
+      <div class="tool-links">
+        <button class="primary" data-go="planner">התכנית שלי להיום</button>
+        <button data-go="gratitude">הכרת תודה</button>
+        <button data-go="meditation">מדיטציה</button>
+        <button data-go="inventory">חשבון נפש יומי / צעד 10</button>
+        <button data-go="readings">משאבי החלמה</button>
+      </div>
+    </div>
   </section>
 
   <!-- Planner -->
   <section id="planner" hidden>
-    <h2>רק להיום תהיה לי תכנית</h2>
+    <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M30 160V120c0-24 76-20 76-50S55 45 55 10M17 128h27M85 83h28M43 27h26M136 28h36m-36 18h24M151 78h36m-36 18h24"/></svg>
+    <div class="page-heading"><h2>התכנית שלי להיום</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg></div>
     <p class="sub" id="pDate"></p>
+    <label class="field"><span>תכניות שמורות</span><select id="pHistory" aria-label="תכניות שמורות"></select></label>
     <form class="row" id="pForm" onsubmit="return false">
       <input type="text" id="pInput" placeholder="מה אני רוצה לעשות היום?" maxlength="200" aria-label="משימה חדשה">
       <button class="btn" id="pAdd" type="submit">הוספה</button>
@@ -177,7 +308,8 @@ nav.tabs svg{width:22px;height:22px}
 
   <!-- Journal -->
   <section id="journal" hidden>
-    <h2>ככה זה עכשיו</h2>
+    <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M23 16h101v121H23ZM40 16v121M51 40h56M51 61h56M51 82h43M51 103h50"/></svg>
+    <div class="page-heading"><h2>ככה זה עכשיו</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg></div>
     <p class="sub">מחשבות, תובנות, רעיונות וזיכרונות. רק בשבילך.</p>
     <button class="btn" id="jNew" style="width:100%">+ רשומה חדשה</button>
     <ul class="list" id="jList"></ul>
@@ -185,8 +317,9 @@ nav.tabs svg{width:22px;height:22px}
 
   <!-- Gratitude -->
   <section id="gratitude" hidden>
-    <h2>הכרת תודה</h2>
-    <p class="sub">דבר אחד קטן בכל יום מספיק.</p>
+    <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M22 152C24 110 44 71 92 24M44 101C9 93 7 62 15 40c28 11 41 30 29 61ZM58 79C59 45 78 24 110 18c0 31-19 52-52 61ZM27 132c35 0 58-17 61-40-34-1-56 13-61 40Z"/></svg>
+    <div class="page-heading"><h2>הכרת תודה</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg></div>
+    <p class="sub">אפשר להוסיף דברים קטנים לאורך היום, ולחזור לתודות מימים קודמים.</p>
     <form class="row" id="gForm" onsubmit="return false">
       <input type="text" id="gInput" placeholder="על מה אני מודה היום?" maxlength="200" aria-label="פריט חדש">
       <button class="btn" id="gAdd" type="submit">הוספה</button>
@@ -196,8 +329,9 @@ nav.tabs svg{width:22px;height:22px}
 
   <!-- Readings -->
   <section id="readings" hidden>
-    <div style="display:flex;align-items:baseline;justify-content:space-between">
-      <h2>קריאות</h2>
+    <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M15 19Q65 8 110 30V126Q65 104 15 117ZM110 30q28-15 57-15M110 47q28-15 57-15M110 64q28-15 57-15M27 39q34-6 69 5M27 57q34-6 69 5M27 75q34-6 69 5M27 93q34-6 69 5"/></svg>
+    <div class="readings-heading">
+      <div class="page-heading"><h2>משאבי החלמה</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M22 13c-5-4-11-4-16-3v23c6-1 11 0 16 3 5-3 10-4 16-3V10c-5-1-11-1-16 3Zm0 0v23M11 17c3 0 5 0 7 1m8 0c2-1 4-1 7-1"/></svg></div>
       <button class="btn ghost" id="editLinks">עריכה</button>
     </div>
     <p class="sub">קישורים לקריאה היומית ולקריאות הפתיחה של הפגישה.</p>
@@ -206,11 +340,63 @@ nav.tabs svg{width:22px;height:22px}
     <p class="note">הקישורים מהאתר הרשמי של מכורים אנונימיים ישראל. אפשר לשנות או להוסיף דרך "עריכה".</p>
   </section>
 
+  <section id="bookmarks" hidden>
+    <div class="page-heading"><h2>הקישורים שלי</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 8h18v29l-9-6-9 6Z"/></svg></div>
+    <p class="sub">קישורים ששמרת לעצמך. נשמרים במכשיר, ובחשבון מחובר גם בגיבוי האישי.</p>
+    <button class="btn" id="bNew">+ הוספת קישור</button>
+    <form id="bForm" hidden>
+      <h3 id="bFormTitle">הוספת קישור</h3>
+      <label class="field"><span>כותרת</span><input id="bTitle" type="text" required maxlength="200"></label>
+      <label class="field"><span>כתובת</span><input id="bUrl" type="text" inputmode="url" dir="ltr" required maxlength="2048" placeholder="https://" aria-describedby="bUrlHelp"></label>
+      <p class="note" id="bUrlHelp">אפשר לשמור כתובת https:// או קישור טלפון tel: בלבד.</p>
+      <label class="field"><span>הערה (לא חובה)</span><textarea id="bNote" maxlength="2000" rows="3"></textarea></label>
+      <p class="note" id="bError" role="alert" hidden></p>
+      <div class="bookmark-actions"><button class="btn" type="submit">שמירה</button><button class="btn ghost" id="bCancel" type="button">ביטול</button></div>
+    </form>
+    <ul class="list" id="bList"></ul>
+  </section>
+
+  <section id="tools" hidden>
+    <h2>כלים להחלמה</h2>
+    <p class="sub">מה שמתאים לך עכשיו.</p>
+    <div class="tool-links">
+      <button data-go="planner">התכנית שלי להיום</button><button data-go="gratitude">הכרת תודה</button>
+      <button data-go="meditation">מדיטציה</button><button data-go="inventory">חשבון נפש יומי / צעד 10</button>
+      <button data-go="journal">יומן אישי</button><button data-go="readings">משאבי החלמה</button>
+      <button data-go="bookmarks">הקישורים שלי</button>
+    </div>
+  </section>
+
+  <section id="meditation" hidden>
+    <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M-22 72a62 42 0 1 0 124 0 62 42 0 1 0-124 0M-44 72a84 60 0 1 0 168 0 84 60 0 1 0-168 0M-66 72a106 78 0 1 0 212 0 106 78 0 1 0-212 0"/></svg>
+    <div class="page-heading"><h2>מדיטציה</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle cx="22" cy="9" r="4"/><path d="M17 18c0-4 10-4 10 0l3 8 7 2M17 18l-3 8-7 2m12-2c-5 0-13 4-12 8 1 4 13 1 19-3m-1-5c5 0 13 4 12 8-1 4-13 1-19-3m1-11 1 6m5-6-1 6"/></svg></div><p class="sub">כמה דקות של שקט.</p>
+    <label class="field"><span>משך בדקות</span><select id="mDuration">
+      <option value="1">1</option><option value="3">3</option><option value="5" selected>5</option>
+      <option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="30">30</option>
+    </select></label>
+    <div class="timer" id="mCountdown" role="timer" aria-label="זמן שנותר">05:00</div>
+    <div class="timer-actions"><button class="btn" id="mStart">התחלה</button><button class="btn secondary" id="mReset">איפוס</button></div>
+    <p class="msg" id="mStatus" role="status"></p>
+    <p class="note">גונג בפתיחה ובסיום. כשהמסך נעול, הצליל עשוי להישמע רק בחזרה לאפליקציה.</p>
+  </section>
+
+  <section id="inventory" hidden>
+    <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M91 8C46 24 38 66 77 90 29 101 1 64 17 34M18 112h107M30 127h83M44 142h55"/></svg>
+    <div class="page-heading"><h2>חשבון נפש יומי / צעד 10</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg></div>
+    <p class="sub">רגע להתבוננות בסוף היום. השאלות הסופיות עדיין בהכנה; השדות הזמניים הם רשות.</p>
+    <label class="field"><span>יום ההתבוננות</span><input type="date" id="iDay" required></label>
+    <label class="field"><span>ימים שמורים</span><select id="iHistory" aria-label="ימי חשבון נפש שמורים"></select></label>
+    <label class="field"><span>סיכום היום / מחשבות לסוף היום</span><textarea id="iSummary" placeholder="אפשר לכתוב כאן כמה מילים..."></textarea></label>
+    <details id="iPlaceholders"><summary>שדות לשאלות עתידיות (רשות)</summary><div id="iQuestions"></div></details>
+    <p class="msg" id="iStatus" role="status"></p>
+  </section>
+
   <!-- Settings -->
   <section id="settings" hidden>
     <h2 id="setTitle">הגדרות</h2>
     <p class="sub" id="setSub">הכול נשמר רק במכשיר הזה.</p>
-    <label class="field"><span>שם</span><input type="text" id="sName" maxlength="40"></label>
+    <button class="btn ghost" id="backToOnboarding" hidden>חזרה להתחלה ללא חשבון</button>
+    <label class="field"><span>שם (לא חובה)</span><input type="text" id="sName" maxlength="40"></label>
     <div class="row">
       <label class="field" style="flex:2"><span>תאריך הניקיון</span><input type="date" id="sDate"></label>
       <label class="field" style="flex:1"><span>שעה (לא חובה)</span><input type="time" id="sTime"></label>
@@ -240,9 +426,12 @@ nav.tabs svg{width:22px;height:22px}
     <div class="settings-foot" id="settingsFoot">
       <button class="btn danger" id="reset">מחיקת כל הנתונים</button>
     </div>
-    <div class="about" id="about">
-      <h3>אודות</h3>
-      <p>זמן נקי היא אפליקציה חינמית למי שנמצא/ת בהחלמה. בלי פרסומות ובלי מעקב.</p>
+  </section>
+  <section class="about" id="about" hidden>
+    <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M-12 134Q36 43 117 17M-4 152Q40 63 129 35M55 49l-5-13m31-2 2-14m21 16 10-10M33 69l-12-7"/></svg>
+      <div class="page-heading"><h2>אודות זמן נקי</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M8 27h7l6-3c3-1 5 3 2 5l-5 2m-3-4 1-6c1-3 4-2 4 0v4m3 4 8-4c4-2 6 2 3 4l-11 7H8"/><path d="M28 9v5m-7 0 3 3m11-3-3 3"/></svg></div>
+      <p>זמן נקי היא מרחב פשוט למי שבהחלמה: לזכור את הדרך שעברת, ולהיעזר בכלים קטנים להיום.</p>
+      <p>האפליקציה חינמית, בלי פרסומות, בלי מעקב ובלי לחץ מסחרי.</p>
       <p>האפליקציה אינה קשורה לאנ-איי (מכורים אנונימיים) ואינה מטעמם. הקישורים לאנ-איי ישראל מופיעים לנוחות בלבד.</p>
       <p>זו לא אפליקציה רפואית ולא שירות חירום.<br>צריכים עזרה עכשיו?</p>
       <ul class="help">
@@ -251,13 +440,12 @@ nav.tabs svg{width:22px;height:22px}
         <li><a href="tel:101">מד"א <b>101</b></a></li>
       </ul>
       <h4>פרטיות</h4>
-      <p>בלי התחברות, כל הנתונים נשמרים רק בטלפון הזה.<br>עם התחברות, הנתונים מגובים בשרת כדי שאפשר יהיה לשחזר אותם או להשתמש בכמה מכשירים. כרגע הגיבוי אינו מוצפן, ולכן מי שמנהל את השרת יכול טכנית לראות אותו.<br>אפשר למחוק את כל הנתונים בכל רגע, כאן בהגדרות.</p>
+      <p>בלי התחברות, כל הנתונים נשמרים רק במכשיר ובדפדפן הזה.<br>עם התחברות, הנתונים מגובים בשרת כדי שאפשר יהיה לשחזר אותם או להשתמש בכמה מכשירים. כרגע הגיבוי אינו מוצפן, ולכן מי שמנהל את השרת יכול טכנית לראות אותו.<br>אפשר למחוק את כל הנתונים בכל רגע, דרך ההגדרות.</p>
       <h4>קוד פתוח</h4>
       <p>הקוד של האפליקציה פתוח לכולם ב-<a href="https://github.com/onahum2023/clean-time" target="_blank" rel="noopener">GitHub</a>.</p>
       <h4>משוב</h4>
       <p>נשמח לשמוע מה עובד ומה חסר: <a href="mailto:onahum@gmail.com" dir="ltr">onahum@gmail.com</a></p>
       <p class="ver" id="appVer"></p>
-    </div>
   </section>
 </div>
 
@@ -276,27 +464,20 @@ nav.tabs svg{width:22px;height:22px}
 </div>
 
 <nav class="tabs" id="tabs">
-  <div class="inner" role="tablist">
-    <button role="tab" data-tab="counter" aria-selected="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>זמן נקי</button>
-    <button role="tab" data-tab="planner" aria-selected="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4.5" width="14" height="16.5" rx="2"/><path d="M9.5 3h5v3h-5zM9 13l2 2 4-4"/></svg>תכנית</button>
-    <button role="tab" data-tab="journal" aria-selected="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4zM13.5 6.5l4 4"/></svg>יומן</button>
-    <button role="tab" data-tab="gratitude" aria-selected="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>תודה</button>
-    <button role="tab" data-tab="readings" aria-selected="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6zM12 6v14.5"/></svg>קריאות</button>
+  <div class="inner" aria-label="ניווט ראשי">
+    <button data-tab="counter" aria-current="page">היום</button>
+    <button data-tab="tools">כלים</button>
+    <button data-tab="about">אודות</button>
   </div>
 </nav>
 
 <script>
 (function(){
-const APP_VERSION='2026.10.03.2';
+const APP_VERSION='2026.10.05.5';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
-const COLORS={teal:'#2E7D78',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
-const DEFAULT={name:'',date:'',time:'',from:'',color:'teal',mode:0,gratitude:[],plans:{},journal:[],
+const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
+const DEFAULT={name:'',date:'',time:'',from:'',color:'teal',mode:0,gratitude:[],plans:{},journal:[],inventory:{},bookmarks:[],
   links:[
     {id:1,title:'רק להיום',url:'https://www.naisrael.org.il/just-for-today/'},
     {id:2,title:'פגישות אנ-איי',url:'https://www.naisrael.org.il/meetings/'},
@@ -306,12 +487,19 @@ const DEFAULT={name:'',date:'',time:'',from:'',color:'teal',mode:0,gratitude:[],
   ]};
 /* linksV is intentionally not in DEFAULT, so saved data without it gets migrated */
 const OLD_LINKS=['https://jftna.org/jft/','https://spadna.org/'];
+let storageError='';
 let S=load();
 
 /* merges saved data (local or from the cloud) over DEFAULT and migrates older shapes */
 function normalize(saved){
   /* deep copy so new keys never share references with DEFAULT */
+  if(!saved||typeof saved!=='object'||Array.isArray(saved))throw new Error('Invalid saved state');
   const d=Object.assign(JSON.parse(JSON.stringify(DEFAULT)),JSON.parse(JSON.stringify(saved)));
+  // Additive evolution: never rewrite gratitude timestamps, plan days, or unknown fields.
+  for(const key of ['gratitude','journal','links','bookmarks'])if(!Array.isArray(d[key]))throw new Error('Invalid '+key);
+  for(const key of ['plans','inventory'])if(!d[key]||typeof d[key]!=='object'||Array.isArray(d[key]))throw new Error('Invalid '+key);
+  if(d.bookmarks.some(b=>!b||typeof b!=='object'||Array.isArray(b)||!['string','number'].includes(typeof b.id)||typeof b.title!=='string'||typeof b.url!=='string'||(b.note!==undefined&&typeof b.note!=='string')))throw new Error('Invalid bookmark');
+  if(Object.values(d.plans).some(items=>!Array.isArray(items)))throw new Error('Invalid plan day');
   if(!d.linksV){
     const defs=JSON.parse(JSON.stringify(DEFAULT.links)), defUrls=defs.map(l=>l.url);
     const own=(d.links||[]).filter(l=>!OLD_LINKS.includes(l.url)&&!defUrls.includes(l.url))
@@ -328,28 +516,53 @@ function load(){
       if(!raw.linksV)writeLocal(d);
       return d;
     }
-  }catch(e){}
+  }catch(e){storageError='לא הצלחנו לקרוא את הנתונים השמורים. הם לא הוחלפו. יש לגבות אותם לפני המשך שימוש.';}
   return JSON.parse(JSON.stringify(DEFAULT));
 }
-function writeLocal(d){try{localStorage.setItem(KEY,JSON.stringify(d||S));}catch(e){}}
+function storageNotice(text){
+  const el=document.getElementById('storageMsg');if(el){el.textContent=text;el.hidden=!text;}
+}
+function writeLocal(d){
+  // A malformed original is left untouched, rather than overwritten by defaults.
+  if(storageError){storageNotice(storageError);return false;}
+  try{localStorage.setItem(KEY,JSON.stringify(d||S));storageNotice('');return true;}
+  catch(e){storageNotice('השינוי לא נשמר במכשיר. ייתכן שהאחסון מלא או חסום.');return false;}
+}
 /* every data change goes through save(): it stamps updatedAt and queues a cloud push */
-function save(){S.updatedAt=Date.now();writeLocal();queuePush();}
+function save(){S.updatedAt=Date.now();const ok=writeLocal();if(ok)queuePush();return ok;}
 const $=id=>document.getElementById(id);
 $('appVer').textContent='גרסה '+APP_VERSION;
 
 /* ---------- Tabs ---------- */
 let current='counter';
+const SCREENS=['counter','planner','journal','gratitude','readings','bookmarks','settings','tools','about','onboarding','meditation','inventory'];
 function show(tab){
+  if(tab==='counter'&&!S.date)tab='onboarding';
   current=tab;
-  ['counter','planner','journal','gratitude','readings','settings'].forEach(t=>$(t).hidden=(t!==tab));
-  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
+  SCREENS.forEach(t=>$(t).hidden=(t!==tab));
+  const active=tab==='about'?'about':['counter','onboarding','settings'].includes(tab)?'counter':'tools';
+  document.querySelectorAll('nav.tabs button').forEach(b=>{
+    if(b.dataset.tab===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+  });
   if(tab==='settings')fillSettings();else applyColor();
   if(tab==='counter')render();
-  if(tab==='planner')renderP();
+  if(tab==='planner'){planSelected=todayKey();renderP();}
+  if(tab==='gratitude')renderG();
+  if(tab==='bookmarks')renderBookmarks();
+  if(tab==='inventory')openInventory(todayKey());
+  if(tab==='meditation')renderTimer();
   window.scrollTo(0,0);
 }
-document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.tab));
-$('openSettings').onclick=()=>show(current==='settings'&&S.date?'counter':'settings');
+document.querySelectorAll('[data-tab],[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.tab||b.dataset.go));
+$('openSettings').onclick=()=>show(current==='settings'?(S.date?'counter':'onboarding'):'settings');
+$('onboardingAccount').onclick=()=>{show('settings');$('sync').scrollIntoView({block:'start'});$('lEmail').focus();};
+$('backToOnboarding').onclick=()=>show('onboarding');
+$('guestForm').onsubmit=ev=>{
+  ev.preventDefault();
+  if(!$('guestForm').reportValidity())return;
+  S.date=$('oDate').value;S.from=$('oFrom').value;
+  if(save())show('counter');
+};
 
 /* ---------- Theme ---------- */
 function applyColor(){document.documentElement.style.setProperty('--accent',COLORS[S.color]||COLORS.teal);}
@@ -410,55 +623,147 @@ $('count').onclick=()=>{
   S.mode=(S.mode+1)%3; writeLocal(); render(); /* UI-only: no updatedAt, no sync */
   const c=$('count'); c.classList.remove('anim'); void c.offsetWidth; c.classList.add('anim');
 };
-setInterval(()=>{if(current==='counter')render();if(planDay!==todayKey())renderP();},1000);
+setInterval(()=>{
+  if(current==='counter')render();
+  if(planDay!==todayKey()){renderP();renderG();$('oDate').max=todayKey();$('sDate').max=todayKey();}
+},1000);
 
 /* ---------- Gratitude ---------- */
+function actionButton(label,handler,cls='edit-btn'){
+  const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=label;b.onclick=handler;return b;
+}
+function inlineEdit(li,item,refresh){
+  const form=document.createElement('form');form.className='inline-edit';
+  const input=document.createElement('textarea');input.value=item.text;input.setAttribute('aria-label','עריכת טקסט');
+  const submit=actionButton('שמירה',()=>{} ,'btn');submit.type='submit';
+  form.append(input,submit,actionButton('ביטול',refresh));
+  form.onsubmit=ev=>{ev.preventDefault();if(!input.value.trim()){input.focus();return;}item.text=input.value.trim();save();refresh();};
+  li.replaceChildren(form);input.focus();
+}
+const dayKey=ts=>{const n=new Date(ts);return Number.isNaN(n.getTime())?'':n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());};
+const dateLabel=key=>key===todayKey()?'היום':new Date(key+'T12:00:00').toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 function renderG(){
-  const ul=$('gList');
-  if(!S.gratitude.length){ul.innerHTML='<li class="empty" style="border:0;display:block">עוד אין כאן כלום. אפשר להתחיל מדבר אחד קטן.</li>';return;}
-  ul.innerHTML='';
-  S.gratitude.slice().sort((a,b)=>b.ts-a.ts).forEach(g=>{
-    const li=document.createElement('li');
-    const t=document.createElement('div');t.className='txt';t.textContent=g.text;
-    const tm=document.createElement('time');tm.textContent=new Date(g.ts).toLocaleDateString('he-IL',{day:'numeric',month:'long'});t.appendChild(tm);
-    const del=document.createElement('button');del.className='del';del.innerHTML='&times;';del.setAttribute('aria-label','מחיקה');
-    del.onclick=()=>{S.gratitude=S.gratitude.filter(x=>x.id!==g.id);save();renderG();};
-    li.append(t,del);ul.appendChild(li);
+  const ul=$('gList');ul.replaceChildren();
+  const groups=new Map([[todayKey(),[]]]);
+  S.gratitude.slice().sort((a,b)=>(b.ts||0)-(a.ts||0)||String(b.id).localeCompare(String(a.id),undefined,{numeric:true})).forEach(g=>{
+    const key=g.day||dayKey(g.ts);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(g);
+  });
+  const keys=[todayKey(),...Array.from(groups.keys()).filter(k=>k!==todayKey()).sort().reverse()];
+  keys.forEach(key=>{
+    const head=document.createElement('li');head.className='day-heading';const h=document.createElement('h3');h.textContent=key?dateLabel(key):'תודות ללא תאריך';head.append(h);ul.append(head);
+    if(!groups.get(key).length){const empty=document.createElement('li');empty.className='empty';empty.textContent='אפשר להתחיל מדבר אחד קטן.';ul.append(empty);}
+    groups.get(key).forEach(g=>{
+      const li=document.createElement('li'),t=document.createElement('div');t.className='txt';t.textContent=g.text;
+      if(dayKey(g.ts)){
+        const tm=document.createElement('time');tm.dateTime=new Date(g.ts).toISOString();tm.textContent=new Date(g.ts).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});t.append(tm);
+      }
+      li.append(t,actionButton('עריכה',()=>inlineEdit(li,g,renderG)),actionButton('מחיקה',()=>{
+        if(!confirm('למחוק את התודה?'))return;S.gratitude=S.gratitude.filter(x=>x!==g);save();renderG();
+      }));ul.append(li);
+    });
   });
 }
-$('gAdd').onclick=()=>{
-  const v=$('gInput').value.trim(); if(!v)return;
-  S.gratitude.push({id:Date.now(),text:v,ts:Date.now()}); save(); $('gInput').value=''; renderG();
+$('gForm').onsubmit=ev=>{
+  ev.preventDefault();const v=$('gInput').value.trim();if(!v)return;
+  S.gratitude.push({id:uid(),text:v,ts:Date.now(),day:todayKey()});save();$('gInput').value='';renderG();$('gInput').focus();
 };
 
 /* ---------- Planner ---------- */
 let lastId=0;
 const uid=()=>(lastId=Math.max(Date.now(),lastId+1));
-const todayKey=()=>{const n=new Date();return n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());};
-let planDay='';
+const todayKey=()=>dayKey(Date.now());
+let planDay='',planSelected='';
 function renderP(){
-  planDay=todayKey();
-  $('pDate').textContent=new Date().toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'long'});
-  const items=S.plans[planDay]||[], ul=$('pList');
+  const previous=planDay;planDay=todayKey();
+  if(!planSelected||planSelected===previous)planSelected=planDay;
+  if(planSelected!==planDay&&!S.plans[planSelected])planSelected=planDay;
+  const selected=planSelected;
+  const history=$('pHistory');history.replaceChildren();
+  [planDay,...Object.keys(S.plans).filter(k=>k!==planDay).sort().reverse()].forEach(k=>{
+    const o=document.createElement('option');o.value=k;o.textContent=dateLabel(k);history.append(o);
+  });history.value=selected;history.parentElement.hidden=history.options.length<2;
+  $('pDate').textContent=dateLabel(selected);
+  $('pForm').hidden=selected!==planDay;
+  const items=S.plans[selected]||[],ul=$('pList');ul.replaceChildren();
   if(!items.length){ul.innerHTML='<li class="empty" style="border:0;display:block">מה דבר אחד שאני רוצה לעשות היום? אפשר להתחיל ממשהו קטן.</li>';return;}
-  ul.innerHTML='';
   items.forEach(p=>{
     const li=document.createElement('li');li.className='plan-item'+(p.done?' done':'');
-    const toggle=()=>{p.done=!p.done;save();renderP();};
-    const ck=document.createElement('button');ck.className='check';ck.setAttribute('role','checkbox');ck.setAttribute('aria-checked',p.done);ck.setAttribute('aria-label',p.text);
+    const ck=document.createElement('button');ck.className='check';ck.setAttribute('role','checkbox');ck.setAttribute('aria-checked',!!p.done);ck.setAttribute('aria-label',p.text);
     ck.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-    ck.onclick=toggle;
-    const t=document.createElement('div');t.className='txt';t.textContent=p.text;t.onclick=toggle;
-    const del=document.createElement('button');del.className='del';del.innerHTML='&times;';del.setAttribute('aria-label','מחיקה');
-    del.onclick=()=>{const k=planDay;S.plans[k]=(S.plans[k]||[]).filter(x=>x.id!==p.id);if(!S.plans[k].length)delete S.plans[k];save();renderP();};
-    li.append(ck,t,del);ul.appendChild(li);
+    ck.onclick=()=>{p.done=!p.done;save();renderP();};
+    const t=document.createElement('div');t.className='txt';t.textContent=p.text;
+    li.append(ck,t,actionButton('עריכה',()=>inlineEdit(li,p,renderP)),actionButton('מחיקה',()=>{
+      if(!confirm('למחוק את הפריט מהתכנית?'))return;
+      S.plans[selected]=(S.plans[selected]||[]).filter(x=>x!==p);if(!S.plans[selected].length)delete S.plans[selected];save();renderP();
+    }));ul.append(li);
   });
 }
-$('pAdd').onclick=()=>{
-  const v=$('pInput').value.trim(); if(!v)return;
-  const k=todayKey(); (S.plans[k]=S.plans[k]||[]).push({id:uid(),text:v,done:false});
-  save(); $('pInput').value=''; renderP();
+$('pHistory').onchange=()=>{planSelected=$('pHistory').value;renderP();};
+$('pForm').onsubmit=ev=>{
+  ev.preventDefault();const v=$('pInput').value.trim();if(!v)return;
+  const k=todayKey();(S.plans[k]=S.plans[k]||[]).push({id:uid(),text:v,done:false});
+  planSelected=k;save();$('pInput').value='';renderP();$('pInput').focus();
 };
+
+/* ---------- Step 10: temporary slots, final questions pending ---------- */
+const INVENTORY_SLOTS=['placeholder_1','placeholder_2','placeholder_3'];
+let inventoryDay='';
+function inventoryHistory(){
+  const select=$('iHistory');select.replaceChildren();
+  const keys=Array.from(new Set([todayKey(),inventoryDay,...Object.keys(S.inventory)])).sort().reverse();
+  keys.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=dateLabel(k);select.append(o);});select.value=inventoryDay;select.parentElement.hidden=keys.length<2;
+}
+function openInventory(key){
+  inventoryDay=key;$('iDay').value=key;$('iDay').max=todayKey();
+  const entry=S.inventory[key]||{};const box=$('iQuestions');box.replaceChildren();
+  INVENTORY_SLOTS.forEach((id,index)=>{
+    const label=document.createElement('label');label.className='field';const title=document.createElement('span');
+    title.textContent='שאלה זמנית '+(index+1)+' — הנוסח יתווסף בהמשך (רשות)';
+    const input=document.createElement('textarea');input.dataset.slot=id;input.value=(entry.answers||{})[id]||'';input.oninput=saveInventory;
+    label.append(title,input);box.append(label);
+  });
+  $('iSummary').value=entry.summary||'';$('iStatus').textContent=entry.updated?'נשמר במכשיר':'';inventoryHistory();
+}
+function saveInventory(){
+  const answers={};document.querySelectorAll('[data-slot]').forEach(el=>answers[el.dataset.slot]=el.value);
+  const existing=S.inventory[inventoryDay]||{};
+  // Retain unknown fields and future question answers when revisiting a day.
+  S.inventory[inventoryDay]={...existing,questionnaireVersion:existing.questionnaireVersion||'placeholder-v1',answers:{...(existing.answers||{}),...answers},summary:$('iSummary').value,created:existing.created||Date.now(),updated:Date.now()};
+  const ok=save();$('iStatus').textContent=ok?'נשמר במכשיר':'לא נשמר במכשיר';inventoryHistory();
+}
+$('iSummary').oninput=saveInventory;
+$('iDay').onchange=()=>{if($('iDay').value&&$('iDay').checkValidity())openInventory($('iDay').value);else $('iDay').value=inventoryDay;};
+$('iHistory').onchange=()=>openInventory($('iHistory').value);
+
+/* ---------- Meditation: wall-clock deadline; ephemeral, no history ---------- */
+const gong=new Audio('assets/gong.wav');gong.preload='auto';
+let mEnd=0,mRemaining=5*60000,mState='idle';
+function playGong(){
+  gong.currentTime=0;gong.play().catch(()=>{$('mStatus').textContent='הצליל לא זמין בדפדפן הזה. הטיימר ממשיך כרגיל.';});
+}
+function renderTimer(){
+  if(mState==='running'){
+    mRemaining=Math.max(0,mEnd-Date.now());
+    if(!mRemaining){mState='finished';playGong();$('mStatus').textContent='הזמן הסתיים.';}
+  }
+  const secs=Math.ceil(mRemaining/1000);$('mCountdown').textContent=pad(Math.floor(secs/60))+':'+pad(secs%60);
+  $('mStart').textContent=mState==='running'?'השהיה':mState==='paused'?'המשך':'התחלה';
+  $('mDuration').disabled=mState==='running'||mState==='paused';
+}
+$('mStart').onclick=()=>{
+  const wasRunning=mState==='running';renderTimer();
+  if(wasRunning&&mState==='finished')return;
+  if(mState==='running'){mRemaining=Math.max(0,mEnd-Date.now());mState='paused';$('mStatus').textContent='מושהה';}
+  else{
+    if(mState!=='paused'){mRemaining=Number($('mDuration').value)*60000;playGong();}
+    mEnd=Date.now()+mRemaining;mState='running';$('mStatus').textContent='';
+  }renderTimer();
+};
+function resetTimer(){mState='idle';mEnd=0;mRemaining=Number($('mDuration').value)*60000;gong.pause();gong.currentTime=0;$('mStatus').textContent='';renderTimer();}
+$('mReset').onclick=resetTimer;$('mDuration').onchange=resetTimer;
+setInterval(renderTimer,250);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderTimer();});
+window.addEventListener('focus',renderTimer);
 
 /* ---------- Journal ---------- */
 const fmtWhen=ts=>new Date(ts).toLocaleString('he-IL',{weekday:'short',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
@@ -495,7 +800,7 @@ function commitJ(){
   if(i<0||t!==e.text){
     e.text=t; e.updated=Date.now();
     if(i<0)S.journal.push(e);
-    jCur=e; save(); $('jSaved').textContent='נשמר';
+    jCur=e; $('jSaved').textContent=save()?'נשמר':'לא נשמר במכשיר';
   }
 }
 function closeJ(){commitJ();jCur=null;$('jEditor').hidden=true;renderJ();}
@@ -512,6 +817,73 @@ window.addEventListener('popstate',()=>{if(!$('jEditor').hidden)closeJ();});
 window.addEventListener('pagehide',commitJ);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)commitJ();else if(planDay!==todayKey())renderP();});
 
+/* ---------- Safe links and private personal bookmarks ---------- */
+const LINK_ERROR='יש להזין כתובת https:// תקינה או מספר טלפון אחרי tel:.';
+function safeLinkUrl(value){
+  if(typeof value!=='string')return null;
+  const raw=value.trim();
+  // Reject controls and ambiguous URL spellings instead of letting URL repair them.
+  if(!raw||/[\u0000-\u0020\u007f\\]/.test(raw))return null;
+  if(/^tel:/i.test(raw))return /^tel:\+?[0-9().-]+$/i.test(raw)&&/[0-9]/.test(raw.slice(4))?raw:null;
+  if(!/^https:\/\//i.test(raw))return null;
+  try{const url=new URL(raw);return url.protocol==='https:'&&url.hostname&&!url.username&&!url.password?url.href:null;}catch(e){return null;}
+}
+function linkTarget(anchor,url){
+  anchor.href=url;
+  if(/^https:/i.test(url)){anchor.target='_blank';anchor.rel='noopener noreferrer';}
+}
+let bookmarkEditId=null;
+function closeBookmarkForm(){
+  bookmarkEditId=null;$('bForm').reset();$('bTitle').setCustomValidity('');$('bUrl').setCustomValidity('');$('bError').hidden=true;$('bForm').hidden=true;$('bNew').hidden=false;
+}
+function openBookmarkForm(item){
+  bookmarkEditId=item?item.id:null;$('bForm').reset();$('bTitle').setCustomValidity('');$('bUrl').setCustomValidity('');$('bError').hidden=true;
+  $('bFormTitle').textContent=item?'עריכת קישור':'הוספת קישור';
+  $('bTitle').value=item?item.title:'';$('bUrl').value=item?item.url:'';$('bNote').value=item?item.note||'':'';
+  $('bForm').hidden=false;$('bNew').hidden=true;$('bTitle').focus();
+}
+function persistBookmarks(next){
+  const previous=S.bookmarks,stamp=S.updatedAt;S.bookmarks=next;
+  if(save())return true;
+  S.bookmarks=previous;S.updatedAt=stamp;return false;
+}
+function renderBookmarks(){
+  const ul=$('bList');ul.replaceChildren();
+  if(!S.bookmarks.length){const li=document.createElement('li');li.className='empty';li.textContent='עוד אין קישורים שמורים. אפשר להוסיף קישור שחשוב לך.';ul.append(li);return;}
+  S.bookmarks.forEach(item=>{
+    const li=document.createElement('li');li.className='bookmark-item';
+    const content=document.createElement('div');content.className='bookmark-content';
+    const url=safeLinkUrl(item.url),title=document.createElement(url?'a':'span');
+    if(url)linkTarget(title,url);else title.className='blocked-link';
+    title.textContent=item.title||item.url;
+    const address=document.createElement('small');address.textContent=item.url;title.append(address);content.append(title);
+    if(item.note){const note=document.createElement('p');note.className='bookmark-note';note.textContent=item.note;content.append(note);}
+    if(!url){const warning=document.createElement('p');warning.className='note';warning.textContent='הכתובת אינה בטוחה לפתיחה. אפשר לתקן אותה דרך עריכה.';content.append(warning);}
+    const actions=document.createElement('div');actions.className='bookmark-actions';
+    const edit=document.createElement('button');edit.className='btn ghost';edit.textContent='עריכה';edit.setAttribute('aria-label','עריכת '+(item.title||'קישור'));edit.onclick=()=>openBookmarkForm(item);
+    const del=document.createElement('button');del.className='btn ghost';del.textContent='מחיקה';del.setAttribute('aria-label','מחיקת '+(item.title||'קישור'));
+    del.onclick=()=>{
+      if(!confirm('למחוק את הקישור השמור?'))return;
+      if(persistBookmarks(S.bookmarks.filter(b=>b.id!==item.id))){if(bookmarkEditId===item.id)closeBookmarkForm();renderBookmarks();$('bNew').focus();}
+    };
+    actions.append(edit,del);li.append(content,actions);ul.append(li);
+  });
+}
+$('bNew').onclick=()=>openBookmarkForm();
+$('bCancel').onclick=()=>{closeBookmarkForm();$('bNew').focus();};
+$('bUrl').oninput=()=>$('bUrl').setCustomValidity('');
+$('bForm').onsubmit=ev=>{
+  ev.preventDefault();const title=$('bTitle').value.trim(),url=safeLinkUrl($('bUrl').value),note=$('bNote').value.trim();
+  $('bTitle').setCustomValidity(title?'':'יש להזין כותרת.');$('bUrl').setCustomValidity(url?'':LINK_ERROR);
+  if(!$('bForm').reportValidity())return;
+  const existing=bookmarkEditId===null?null:S.bookmarks.find(b=>b.id===bookmarkEditId);
+  if(bookmarkEditId!==null&&!existing){$('bError').textContent='הקישור כבר אינו ברשימה. אפשר לבטל ולהוסיף קישור חדש.';$('bError').hidden=false;return;}
+  const item=Object.assign({},existing||{id:uid()},{title,url,note});
+  const next=existing?S.bookmarks.map(b=>b.id===bookmarkEditId?item:b):S.bookmarks.concat(item);
+  if(persistBookmarks(next)){closeBookmarkForm();renderBookmarks();$('bNew').focus();}
+};
+$('bTitle').oninput=()=>$('bTitle').setCustomValidity('');
+
 /* ---------- Readings ---------- */
 let editing=false;
 function renderL(){
@@ -524,14 +896,14 @@ function renderL(){
     if(editing){
       const w=document.createElement('div');w.className='link-edit';
       const ti=document.createElement('input');ti.type='text';ti.value=l.title;ti.placeholder='כותרת';ti.setAttribute('aria-label','כותרת');
-      const ui=document.createElement('input');ui.type='url';ui.value=l.url;ui.placeholder='https://';ui.dir='ltr';ui.setAttribute('aria-label','כתובת');
-      ti.oninput=()=>{l.title=ti.value;save();}; ui.oninput=()=>{l.url=ui.value.trim();save();};
+      const ui=document.createElement('input');ui.type='text';ui.inputMode='url';ui.value=l.url;ui.placeholder='https://';ui.dir='ltr';ui.setAttribute('aria-label','כתובת');
+      ti.oninput=()=>{l.title=ti.value;save();}; ui.oninput=()=>{const raw=ui.value.trim(),url=safeLinkUrl(raw);ui.setCustomValidity(raw&&!url?LINK_ERROR:'');if(!raw||url){l.url=url||'';save();}};ui.onchange=()=>ui.reportValidity();
       const del=document.createElement('button');del.className='del';del.innerHTML='&times;';del.setAttribute('aria-label','מחיקת קישור');
       del.onclick=()=>{S.links=S.links.filter(x=>x.id!==l.id);save();renderL();};
       w.append(ti,ui);li.append(w,del);
     }else{
-      const a=document.createElement('a');a.href=l.url;
-      if(!/^tel:/i.test(l.url)){a.target='_blank';a.rel='noopener';}
+      const url=safeLinkUrl(l.url),a=document.createElement(url?'a':'span');
+      if(url)linkTarget(a,url);
       a.textContent=l.title||l.url;
       const sm=document.createElement('small');sm.textContent=l.url.replace(/^(https?:\/\/|tel:)/i,'').replace(/^www\./i,'').replace(/\/$/,'');a.appendChild(sm);
       li.appendChild(a);
@@ -548,6 +920,7 @@ function fillSettings(){
   $('setTitle').textContent=S.date?'הגדרות':'בואו נתחיל';
   renderSync();
   $('settingsFoot').hidden=!S.date;
+  $('backToOnboarding').hidden=!!S.date;
   $('sName').value=S.name;$('sDate').value=S.date;$('sTime').value=S.time;$('sFrom').value=S.from;
   pickColor=S.color; renderSwatches();
 }
@@ -561,14 +934,14 @@ function renderSwatches(){
   });
 }
 $('saveSettings').onclick=()=>{
-  if(!$('sDate').value){$('sDate').focus();$('sDate').style.borderColor='#B3413B';return;}
+  if(!$('sDate').value||!$('sDate').checkValidity()){$('sDate').focus();$('sDate').style.borderColor='#B3413B';return;}
   $('sDate').style.borderColor='';
   S.name=$('sName').value.trim();S.date=$('sDate').value;S.time=$('sTime').value;S.from=$('sFrom').value.trim();S.color=pickColor;
-  save();applyColor();show('counter');
+  if(save()){applyColor();show('counter');}
 };
 function resetLocal(){
   try{localStorage.removeItem(KEY);}catch(e){}
-  S=JSON.parse(JSON.stringify(DEFAULT));applyColor();renderG();renderL();renderP();renderJ();show('settings');
+  storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();show('onboarding');
 }
 $('reset').onclick=async()=>{
   if(!signedIn()){
@@ -595,7 +968,7 @@ let sb=null, sbLoading=null, sbReady=false, user=null, pushTimer=null, busy=fals
 let M=(()=>{try{return JSON.parse(localStorage.getItem(SYNC_KEY))||{};}catch(e){return {};}})();
 function saveMeta(){try{localStorage.setItem(SYNC_KEY,JSON.stringify(M));}catch(e){}}
 const signedIn=()=>!!(user||(M.uid&&!sbReady));
-const hasData=d=>!!(d&&(d.date||d.name||(d.gratitude||[]).length||(d.journal||[]).length||Object.keys(d.plans||{}).length));
+const hasData=d=>!!(d&&(d.date||d.name||(d.gratitude||[]).length||(d.journal||[]).length||Object.keys(d.plans||{}).length||Object.keys(d.inventory||{}).length||(d.bookmarks||[]).length));
 
 function loadSupabase(){
   if(sbLoading)return sbLoading;
@@ -678,7 +1051,9 @@ function applyRemote(data,t){
   S=Object.assign(normalize(data),keep); S.updatedAt=t;
   writeLocal();
   if(current!=='settings')applyColor();
-  renderG();renderL();renderP();render();
+  renderG();renderL();renderBookmarks();renderP();render();
+  if(current==='inventory')openInventory(inventoryDay||todayKey());
+  if(current==='onboarding'&&S.date)show('counter');
   if($('jEditor').hidden)renderJ();
   if(current==='settings'&&!$('settings').contains(document.activeElement))fillSettings();
 }
@@ -839,8 +1214,9 @@ if(!onOldHost&&urlP.has('import')){
 /* ---------- end Domain move ---------- */
 
 /* ---------- Init ---------- */
-applyColor();renderG();renderL();renderP();renderJ();
-show(S.date?'counter':'settings');
+applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();storageNotice(storageError);
+$('oDate').max=todayKey();$('sDate').max=todayKey();
+show(S.date?'counter':'onboarding');
 if(urlP.has('error_code')||urlP.has('error')){
   cleanUrl(); show('settings'); setMsg(errText(urlP.get('error_code')||urlP.get('error')),true);
 }

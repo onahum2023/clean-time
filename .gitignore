@@ -11,3 +11,6 @@ desktop.ini
 .idea/
 *.swp
 *~
+
+# Local browser QA snapshots and reports
+.playwright-mcp/
