@@ -25,7 +25,8 @@ GitHub Issues are the source of truth for active work. This file is a compact ro
 - [ ] **#16 Complete Step 10 reflection content.**
 - [ ] **#17 Real account/cloud deletion:** remove the user's cloud row and Auth identity, not only replace recovery state with an encrypted empty state.
 - [ ] **#18 Production security headers:** CSP, frame protection, referrer policy and nosniff without breaking auth/sync/PWA behavior.
-- [ ] **#19 Production auth/SMTP/RLS verification:** live delivery/redirect checks and cross-account isolation using test accounts only.
+- [ ] **#19 Production auth/SMTP/RLS verification:** live delivery/redirect checks and cross-account isolation using test accounts only. One fresh Gmail Inbox delivery has passed; broader provider/RLS verification remains.
+- [ ] **#30 Backup activation state after email verification:** make all screens distinguish verified account vs encrypted-backup-active state.
 - [ ] **#21 Physical Android/PWA validation.**
 - [ ] **#22 Retire legacy Vercel-origin handoff safely.**
 
@@ -49,6 +50,7 @@ GitHub Issues are the source of truth for active work. This file is a compact ro
 - [ ] Daily check-in/reminders.
 - [ ] Quick sponsor-call action.
 - [ ] Meeting finder, ideally using a feed agreed with NA Israel.
+- [ ] **#31 Clarify recovery-date format in Hebrew UI.**
 
 ## Established foundations
 
