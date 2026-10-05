@@ -6,7 +6,7 @@ async(page)=>{
   const c=await page.context().browser().newContext({viewport:{width:360,height:800}});
   await c.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());
   await c.addInitScript(({key,local,remote})=>{
-   if(local)localStorage.setItem(key,JSON.stringify(local));
+   if(local&&!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(local));
    window.confirm=()=>true;window.qaRemote=remote;window.qaUploads=[];window.qaEmails=[];window.qaUser=null;window.qaFail=false;
    const client={auth:{onAuthStateChange(cb){window.qaCallback=cb;},getSession:async()=>{if(location.hash.includes('access_token=synthetic'))window.qaUser={id:'synthetic',email:'qa@example.invalid'};return {data:{session:window.qaUser?{user:window.qaUser}:null}};},signInWithOtp:async args=>{if(window.qaFail)return {error:{code:'rate_limit'}};window.qaEmails.push(args);return {};},signOut:async()=>{window.qaUser=null;return {};}},from(){return {select(){return {eq(){return {maybeSingle:async()=>({data:window.qaRemote?{data:window.qaRemote,updated_at:new Date(window.qaRemote.updatedAt).toISOString()}:null})}}}},upsert:async row=>{window.qaUploads.push(row);window.qaRemote=row.data;return {};}}}};
    window.supabase={createClient:()=>client};
@@ -21,8 +21,12 @@ async(page)=>{
  check(await p.locator('#guestForm input[type=email]').count()===0,'Guest onboarding has no email');await fit(p);
  await p.locator('#oDate').fill('2025-01-01');await p.locator('#oFrom').selectOption('אחר');await p.locator('#guestForm button').click();
  check(await p.locator('#counter').isVisible(),'Guest onboarding enters fully usable app');await c.close();
- ({c,p}=await scenario(null,null));await p.locator('#onboardingAccount').click();await fit(p);
- await p.locator('#aName').fill('בדיקה');await p.locator('#aDate').fill('2025-01-01');await p.locator('#aTime').fill('12:30');await p.locator('#aFrom').selectOption('סמים');await p.locator('#aColor').selectOption('rose');await login(p);
+ ({c,p}=await scenario({color:'olive'},null));await p.locator('#onboardingAccount').click();await fit(p);
+ check(await p.locator('#aSwatches').isVisible()&&await p.locator('#aSwatches').getAttribute('role')==='radiogroup'&&await p.locator('#aSwatches').getAttribute('aria-label')==='צבע','Registered onboarding displays accessible color swatches');
+ check(await p.locator('#aColor, #authProfile select[id*=Color]').count()===0,'Registered onboarding color dropdown is gone');
+ check(await p.locator('#aSwatches [role=radio]').evaluateAll(buttons=>buttons.length===6&&buttons.map(b=>b.getAttribute('aria-label')).join(',')==='טורקיז,כחול,אינדיגו,שזיף,זית,ורד'&&buttons.every(b=>b.type==='button'&&b.className==='swatch')&&buttons.filter(b=>b.getAttribute('aria-checked')==='true').length===1)&&await p.locator('#aSwatches [aria-checked=true]').getAttribute('aria-label')==='זית','Six shared swatches retain order and default to local saved color');
+ await p.locator('#aName').fill('בדיקה');await p.locator('#aDate').fill('2025-01-01');await p.locator('#aTime').fill('12:30');await p.locator('#aFrom').selectOption('סמים');await p.locator('#aSwatches').getByRole('radio',{name:'ורד',exact:true}).click();await login(p);
+ check(await p.locator('#aSwatches [aria-checked=true]').getAttribute('aria-label')==='ורד'&&await p.evaluate(k=>JSON.parse(localStorage.getItem(k)).color==='rose',key),'Selected swatch ring and persisted registered profile use chosen color');
  check(await p.evaluate(k=>{const s=JSON.parse(localStorage.getItem(k));return s.name==='בדיקה'&&s.time==='12:30'&&s.color==='rose'&&window.qaUploads.length===0;},key),'Account creation persists complete profile, sends link without premature upload');
  await p.goto(origin+'/#access_token=synthetic');await p.reload();await p.waitForFunction(()=>window.qaUploads.length===1);await p.waitForTimeout(100);
  check(await p.evaluate(()=>!location.hash),'Magic-link return cleans URL and restores persisted creation profile');

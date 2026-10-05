@@ -445,7 +445,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
           <label class="field"><span>תאריך תחילת הניקיון / ההחלמה</span><input type="date" id="aDate"></label>
           <label class="field"><span>שעה (לא חובה)</span><input type="time" id="aTime"></label>
           <label class="field"><span>החלמה מ־</span><select id="aFrom"><option value="" disabled selected>בחירה</option><option>אלכוהול</option><option>סמים</option><option>עישון</option><option>אוכל</option><option>אחר</option></select></label>
-          <label class="field"><span>צבע</span><select id="aColor"><option value="teal">טורקיז</option><option value="sky">כחול</option><option value="indigo">אינדיגו</option><option value="plum">שזיף</option><option value="olive">זית</option><option value="rose">ורד</option></select></label>
+          <div class="field"><span>צבע</span><div class="swatches" id="aSwatches" role="radiogroup" aria-label="צבע"></div></div>
         </div>
         <button class="btn" id="lSend" type="submit">יצירת חשבון ושליחת קישור למייל</button>
       </form>
@@ -499,7 +499,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 
 <script>
 (function(){
-const APP_VERSION='2026.10.05.6';
+const APP_VERSION='2026.10.05.7';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -591,7 +591,7 @@ function openAuth(mode){
   $('authSub').textContent='הכניסה תמיד דרך קישור למייל. המייל מזהה את החשבון והגיבוי.'+(convert?' הנתונים במכשיר יישמרו.':'')+' כרגע הגיבוי בענן אינו מוצפן ומנהל השרת יכול טכנית לראות אותו.';
   $('authProfile').hidden=!create;$('aDate').required=create;$('aFrom').required=create;
   $('authNameField').hidden=!(create||(convert&&!S.name));
-  $('aName').value=S.name;$('aDate').value=S.date;$('aTime').value=S.time;$('aFrom').value=S.from;$('aColor').value=S.color;
+  $('aName').value=S.name;$('aDate').value=S.date;$('aTime').value=S.time;$('aFrom').value=S.from;pickColor=S.color;renderSwatches('aSwatches');
   $('lEmail').value='';$('lSend').textContent=mode==='login'?'שליחת קישור כניסה למייל':'יצירת חשבון ושליחת קישור למייל';
   setMsg('');show('auth');
 }
@@ -970,12 +970,12 @@ function fillSettings(){
   $('sName').value=S.name;$('sDate').value=S.date;$('sTime').value=S.time;$('sFrom').value=S.from;
   pickColor=S.color; renderSwatches();
 }
-function renderSwatches(){
-  const box=$('swatches');box.innerHTML='';
+function renderSwatches(boxId='swatches'){
+  const box=$(boxId);box.innerHTML='';
   Object.entries(COLORS).forEach(([k,v])=>{
-    const b=document.createElement('button');b.className='swatch';b.style.background=v;
+    const b=document.createElement('button');b.type='button';b.className='swatch';b.style.background=v;
     b.setAttribute('role','radio');b.setAttribute('aria-checked',k===pickColor);b.setAttribute('aria-label',CNAMES[k]);
-    b.onclick=()=>{pickColor=k;document.documentElement.style.setProperty('--accent',v);renderSwatches();};
+    b.onclick=()=>{pickColor=k;document.documentElement.style.setProperty('--accent',v);renderSwatches(boxId);};
     box.appendChild(b);
   });
 }
@@ -1061,7 +1061,7 @@ $('loginForm').onsubmit=async ev=>{
   // Persist the complete local profile before sending; it survives a reload or link return.
   // Sync still requires an authenticated user and the first-sign-in conflict choice.
   if(authMode==='create'){
-    Object.assign(S,{name:$('aName').value.trim(),date:$('aDate').value,time:$('aTime').value,from:$('aFrom').value,color:$('aColor').value});
+    Object.assign(S,{name:$('aName').value.trim(),date:$('aDate').value,time:$('aTime').value,from:$('aFrom').value,color:pickColor});
     if(!save())return;
   }else if(authMode==='convert'&&!S.name){S.name=$('aName').value.trim();if(!save())return;}
   $('lSend').disabled=true;setMsg('שולח...');
