@@ -267,7 +267,8 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       <button class="btn" type="submit">המשך כאורח/ת</button>
     </form>
     <p class="sub">בלי מייל או טלפון. הנתונים נשמרים רק במכשיר ובדפדפן הזה.</p>
-    <button class="btn secondary" id="onboardingAccount">יצירת חשבון / התחברות</button>
+    <button class="btn secondary" id="onboardingAccount">יצירת חשבון</button>
+    <button class="btn ghost" id="onboardingLogin">כבר יש לי חשבון</button>
     <p class="note">חשבון הוא אפשרות לגיבוי ולסנכרון בין מכשירים. אפשר לבחור בו גם בהמשך.</p>
     <button class="btn ghost" data-go="about">אודות זמן נקי ופרטיות</button>
   </section>
@@ -406,26 +407,51 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       <datalist id="fromOpts"><option value="סמים"><option value="אלכוהול"><option value="הימורים"><option value="אכילת יתר"><option value="עישון"></datalist>
     </label>
     <div class="field"><span>צבע</span><div class="swatches" id="swatches" role="radiogroup" aria-label="צבע"></div></div>
-    <button class="btn" id="saveSettings" style="width:100%;margin-top:8px">שמירה</button>
-    <div class="sync" id="sync">
-      <h3>גיבוי וסנכרון</h3>
-      <div id="syncOut">
-        <p class="sub">אפשר להתחבר עם מייל כדי לגבות את הנתונים ולסנכרן בין מכשירים. בלי התחברות הכול נשמר רק במכשיר הזה.</p>
-        <form id="loginForm" onsubmit="return false" novalidate>
-          <input type="email" id="lEmail" placeholder="כתובת מייל" autocomplete="email" dir="ltr" maxlength="200" aria-label="כתובת מייל">
-          <button class="btn" id="lSend" type="submit">שליחת קישור</button>
-        </form>
-      </div>
-      <div id="syncIn" hidden>
-        <p class="who">חשבון: <b id="sEmail" dir="ltr"></b></p>
-        <p class="sub" id="syncStatus"></p>
-        <button class="btn danger" id="signOut">התנתקות</button>
-      </div>
-      <p class="msg" id="syncMsg" role="status"></p>
+    <button class="btn" id="saveSettings" style="width:100%;margin-top:8px">שמירת הגדרות החלמה</button>
+    <div class="sync">
+      <button class="btn secondary" id="createAccount">יצירת חשבון והפעלת גיבוי וסנכרון</button>
+      <button class="btn ghost" id="settingsLogin">כבר יש לי חשבון</button>
+      <button class="btn secondary" id="myAccount" hidden>החשבון שלי</button>
     </div>
     <div class="settings-foot" id="settingsFoot">
       <button class="btn danger" id="reset">מחיקת כל הנתונים</button>
     </div>
+  </section>
+  <!-- Account identity is separate from recovery preferences. Future #9 status belongs here. -->
+  <section id="account" hidden>
+    <h2>החשבון שלי</h2>
+    <div id="syncIn" hidden>
+      <p class="who">שם: <b id="accountName"></b></p>
+      <p class="who">מייל: <b id="sEmail" dir="ltr"></b></p>
+      <p id="accountState"></p>
+      <p class="sub" id="syncStatus" role="status"></p>
+      <p class="msg" id="accountMsg" role="status"></p>
+      <button class="btn danger" id="signOut">התנתקות</button>
+      <div class="settings-foot">
+        <button class="btn danger" id="accountDelete">מחיקת נתונים מהמכשיר / מהענן</button>
+        <p class="note">מחיקת הנתונים אינה מוחקת את חשבון ההתחברות. מחיקת החשבון עצמו עדיין אינה זמינה.</p>
+      </div>
+    </div>
+    <button class="btn ghost" data-go="settings">הגדרות החלמה</button>
+  </section>
+  <section id="auth" hidden>
+    <h2 id="authTitle">יצירת חשבון</h2>
+    <p class="sub" id="authSub"></p>
+    <div id="syncOut">
+      <form id="loginForm">
+        <label class="field" id="authNameField"><span>שם (לא חובה)</span><input id="aName" maxlength="40" autocomplete="given-name"></label>
+        <label class="field"><span>כתובת מייל</span><input type="email" id="lEmail" required autocomplete="email" dir="ltr" maxlength="200"></label>
+        <div id="authProfile">
+          <label class="field"><span>תאריך תחילת הניקיון / ההחלמה</span><input type="date" id="aDate"></label>
+          <label class="field"><span>שעה (לא חובה)</span><input type="time" id="aTime"></label>
+          <label class="field"><span>החלמה מ־</span><select id="aFrom"><option value="" disabled selected>בחירה</option><option>אלכוהול</option><option>סמים</option><option>עישון</option><option>אוכל</option><option>אחר</option></select></label>
+          <label class="field"><span>צבע</span><select id="aColor"><option value="teal">טורקיז</option><option value="sky">כחול</option><option value="indigo">אינדיגו</option><option value="plum">שזיף</option><option value="olive">זית</option><option value="rose">ורד</option></select></label>
+        </div>
+        <button class="btn" id="lSend" type="submit">יצירת חשבון ושליחת קישור למייל</button>
+      </form>
+    </div>
+    <p class="msg" id="syncMsg" role="status"></p>
+    <button class="btn ghost" id="authBack">חזרה</button>
   </section>
   <section class="about" id="about" hidden>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M-12 134Q36 43 117 17M-4 152Q40 63 129 35M55 49l-5-13m31-2 2-14m21 16 10-10M33 69l-12-7"/></svg>
@@ -473,7 +499,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 
 <script>
 (function(){
-const APP_VERSION='2026.10.05.5';
+const APP_VERSION='2026.10.05.6';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -535,16 +561,18 @@ $('appVer').textContent='גרסה '+APP_VERSION;
 
 /* ---------- Tabs ---------- */
 let current='counter';
-const SCREENS=['counter','planner','journal','gratitude','readings','bookmarks','settings','tools','about','onboarding','meditation','inventory'];
+const SCREENS=['counter','planner','journal','gratitude','readings','bookmarks','settings','tools','about','onboarding','meditation','inventory','auth','account'];
 function show(tab){
-  if(tab==='counter'&&!S.date)tab='onboarding';
+  if(tab==='counter'&&!S.date)tab=signedIn()?'settings':'onboarding';
+  if(tab==='onboarding'&&signedIn())tab='settings';
   current=tab;
   SCREENS.forEach(t=>$(t).hidden=(t!==tab));
-  const active=tab==='about'?'about':['counter','onboarding','settings'].includes(tab)?'counter':'tools';
+  const active=tab==='about'?'about':['counter','onboarding','settings','auth','account'].includes(tab)?'counter':'tools';
   document.querySelectorAll('nav.tabs button').forEach(b=>{
     if(b.dataset.tab===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   });
   if(tab==='settings')fillSettings();else applyColor();
+  if(tab==='account')renderSync();
   if(tab==='counter')render();
   if(tab==='planner'){planSelected=todayKey();renderP();}
   if(tab==='gratitude')renderG();
@@ -555,7 +583,24 @@ function show(tab){
 }
 document.querySelectorAll('[data-tab],[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.tab||b.dataset.go));
 $('openSettings').onclick=()=>show(current==='settings'?(S.date?'counter':'onboarding'):'settings');
-$('onboardingAccount').onclick=()=>{show('settings');$('sync').scrollIntoView({block:'start'});$('lEmail').focus();};
+let authMode='create';
+function openAuth(mode){
+  authMode=mode;
+  const create=mode==='create',convert=mode==='convert';
+  $('authTitle').textContent=create?'יצירת חשבון':convert?'יצירת חשבון והפעלת גיבוי':'כבר יש לי חשבון';
+  $('authSub').textContent='הכניסה תמיד דרך קישור למייל. המייל מזהה את החשבון והגיבוי.'+(convert?' הנתונים במכשיר יישמרו.':'')+' כרגע הגיבוי בענן אינו מוצפן ומנהל השרת יכול טכנית לראות אותו.';
+  $('authProfile').hidden=!create;$('aDate').required=create;$('aFrom').required=create;
+  $('authNameField').hidden=!(create||(convert&&!S.name));
+  $('aName').value=S.name;$('aDate').value=S.date;$('aTime').value=S.time;$('aFrom').value=S.from;$('aColor').value=S.color;
+  $('lEmail').value='';$('lSend').textContent=mode==='login'?'שליחת קישור כניסה למייל':'יצירת חשבון ושליחת קישור למייל';
+  setMsg('');show('auth');
+}
+$('onboardingAccount').onclick=()=>openAuth('create');
+$('onboardingLogin').onclick=()=>openAuth('login');
+$('createAccount').onclick=()=>openAuth(hasData(S)?'convert':'create');
+$('settingsLogin').onclick=()=>openAuth('login');
+$('myAccount').onclick=()=>show('account');
+$('authBack').onclick=()=>show(S.date?'settings':'onboarding');
 $('backToOnboarding').onclick=()=>show('onboarding');
 $('guestForm').onsubmit=ev=>{
   ev.preventDefault();
@@ -625,7 +670,7 @@ $('count').onclick=()=>{
 };
 setInterval(()=>{
   if(current==='counter')render();
-  if(planDay!==todayKey()){renderP();renderG();$('oDate').max=todayKey();$('sDate').max=todayKey();}
+  if(planDay!==todayKey()){renderP();renderG();$('oDate').max=todayKey();$('sDate').max=todayKey();$('aDate').max=todayKey();}
 },1000);
 
 /* ---------- Gratitude ---------- */
@@ -917,10 +962,11 @@ $('addLink').onclick=()=>{S.links.push({id:Date.now(),title:'',url:''});save();r
 /* ---------- Settings ---------- */
 let pickColor=S.color;
 function fillSettings(){
-  $('setTitle').textContent=S.date?'הגדרות':'בואו נתחיל';
+  $('setTitle').textContent='הגדרות החלמה';
   renderSync();
-  $('settingsFoot').hidden=!S.date;
-  $('backToOnboarding').hidden=!!S.date;
+  $('settingsFoot').hidden=!S.date||signedIn();
+  $('sName').closest('label').hidden=signedIn();
+  $('backToOnboarding').hidden=!!S.date||signedIn();
   $('sName').value=S.name;$('sDate').value=S.date;$('sTime').value=S.time;$('sFrom').value=S.from;
   pickColor=S.color; renderSwatches();
 }
@@ -936,13 +982,14 @@ function renderSwatches(){
 $('saveSettings').onclick=()=>{
   if(!$('sDate').value||!$('sDate').checkValidity()){$('sDate').focus();$('sDate').style.borderColor='#B3413B';return;}
   $('sDate').style.borderColor='';
-  S.name=$('sName').value.trim();S.date=$('sDate').value;S.time=$('sTime').value;S.from=$('sFrom').value.trim();S.color=pickColor;
+  if(!signedIn())S.name=$('sName').value.trim();S.date=$('sDate').value;S.time=$('sTime').value;S.from=$('sFrom').value.trim();S.color=pickColor;
   if(save()){applyColor();show('counter');}
 };
 function resetLocal(){
   try{localStorage.removeItem(KEY);}catch(e){}
   storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();show('onboarding');
 }
+$('accountDelete').onclick=()=>$('reset').onclick();
 $('reset').onclick=async()=>{
   if(!signedIn()){
     if(!confirm('למחוק את כל הנתונים מהמכשיר?'))return;
@@ -982,7 +1029,7 @@ function loadSupabase(){
     sb.auth.onAuthStateChange((ev,session)=>{
       user=session?session.user:null;
       /* never call supabase from inside this callback */
-      setTimeout(()=>{renderSync();if(ev==='SIGNED_IN')sync();},0);
+      setTimeout(async()=>{renderSync();if(ev==='SIGNED_IN'){await sync();if(current==='auth')show(S.date?'counter':'account');}},0);
     });
     return sb;
   },e=>{sbLoading=null;throw e;});
@@ -998,20 +1045,27 @@ function errText(e){
   if(/rate_limit/.test(code)||(e&&e.status===429))return 'נשלחו יותר מדי קישורים. אפשר לנסות שוב בעוד כמה דקות.';
   return 'משהו השתבש. אפשר לנסות שוב.';
 }
-function setMsg(text,err){const m=$('syncMsg');m.textContent=text||'';m.classList.toggle('err',!!err);}
+function setMsg(text,err){for(const id of ['syncMsg','accountMsg']){const m=$(id);m.textContent=text||'';m.classList.toggle('err',!!err);}}
 
-/* Login. Step 1 emails a magic link. A 6-digit code flow would add a second step here:
-   sb.auth.verifyOtp({email,token,type:'email'}) */
+/* Passwordless access: email is both account and sync identity. */
 async function sendLogin(email){
   await loadSupabase();
   const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin}});
   if(error)throw error;
 }
-$('lSend').onclick=async()=>{
-  const inp=$('lEmail'), email=inp.value.trim();
+$('loginForm').onsubmit=async ev=>{
+  ev.preventDefault();
+  const inp=$('lEmail'),email=inp.value.trim();
+  if(!$('loginForm').reportValidity())return;
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setMsg(errText('invalid_email'),true);inp.focus();return;}
-  $('lSend').disabled=true; setMsg('שולח...');
-  try{await sendLogin(email);setMsg('שלחנו קישור למייל. כדאי לפתוח אותו בטלפון הזה, בדפדפן Chrome.');}
+  // Persist the complete local profile before sending; it survives a reload or link return.
+  // Sync still requires an authenticated user and the first-sign-in conflict choice.
+  if(authMode==='create'){
+    Object.assign(S,{name:$('aName').value.trim(),date:$('aDate').value,time:$('aTime').value,from:$('aFrom').value,color:$('aColor').value});
+    if(!save())return;
+  }else if(authMode==='convert'&&!S.name){S.name=$('aName').value.trim();if(!save())return;}
+  $('lSend').disabled=true;setMsg('שולח...');
+  try{await sendLogin(email);setMsg('שלחנו קישור למייל. פתיחת הקישור משלימה את הכניסה והפעלת הגיבוי.');}
   catch(e){setMsg(errText(e),true);}
   $('lSend').disabled=false;
 };
@@ -1019,6 +1073,9 @@ $('lSend').onclick=async()=>{
 function renderSync(){
   const on=signedIn();
   $('syncOut').hidden=on; $('syncIn').hidden=!on;
+  $('createAccount').hidden=on;$('settingsLogin').hidden=on;$('myAccount').hidden=!on;
+  $('accountName').textContent=S.name||'לא צוין';
+  $('accountState').textContent=user?'חשבון רשום · גיבוי וסנכרון פעילים':'חשבון רשום · בודקים את החיבור';
   $('setSub').textContent=on?'הנתונים נשמרים במכשיר ומגובים בענן.':'הכול נשמר רק במכשיר הזה.';
   if(!on)return;
   $('sEmail').textContent=(user&&user.email)||M.email||'';
@@ -1067,7 +1124,7 @@ async function upload(){
 /* pull the row, then apply it or push, by updatedAt. Runs one at a time. */
 async function sync(){
   if(busy){again=true;return;}
-  if(!sbReady){if(M.uid||sbLoading)startSync();return;}
+  if(!sbReady){if(M.uid||sbLoading)return startSync();return;}
   if(!user)return;
   if(!navigator.onLine){syncErr='offline';renderSync();return;}
   busy=true;
@@ -1082,7 +1139,7 @@ async function sync(){
         if(hasData(remote)&&hasData(S)){
           const pick=await ask('נמצאו נתונים בשני המקומות','יש נתונים גם במכשיר הזה וגם בענן. אילו נתונים לשמור? הנתונים האחרים יוחלפו.',
             [{label:'לשמור את הנתונים מהמכשיר הזה',value:'local'},{label:'לטעון את הנתונים מהענן',value:'cloud',cls:'ghost'}]);
-          if(pick==='cloud')applyRemote(remote,rT);else{S.updatedAt=Date.now();writeLocal();}
+          if(pick==='cloud')applyRemote(remote,rT);else{S.updatedAt=Math.max(Date.now(),rT+1);writeLocal();}
         }else if(hasData(remote))applyRemote(remote,rT);
         else if(remote)S.updatedAt=Math.max(Date.now(),rT+1);
         M.uid=user.id;
@@ -1117,11 +1174,10 @@ async function startSync(){
   user=data&&data.session?data.session.user:null;
   if(fromLink){
     fromLink=false; cleanUrl();
-    if(!user)setMsg(errText(error||'otp_expired'),true);
-    show('settings');
+    if(!user){openAuth('login');setMsg(errText(error||'otp_expired'),true);}
   }
   renderSync();
-  if(user)sync();
+  if(user){await sync();if(current==='auth'||current==='onboarding')show(S.date?'counter':'account');}
 }
 
 async function signOutNow(){
@@ -1152,7 +1208,7 @@ async function wipeCloud(){
     M.dirty=true; saveMeta();
     setMsg('המחיקה מהענן לא הושלמה. היא תושלם כשהחיבור יחזור.',true);
   }
-  renderSync();
+  show('account');renderSync();
 }
 
 /* magic-link return: tokens (or an error) arrive in the URL hash */
@@ -1215,10 +1271,10 @@ if(!onOldHost&&urlP.has('import')){
 
 /* ---------- Init ---------- */
 applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();storageNotice(storageError);
-$('oDate').max=todayKey();$('sDate').max=todayKey();
+$('oDate').max=todayKey();$('sDate').max=todayKey();$('aDate').max=todayKey();
 show(S.date?'counter':'onboarding');
 if(urlP.has('error_code')||urlP.has('error')){
-  cleanUrl(); show('settings'); setMsg(errText(urlP.get('error_code')||urlP.get('error')),true);
+  cleanUrl(); openAuth('login'); setMsg(errText(urlP.get('error_code')||urlP.get('error')),true);
 }
 let hasSession=false; try{hasSession=!!localStorage.getItem(AUTH_KEY);}catch(e){}
 if(fromLink||M.uid||hasSession)startSync();
