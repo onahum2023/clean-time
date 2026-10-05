@@ -59,7 +59,7 @@ async(page)=>{
  const read=p=>p.evaluate(key=>JSON.parse(localStorage.getItem(key)),KEY);
  async function protectedLoad(s,label){
   const {p,calls}=s;
-  check(await p.locator('#counter').isVisible()||await p.locator('#account').isVisible(),label+': opens app or encryption setup without onboarding');
+  check(await p.locator('#counter').isVisible(),label+': opens Today directly without onboarding');
   check(!await p.locator('#onboarding').isVisible()&&!await p.locator('#auth').isVisible()&&!await p.locator('#ask').isVisible()&&await p.evaluate(()=>window.qaForbiddenScreens.length===0),label+': no onboarding, account flow or conflict transition');
   check(calls.emails===0&&calls.signOut===0&&calls.delete===0&&await p.evaluate(()=>window.qaConfirmations.length===0&&window.qaStorageRemovals.length===0),label+': no email, sign-out, deletion or local clearing');
   check(calls.reads.length>=1&&calls.reads.every(r=>r.table==='user_data'&&r.columns==='data,updated_at'&&r.field==='user_id'&&r.id===identity.id),label+': existing table/row scoped to authenticated user');

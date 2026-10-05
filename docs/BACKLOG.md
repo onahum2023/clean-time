@@ -29,7 +29,7 @@ Checkmarks in this section mean implemented and tested locally, pending PR revie
 - [ ] Live magic-link and physical Android checks; no production deployment in this change.
 - [x] **#9 Encryption (implemented on dedicated branch, pending review/release).** Whole-state Web Crypto envelope, acknowledged recovery key, new-device unlock and retry-safe plaintext migration. Recovery key is not an account password. Required unapplied database guard and release checks: [encryption QA](ENCRYPTION-QA.md).
 
-## P0: Production UAT UX fixes — pending review and release
+## P0: Production UAT UX fixes — retained in encryption refresh
 
 - [x] Returning-account login cannot create users; missing-account feedback and Create Account route.
 - [x] Internal browser Back/Forward, including Journal editor and Settings/My Account.
@@ -41,7 +41,7 @@ Checkmarks in this section mean implemented and tested locally, pending PR revie
 - [x] **Live unused-email verification.** Verified in production: an unused email on “כבר יש לי חשבון” does not create an identity, shows the Hebrew missing-account message, and offers the Create Account route.
 - [ ] **Auth email deliverability follow-up.** Recheck magic-link delivery with at least one additional Gmail account and one non-Gmail provider; keep current Spam-folder guidance unless broader evidence suggests a provider/configuration issue.
 
-See [UAT regression evidence](UAT-REGRESSION.md). Encryption PR #13 remains separate and untouched. No merge or deployment in this task.
+See [UAT regression evidence](UAT-REGRESSION.md). Encryption PR #13 is refreshed onto main `88358f2bc40b93d881fcaa416258109328436ae8` and retains the released UAT behavior. Encryption remains pending review/release; no merge, deployment or SQL application in this refresh.
 
 ## P0: Before sharing beyond family
 

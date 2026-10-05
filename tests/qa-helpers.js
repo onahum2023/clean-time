@@ -1,5 +1,6 @@
 // Node-side helpers for browser QA. Keys are generated at runtime, never reported.
 exports.activate=async p=>{
+ if(!await p.locator('#account').isVisible()){await p.locator('#openSettings').click();await p.locator('#myAccount').click();}
  await p.locator('#makeRecoveryKey').click();await p.locator('#recoveryGenerated').waitFor({state:'visible'});
  await p.locator('#recoverySaved').check();await p.locator('#activateEncryption').click();
  await p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('גיבוי מוצפן פעיל')&&!JSON.parse(localStorage.getItem('cleantime-he-sync')).dirty);

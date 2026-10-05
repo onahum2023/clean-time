@@ -6,7 +6,7 @@ async(page)=>{
  const uid='00000000-0000-4000-8000-000000000009',email='crypto-qa@example.invalid';
  const full={name:'שם סינתטי סודי',date:'2024-02-03',time:'11:23',from:'סוג סינתטי',mode:2,color:'plum',linksV:2,
   journal:[{id:'j',text:'יומן סינתטי סודי',created:1,updated:2}],gratitude:[{id:'g',text:'תודה סינתטית סודית',ts:3}],
-  inventory:{'2025-01-01':{summary:'סיכום סינתטי סודי',answers:{q:'תשובה סודית'}}},plans:{'2025-01-01':[{id:'p',text:'תכנית סודית',done:false}]},
+  inventory:{'2025-01-01':{summary:'סיכום סינתטי סודי',answers:{q:'תשובה סודית',placeholder_1:'old synthetic answer',future_prompt:'keep'},questionnaireVersion:'placeholder-v1',extra:{keep:true}}},plans:{'2025-01-01':[{id:'p',text:'תכנית סודית',done:false}]},
   bookmarks:[{id:'b',title:'כותרת סודית',url:'https://example.invalid/private',note:'הערה סודית'}],links:[{id:'l',title:'משאב סודי',url:'https://example.invalid/secret'}],extra:{text:'תוכן עתידי סודי'},updatedAt:1750000000000};
  const cloudState=s=>{const d=structuredClone(s);delete d.mode;return d;};
  const canonical=v=>JSON.stringify(v,(_,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(k=>[k,x[k]])):x);
@@ -14,9 +14,10 @@ async(page)=>{
  async function scenario({local=full,row=null,material=null,registered=true,meta=true}={}){
   const c=await page.context().browser().newContext({viewport:{width:360,height:800}});
   let cloud=structuredClone(row),fail=false,casMiss=false,verifyFail=false,raceRow=null;
-  const calls={uploads:[],reads:0,network:[],logs:[],errors:[]};
+  const calls={uploads:[],reads:0,network:[],logs:[],errors:[],otp:[]};
   await c.route('**/*',r=>{if(r.request().url().startsWith(origin+'/'))return r.continue();calls.network.push(r.request().url());return r.abort();});
   await c.exposeBinding('__cryptoCloud',async(_,op,payload)=>{
+   if(op==='otp'){calls.otp.push(payload);return payload.email==='unused@example.invalid'&&payload.options.shouldCreateUser===false?{error:{code:'otp_disabled',status:422,message:'synthetic missing account'}}:{};}
    if(op==='read'){calls.reads++;return verifyFail&&calls.uploads.length?{error:{code:'synthetic'}}:{data:structuredClone(cloud)};}
    if(op==='write'){
     if(fail)return {error:{code:'synthetic'}};
@@ -39,7 +40,7 @@ async(page)=>{
    }
    window.confirm=()=>true;window.qaOnline=true;
    Object.defineProperty(navigator,'onLine',{get:()=>window.qaOnline});
-   const client={auth:{onAuthStateChange(cb){window.qaAuthCallback=cb;},getSession:async()=>({data:{session:localStorage.getItem('cleantime-he-auth')?{user:{id:uid,email}}:null}}),signInWithOtp:async()=>({}),signOut:async()=>({})},from(){return {
+   const client={auth:{onAuthStateChange(cb){window.qaAuthCallback=cb;},getSession:async()=>({data:{session:localStorage.getItem('cleantime-he-auth')?{user:{id:uid,email}}:null}}),signInWithOtp:args=>window.__cryptoCloud('otp',args),signOut:async()=>({})},from(){return {
     select(){return {eq(){return {maybeSingle:()=>window.__cryptoCloud('read')}}};},
     update(row){let previous=null;return {eq(k,v){if(k==='updated_at')previous=v;return this;},select:()=>window.__cryptoCloud('write',{row,previous})};},
     insert:row=>({select:()=>window.__cryptoCloud('write',{row,previous:null})})
@@ -49,6 +50,7 @@ async(page)=>{
   },{local,material,registered,meta,KEY,CK,MK,uid,email});
   const p=await c.newPage();p.on('console',msg=>calls.logs.push(msg.text()));p.on('pageerror',e=>calls.errors.push(e.message));await p.goto(origin);
   if(registered)await p.waitForFunction(()=>!!document.getElementById('encryptionMsg').textContent||!document.getElementById('ask').hidden||/הגיבוי המוצפן עדיין לא הופעל|גיבוי מוצפן פעיל|מפתח שחזור נדרש/.test(document.getElementById('encryptionStatus').textContent));
+  if(registered&&!await p.locator('#account').isVisible()&&!await p.locator('#ask').isVisible()){await p.locator('#openSettings').click();await p.locator('#myAccount').click();}
   const plain=async()=>p.evaluate(async row=>{const m=JSON.parse(localStorage.getItem('cleantime-he-crypto'));return SyncCrypto.decrypt(row.data,await SyncCrypto.importDek(m.raw),m.uid,row.updated_at);},cloud);
   return {c,p,calls,cloud:()=>structuredClone(cloud),plain,setFail:v=>fail=v,setCas:v=>casMiss=v,setVerify:v=>verifyFail=v,setRace:v=>raceRow=v};
  }
@@ -98,6 +100,44 @@ async(page)=>{
  await s.p.locator('#recoveryInput').fill(recovery.toLowerCase().replace(/-/g,' '));await s.p.locator('#unlockRecovery').click();await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('גיבוי מוצפן פעיל'));
  check(same(cloudState(await read(s.p)),plain)&&s.calls.uploads.length===0,'Correct recovery key on new device decrypts and applies whole cloud state');
  check((await stored(s.p)).confirmed,'New device retains verified usable DEK');await s.c.close();
+ // Combined UAT journeys while the registered whole-state backup is encrypted.
+ s=await scenario({row,material});await s.p.locator('[data-tab="counter"]').click();
+ const visible=async id=>{await s.p.waitForFunction(id=>!document.getElementById(id).hidden,id);check(await s.p.locator('#'+id).isVisible(),'Encrypted history restores '+id);};
+ for(const target of ['gratitude','planner']){await s.p.locator('#counter [data-go="'+target+'"]').click();await s.p.goBack();await visible('counter');await s.p.goForward();await visible(target);await s.p.goBack();}
+ await s.p.locator('#openSettings').click();await s.p.locator('#myAccount').click();await s.p.goBack();await visible('settings');await s.p.goForward();await visible('account');
+ const historyLength=await s.p.evaluate(()=>history.length);await s.p.evaluate(()=>window.dispatchEvent(new Event('focus')));await settle(s.p);
+ check(await s.p.evaluate(()=>history.length)===historyLength,'Encrypted sync/rerender adds no history entries');
+ await s.p.locator('[data-tab="tools"]').click();await s.p.locator('#tools [data-go="journal"]').click();await s.p.locator('#jNew').click();await s.p.locator('#jText').fill('encrypted editor synthetic');await s.p.goBack();
+ check(!await s.p.locator('#jEditor').isVisible()&&await s.p.locator('#journal').isVisible(),'Encrypted Journal Back commits and closes editor');await s.p.goForward();check(await s.p.locator('#jText').inputValue()==='encrypted editor synthetic','Encrypted Journal Forward retains editor content');await s.p.locator('#jDone').click();
+ await s.p.locator('[data-tab="counter"]').click();await s.p.locator('#counter [data-go="inventory"]').click();
+ check(await s.p.locator('#iPlaceholders,[data-slot]').count()===0,'Encrypted Step 10 keeps placeholder controls hidden');
+ await s.p.locator('#iHistory').selectOption('2025-01-01');await s.p.locator('#iSummary').fill('encrypted reflection synthetic');
+ for(const width of [320,360,508,1280]){await s.p.setViewportSize({width,height:800});check(await s.p.evaluate(()=>{const w=document.documentElement.clientWidth;return document.documentElement.scrollWidth<=w&&[...document.querySelectorAll('#inventory textarea,#inventory select')].every(e=>{const b=e.getBoundingClientRect();return b.left>=0&&b.right<=w&&e.scrollWidth<=e.clientWidth;});}),'Encrypted Step 10 fits '+width+'px');}
+ await s.p.evaluate(()=>window.dispatchEvent(new Event('online')));await s.p.waitForFunction(()=>!JSON.parse(localStorage.getItem('cleantime-he-sync')).dirty);
+ check(same((await s.plain()).inventory['2025-01-01'].answers,full.inventory['2025-01-01'].answers),'Legacy and future Step 10 answers survive encrypted edit round trip');
+ check(!JSON.stringify(s.cloud()).includes('placeholder_1')&&!JSON.stringify(s.cloud()).includes('old synthetic answer'),'Cloud envelope contains no plaintext legacy answers');await s.c.close();
+ // Explicit account creation/conversion, validation and returning login into encryption.
+ const signIn=async p=>{await p.evaluate(({uid,email})=>{localStorage.setItem('cleantime-he-auth','synthetic-session');window.qaAuthCallback('SIGNED_IN',{user:{id:uid,email}});},{uid,email});await p.locator('#encryptionSetup').waitFor({state:'visible'});};
+ for(const mode of ['create','convert']){
+  s=await scenario({registered:false,local:mode==='create'?null:full});
+  if(mode==='create')await s.p.locator('#onboardingAccount').click();else{await s.p.locator('#openSettings').click();await s.p.locator('#createAccount').click();}
+  await s.p.locator('#lEmail').fill(email);
+  if(mode==='create'){
+   await s.p.locator('#aFrom').selectOption('אחר');await s.p.locator('#lSend').click();check(s.calls.otp.length===0&&(await s.p.locator('#aDateError').innerText()).includes('תקין'),'Encryption creation: missing date blocks magic link');
+   await s.p.locator('#aDate').fill('2099-01-01');await s.p.locator('#lSend').click();check(s.calls.otp.length===0&&(await s.p.locator('#aDateError').innerText()).includes('בעתיד'),'Encryption creation: future date blocks magic link');await s.p.locator('#aDate').fill('2025-01-01');
+  }
+  await s.p.locator('#lSend').click();await s.p.waitForFunction(()=>document.getElementById('syncMsg').textContent.includes('Spam'));
+  check(s.calls.otp.length===1&&s.calls.otp[0].options.shouldCreateUser===true,mode+': explicit creation and Spam guidance before encryption');
+  await signIn(s.p);check(s.calls.uploads.length===0,mode+': authenticated setup waits for saved-key acknowledgement');const setupLength=await s.p.evaluate(()=>history.length);await activate(s.p);check(await s.p.evaluate(()=>history.length)===setupLength,mode+': setup does not add history entries');
+  check(s.cloud().data.v===1&&(mode==='create'||same((await s.plain()).gratitude,full.gratitude)),mode+': encrypted account preserves profile/recovery content');await s.c.close();
+ }
+ s=await scenario({registered:false,local:null,row});await s.p.locator('#onboardingLogin').click();await s.p.locator('#lEmail').fill('unused@example.invalid');await s.p.locator('#lSend').click();await s.p.waitForFunction(()=>document.getElementById('syncMsg').textContent.includes('לא מצאנו חשבון'));
+ check(s.calls.otp[0].options.shouldCreateUser===false&&s.calls.uploads.length===0&&await stored(s.p)===null&&await s.p.locator('#authCreate').isVisible(),'Unused returning email cannot create an account/key/cloud write');
+ await s.p.locator('#lEmail').fill(email);await s.p.locator('#lSend').click();await s.p.waitForFunction(()=>document.getElementById('syncMsg').textContent.includes('Spam'));
+ check(s.calls.otp[1].options.shouldCreateUser===false,'Existing encrypted returning login forbids identity creation');
+ await s.p.evaluate(({uid,email})=>{localStorage.setItem('cleantime-he-auth','synthetic-session');window.qaAuthCallback('SIGNED_IN',{user:{id:uid,email}});},{uid,email});await s.p.locator('#recoveryForm').waitFor();
+ const unlockLength=await s.p.evaluate(()=>history.length);await s.p.locator('#recoveryInput').fill(recovery);await s.p.locator('#unlockRecovery').click();await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('גיבוי מוצפן פעיל'));
+ check(s.calls.uploads.length===0&&await s.p.evaluate(()=>history.length)===unlockLength,'Returning unlock authenticates existing envelope without extra history or upload');await s.p.goBack();await s.p.waitForFunction(()=>!document.getElementById('auth').hidden);check(await s.p.locator('#auth').isVisible(),'Unlock screen Back restores returning-login screen');await s.c.close();
  // Pure Web Crypto integrity checks, using runtime-generated material.
  s=await scenario({row,material});
  const cryptoChecks=await s.p.evaluate(async({row,material,plain,recovery})=>{
@@ -141,6 +181,12 @@ async(page)=>{
  check(s.calls.uploads.length===1&&!!(await stored(s.p)),'Local storage recovery retries acknowledged key without losing content');await s.c.close();
  // Existing plaintext migration, including setup, write, verification and CAS failures.
  const legacy={user_id:uid,data:cloudState(full),updated_at:new Date(full.updatedAt).toISOString()};
+ for(const pick of ['local','cloud']){
+  s=await scenario({row:legacy,meta:false,local:{...full,time:'15:00',updatedAt:full.updatedAt+10000}});await s.p.locator('#ask').waitFor();
+  check(s.calls.uploads.length===0&&same(s.cloud(),legacy),'Plaintext '+pick+': conflict remains explicit before migration');
+  await s.p.locator('#askB').getByRole('button',{name:pick==='local'?'לשמור את הנתונים מהמכשיר הזה':'לטעון את הנתונים מהענן'}).click();await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('הגיבוי המוצפן עדיין לא הופעל'));await activate(s.p);
+  check((await s.plain()).time===(pick==='local'?'15:00':full.time),'Plaintext '+pick+': acknowledged migration preserves selected state');await s.c.close();
+ }
  s=await scenario({row:legacy});
  check(s.calls.uploads.length===0&&same(s.cloud(),legacy)&&same(await read(s.p),full),'Legacy migration waits for acknowledgement; neither side destroyed');
  s.setFail(true);await s.p.locator('#makeRecoveryKey').click();await s.p.locator('#recoveryGenerated').waitFor();await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();await s.p.waitForFunction(()=>document.getElementById('encryptionMsg').textContent.includes('לא הושלם'));

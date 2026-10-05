@@ -1,6 +1,6 @@
 # Registered-user encrypted sync (#9)
 
-Implemented from current main `aed56bc69f6271219423e4ca0bc4df2e394ac3a0`. Pending review. No merge, deployment, database changes, real-user access or emails performed.
+Refreshed onto current main `88358f2bc40b93d881fcaa416258109328436ae8` (released UAT fixes and live unused-email verification note). Pending review. No merge, deployment, database changes, real-user access or emails performed.
 
 ## Format and key lifecycle
 
@@ -16,6 +16,7 @@ The account-scoped `cleantime-he-crypto` device cache holds the usable raw DEK +
 
 ## Migration and failure semantics
 
+- Existing registered users with a recovery date continue directly into Today. Pending legacy migration stays accessible through Settings → My Account; no forced onboarding/account creation. New sign-ins needing setup/unlock open My Account.
 - Legacy cloud state is read with existing normalization, newest-timestamp rules and first-sign-in local/cloud selection. Neither side is uploaded until a key is generated and explicitly acknowledged as saved. Guest state never migrates.
 - Persist the usable key before writing cloud state. If local key persistence fails, no cloud write occurs. Legacy local recovery collections/unknown fields survive.
 - Migration advances `updatedAt` beyond the selected state/read-row timestamp, encrypts the complete authoritative state, and conditionally updates the exact row timestamp last read. An absent row uses INSERT, so concurrent setup hits the primary-key constraint rather than replacing a winner's DEK.
@@ -43,11 +44,12 @@ Run a localhost server on port 8765, then `node tests/run-qa.js` from the reposi
 | sync | 8 |
 | bookmarks | 43 |
 | bookmarks sync | 11 |
-| upgrade compatibility | 52 |
-| encryption/migration | 63 |
-| **Total** | **298** |
+| upgrade compatibility | 55 |
+| UAT | 43 |
+| encryption/migration | 97 |
+| **Total** | **378** |
 
-Encryption coverage includes guest/no cloud; acknowledged first setup; complete round trip; absence of readable recovery fields/content, raw DEK and recovery key in uploads; missing/wrong/correct keys; trusted reload and sign-out; both timestamp directions; both explicit conflict choices; key-generation/key-persistence/migration/write/read-back/CAS/concurrent-setup failures and retry; deletion success/failure; 360px setup and unlock; random IV independence; modified ciphertext/account/timestamp/version/KDF/extra-field rejection; exact HKDF profile, domain/hash/salt tamper rejection and account-bound unwrap; revised privacy guarantee; key/account isolation; no logging or password APIs. Existing account/local/edge/bookmarks suites retain their original behaviors with ciphertext-aware expectations. Upgrade coverage adds explicit encrypted migration after acknowledgement.
+Encryption coverage includes guest/no cloud; acknowledged first setup; complete round trip; absence of readable recovery fields/content, raw DEK and recovery key in uploads; missing/wrong/correct keys; trusted reload and sign-out; both timestamp directions; both explicit conflict choices; key-generation/key-persistence/migration/write/read-back/CAS/concurrent-setup failures and retry; deletion success/failure; 360px setup and unlock; random IV independence; modified ciphertext/account/timestamp/version/KDF/extra-field rejection; exact HKDF profile, domain/hash/salt tamper rejection and account-bound unwrap; revised privacy guarantee; key/account isolation; no logging or password APIs. Existing account/local/edge/bookmarks suites retain their original behaviors with ciphertext-aware expectations. Upgrade coverage retains strict direct-Today landing and explicit encrypted migration after acknowledgement. Combined coverage adds create/convert → setup, returning encrypted login with creation forbidden, unused-email rejection, Spam guidance, missing/future dates blocking OTP, setup/unlock history, encrypted Back/Forward and Journal editor, hidden Step 10 controls/legacy answer round trips and 320/360/508/1280px layout. Both plaintext conflict choices are tested through acknowledged migration.
 
 ## Remaining release checks and limits
 
@@ -67,8 +69,8 @@ Measured on local desktop Chromium 151.0.7922.34 (macOS), using Web Crypto and a
 
 | Operation | Samples | Median | p95 |
 | --- | ---: | ---: | ---: |
-| HKDF derivation only | 100 | below 0.1ms timer resolution | 0.1ms |
-| Previous PBKDF2 derivation (600,000 iterations) | 10 | 38.5ms | 42.4ms |
-| Complete HKDF unlock, including imports, unwrap, authenticated payload decrypt and JSON parse | 50 | 2.6ms | 2.9ms |
+| HKDF derivation only | 100 | below 0.1ms timer resolution | below 0.1ms timer resolution |
+| Previous PBKDF2 derivation (600,000 iterations) | 10 | 36.7ms | 37.1ms |
+| Complete HKDF unlock, including imports, unwrap, authenticated payload decrypt and JSON parse | 50 | 2.5ms | 2.9ms |
 
 These are desktop measurements, not Android measurements; concurrent QA/browser scheduling and coarse timer resolution limit precision. HKDF-SHA-256 for a 32-byte output performs one extract HMAC and one expand HMAC rather than a 600,000-iteration password-stretching loop. Android KEK derivation is expected to be millisecond-scale, with dispatch/import, payload size and JSON processing dominating full unlock; this is an estimate, not a device-specific bound. Physical Android timing remains a staging/manual check. Trusted-device normal sync still does not run a recovery-key KDF.

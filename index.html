@@ -1308,7 +1308,7 @@ async function sync(){
         cryptoState='setup';
         if(!await loadMaterial(id)){
           // Keep legacy/local state; user initiates setup from My Account.
-          M.dirty=true;saveMeta();syncErr='';show('account');break;
+          M.dirty=true;saveMeta();syncErr='';if(current==='auth'||current==='onboarding'||!S.date)show('account');break;
         }
         if(keyMaterial.confirmed)throw new Error('Encrypted row changed');
         S.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1,(Date.parse(row?.updated_at)||0)+1);
