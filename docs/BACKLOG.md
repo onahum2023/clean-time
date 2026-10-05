@@ -38,7 +38,7 @@ Checkmarks in this section mean implemented and tested locally, pending PR revie
 - [x] Magic-link waiting guidance mentions Spam; provider settings unchanged.
 - [x] Synthetic registered-user upgrade and unchanged storage/sync compatibility coverage.
 - [ ] Physical Android and live delivery recheck after an explicitly authorized release.
-- [ ] **Live unused-email verification.** Confirm that “כבר יש לי חשבון” with a genuinely unused authorized email does not create an identity, shows the Hebrew missing-account message, and offers the Create Account route.
+- [x] **Live unused-email verification.** Verified in production: an unused email on “כבר יש לי חשבון” does not create an identity, shows the Hebrew missing-account message, and offers the Create Account route.
 - [ ] **Auth email deliverability follow-up.** Recheck magic-link delivery with at least one additional Gmail account and one non-Gmail provider; keep current Spam-folder guidance unless broader evidence suggests a provider/configuration issue.
 
 See [UAT regression evidence](UAT-REGRESSION.md). Encryption PR #13 remains separate and untouched. No merge or deployment in this task.
