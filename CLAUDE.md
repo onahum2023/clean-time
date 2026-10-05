@@ -76,4 +76,4 @@ See `docs/UX-1.0-UAT.md` for the additive data evolution, product decisions, bro
 
 ## Account-model UX (#10)
 
-See `docs/ACCOUNT-QA.md` for synthetic account-flow QA and manual checks. The JSON/localStorage schema and whole-state sync are unchanged. An explicit local conflict choice stamps newer than both clocks, so a future cloud timestamp cannot undo that choice. No encryption or recovery-key UX (#9) is implemented.
+See `docs/ACCOUNT-QA.md` for synthetic account-flow QA and manual checks, and `docs/UPGRADE-COMPATIBILITY.md` for the current-production active-user compatibility pass. The JSON/localStorage schema and whole-state sync are unchanged. An explicit local conflict choice stamps newer than both clocks, so a future cloud timestamp cannot undo that choice. No encryption or recovery-key UX (#9) is implemented.

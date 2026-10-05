@@ -499,7 +499,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 
 <script>
 (function(){
-const APP_VERSION='2026.10.05.7';
+const APP_VERSION='2026.10.05.8';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -1147,7 +1147,7 @@ async function sync(){
       M.email=user.email;
       const lT=S.updatedAt||0;
       let synced=lT;
-      if(rT>lT)applyRemote(remote,rT);
+      if(rT>lT){applyRemote(remote,rT);synced=rT;}
       else if(lT>rT||(!remote&&hasData(S)))synced=await upload();
       M.dirty=(S.updatedAt||0)!==synced; M.lastSync=Date.now(); syncErr='';
       saveMeta();
