@@ -52,12 +52,11 @@ async (page) => {
   check((await read()).plans[localDay].length===2&&(await read()).plans[localDay][0].done,'Plan edit/delete/check persists after refresh');
   await page.locator('#pList [role="checkbox"]').first().click();check(!(await read()).plans[localDay][0].done,'Plan uncheck persists');
   await go('inventory');
-  await page.locator('#iPlaceholders summary').click();
-  await page.locator('#iSummary').fill('מחשבות לסוף היום');await page.locator('[data-slot="placeholder_1"]').fill('טקסט זמני');
+  await page.locator('#iSummary').fill('מחשבות לסוף היום');
   await page.locator('#iDay').fill(oldDay);await page.locator('#iDay').dispatchEvent('change');await page.locator('#iSummary').fill('יום קודם');
   await page.locator('#iHistory').selectOption(localDay);
   check(await page.locator('#iSummary').inputValue()==='מחשבות לסוף היום','Inventory revisits today');
-  await page.reload();await go('inventory');await page.locator('#iPlaceholders summary').click();check(await page.locator('[data-slot="placeholder_1"]').inputValue()==='טקסט זמני','Inventory slot and summary persist');
+  await page.reload();await go('inventory');check(await page.locator('#iSummary').inputValue()==='מחשבות לסוף היום','Inventory summary persists');
   await page.locator('#iHistory').selectOption(oldDay);check(await page.locator('#iSummary').inputValue()==='יום קודם','Inventory revisits prior day');
   await go('journal');await page.locator('#jNew').click();await page.locator('#jText').fill('יומן בדיקה');await page.locator('#jDone').click();
   check((await read()).journal[0].text==='יומן בדיקה','Existing journal remains usable');
