@@ -1,6 +1,7 @@
 // Run with the Playwright MCP browser_run_code_unsafe tool (filename: tests/local-qa.js).
 // Only localhost is allowed. Synthetic fixtures; no real auth, email, or cloud writes.
 async (page) => {
+  const {activate,adaptMock}=require(process.cwd()+'/tests/qa-helpers.js');
   const results=[];
   const check=(value,label)=>{if(!value)throw new Error(label);results.push(label);};
   const origin='http://127.0.0.1:8765';
@@ -60,7 +61,7 @@ async (page) => {
   await page.locator('#iHistory').selectOption(oldDay);check(await page.locator('#iSummary').inputValue()==='יום קודם','Inventory revisits prior day');
   await go('journal');await page.locator('#jNew').click();await page.locator('#jText').fill('יומן בדיקה');await page.locator('#jDone').click();
   check((await read()).journal[0].text==='יומן בדיקה','Existing journal remains usable');
-  await page.locator('[data-tab="about"]').click();check((await page.locator('#about').innerText()).includes('הגיבוי אינו מוצפן'),'About discloses current cloud privacy limitation');
+  await page.locator('[data-tab="about"]').click();check((await page.locator('#about').innerText()).includes('מוצפנים במכשיר לפני הסנכרון'),'About discloses device encryption and recovery-key privacy model');
   await go('meditation');
   await page.evaluate(()=>{
     window.gongEvents=[];
@@ -114,19 +115,20 @@ async (page) => {
     localStorage.setItem('cleantime-he-auth','synthetic-session');
     localStorage.setItem('cleantime-he-sync',JSON.stringify({uid:'qa-user',lastSync:1}));
     window.qaRemote={...fixture,updatedAt:fixture.updatedAt+100,inventory:{'2025-02-10':{summary:'סיכום מהענן',answers:{placeholder_2:'תשובה מהענן'},created:1,updated:2}}};window.qaUploads=[];
-    const client={auth:{onAuthStateChange(){},getSession:async()=>({data:{session:{user:{id:'qa-user',email:'qa@example.invalid'}}}}),signInWithOtp:async()=>({}),signOut:async()=>({})},from(){return {select(){return {eq(){return {maybeSingle:async()=>({data:{data:window.qaRemote,updated_at:new Date(window.qaRemote.updatedAt).toISOString()}})}}}},upsert:async row=>{window.qaUploads.push(row);window.qaRemote=row.data;return {};}}}};
+    const client={auth:{onAuthStateChange(){},getSession:async()=>({data:{session:{user:{id:'qa-user',email:'qa@example.invalid'}}}}),signInWithOtp:async()=>({}),signOut:async()=>({})},from(){return {select(){return {eq(){return {maybeSingle:async()=>({data:{data:window.qaRemote,updated_at:(window.qaTimestamp||new Date(window.qaRemote.updatedAt).toISOString())}})}}}},upsert:async row=>{window.qaUploads.push(row);window.qaRemote=row.data;return {};}}}};
     window.supabase={createClient:()=>client};
     const original=Element.prototype.appendChild;
     Element.prototype.appendChild=function(el){if(el.tagName==='SCRIPT'&&el.src.includes('supabase-js')){setTimeout(()=>el.onload(),0);return el;}return original.call(this,el);};
   },{key,fixture});
-  const cloud=await context.newPage();await cloud.goto(origin);await cloud.waitForTimeout(500);
+  await adaptMock(context);const cloud=await context.newPage();await cloud.goto(origin);await cloud.waitForTimeout(500);
+  await activate(cloud);await cloud.evaluate(()=>window.qaUploads=[]);
   await cloud.locator('[data-tab="tools"]').click();await cloud.locator('#tools [data-go="inventory"]').click();await cloud.locator('#iHistory').selectOption(oldDay);
   check(await cloud.locator('#iSummary').inputValue()==='סיכום מהענן','Mock signed-in cloud pull loads inventory');
   await cloud.locator('#iSummary').fill('סיכום מעודכן');await cloud.waitForTimeout(2400);
-  const uploads=await cloud.evaluate(()=>window.qaUploads);
-  check(uploads.length>0&&uploads.at(-1).data.inventory[oldDay].summary==='סיכום מעודכן','Mock signed-in save uploads inventory through existing JSON row');
-  check(!('mode' in uploads.at(-1).data)&&uploads.at(-1).user_id==='qa-user','Cloud upload preserves account scope and local-only mode exclusion');
-  await cloud.evaluate(()=>{window.qaRemote={...window.qaRemote,updatedAt:Date.now()+1000,inventory:{...window.qaRemote.inventory,'2025-02-09':{summary:'יום נוסף בענן'}}};window.dispatchEvent(new Event('focus'));});await cloud.waitForTimeout(400);
+  const uploads=await cloud.evaluate(()=>window.qaUploads),decrypted=await cloud.evaluate(()=>qaPlain());
+  check(uploads.length>0&&decrypted.inventory[oldDay].summary==='סיכום מעודכן','Mock signed-in save encrypts whole-state inventory in existing row');
+  check(!('mode' in decrypted)&&uploads.at(-1).data.v===1&&uploads.at(-1).user_id==='qa-user','Cloud upload preserves account scope and local-only mode exclusion');
+  await cloud.evaluate(async()=>{const current=await qaPlain(),state={...current,updatedAt:Date.now()+1000,inventory:{...current.inventory,'2025-02-09':{summary:'יום נוסף בענן'}}};window.qaTimestamp=new Date(state.updatedAt).toISOString();const m=JSON.parse(localStorage.getItem('cleantime-he-crypto'));window.qaRemote=await SyncCrypto.encrypt(state,await SyncCrypto.importDek(m.raw),m,m.uid,window.qaTimestamp);window.dispatchEvent(new Event('focus'));});await cloud.waitForTimeout(400);
   check((await cloud.locator('#iHistory option').allTextContents()).length===3,'Mock remote refresh updates inventory history');
   await context.close();
   await seed(fixture);await page.locator('[data-tab="counter"]').click();

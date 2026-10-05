@@ -27,9 +27,9 @@ Checkmarks in this section mean implemented and tested locally, pending PR revie
 - [x] Separate My Account with identity, sync state, sign-out and existing data deletion entry.
 - [x] Recovery settings cleanup and synthetic 360px account-flow QA. See [account QA notes](ACCOUNT-QA.md).
 - [ ] Live magic-link and physical Android checks; no production deployment in this change.
-- [ ] **#9 Encryption.** Separate work: no key generation, recovery-key UI or encrypted sync in #10. A recovery key will not be an account password.
+- [x] **#9 Encryption (implemented on dedicated branch, pending review/release).** Whole-state Web Crypto envelope, acknowledged recovery key, new-device unlock and retry-safe plaintext migration. Recovery key is not an account password. Required unapplied database guard and release checks: [encryption QA](ENCRYPTION-QA.md).
 
-## P0: Production UAT UX fixes — pending review and release
+## P0: Production UAT UX fixes — retained in encryption refresh
 
 - [x] Returning-account login cannot create users; missing-account feedback and Create Account route.
 - [x] Internal browser Back/Forward, including Journal editor and Settings/My Account.
@@ -41,11 +41,11 @@ Checkmarks in this section mean implemented and tested locally, pending PR revie
 - [x] **Live unused-email verification.** Verified in production: an unused email on “כבר יש לי חשבון” does not create an identity, shows the Hebrew missing-account message, and offers the Create Account route.
 - [ ] **Auth email deliverability follow-up.** Recheck magic-link delivery with at least one additional Gmail account and one non-Gmail provider; keep current Spam-folder guidance unless broader evidence suggests a provider/configuration issue.
 
-See [UAT regression evidence](UAT-REGRESSION.md). Encryption PR #13 remains separate and untouched. No merge or deployment in this task.
+See [UAT regression evidence](UAT-REGRESSION.md). Encryption PR #13 is refreshed onto main `88358f2bc40b93d881fcaa416258109328436ae8` and retains the released UAT behavior. Encryption remains pending review/release; no merge, deployment or SQL application in this refresh.
 
 ## P0: Before sharing beyond family
 
-- [?] **Journal privacy decision.** Today journal, gratitude and plans sync to Supabase as plain JSON, readable by the project owner. Options: (a) encrypt on the device with a user passphrase before sync, (b) keep journal local-only and sync only counter and settings. Blocks the privacy page.
+- [x] **Cloud privacy model (pending #9 release).** Entire registered-user recovery state is encrypted on device. Existing rows remain legacy until saved-key acknowledgement and verified migration. Guest data stays local. Prior plaintext backups are not retroactively encrypted.
 - [x] **Self-host fonts (implemented locally, pending merge).** Assistant is bundled with its OFL license; Google Fonts requests removed.
 - [ ] **Security headers.** Add `vercel.json` with CSP (self, cdn.jsdelivr.net, *.supabase.co), `frame-ancestors 'none'`, `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`.
 - [x] **Safe reading links (implemented locally, pending merge).** Shared `https:` / numeric `tel:` validation for resources and bookmarks; unsafe imported links remain visible but cannot open. See [bookmark review](BOOKMARKS-REVIEW.md).
@@ -54,7 +54,7 @@ See [UAT regression evidence](UAT-REGRESSION.md). Encryption PR #13 remains sepa
 - [ ] **RLS test.** With a second account, confirm it cannot select, update or delete another user's row.
 - [x] **Domain.** clean-time.app, connected to Vercel (apex redirects to www.clean-time.app, the primary), linked from the README. The old host hands local data over (see "Domain move" in CLAUDE.md). Remaining: redirect clean-time-eight.vercel.app to the new domain later, then remove the move code.
 - [ ] **Supabase redirect URL.** Add `https://www.clean-time.app` to Auth → Redirect URLs, then test a magic-link sign-in on the new domain.
-- [ ] **Privacy page (Hebrew).** What is stored, where, who can read it, how to delete. Short.
+- [x] **Privacy disclosure (pending #9 release).** About/account copy describes guest-local data, on-device encryption, email/minimal technical metadata and unrecoverable lost keys. Legal review remains separate.
 - [x] **License.** AGPL-3.0 (see `LICENSE`).
 
 ## P1: Soon after

@@ -1,3 +1,5 @@
+> Issue #9 follow-up: encrypted sync now replaces plaintext uploads after explicit saved-key acknowledgement. This document records the account-model baseline; current encryption behavior and synthetic QA are in [ENCRYPTION-QA.md](ENCRYPTION-QA.md). Auth/session/local recovery schema remain compatible.
+
 # Account model (#10) — local QA
 
 Based on `codex/clean-time-1.0-p0` at `d5a7924`. No merge or production deployment.

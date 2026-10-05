@@ -1,3 +1,11 @@
+> Issue #9 follow-up: encrypted sync now replaces plaintext uploads after explicit saved-key acknowledgement. This document records the account-model baseline; current encryption behavior and synthetic QA are in [ENCRYPTION-QA.md](ENCRYPTION-QA.md). Auth/session/local recovery schema remain compatible.
+
+# Current encryption refresh compatibility
+
+Refreshed onto main `88358f2bc40b93d881fcaa416258109328436ae8`. `tests/upgrade-qa.js` now passes 55 synthetic checks, including strict direct-Today entry for populated existing plaintext and encrypted accounts, Settings/My Account history, matching-state no-write behavior, acknowledged encrypted migration, normal encrypted edits, reload/reopen and explicit sign-out. Local state/session formats and preserved unknown/history fields remain compatible. Pending legacy migration does not redirect an existing dated user away from Today. Local/cloud winner selection occurs before acknowledged migration; write failure retains content. Cloud writes now use conditional ciphertext plus authenticated read-back rather than plaintext upserts.
+
+Full combined results and staging/manual limits: [ENCRYPTION-QA.md](ENCRYPTION-QA.md). No production account was inspected. The section below is historical PR #11 evidence and its old production snapshot/counts; it does not describe the refreshed cloud serialization.
+
 # PR #11: active registered-user compatibility pass
 
 Date: 2026-10-05. Synthetic accounts and recovery data only. No production Supabase operations, real email, merge or deployment.
