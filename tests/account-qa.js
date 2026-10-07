@@ -5,7 +5,7 @@ async(page)=>{
  const check=(v,label)=>{if(!v)throw new Error(label);results.push(label);};
  async function scenario(local,remote){
   const c=await page.context().browser().newContext({viewport:{width:360,height:800}});
-  await c.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());
+  await c.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
   await c.addInitScript(({key,local,remote})=>{
    if(local&&!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(local));
    window.confirm=()=>true;window.qaRemote=remote;window.qaUploads=[];window.qaEmails=[];window.qaUser=null;window.qaFail=false;

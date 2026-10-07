@@ -4,7 +4,7 @@ async(page)=>{
  const origin=(process.env.QA_BASE_URL||'http://127.0.0.1:8765'),key='cleantime-he-v1',results=[];
  const check=(v,label)=>{if(!v)throw new Error(label);results.push(label);};
  const context=await page.context().browser().newContext();
- await context.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());
+ await context.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
  await context.addInitScript(key=>{
   window.confirm=()=>true;window.qaLoggedIn=false;window.qaOnline=true;window.qaUploads=[];window.qaEmails=[];
   Object.defineProperty(navigator,'onLine',{get:()=>window.qaOnline});

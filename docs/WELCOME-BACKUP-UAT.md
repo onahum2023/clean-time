@@ -18,6 +18,19 @@ Read-only project/branch discovery found only the production project/default bra
 
 **Live auth/backup QA is pending.** It needs an approved dedicated test Supabase project with compatible `user_data` schema/RLS/encrypted guard, a reviewed Preview-only public configuration path (the app currently hard-codes production configuration), the exact Preview origin in Auth Redirect URLs, and designated existing/new test identities with controlled email inboxes and synthetic recovery content. Do not treat mocked Preview auth as proof of SMTP, redirects, RLS or database guard execution. Broader email/RLS verification stays in #19; physical Android/PWA work stays in #21.
 
+## Smallest staging setup and cost
+
+No suitable existing staging backend was found in connected metadata. Smallest recommended option: one **empty Free-plan project in a Free organization**, if an active-project slot is available. Cost: **$0/month** within Free quotas (500 MB DB, 5 GB egress; two active Free projects maximum; pauses after one week of inactivity). No production project transfer or billing/config change is needed. Quota availability outside the connected project list was not established. [Current Supabase pricing](https://supabase.com/pricing), [billing scope](https://supabase.com/docs/guides/platform/billing-on-supabase).
+
+Required setup, after authorization:
+
+1. Create the empty staging project; install compatible table/RLS/guard definitions from reviewed source, with no production recovery data or Auth users copied.
+2. Configure only staging Auth site/redirect URLs for the exact Preview and designated controlled test mailboxes. Default SMTP can test team addresses at two emails/hour; use staging custom SMTP if other addresses or faster testing are required. [SMTP restrictions](https://supabase.com/docs/guides/auth/auth-smtp). Any provider charge depends on the chosen sender; no paid service is currently required for slow team-mailbox testing.
+3. Add a small reviewed Preview-only public-config generation step in this same PR, supply the staging public URL/publishable key only to this PR's Preview branch, redeploy, and verify deployed configuration/network target differs from production **before** creating synthetic accounts or writing fixtures. No service-role credential belongs in frontend config.
+4. Run the pending live flows below using synthetic recovery content, then leave PR #33 unmerged for acceptance.
+
+Alternative if the organization already has a paid plan: a data-less Supabase Preview branch starts at **$0.01344/hour** (about **$0.32/day**, **$2.26/week**) plus usage; branching is unavailable on Free. If a paid plan is not already present, Pro starts at **$25/month**. Branch usage is not covered by spend caps or compute credits. No paid branch or plan was created. [Branch costs](https://supabase.com/docs/guides/platform/manage-your-usage/branching), [pricing](https://supabase.com/pricing).
+
 ## Automated checks
 
 Run from repository root with Playwright available through `NODE_PATH`:
@@ -30,11 +43,27 @@ QA_ENGINE=webkit QA_BASE_URL=https://EXACT-PR-PREVIEW.vercel.app node tests/run-
 
 `QA_BASE_URL` accepts only an exact HTTPS Vercel origin. Each suite uses disposable contexts and synthetic fixtures; external auth/database calls are aborted/mocked. Web Crypto uses deployed `assets/sync-crypto.js` with generated fixture keys kept out of reports/logs. Guest tests use actual deployed HTML/assets. Screenshots with generated key fields are masked. No browser auth state is committed.
 
-Local regression: 475 checks passed before the last responsive assertions; the final focused Welcome/encryption run passed 198 checks (83 + 115). WebKit Welcome/date baseline passed 74 checks. Final deployed results and immutable deployment identity will be added after Preview QA.
+First deployed pass: Chromium **480 checks, zero failed suites** against `https://clean-time-oja736rmh-nu-cielo.vercel.app`, Git commit `2d7cf2b388aa294ba43a0070618b27e1b21fb585`, deployment `dpl_2GQ7mn1iyH19Ui4ASFtwrF9CtyvK`, source Git, Ready/Preview. Full local regression also passed; final deployed theme correction will be rechecked below.
+
+| Suite | Passing checks (first Preview pass) |
+| --- | ---: |
+| account | 27 |
+| bookmarks | 43 |
+| bookmarks-sync | 11 |
+| edge | 12 |
+| encryption | 115 |
+| local | 83 |
+| sync | 8 |
+| UAT | 43 |
+| upgrade | 55 |
+| Welcome/date | 83 |
+| **Total** | **480** |
+
+Preview is Vercel-auth protected (anonymous HTTP 302). `tests/preview-access.js` adds the Vercel CLI's short-lived development OIDC header only to the exact Preview origin, in memory; third-party fixture routes remain blocked/mocked. Protection was not disabled, no credential was printed/committed, and no live Supabase request was sent. Run protected QA with `vercel env run` for the linked `nu-cielo/clean-time` project and the commands above. Nora/Oded require Vercel access to open the Preview.
 
 ## Browser review and limitations
 
-Pending visual review of deployed Welcome/setup/Today at 320/360/390px and light/dark themes. Automated keyboard/focus/touch/date/time-zone and history checks are distinct from visual browser review. No physical phone was tested. Live auth/email/database checks listed above remain pending even when their synthetic browser equivalents pass.
+Visually inspected 24 screenshots of deployed Welcome/setup/Today/guest My Account at 320/360/390px and light/dark themes: all fit in RTL, actions are clear, and Welcome primary/secondary actions remain above the fold at 360×800. The review found dark native date segments/icon needed theme styling; `color-scheme` now follows the existing light/dark theme and the final deployed correction is being verified. Screenshots are synthetic local QA artifacts outside Git. This is human inspection of browser-generated screenshots, not an interactive manual or physical-device pass. Automated keyboard/focus/touch/date/time-zone and history checks are distinct from visual browser review. Final local WebKit Welcome/date/theme coverage: **89 passing checks**. WebKit navigation to the protected Preview did not receive any response before timeout, including a focused diagnostic; deployed WebKit coverage remains pending. Chromium protected access works and is the deployed browser evidence. No interactive manual account UAT or physical phone was tested. Live auth/email/database checks listed above remain pending even when their synthetic browser equivalents pass.
 
 ## Nora/Oded Preview acceptance checklist
 

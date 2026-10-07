@@ -15,7 +15,7 @@ async(page)=>{
   const c=await page.context().browser().newContext({viewport:{width:360,height:800}});
   let cloud=structuredClone(row),fail=false,casMiss=false,verifyFail=false,raceRow=null,hold=false,release=null;
   const calls={uploads:[],reads:0,network:[],logs:[],errors:[],otp:[]};
-  await c.route('**/*',r=>{if(r.request().url().startsWith(origin+'/'))return r.continue();calls.network.push(r.request().url());return r.abort();});
+  await c.route('**/*',r=>{if(r.request().url().startsWith(origin+'/'))return r.fallback();calls.network.push(r.request().url());return r.abort();});
   await c.exposeBinding('__cryptoCloud',async(_,op,payload)=>{
    if(op==='otp'){calls.otp.push(payload);return payload.email==='unused@example.invalid'&&payload.options.shouldCreateUser===false?{error:{code:'otp_disabled',status:422,message:'synthetic missing account'}}:{};}
    if(op==='read'){calls.reads++;return verifyFail&&calls.uploads.length?{error:{code:'synthetic'}}:{data:structuredClone(cloud)};}

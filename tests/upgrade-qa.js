@@ -23,7 +23,7 @@ async(page)=>{
  async function scenario(local,remote){
   const c=await page.context().browser().newContext({viewport:{width:360,height:800}});
   const calls={reads:[],uploads:[],emails:0,signOut:0,delete:0,clientOptions:[],blocked:[],errors:[]};let cloud=clone(remote),cloudTimestamp=cloud?new Date(cloud.updatedAt).toISOString():null;
-  await c.route('**/*',r=>{const url=r.request().url();if(url.startsWith(origin+'/')||url===origin)return r.continue();calls.blocked.push(url);return r.abort();});
+  await c.route('**/*',r=>{const url=r.request().url();if(url.startsWith(origin+'/')||url===origin)return r.fallback();calls.blocked.push(url);return r.abort();});
   await c.exposeBinding('__upgradeCloud',async(source,op,payload)=>{
    if(op==='read'){calls.reads.push(payload);return {data:cloud?{data:clone(cloud),updated_at:cloudTimestamp}:null};}
    if(op==='upload'){calls.uploads.push(clone(payload));cloud=clone(payload.row.data);cloudTimestamp=payload.row.updated_at;return {data:[{user_id:identity.id}]};}

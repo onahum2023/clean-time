@@ -7,6 +7,7 @@ if(process.env.QA_BASE_URL){
 }
 (async()=>{
  const browser=await (process.env.QA_ENGINE==='webkit'?webkit:chromium).launch({headless:true});
+ require('./preview-access.js').attachPreviewAccess(browser);
  let total=0,failed=0;
  try{
   const suites=process.argv.slice(2).length?process.argv.slice(2):fs.readdirSync('tests').filter(f=>f.endsWith('-qa.js')&&f!=='run-qa.js').sort();

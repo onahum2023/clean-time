@@ -8,7 +8,7 @@ async (page) => {
   const key='cleantime-he-v1';
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   const requests=[];page.on('request',r=>requests.push(r.url()));
-  await page.route('**/*',route=>route.request().url().startsWith(origin)?route.continue():route.abort());
+  await page.route('**/*',route=>route.request().url().startsWith(origin)?route.fallback():route.abort());
   await page.addInitScript(()=>{window.confirm=()=>true;});
   await page.goto(origin);
   const localDay=await page.evaluate(()=>{const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;});
@@ -109,7 +109,7 @@ async (page) => {
   check(await page.evaluate(k=>localStorage.getItem(k),key)==='{broken','Malformed original is never silently overwritten');
   // A fresh browser context mocks only the SDK/client; all network is still localhost-only.
   const context=await page.context().browser().newContext({viewport:{width:360,height:800}});
-  await context.route('**/*',route=>route.request().url().startsWith(origin)?route.continue():route.abort());
+  await context.route('**/*',route=>route.request().url().startsWith(origin)?route.fallback():route.abort());
   await context.addInitScript(({key,fixture})=>{
     if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(fixture));
     localStorage.setItem('cleantime-he-auth','synthetic-session');

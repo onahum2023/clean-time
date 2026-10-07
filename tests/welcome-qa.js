@@ -6,7 +6,7 @@ async(page)=>{
  for(const timezoneId of ['Asia/Jerusalem','America/Los_Angeles','Pacific/Kiritimati']){
   const c=await browser.newContext({viewport:{width:360,height:800},timezoneId});
   const p=await c.newPage(),external=[],errors=[];
-  await c.route('**/*',r=>{if(new URL(r.request().url()).origin===origin)return r.continue();external.push(r.request().url());return r.abort();});
+  await c.route('**/*',r=>{if(new URL(r.request().url()).origin===origin)return r.fallback();external.push(r.request().url());return r.abort();});
   p.on('pageerror',e=>errors.push(e.message));await p.goto(origin);
   check(await p.locator('#welcome').isVisible()&&!await p.locator('#guestForm').isVisible()&&!await p.locator('#tabs').isVisible()&&!await p.locator('#openSettings').isVisible(),'Fresh Welcome has no recovery fields/navigation '+timezoneId);
   check(await p.locator('#welcome input').count()===0&&!await p.locator('#authCreate').isVisible(),'Welcome has no registration form');
@@ -38,7 +38,7 @@ async(page)=>{
  for(const width of [320,360,390])for(const colorScheme of ['light','dark']){
   const c=await browser.newContext({viewport:{width,height:800},colorScheme});const p=await c.newPage();await p.goto(origin);
   for(const screen of ['welcome','onboarding']){
-   if(screen==='onboarding')await p.locator('#welcomeStart').click();
+   if(screen==='onboarding'){await p.locator('#welcomeStart').click();check(await p.locator('#oDate').evaluate((e,theme)=>getComputedStyle(e).colorScheme===theme,colorScheme),'Native date control theme '+width+' '+colorScheme);}
    check(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&getComputedStyle(document.documentElement).direction==='rtl'),screen+' RTL fit '+width+' '+colorScheme);
    check(await p.locator('#'+screen+' button:visible').evaluateAll(es=>es.every(e=>e.getBoundingClientRect().height>=44)),screen+' touch targets '+width+' '+colorScheme);
    if(screen==='welcome'&&width===360)check(await p.locator('#onboardingLogin').evaluate(e=>e.getBoundingClientRect().bottom<=800),'Welcome primary and secondary actions above fold');

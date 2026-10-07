@@ -21,6 +21,7 @@
   font-display:swap;
 }
 :root{
+  color-scheme:light;
   --bg:#F7F5F0; --surface:#FFFFFF; --ink:#26302D; --muted:#66736F; --line:#D9DED9;
   --accent:#477E72; --accent-ink:var(--action);
   --action:color-mix(in srgb,var(--accent) 84%,#00251E);
@@ -32,12 +33,14 @@
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
+    color-scheme:dark;
     --bg:#191E1B; --surface:#232A26; --ink:#EDF0E9; --muted:#A6B3AA; --line:#3E4941;
     --accent-ink:color-mix(in srgb,var(--accent) 55%,#FFFFFF);
     --accent-soft:color-mix(in srgb,var(--accent) 22%,var(--bg));
   }
 }
 :root[data-theme="dark"]{
+  color-scheme:dark;
   --bg:#191E1B; --surface:#232A26; --ink:#EDF0E9; --muted:#A6B3AA; --line:#3E4941;
   --accent-ink:color-mix(in srgb,var(--accent) 55%,#FFFFFF);
   --accent-soft:color-mix(in srgb,var(--accent) 22%,var(--bg));
@@ -512,7 +515,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       </ul>
       <h4>פרטיות</h4>
       <p>בלי התחברות, כל הנתונים נשמרים רק במכשיר ובדפדפן הזה.</p>
-      <p>בחשבון רשום, נתוני ההחלמה מוצפנים במכשיר לפני שהם נשמרים בגיבוי בענן. כדי לפתוח את הגיבוי במכשיר חדש נדרש מפתח השחזור שלך. חשוב לשמור אותו במקום בטוח — אם המפתח יאבד, ייתכן שלא יהיה ניתן לשחזר את הנתונים מהענן.</p>
+      <p>חשבון לבדו אינו מפעיל גיבוי. לאחר שמירת מפתח השחזור ואימות הגיבוי הראשון, נתוני ההחלמה מוצפנים במכשיר לפני שהם נשמרים בגיבוי בענן. כדי לפתוח את הגיבוי במכשיר חדש נדרש מפתח השחזור שלך. חשוב לשמור אותו במקום בטוח — אם המפתח יאבד, ייתכן שלא יהיה ניתן לשחזר את הנתונים מהענן.</p>
       <p>המידע במכשיר עצמו נשאר זמין לאפליקציה בזמן השימוש. כתובת המייל ומידע טכני מינימלי נשמרים לצורך כניסה לחשבון וסנכרון.</p>
       <p>אפשר למחוק את נתוני ההחלמה מהמכשיר ומהגיבוי בענן דרך ההגדרות.</p>
       <h4>קוד פתוח</h4>
@@ -1087,7 +1090,7 @@ $('reset').onclick=async()=>{
     if(!confirm('למחוק את כל הנתונים מהמכשיר?'))return;
     resetLocal();return;
   }
-  const where=await ask('מחיקת כל הנתונים','מהמכשיר בלבד: הנתונים יימחקו מהמכשיר הזה והחשבון יתנתק. העותק בענן יישאר.\nגם מהענן: הנתונים יימחקו מהמכשיר ומהענן, ולא יהיה אפשר לשחזר אותם.',
+  const where=await ask('מחיקת כל הנתונים','מהמכשיר בלבד: הנתונים יימחקו מהמכשיר הזה והחשבון יתנתק. אם כבר נוצר גיבוי בענן, הוא יישאר.\nגם מהענן: הנתונים יימחקו מהמכשיר ומהענן, ולא יהיה אפשר לשחזר אותם.',
     [{label:'מהמכשיר הזה בלבד',value:'device',cls:'danger'},{label:'גם מהענן',value:'cloud',cls:'danger'},{label:'ביטול',value:null,cls:'ghost'}]);
   if(where==='device'){await signOutNow();return;}
   if(where==='cloud')await wipeCloud();
@@ -1412,7 +1415,7 @@ async function signOutNow(){
   resetLocal(); setMsg('');
 }
 $('signOut').onclick=async()=>{
-  if(!confirm('התנתקות תמחק את כל הנתונים מהמכשיר הזה.\nהעותק בענן יישאר. כדי לפתוח גיבוי מוצפן לאחר כניסה מחדש צריך את מפתח השחזור. יש לשמור אותו לפני ההתנתקות.\n\nלהתנתק?'))return;
+  if(!confirm('התנתקות תמחק את כל הנתונים מהמכשיר הזה.\nאם כבר נוצר גיבוי בענן, הוא יישאר. כדי לפתוח גיבוי מוצפן לאחר כניסה מחדש צריך את מפתח השחזור. יש לשמור אותו לפני ההתנתקות.\n\nלהתנתק?'))return;
   if(M.dirty){
     clearTimeout(pushTimer); await sync();
     if(M.dirty&&!confirm('יש שינויים שעוד לא גובו לענן, והם יימחקו. להתנתק בכל זאת?'))return;
