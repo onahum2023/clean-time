@@ -10,7 +10,11 @@
 - Native date inputs remain in guest setup, explicit account creation and recovery settings. Each shows an immediate Hebrew month-name confirmation. Canonical `YYYY-MM-DD` parsing/storage and counter math are unchanged; formatting uses local calendar components, not UTC parsing. Browser-native placeholder order cannot be guaranteed.
 - Recovery data shape, unknown/legacy fields, malformed-storage protection, guest conversion, conflict choices, encryption envelope/KDF and migrations remain intact. App version: `2026.10.07.2`.
 
-## Preview backend inspection and live QA boundary
+## Current staging status
+
+An isolated **Pro-plan staging project** has now been provisioned in `nucielo` at the user’s request (additional compute quote **$10/month**). PR #33’s branch-scoped Preview config targets `uffvbfmfsesdhjzzjiyu`, and the deployed config plus real Auth request target were verified before creating a synthetic test identity. See [staging setup and live QA evidence](staging/README.md). **604 local and deployed synthetic checks pass**. Live unused-email rejection, guest setup/reload and registration continuity pass; real email verification and subsequent crypto/restore checks are pending controlled-mailbox access. Production remains untouched. The earlier inspection/cost section below records the pre-provisioning state.
+
+## Earlier Preview backend inspection and live QA boundary
 
 Vercel project: `nu-cielo/clean-time`, `prj_6MhMelClmBk0S83h1kXE90rslkjr`. Preview environment has no environment variables. This is a static deployment with public Supabase URL/key in `index.html`; Preview therefore uses the production project `aefhjgmiwgajdhgyhelm`, not an isolated database. `signInWithOtp` requests `emailRedirectTo: location.origin`; Supabase must allow that exact origin or links may fall back to its configured site URL. Actual allowlist/fallback behavior has not been verified with live mail.
 
@@ -67,7 +71,7 @@ Visually inspected 24 screenshots of deployed Welcome/setup/Today/guest My Accou
 
 ## Nora/Oded Preview acceptance checklist
 
-Use a fresh browser profile for guest UAT. Until staging exists, do not submit account forms on this Preview (they point to production).
+Use a fresh browser profile and synthetic content for UAT. The current staging-configured Preview permits designated test accounts only; earlier immutable Previews may still point to production. Confirm the staging-configured URL in PR #33 before submitting account forms.
 
 1. Send only the revised Preview link to a fresh visitor. Check centered logo/name → purpose/origin → four feature explanations → start/sign-in → reassurance → About/privacy. Can they understand the app and scroll naturally to **מתחילים** without instructions? Feature items must not open tools before setup. The former above-the-fold action check is superseded. Can they reach About/privacy and return?
 2. Start, choose recovery type and October 1, and confirm **1 באוקטובר 2026**. Check required/future-date messages. Go Back and confirm the draft remains.
