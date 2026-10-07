@@ -1,6 +1,6 @@
 // Local UAT regression: synthetic email registry/SDK only; all external traffic blocked.
 async(page)=>{
- const origin='http://127.0.0.1:8765',key='cleantime-he-v1',results=[];
+ const origin=(process.env.QA_BASE_URL||'http://127.0.0.1:8765'),key='cleantime-he-v1',results=[];
  const check=(v,label)=>{if(!v)throw new Error(label);results.push(label);};
  async function scenario(local){
   const c=await page.context().browser().newContext({viewport:{width:360,height:800}});
@@ -34,12 +34,13 @@ async(page)=>{
  await p.locator('#lEmail').fill('unused@example.invalid');await p.locator('#aDate').fill('2025-01-01');await p.locator('#aFrom').selectOption('אחר');await p.locator('#lSend').click();await p.waitForFunction(()=>window.qaLinks.length===2);
  check(await p.evaluate(()=>window.qaCalls[2].options.shouldCreateUser===true&&window.qaUsers.includes('unused@example.invalid')),'Explicit Create Account permits new identity');await c.close();
  ({c,p}=await scenario({date:'2025-01-01',from:'אחר',gratitude:[{id:1,text:'synthetic',ts:1}]}));
- await p.locator('#openSettings').click();await p.locator('#createAccount').click();await p.locator('#lEmail').fill('convert@example.invalid');await p.locator('#lSend').click();await p.waitForFunction(()=>window.qaLinks.length===1);
+ await p.locator('#openSettings').click();await p.locator('#myAccount').click();await p.locator('#createAccount').click();await p.locator('#lEmail').fill('convert@example.invalid');await p.locator('#lSend').click();await p.waitForFunction(()=>window.qaLinks.length===1);
  check(await p.evaluate(k=>window.qaCalls[0].options.shouldCreateUser===true&&window.qaUsers.includes('convert@example.invalid')&&JSON.parse(localStorage.getItem(k)).gratitude[0].text==='synthetic',key),'Guest conversion permits creation and retains local data');await c.close();
  // Native invalid events also expose inline errors before the browser allows submit.
  for(const mode of ['guest','create','settings']){
   ({c,p}=await scenario(mode==='settings'?{date:'2025-01-01'}:null));
-  if(mode==='create'){await p.locator('#onboardingAccount').click();await p.locator('#lEmail').fill('date@example.invalid');await p.locator('#aFrom').selectOption('אחר');}
+  if(mode==='create'){await p.locator('#onboardingLogin').click();await p.locator('#authCreate').click();await p.locator('#lEmail').fill('date@example.invalid');await p.locator('#aFrom').selectOption('אחר');}
+  if(mode==='guest')await p.locator('#welcomeStart').click();
   if(mode==='settings')await p.locator('#openSettings').click();
   const id=mode==='guest'?'oDate':mode==='create'?'aDate':'sDate',button=mode==='guest'?'#guestForm button':mode==='create'?'#lSend':'#saveSettings';
   await p.locator('#'+id).fill('');await p.locator(button).click();

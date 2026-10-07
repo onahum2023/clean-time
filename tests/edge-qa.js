@@ -1,6 +1,6 @@
 // Additional localhost-only edge tests. Run after local-qa.js using Playwright MCP.
 async (page)=>{
- const origin='http://127.0.0.1:8765',key='cleantime-he-v1',results=[];
+ const origin=(process.env.QA_BASE_URL||'http://127.0.0.1:8765'),key='cleantime-he-v1',results=[];
  const check=(v,label)=>{if(!v)throw new Error(label);results.push(label);};
  const context=await page.context().browser().newContext({viewport:{width:360,height:800}});
  await context.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());

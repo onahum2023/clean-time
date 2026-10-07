@@ -13,6 +13,8 @@ A free Hebrew app for people in recovery from addiction. It counts your clean ti
 
 **Clean time (זמן נקי).** Your clean time since the date you choose. Tap the counter to switch between years, months and days, total days, or hours, minutes and seconds.
 
+**First visit.** Welcome explains the app; **מתחילים** opens a separate setup asking only for a recovery date and type. No name, email or phone is required. Existing configured users open Today. Native date pickers show a Hebrew confirmation with the month written out. About/privacy is available before setup.
+
 **Today (היום).** The clean-time counter and direct access to your daily recovery tools.
 
 **Daily plan (התכנית שלי להיום).** One checklist per calendar day. Add, edit, delete and check items. Each new day starts empty; previous plans remain accessible.
@@ -35,6 +37,7 @@ A free Hebrew app for people in recovery from addiction. It counts your clean ti
 
 - You don't need an account. Guest onboarding asks only for a start date and recovery type. Without an account, data stays in this device's browser.
 - Registered accounts use email magic links. Once you save your recovery key and activate encrypted backup, the complete recovery state is encrypted on your device before sync. The stored cloud copy is not readable from Supabase alone without the encryption key. This guarantee excludes device compromise or malicious JavaScript delivered in the future. Email and minimal authentication/sync metadata remain available. Existing legacy backups are migrated only through the guarded recovery-key flow.
+- Email verification opens recovery-key setup; it does not activate backup. You may finish later and continue locally, with a reminder on Today/My Account. Settings and My Account share the same backup status. Backup is active only after encrypted write/readback verification; failures retain local data and retry material. A later sync error retains the last verified backup status.
 - New devices need the recovery key. Clean Time cannot recover encrypted cloud content without it or a working trusted device. Local data and the trusted device key remain stored on your device for this release.
 - There are no ads, no analytics and nothing is sold or shared.
 - Device and cloud-data deletion are available from settings/My Account. Cloud deletion requires an unlocked backup and writes an encrypted empty state; it does not delete the login account. See [encryption and migration notes](docs/ENCRYPTION-QA.md) for design, migration and limitations.
@@ -51,7 +54,7 @@ No build or new dependencies are required. From the repository:
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-Open `http://127.0.0.1:8765`. See [the UX update and UAT report](docs/UX-1.0-UAT.md) for storage changes, automated QA, and remaining manual checks.
+Open `http://127.0.0.1:8765`. See [the Welcome/backup/date Preview UAT report](docs/WELCOME-BACKUP-UAT.md) and [the UX update and UAT report](docs/UX-1.0-UAT.md) for storage changes, automated QA, and remaining manual checks.
 
 ## Feedback
 

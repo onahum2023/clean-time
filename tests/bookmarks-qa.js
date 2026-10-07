@@ -1,6 +1,6 @@
 // Localhost-only bookmark CRUD/safety/persistence tests; isolated synthetic state.
 async(page)=>{
- const origin='http://127.0.0.1:8765',key='cleantime-he-v1',results=[];
+ const origin=(process.env.QA_BASE_URL||'http://127.0.0.1:8765'),key='cleantime-he-v1',results=[];
  const check=(v,label)=>{if(!v)throw Error(label);results.push(label);};
  const context=await page.context().browser().newContext({viewport:{width:360,height:844}});
  const requests=[];

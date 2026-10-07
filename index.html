@@ -189,7 +189,13 @@ select{min-height:46px}
 .timer{font-size:clamp(3.5rem,22vw,6rem);font-variant-numeric:tabular-nums;line-height:1.3;margin:28px 0;direction:ltr}
 .timer-actions{display:flex;gap:12px;justify-content:center}
 .timer-actions .btn{min-width:100px}
-#onboarding{padding-top:24px}
+#welcome,#onboarding,#startup{padding-top:24px}
+#welcome .btn{width:100%;white-space:normal;margin-bottom:12px}
+.date-confirmation{display:block;color:var(--ink);font-weight:600;margin-top:8px}
+#backupReminder{padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:16px}
+#backupReminder .btn{margin-top:8px;width:100%;white-space:normal}
+#account .btn{max-width:100%;white-space:normal}
+#accountGuest .btn,#finishBackupLater{width:100%;margin-bottom:12px}
 #onboarding .btn{width:100%;margin-bottom:12px;white-space:normal}
 .btn.secondary{background:var(--surface);color:var(--accent-ink);border:1px solid var(--line)}
 #onboarding h2{margin-top:0}
@@ -250,31 +256,44 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <div class="app">
   <header>
     <h1 id="greet">זמן נקי</h1>
-    <button class="icon-btn" id="openSettings" aria-label="הגדרות">
+    <button class="icon-btn" id="openSettings" hidden aria-label="הגדרות">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
     </button>
   </header>
 
   <p id="storageMsg" role="alert" hidden></p>
+  <section id="startup" hidden aria-live="polite">
+    <h2>בודקים את החשבון והגיבוי</h2>
+    <p class="sub">הנתונים במכשיר נשמרים. עוד רגע ממשיכים.</p>
+    <button class="btn ghost" id="startupLocal" hidden>להמשיך במכשיר הזה</button>
+  </section>
+  <section id="welcome" hidden>
+    <h2>יום אחד בכל פעם</h2>
+    <p class="sub">זמן נקי היא אפליקציה חינמית שמלווה את היום בהחלמה: זמן נקי, תכנית יומית, יומן והכרת תודה.</p>
+    <button class="btn" id="welcomeStart">מתחילים</button>
+    <button class="btn ghost" id="onboardingLogin">כבר יש לי חשבון</button>
+    <p class="note">אין צורך בהרשמה. הנתונים נשמרים בדפדפן במכשיר הזה. גיבוי מוצפן הוא אפשרות שאפשר להפעיל בהמשך.</p>
+    <button class="btn ghost" data-go="about">אודות זמן נקי ופרטיות</button>
+  </section>
   <section id="onboarding" hidden>
-    <h2>ברוכים הבאים לזמן נקי</h2>
-    <p class="sub">מרחב פשוט וחינמי ליום שלך בהחלמה. אפשר להתחיל בלי חשבון.</p>
+    <h2>מתחילים בקצב שלך</h2>
+    <p class="sub">בוחרים תאריך תחילת החלמה וסוג החלמה, וממשיכים ליום שלך.</p>
     <form id="guestForm">
       <label class="field"><span>תאריך תחילת הניקיון / ההחלמה</span><input type="date" id="oDate" required></label>
       <label class="field"><span>החלמה מ־</span><select id="oFrom" required>
         <option value="" disabled selected>בחירה</option><option>אלכוהול</option><option>סמים</option><option>עישון</option><option>אוכל</option><option>אחר</option>
       </select></label>
-      <button class="btn" type="submit">המשך כאורח/ת</button>
+      <p class="msg err" id="oFromError" role="alert" hidden>יש לבחור סוג החלמה.</p>
+      <button class="btn" type="submit">ממשיכים להיום</button>
     </form>
-    <p class="sub">בלי מייל או טלפון. הנתונים נשמרים רק במכשיר ובדפדפן הזה.</p>
-    <button class="btn secondary" id="onboardingAccount">יצירת חשבון</button>
-    <button class="btn ghost" id="onboardingLogin">כבר יש לי חשבון</button>
-    <p class="note">חשבון הוא אפשרות לגיבוי ולסנכרון בין מכשירים. אפשר לבחור בו גם בהמשך.</p>
-    <button class="btn ghost" data-go="about">אודות זמן נקי ופרטיות</button>
+    <p class="note">בלי שם, מייל או טלפון. הנתונים נשמרים רק בדפדפן במכשיר הזה.</p>
+    <button class="btn ghost" id="setupBack">חזרה</button>
+    <button class="btn ghost" data-go="about">אודות ופרטיות</button>
   </section>
 
   <!-- Counter -->
-  <section id="counter">
+  <section id="counter" hidden>
+    <div id="backupReminder" hidden><p id="backupReminderText" role="status"></p><button class="btn secondary" id="resumeBackup">השלמת הגיבוי המוצפן</button></div>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M15 101h450M130 101a110 110 0 0 1 220 0M160 101a80 80 0 0 1 160 0M190 101a50 50 0 0 1 100 0M44 120h392M84 139h312"/></svg>
     <svg class="page-art daybreak" viewBox="0 0 68 34" aria-hidden="true" focusable="false"><path d="M4 26h60M23 26a11 11 0 0 1 22 0M34 3v5M13 12l4 4m38-4-4 4M12 31h44"/></svg>
     <div class="from-chip" id="fromChip" hidden></div>
@@ -408,9 +427,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
     <div class="field"><span>צבע</span><div class="swatches" id="swatches" role="radiogroup" aria-label="צבע"></div></div>
     <button class="btn" id="saveSettings" style="width:100%;margin-top:8px">שמירת הגדרות החלמה</button>
     <div class="sync">
-      <button class="btn secondary" id="createAccount">יצירת חשבון והפעלת גיבוי וסנכרון</button>
-      <button class="btn ghost" id="settingsLogin">כבר יש לי חשבון</button>
-      <button class="btn secondary" id="myAccount" hidden>החשבון שלי</button>
+      <button class="btn secondary" id="myAccount">החשבון שלי</button>
     </div>
     <div class="settings-foot" id="settingsFoot">
       <button class="btn danger" id="reset">מחיקת כל הנתונים</button>
@@ -419,6 +436,12 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   <!-- Account identity and encryption status are separate from recovery preferences. -->
   <section id="account" hidden>
     <h2>החשבון שלי</h2>
+    <div id="accountGuest">
+      <p class="sub">הנתונים נשמרים בדפדפן במכשיר הזה. אין צורך בחשבון כדי להשתמש בזמן נקי.</p>
+      <p class="note">אפשר לבחור חשבון לגיבוי מוצפן ולסנכרון. הנתונים המקומיים יישמרו גם בתהליך ההרשמה.</p>
+      <button class="btn secondary" id="createAccount">יצירת חשבון וגיבוי מוצפן</button>
+      <button class="btn ghost" id="settingsLogin">כבר יש לי חשבון</button>
+    </div>
     <div id="syncIn" hidden>
       <p class="who">שם: <b id="accountName"></b></p>
       <p class="who">מייל: <b id="sEmail" dir="ltr"></b></p>
@@ -445,6 +468,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
         <p class="msg" id="encryptionMsg" role="status" aria-live="polite"></p>
         <button class="btn ghost" id="retryEncryption" hidden>ניסיון סנכרון נוסף</button>
       </div>
+      <button class="btn ghost" id="finishBackupLater" hidden>להשלים אחר כך ולהמשיך במכשיר הזה</button>
       <button class="btn danger" id="signOut">התנתקות</button>
       <div class="settings-foot">
         <button class="btn danger" id="accountDelete">מחיקת נתונים מהמכשיר / מהענן</button>
@@ -474,6 +498,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
     <button class="btn ghost" id="authBack">חזרה</button>
   </section>
   <section class="about" id="about" hidden>
+    <button class="btn ghost" id="aboutBack" hidden>חזרה</button>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M-12 134Q36 43 117 17M-4 152Q40 63 129 35M55 49l-5-13m31-2 2-14m21 16 10-10M33 69l-12-7"/></svg>
       <div class="page-heading"><h2>אודות זמן נקי</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M8 27h7l6-3c3-1 5 3 2 5l-5 2m-3-4 1-6c1-3 4-2 4 0v4m3 4 8-4c4-2 6 2 3 4l-11 7H8"/><path d="M28 9v5m-7 0 3 3m11-3-3 3"/></svg></div>
       <p>זמן נקי היא מרחב פשוט למי שבהחלמה: לזכור את הדרך שעברת, ולהיעזר בכלים קטנים להיום.</p>
@@ -512,7 +537,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   <div class="box"><h3 id="askT"></h3><p id="askP"></p><div class="acts" id="askB"></div></div>
 </div>
 
-<nav class="tabs" id="tabs">
+<nav class="tabs" id="tabs" hidden>
   <div class="inner" aria-label="ניווט ראשי">
     <button data-tab="counter" aria-current="page">היום</button>
     <button data-tab="tools">כלים</button>
@@ -523,7 +548,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/sync-crypto.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.05.11';
+const APP_VERSION='2026.10.07.1';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -585,31 +610,35 @@ $('appVer').textContent='גרסה '+APP_VERSION;
 
 /* ---------- Tabs ---------- */
 let current='counter';
-const SCREENS=['counter','planner','journal','gratitude','readings','bookmarks','settings','tools','about','onboarding','meditation','inventory','auth','account'];
+const SCREENS=['counter','planner','journal','gratitude','readings','bookmarks','settings','tools','about','welcome','startup','onboarding','meditation','inventory','auth','account'];
 function show(tab,record=true){
   if(!SCREENS.includes(tab))return;
-  if(tab==='counter'&&!S.date)tab=signedIn()?'settings':'onboarding';
+  if(tab==='counter'&&!S.date)tab=signedIn()?'settings':'welcome';
   if(tab==='onboarding'&&signedIn())tab='settings';
   if(record&&(tab!==current||(tab==='auth'&&history.state?.authMode!==authMode)))history.pushState({screen:tab,authMode:tab==='auth'?authMode:null},'');
   current=tab;
   if(!record)history.replaceState({...history.state,screen:tab},'');
   SCREENS.forEach(t=>$(t).hidden=(t!==tab));
+  const entering=(!S.date&&!signedIn())||['welcome','onboarding','startup'].includes(tab);
+  $('tabs').hidden=entering;$('openSettings').hidden=entering;
+  $('aboutBack').hidden=tab!=='about'||!entering;
   const active=tab==='about'?'about':['counter','onboarding','settings','auth','account'].includes(tab)?'counter':'tools';
   document.querySelectorAll('nav.tabs button').forEach(b=>{
     if(b.dataset.tab===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   });
   if(tab==='settings')fillSettings();else applyColor();
   if(tab==='account')renderSync();
-  if(tab==='counter')render();
+  if(tab==='counter'){render();renderSync();}
   if(tab==='planner'){planSelected=todayKey();renderP();}
   if(tab==='gratitude')renderG();
   if(tab==='bookmarks')renderBookmarks();
   if(tab==='inventory')openInventory(todayKey());
   if(tab==='meditation')renderTimer();
+  if(record){const heading=$(tab).querySelector('h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}}
   window.scrollTo(0,0);
 }
 document.querySelectorAll('[data-tab],[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.tab||b.dataset.go));
-$('openSettings').onclick=()=>show(current==='settings'?(S.date?'counter':'onboarding'):'settings');
+$('openSettings').onclick=()=>show(current==='settings'?(S.date?'counter':'welcome'):'settings');
 let authMode='create';
 function openAuth(mode,record=true){
   authMode=mode;
@@ -622,16 +651,24 @@ function openAuth(mode,record=true){
   $('lEmail').value='';$('lSend').textContent=mode==='login'?'שליחת קישור כניסה למייל':'יצירת חשבון ושליחת קישור למייל';
   $('authCreate').hidden=mode!=='login';
   $('aDateError').hidden=true;$('aDateError').textContent='';$('aDate').removeAttribute('aria-invalid');
-  setMsg('');show('auth',record);
+  confirmRecoveryDate('aDate');setMsg('');show('auth',record);
 }
 $('authCreate').onclick=()=>openAuth(S.date?'convert':'create');
-$('onboardingAccount').onclick=()=>openAuth('create');
+$('welcomeStart').onclick=()=>show('onboarding');
+$('setupBack').onclick=()=>show('welcome');
+$('aboutBack').onclick=()=>history.back();
+$('startupLocal').onclick=()=>show(S.date?'counter':'welcome');
+$('finishBackupLater').onclick=()=>show(S.date?'counter':'settings');
+$('resumeBackup').onclick=()=>show('account');
+$('oFrom').setAttribute('aria-describedby','oFromError');
+$('oFrom').addEventListener('invalid',()=>{$('oFromError').hidden=false;});
+$('oFrom').addEventListener('change',()=>{$('oFromError').hidden=!!$('oFrom').value;});
 $('onboardingLogin').onclick=()=>openAuth('login');
 $('createAccount').onclick=()=>openAuth(hasData(S)?'convert':'create');
 $('settingsLogin').onclick=()=>openAuth('login');
 $('myAccount').onclick=()=>show('account');
-$('authBack').onclick=()=>show(S.date?'settings':'onboarding');
-$('backToOnboarding').onclick=()=>show('onboarding');
+$('authBack').onclick=()=>show(S.date?'account':'welcome');
+$('backToOnboarding').onclick=()=>show('welcome');
 $('guestForm').onsubmit=ev=>{
   ev.preventDefault();
   if(!validateRecoveryDate('oDate')||!$('guestForm').reportValidity())return;
@@ -648,12 +685,19 @@ function validateRecoveryDate(id,focus=true){
   if(text&&focus)input.focus();
   return !text;
 }
+function confirmRecoveryDate(id){
+  const value=$(id).value,parts=/^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  const date=parts?new Date(Number(parts[1]),Number(parts[2])-1,Number(parts[3]),12):null;
+  $(id+'Confirmation').textContent=date&&!isNaN(date)?'התאריך שנבחר: '+date.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'}):'';
+}
 for(const id of ['oDate','aDate','sDate']){
   const input=$(id),message=document.createElement('span');
   message.id=id+'Error';message.className='msg err';message.setAttribute('role','alert');message.hidden=true;
-  input.setAttribute('aria-describedby',message.id);input.after(message);
+  const confirmation=document.createElement('span');confirmation.id=id+'Confirmation';confirmation.className='date-confirmation';confirmation.setAttribute('aria-live','polite');
+  input.setAttribute('aria-describedby',message.id+' '+confirmation.id);input.after(message,confirmation);
   input.addEventListener('invalid',()=>validateRecoveryDate(id,false));
-  input.addEventListener('input',()=>validateRecoveryDate(id,false));
+  input.addEventListener('input',()=>{validateRecoveryDate(id,false);confirmRecoveryDate(id);});
+  input.addEventListener('change',()=>confirmRecoveryDate(id));
 }
 
 /* ---------- Theme ---------- */
@@ -900,7 +944,7 @@ $('jDel').onclick=()=>{
 window.addEventListener('popstate',ev=>{
   if(!$('jEditor').hidden)closeJ();
   const state=ev.state;
-  const tab=state&&SCREENS.includes(state.screen)?state.screen:(S.date?'counter':'onboarding');
+  const tab=state&&SCREENS.includes(state.screen)?state.screen:(S.date?'counter':'welcome');
   if(tab==='auth')openAuth(state.authMode||'login',false);else show(tab,false);
   if(tab==='journal'&&state&&state.j){
     const entry=S.journal.find(e=>e.id===state.entryId);
@@ -1017,7 +1061,7 @@ function fillSettings(){
   $('backToOnboarding').hidden=!!S.date||signedIn();
   $('sDateError').hidden=true;$('sDateError').textContent='';$('sDate').removeAttribute('aria-invalid');
   $('sName').value=S.name;$('sDate').value=S.date;$('sTime').value=S.time;$('sFrom').value=S.from;
-  pickColor=S.color; renderSwatches();
+  confirmRecoveryDate('sDate');pickColor=S.color; renderSwatches();
 }
 function renderSwatches(boxId='swatches'){
   const box=$(boxId);box.innerHTML='';
@@ -1035,7 +1079,7 @@ $('saveSettings').onclick=()=>{
 };
 function resetLocal(){
   try{localStorage.removeItem(KEY);}catch(e){}
-  storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();show('onboarding');
+  storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();$('oDate').value='';$('oFrom').value='';confirmRecoveryDate('oDate');show('welcome');
 }
 $('accountDelete').onclick=()=>$('reset').onclick();
 $('reset').onclick=async()=>{
@@ -1080,7 +1124,7 @@ function loadSupabase(){
       if(user?.id!==next?.id)clearEncryption();
       user=next;
       /* never call supabase from inside this callback */
-      setTimeout(async()=>{renderSync();if(ev==='SIGNED_IN'){await sync();if(current==='auth')show(cryptoState==='locked'||cryptoState==='setup'?'account':S.date?'counter':'account');}},0);
+      setTimeout(async()=>{renderSync();if(ev==='SIGNED_IN'){await sync();if(current==='auth'||current==='startup')show(cryptoState==='active'&&S.date?'counter':'account');}},0);
     });
     return sb;
   },e=>{sbLoading=null;throw e;});
@@ -1117,30 +1161,35 @@ $('loginForm').onsubmit=async ev=>{
     if(!save())return;
   }else if(authMode==='convert'&&!S.name){S.name=$('aName').value.trim();if(!save())return;}
   $('lSend').disabled=true;setMsg('שולח...');
-  try{await sendLogin(email,authMode);setMsg('שלחנו קישור למייל. פתיחת הקישור משלימה את הכניסה והפעלת הגיבוי. לא הגיע? כדאי לבדוק גם בדואר זבל / Spam.');}
+  try{await sendLogin(email,authMode);setMsg('שלחנו קישור למייל. פתיחת הקישור מאמתת את החשבון. כדי להפעיל גיבוי מוצפן, ממשיכים לשמירת מפתח שחזור ולאימות הגיבוי הראשון. לא הגיע? כדאי לבדוק גם בדואר זבל / Spam.');}
   catch(e){setMsg(authMode==='login'&&/otp_disabled|signup_disabled|user_not_found/.test(e.code||'')?'לא מצאנו חשבון עם כתובת המייל הזו. אפשר ליצור חשבון חדש.':errText(e),true);}
   $('lSend').disabled=false;
 };
 
+function backupStatus(){
+  if(!signedIn())return {state:'local',text:'הכול נשמר רק בדפדפן במכשיר הזה.'};
+  const verified=cryptoState==='active'&&keyMaterial?.confirmed;
+  if(verified)return {state:syncErr?'attention':'active',text:syncErr?'הגיבוי המוצפן האחרון אומת. שינויים חדשים ממתינים לסנכרון; יש לבדוק את החיבור ולנסות שוב.':M.dirty?'גיבוי מוצפן פעיל. שינויים חדשים ממתינים לסנכרון.':'גיבוי מוצפן פעיל · הגיבוי האחרון אומת.'};
+  if(cryptoState==='locked')return {state:'locked',text:'מפתח שחזור נדרש כדי לפתוח את הגיבוי במכשיר הזה. הנתונים המקומיים נשמרים.'};
+  if(syncErr)return {state:'error',text:'הגיבוי המוצפן לא אומת במכשיר הזה. הנתונים נשמרים מקומית. יש לבדוק את החיבור ולנסות שוב.'};
+  if(dataKey)return {state:'verifying',text:'מפתח השחזור נשמר. הגיבוי הראשון ממתין לאימות; הגיבוי עדיין לא פעיל.'};
+  if(cryptoState==='setup')return {state:'setup',text:'החשבון מאומת. הגיבוי המוצפן עדיין לא הופעל. צריך לשמור מפתח שחזור ולאמת את הגיבוי הראשון.'};
+  return {state:'checking',text:'בודקים את החשבון והגיבוי. הנתונים המקומיים נשמרים.'};
+}
 function renderSync(){
-  const on=signedIn();
+  const on=signedIn(),status=backupStatus();
   $('syncOut').hidden=on; $('syncIn').hidden=!on;
-  $('createAccount').hidden=on;$('settingsLogin').hidden=on;$('myAccount').hidden=!on;
+  $('createAccount').hidden=on;$('settingsLogin').hidden=on;$('myAccount').hidden=false;$('accountGuest').hidden=on;
   $('accountName').textContent=S.name||'לא צוין';
   $('accountState').textContent=user?'חשבון רשום · כניסה דרך קישור למייל':'חשבון רשום · בודקים את החיבור';
+  $('setSub').textContent=status.text;
+  $('syncStatus').textContent=status.text+(M.lastSync&&keyMaterial?.confirmed?' סנכרון אחרון: '+new Date(M.lastSync).toLocaleString('he-IL',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}):'');
+  $('backupReminder').hidden=!on||['active','attention','checking'].includes(status.state);
+  $('backupReminderText').textContent=status.text;
+  $('resumeBackup').textContent=status.state==='locked'?'פתיחת הגיבוי במכשיר הזה':'השלמת הגיבוי המוצפן';
+  $('finishBackupLater').hidden=!on||['active','attention'].includes(status.state);
   renderEncryption();
-  $('setSub').textContent=on?'הנתונים נשמרים במכשיר ומגובים בענן.':'הכול נשמר רק במכשיר הזה.';
-  if(!on)return;
-  $('sEmail').textContent=(user&&user.email)||M.email||'';
-  let st;
-  if(cryptoState==='setup')st='הגיבוי ממתין לשמירת מפתח שחזור. הנתונים המקומיים נשמרים כרגיל.';
-  else if(cryptoState==='locked')st='מפתח שחזור נדרש כדי לסנכרן במכשיר הזה.';
-  else if(syncErr==='offline')st='אין חיבור. השינויים יגובו כשהחיבור יחזור.';
-  else if(syncErr)st='הסנכרון נכשל. ננסה שוב כשהאפליקציה תיפתח מחדש.';
-  else if(M.dirty)st='יש שינויים שממתינים לגיבוי...';
-  else if(M.lastSync)st='סנכרון אחרון: '+new Date(M.lastSync).toLocaleString('he-IL',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
-  else st='מסנכרן...';
-  $('syncStatus').textContent=st;
+  if(on)$('sEmail').textContent=(user&&user.email)||M.email||'';
 }
 
 /* a modal with buttons; resolves with the chosen button's value */
@@ -1172,7 +1221,7 @@ function applyRemote(data,t){
 /* Encryption material is scoped to the authenticated account; the recovery key is
    only shown during setup and is never persisted or sent to the SDK. */
 function renderEncryption(){
-  $('encryptionStatus').textContent=cryptoState==='active'?'גיבוי מוצפן פעיל · מפתח ההצפנה שמור במכשיר הזה':cryptoState==='locked'?'מפתח שחזור נדרש במכשיר הזה':cryptoState==='setup'?'הגיבוי המוצפן עדיין לא הופעל':'בודקים את מצב הגיבוי המוצפן';
+  $('encryptionStatus').textContent=backupStatus().text;
   $('encryptionSetup').hidden=cryptoState!=='setup'||!!dataKey;
   $('recoveryForm').hidden=cryptoState!=='locked';
   $('retryEncryption').hidden=!syncErr||cryptoState==='locked';
@@ -1216,7 +1265,7 @@ $('activateEncryption').onclick=async()=>{
   try{
     storeMaterial(pendingKey.material);keyMaterial=pendingKey.material;dataKey=pendingKey.key;
     pendingKey=null;$('recoveryOutput').value='';$('recoveryGenerated').hidden=true;
-    encryptionMessage('');await sync();
+    encryptionMessage('');renderSync();await sync();
   }catch(e){encryptionMessage('מפתח ההצפנה לא נשמר במכשיר. הגיבוי בענן לא השתנה. אפשר לנסות שוב.');}
 };
 $('recoveryForm').onsubmit=async ev=>{
@@ -1227,7 +1276,7 @@ $('recoveryForm').onsubmit=async ev=>{
     const opened=await SyncCrypto.unlock(row.data,input,id,row.updated_at);
     if(epoch!==cryptoEpoch||user?.id!==id)return;
     storeMaterial(opened.material);keyMaterial=opened.material;dataKey=opened.key;
-    encryptionMessage('');await sync();
+    encryptionMessage('');renderSync();await sync();
   }catch(e){encryptionMessage('המפתח שגוי, הגיבוי פגום או שלא ניתן לשמור את המפתח במכשיר. הנתונים במכשיר ובענן לא השתנו. אפשר לנסות שוב.');}
   finally{$('unlockRecovery').disabled=false;}
 };
@@ -1270,9 +1319,12 @@ async function sync(){
   if(!sbReady){if(M.uid||sbLoading)return startSync();return;}
   if(!user)return;
   if(storageError){encryptionMessage('יש בעיה בנתונים המקומיים. הסנכרון נעצר כדי לשמור עליהם.');renderSync();return;}
-  if(!navigator.onLine){syncErr='offline';renderSync();return;}
   busy=true;const id=user.id,epoch=cryptoEpoch;
   try{
+    // Retain the last verified backup status even when this reopen cannot reach the cloud.
+    if(await loadMaterial(id)&&keyMaterial.confirmed)cryptoState='active';
+    if(user?.id!==id||epoch!==cryptoEpoch){busy=false;return;}
+    if(!navigator.onLine){syncErr='offline';busy=false;renderSync();return;}
     do{
       again=false;
       const row=await readRow(id);
@@ -1310,8 +1362,8 @@ async function sync(){
       if(!encrypted){
         cryptoState='setup';
         if(!await loadMaterial(id)){
-          // Keep legacy/local state; user initiates setup from My Account.
-          M.dirty=true;saveMeta();syncErr='';if(current==='auth'||current==='onboarding'||!S.date)show('account');break;
+          // Preserve legacy/local state; callbacks continue to setup, returning users get a reminder.
+          M.dirty=true;saveMeta();syncErr='';if(current==='auth'||current==='onboarding'||current==='startup'||!S.date)show('account');break;
         }
         if(keyMaterial.confirmed)throw new Error('Encrypted row changed');
         S.updatedAt=Math.max(Date.now(),(S.updatedAt||0)+1,(Date.parse(row?.updated_at)||0)+1);
@@ -1338,7 +1390,7 @@ function flushPush(){if(pushTimer){clearTimeout(pushTimer);pushTimer=null;sync()
 
 /* loads the library and restores the session (or finishes a magic-link sign-in) */
 async function startSync(){
-  try{await loadSupabase();}catch(e){syncErr='offline';renderSync();return;}
+  try{await loadSupabase();}catch(e){syncErr='offline';$('startupLocal').hidden=false;renderSync();return;}
   if(sbReady)return sync();
   const {data,error}=await sb.auth.getSession();
   sbReady=true;
@@ -1348,7 +1400,8 @@ async function startSync(){
     if(!user){openAuth('login');setMsg(errText(error||'otp_expired'),true);}
   }
   renderSync();
-  if(user){await sync();if(current==='auth'||current==='onboarding')show(cryptoState==='locked'||cryptoState==='setup'?'account':S.date?'counter':'account');}
+  if(!user&&current==='startup')show(S.date?'counter':'welcome',false);
+  if(user){await sync();if(current==='auth'||current==='onboarding'||current==='startup')show(cryptoState==='active'&&S.date?'counter':'account');}
 }
 
 async function signOutNow(){
@@ -1424,7 +1477,7 @@ async function moveOut(){
   }
   if(M.uid&&!M.dirty){
     await ask('האפליקציה עברה לכתובת חדשה',
-      'מעכשיו זמן נקי נמצאת בכתובת:\n'+NEW_HOST+'\n\nהנתונים שלך מגובים בענן. כדי לראות אותם שם, צריך להתחבר בכתובת החדשה עם אותו מייל.\n\n'+REINSTALL,
+      'מעכשיו זמן נקי נמצאת בכתובת:\n'+NEW_HOST+'\n\nכדי לבדוק את הגיבוי ולפתוח אותו בכתובת החדשה, צריך להתחבר עם אותו מייל ומפתח השחזור. הנתונים המקומיים נשארים בדפדפן הזה.\n\n'+REINSTALL,
       [{label:'מעבר לכתובת החדשה',value:1}]);
     location.href=NEW_ORIGIN+'/';
     return;
@@ -1448,12 +1501,14 @@ if(!onOldHost&&urlP.has('import')){
 /* ---------- Init ---------- */
 applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();storageNotice(storageError);
 $('oDate').max=todayKey();$('sDate').max=todayKey();$('aDate').max=todayKey();
-history.replaceState({screen:S.date?'counter':'onboarding'},'');
-show(S.date?'counter':'onboarding',false);
+let hasSession=false; try{hasSession=!!localStorage.getItem(AUTH_KEY);}catch(e){}
+const initial=fromLink||(!S.date&&(M.uid||hasSession))?'startup':S.date?'counter':'welcome';
+history.replaceState({screen:initial},'');
+show(initial,false);
+renderSync();
 if(urlP.has('error_code')||urlP.has('error')){
   cleanUrl(); openAuth('login'); setMsg(errText(urlP.get('error_code')||urlP.get('error')),true);
 }
-let hasSession=false; try{hasSession=!!localStorage.getItem(AUTH_KEY);}catch(e){}
 if(fromLink||M.uid||hasSession)startSync();
 if(onOldHost)moveOut(); /* temporary, see Domain move */
 })();
