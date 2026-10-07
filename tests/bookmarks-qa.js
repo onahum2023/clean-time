@@ -1,10 +1,10 @@
 // Localhost-only bookmark CRUD/safety/persistence tests; isolated synthetic state.
 async(page)=>{
- const origin='http://127.0.0.1:8765',key='cleantime-he-v1',results=[];
+ const origin=(process.env.QA_BASE_URL||'http://127.0.0.1:8765'),key='cleantime-he-v1',results=[];
  const check=(v,label)=>{if(!v)throw Error(label);results.push(label);};
  const context=await page.context().browser().newContext({viewport:{width:360,height:844}});
  const requests=[];
- await context.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());
+ await context.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
  await context.addInitScript(()=>window.confirm=()=>true);
  const p=await context.newPage();p.on('request',r=>requests.push(r.url()));
  const errors=[];p.on('pageerror',e=>errors.push(e.message));

@@ -4,11 +4,11 @@ async (page) => {
   const {activate,adaptMock}=require(process.cwd()+'/tests/qa-helpers.js');
   const results=[];
   const check=(value,label)=>{if(!value)throw new Error(label);results.push(label);};
-  const origin='http://127.0.0.1:8765';
+  const origin=(process.env.QA_BASE_URL||'http://127.0.0.1:8765');
   const key='cleantime-he-v1';
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   const requests=[];page.on('request',r=>requests.push(r.url()));
-  await page.route('**/*',route=>route.request().url().startsWith(origin)?route.continue():route.abort());
+  await page.route('**/*',route=>route.request().url().startsWith(origin)?route.fallback():route.abort());
   await page.addInitScript(()=>{window.confirm=()=>true;});
   await page.goto(origin);
   const localDay=await page.evaluate(()=>{const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;});
@@ -20,13 +20,13 @@ async (page) => {
   const seed=async data=>{await page.evaluate(({key,data})=>{localStorage.clear();if(data)localStorage.setItem(key,JSON.stringify(data));},{key,data});await page.reload();};
   await page.setViewportSize({width:360,height:800});
   await seed(null);
-  await page.locator('#onboardingAccount').click();
+  await page.locator('#onboardingLogin').click();await page.locator('#authCreate').click();
   check(await page.locator('#syncOut').isVisible(),'Optional account path exposes existing magic-link UI');
   await page.locator('#authBack').click();
-  check(await page.locator('#onboarding').isVisible(),'Account path returns to guest onboarding');
+  check(await page.locator('#welcome').isVisible(),'Account path returns to guest onboarding');
   for(const from of ['אלכוהול','סמים','עישון','אוכל','אחר']){
     await seed(null);
-    await page.locator('#oDate').fill('2025-01-01');await page.locator('#oFrom').selectOption(from);
+    await page.locator('#welcomeStart').click();await page.locator('#oDate').fill('2025-01-01');await page.locator('#oFrom').selectOption(from);
     await page.locator('#guestForm button').click();
     const state=await read();check(state.date==='2025-01-01'&&state.from===from&&state.name===''&&await page.locator('#counter').isVisible(),`Guest onboarding: ${from}`);
   }
@@ -105,11 +105,11 @@ async (page) => {
   // Malformed local data must survive subsequent attempted saves unchanged.
   await page.evaluate(k=>{localStorage.clear();localStorage.setItem(k,'{broken');},key);await page.reload();
   check(await page.locator('#storageMsg').isVisible(),'Malformed storage shows warning');
-  await page.locator('#oDate').fill('2025-01-01');await page.locator('#oFrom').selectOption('אחר');await page.locator('#guestForm button').click();
+  await page.locator('#welcomeStart').click();await page.locator('#oDate').fill('2025-01-01');await page.locator('#oFrom').selectOption('אחר');await page.locator('#guestForm button').click();
   check(await page.evaluate(k=>localStorage.getItem(k),key)==='{broken','Malformed original is never silently overwritten');
   // A fresh browser context mocks only the SDK/client; all network is still localhost-only.
   const context=await page.context().browser().newContext({viewport:{width:360,height:800}});
-  await context.route('**/*',route=>route.request().url().startsWith(origin)?route.continue():route.abort());
+  await context.route('**/*',route=>route.request().url().startsWith(origin)?route.fallback():route.abort());
   await context.addInitScript(({key,fixture})=>{
     if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(fixture));
     localStorage.setItem('cleantime-he-auth','synthetic-session');

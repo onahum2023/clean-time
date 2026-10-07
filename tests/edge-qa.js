@@ -1,9 +1,9 @@
 // Additional localhost-only edge tests. Run after local-qa.js using Playwright MCP.
 async (page)=>{
- const origin='http://127.0.0.1:8765',key='cleantime-he-v1',results=[];
+ const origin=(process.env.QA_BASE_URL||'http://127.0.0.1:8765'),key='cleantime-he-v1',results=[];
  const check=(v,label)=>{if(!v)throw new Error(label);results.push(label);};
  const context=await page.context().browser().newContext({viewport:{width:360,height:800}});
- await context.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());
+ await context.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
  const p=await context.newPage();await p.goto(origin);
  const fixture={date:'2025-01-01',gratitude:[{id:1,text:'ישן',ts:1739181600000}],plans:{},journal:[],links:[{id:10,title:'אישי',url:'https://example.org/'}],updatedAt:10};
  await p.evaluate(({key,fixture})=>localStorage.setItem(key,JSON.stringify(fixture)),{key,fixture});await p.reload();

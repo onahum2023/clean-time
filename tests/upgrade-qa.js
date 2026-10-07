@@ -2,7 +2,7 @@
 // Run like the other browser QA suites against localhost. No live Supabase SDK/network.
 async(page)=>{
  const {activate}=require(process.cwd()+'/tests/qa-helpers.js');
- const origin='http://127.0.0.1:8765',KEY='cleantime-he-v1',AUTH='cleantime-he-auth',META='cleantime-he-sync';
+ const origin=(process.env.QA_BASE_URL||'http://127.0.0.1:8765'),KEY='cleantime-he-v1',AUTH='cleantime-he-auth',META='cleantime-he-sync';
  const results=[],check=(v,label)=>{if(!v)throw new Error(label);results.push(label);};
  const clone=v=>JSON.parse(JSON.stringify(v));
  const canonical=v=>JSON.stringify(v,(_,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(k=>[k,x[k]])):x);
@@ -23,7 +23,7 @@ async(page)=>{
  async function scenario(local,remote){
   const c=await page.context().browser().newContext({viewport:{width:360,height:800}});
   const calls={reads:[],uploads:[],emails:0,signOut:0,delete:0,clientOptions:[],blocked:[],errors:[]};let cloud=clone(remote),cloudTimestamp=cloud?new Date(cloud.updatedAt).toISOString():null;
-  await c.route('**/*',r=>{const url=r.request().url();if(url.startsWith(origin+'/')||url===origin)return r.continue();calls.blocked.push(url);return r.abort();});
+  await c.route('**/*',r=>{const url=r.request().url();if(url.startsWith(origin+'/')||url===origin)return r.fallback();calls.blocked.push(url);return r.abort();});
   await c.exposeBinding('__upgradeCloud',async(source,op,payload)=>{
    if(op==='read'){calls.reads.push(payload);return {data:cloud?{data:clone(cloud),updated_at:cloudTimestamp}:null};}
    if(op==='upload'){calls.uploads.push(clone(payload));cloud=clone(payload.row.data);cloudTimestamp=payload.row.updated_at;return {data:[{user_id:identity.id}]};}
@@ -102,8 +102,8 @@ async(page)=>{
  await s.p.locator('#signOut').click();
  check(s.calls.signOut===0&&await s.p.locator('#account').isVisible()&&await s.p.evaluate(()=>window.qaConfirmations.length===1),'Sign-out requires explicit confirmation; cancelling retains account');
  const cloudBeforeSignout=s.cloud();
- await s.p.evaluate(()=>window.qaConfirmAnswer=true);await s.p.locator('#signOut').click();await s.p.waitForFunction(()=>!document.getElementById('onboarding').hidden);
- check(s.calls.signOut===1&&await s.p.locator('#onboarding').isVisible()&&await s.p.evaluate(({KEY,AUTH,META})=>![KEY,AUTH,META].some(k=>localStorage.getItem(k)),{KEY,AUTH,META}),'Only user-confirmed sign-out clears device/session');
+ await s.p.evaluate(()=>window.qaConfirmAnswer=true);await s.p.locator('#signOut').click();await s.p.waitForFunction(()=>!document.getElementById('welcome').hidden);
+ check(s.calls.signOut===1&&await s.p.locator('#welcome').isVisible()&&await s.p.evaluate(({KEY,AUTH,META})=>![KEY,AUTH,META].some(k=>localStorage.getItem(k)),{KEY,AUTH,META}),'Only user-confirmed sign-out clears device/session');
  check(same(s.cloud(),cloudBeforeSignout)&&s.calls.uploads.length===beforeReload&&s.calls.delete===0,'Explicit sign-out retains cloud data with no clearing/deletion');
  check(s.calls.errors.length===0&&s.calls.blocked.length===0,'Active-account upgrade performs no external requests or JavaScript errors');await s.c.close();
  const newerRemote={...cloudState(full),time:'10:15',updatedAt:timestamp+2000};

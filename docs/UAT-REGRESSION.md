@@ -1,5 +1,7 @@
 # Production UAT UX regression
 
+The next combined #30/#32/#31 wave and deployed Preview evidence are recorded in [WELCOME-BACKUP-UAT.md](WELCOME-BACKUP-UAT.md). The tables below remain historical evidence.
+
 2026-10-05. Based on current `main` (`aed56bc69f6271219423e4ca0bc4df2e394ac3a0`). Implemented on `codex/uat-ux-fixes`; pending review and explicitly authorized release. No merge or deployment.
 
 ## Fixed behavior

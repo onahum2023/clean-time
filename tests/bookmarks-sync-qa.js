@@ -1,10 +1,10 @@
 // Local-only SDK mock: conflict choice, magic-link UI, offline retry, sign-out.
 async(page)=>{
  const {activate,adaptMock}=require(process.cwd()+'/tests/qa-helpers.js');
- const origin='http://127.0.0.1:8765',key='cleantime-he-v1',results=[];
+ const origin=(process.env.QA_BASE_URL||'http://127.0.0.1:8765'),key='cleantime-he-v1',results=[];
  const check=(v,label)=>{if(!v)throw new Error(label);results.push(label);};
  const context=await page.context().browser().newContext();
- await context.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());
+ await context.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
  await context.addInitScript(key=>{
   window.confirm=()=>true;window.qaLoggedIn=false;window.qaOnline=true;window.qaUploads=[];window.qaEmails=[];
   Object.defineProperty(navigator,'onLine',{get:()=>window.qaOnline});
@@ -16,7 +16,7 @@ async(page)=>{
   window.supabase={createClient:()=>client};
   const append=Element.prototype.appendChild;Element.prototype.appendChild=function(el){if(el.tagName==='SCRIPT'&&el.src.includes('supabase-js')){setTimeout(()=>el.onload(),0);return el;}return append.call(this,el);};
  },key);
- await adaptMock(context);const p=await context.newPage();await p.goto(origin);await p.locator('#openSettings').click();await p.locator('#createAccount').click();await p.locator('#lEmail').fill('qa@example.invalid');await p.locator('#lSend').click();await p.waitForFunction(()=>window.qaEmails.length===1);
+ await adaptMock(context);const p=await context.newPage();await p.goto(origin);await p.locator('#openSettings').click();await p.locator('#myAccount').click();await p.locator('#createAccount').click();await p.locator('#lEmail').fill('qa@example.invalid');await p.locator('#lSend').click();await p.waitForFunction(()=>window.qaEmails.length===1);
  check(await p.evaluate(()=>window.qaEmails.length===1&&window.qaEmails[0].options.emailRedirectTo===location.origin),'Magic-link UI invokes existing SDK with current-origin redirect (mock only)');
  await p.evaluate(()=>{window.qaLoggedIn=true;window.qaAuthCallback('SIGNED_IN',{user:{id:'mock-user',email:'qa@example.invalid'}});});
  await p.waitForTimeout(300);
@@ -38,7 +38,7 @@ async(page)=>{
  check(await p.evaluate(async()=>(await qaPlain()).bookmarks.length===0),'Bookmark deletion syncs through the existing account row');
  await p.locator('#bNew').click();await p.locator('#bTitle').fill('נכתב ללא חיבור');await p.locator('#bUrl').fill('https://example.invalid/kept');await p.locator('#bForm button[type=submit]').click();
  await p.locator('#openSettings').click();await p.locator('#myAccount').click();await p.locator('#signOut').click();
- check(await p.locator('#onboarding').isVisible()&&await p.evaluate(k=>!localStorage.getItem(k)&&!localStorage.getItem('cleantime-he-sync'),key),'Existing sign-out returns to onboarding and clears local account state');
+ check(await p.locator('#welcome').isVisible()&&await p.evaluate(k=>!localStorage.getItem(k)&&!localStorage.getItem('cleantime-he-sync'),key),'Existing sign-out returns to onboarding and clears local account state');
  check(await p.evaluate(()=>SyncCrypto.isEnvelope(window.qaRemote)),'Sign-out retains mock cloud copy');
  await context.close();return {passed:results.length,results};
 }

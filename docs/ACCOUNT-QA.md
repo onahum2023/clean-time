@@ -2,6 +2,8 @@
 
 # Account model (#10) — local QA
 
+Current Welcome/setup and backup status behavior, deployed Preview evidence and pending live-account coverage are in [WELCOME-BACKUP-UAT.md](WELCOME-BACKUP-UAT.md). The coverage totals below are the original baseline. Guest registration/sign-in now live under My Account after setup.
+
 Based on `codex/clean-time-1.0-p0` at `d5a7924`. No merge or production deployment.
 
 ## Behavior and compatibility
