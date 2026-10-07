@@ -39,7 +39,7 @@ async(page)=>{
     if(meta&&registered)localStorage.setItem(MK,JSON.stringify({uid,email,dirty:false}));
     if(registered)localStorage.setItem('cleantime-he-auth','synthetic-session');localStorage.setItem('qa-seeded','1');
    }
-   window.confirm=()=>true;window.qaOnline=true;
+   window.qaLandingLength=history.length;window.confirm=()=>true;window.qaOnline=true;
    Object.defineProperty(navigator,'onLine',{get:()=>window.qaOnline});
    const client={auth:{onAuthStateChange(cb){window.qaAuthCallback=cb;},getSession:async()=>({data:{session:localStorage.getItem('cleantime-he-auth')?{user:{id:uid,email}}:null}}),signInWithOtp:args=>window.__cryptoCloud('otp',args),signOut:async()=>({})},from(){return {
     select(){return {eq(){return {maybeSingle:()=>window.__cryptoCloud('read')}}};},
@@ -62,6 +62,10 @@ async(page)=>{
  let s=await scenario({registered:false});
  check(s.calls.reads===0&&s.calls.network.length===0&&await stored(s.p)===null,'Guest: zero cloud/third-party access or key creation');
  check(same(await read(s.p),full),'Guest working copy unchanged');await s.c.close();
+ s=await scenario({local:null,meta:false});
+ check(await s.p.locator('#account').isVisible()&&await s.p.evaluate(()=>history.state.screen==='account'&&history.length===window.qaLandingLength),'Unconfigured session resolves startup in place, without loading-screen Back entry');
+ await s.p.locator('#account [data-go=settings]').click();await s.p.locator('#openSettings').click();
+ check(await s.p.locator('#account').isVisible()&&!await s.p.locator('#welcome').isVisible(),'Unconfigured registered Settings gear returns My Account, never Welcome');await s.c.close();
  s=await scenario();
  check(s.calls.uploads.length===0&&await stored(s.p)===null,'New account: no upload or stored key before setup');
  check((await s.p.locator('#setSub').textContent())===(await status(s.p))&&!(await status(s.p)).includes('גיבוי מוצפן פעיל'),'Pre-key status consistent across settings/account');
