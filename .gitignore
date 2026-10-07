@@ -14,3 +14,8 @@ desktop.ini
 
 # Local browser QA snapshots and reports
 .playwright-mcp/
+
+# Generated deployment/config output
+dist/
+.vercel/
+.env*.local

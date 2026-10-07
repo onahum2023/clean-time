@@ -582,10 +582,11 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   </div>
 </nav>
 
+<script src="assets/backend-config.js"></script>
 <script src="assets/sync-crypto.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.07.2';
+const APP_VERSION='2026.10.07.3';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -1140,8 +1141,14 @@ $('reset').onclick=async()=>{
 /* ---------- Cloud backup & sync (optional) ----------
    localStorage stays the working copy. The whole state (minus LOCAL_ONLY) is one row
    per user in public.user_data; the side with the newer updatedAt wins. */
-const SUPA_URL='https://aefhjgmiwgajdhgyhelm.supabase.co';
-const SUPA_KEY='sb_publishable_0R5rSCEhM5INCy-5zLwGsA_j51Ty39v';
+const PRODUCTION_SUPA_URL='https://aefhjgmiwgajdhgyhelm.supabase.co';
+const PRODUCTION_SUPA_KEY='sb_publishable_0R5rSCEhM5INCy-5zLwGsA_j51Ty39v';
+const backend=window.CleanTimeBackend;
+const previewHost=location.hostname.endsWith('.vercel.app')&&location.hostname!=='clean-time-eight.vercel.app';
+const stagingConfig=backend?.environment==='preview'&&backend.url==='https://uffvbfmfsesdhjzzjiyu.supabase.co'&&/^sb_publishable_[A-Za-z0-9_-]+$/.test(backend.key||'');
+// A missing/incorrect Preview asset must never silently connect to production.
+const SUPA_URL=previewHost?(stagingConfig?backend.url:null):PRODUCTION_SUPA_URL;
+const SUPA_KEY=previewHost?(stagingConfig?backend.key:null):PRODUCTION_SUPA_KEY;
 const SUPA_JS='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js';
 const SUPA_SRI='sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok';
 const AUTH_KEY='cleantime-he-auth', SYNC_KEY='cleantime-he-sync', CRYPTO_KEY='cleantime-he-crypto';
@@ -1155,6 +1162,7 @@ const signedIn=()=>!!(user||(M.uid&&!sbReady));
 const hasData=d=>!!(d&&(d.date||d.name||(d.gratitude||[]).length||(d.journal||[]).length||Object.keys(d.plans||{}).length||Object.keys(d.inventory||{}).length||(d.bookmarks||[]).length));
 
 function loadSupabase(){
+  if(!SUPA_URL||!SUPA_KEY)return Promise.reject(new Error('Backup configuration unavailable'));
   if(sbLoading)return sbLoading;
   sbLoading=new Promise((res,rej)=>{
     const s=document.createElement('script');
