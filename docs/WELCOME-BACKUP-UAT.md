@@ -1,6 +1,6 @@
 # Welcome, backup activation and recovery dates — Preview UAT
 
-2026-10-07. One package for #30, #32 and #31, based on `main` `d93dd9b`. Branch: `codex/welcome-backup-date`. PR and exact Preview evidence are recorded below. Leave unmerged for Nora/Oded acceptance; no production promotion.
+2026-10-07. One package for #30, #32 and #31, based on `main` `d93dd9b`. Branch: `codex/welcome-backup-date`. PR: [#33](https://github.com/onahum2023/clean-time/pull/33). Exact Preview evidence is recorded below. Leave unmerged for Nora/Oded acceptance; no production promotion.
 
 ## Behavior
 
@@ -43,27 +43,27 @@ QA_ENGINE=webkit QA_BASE_URL=https://EXACT-PR-PREVIEW.vercel.app node tests/run-
 
 `QA_BASE_URL` accepts only an exact HTTPS Vercel origin. Each suite uses disposable contexts and synthetic fixtures; external auth/database calls are aborted/mocked. Web Crypto uses deployed `assets/sync-crypto.js` with generated fixture keys kept out of reports/logs. Guest tests use actual deployed HTML/assets. Screenshots with generated key fields are masked. No browser auth state is committed.
 
-First deployed pass: Chromium **480 checks, zero failed suites** against `https://clean-time-oja736rmh-nu-cielo.vercel.app`, Git commit `2d7cf2b388aa294ba43a0070618b27e1b21fb585`, deployment `dpl_2GQ7mn1iyH19Ui4ASFtwrF9CtyvK`, source Git, Ready/Preview. Full local regression also passed; final deployed theme correction will be rechecked below.
+Final implementation: Chromium **488 checks, zero failed suites**, both locally and against [the tested immutable Preview](https://clean-time-edw7jztkl-nu-cielo.vercel.app). Git commit `5d6d9a305240b10085b7f1faea998bbd2ce2d607`; deployment `dpl_2ZcZtfyM4CVpPXddwSGZKKPowsUT`; Git source, Ready, Preview. Native dark controls and authenticated startup/Back findings were fixed in this PR; affected local suites passed and the entire deployed suite was rerun. All **15 JavaScript syntax checks** and `git diff --check` passed. Documentation-only follow-up commits do not change tested application code. The PR description links the latest checked Preview.
 
-| Suite | Passing checks (first Preview pass) |
+| Suite | Passing checks (final implementation) |
 | --- | ---: |
 | account | 27 |
 | bookmarks | 43 |
 | bookmarks-sync | 11 |
 | edge | 12 |
-| encryption | 115 |
+| encryption | 117 |
 | local | 83 |
 | sync | 8 |
 | UAT | 43 |
 | upgrade | 55 |
-| Welcome/date | 83 |
-| **Total** | **480** |
+| Welcome/date | 89 |
+| **Total** | **488** |
 
 Preview is Vercel-auth protected (anonymous HTTP 302). `tests/preview-access.js` adds the Vercel CLI's short-lived development OIDC header only to the exact Preview origin, in memory; third-party fixture routes remain blocked/mocked. Protection was not disabled, no credential was printed/committed, and no live Supabase request was sent. Run protected QA with `vercel env run` for the linked `nu-cielo/clean-time` project and the commands above. Nora/Oded require Vercel access to open the Preview.
 
 ## Browser review and limitations
 
-Visually inspected 24 screenshots of deployed Welcome/setup/Today/guest My Account at 320/360/390px and light/dark themes: all fit in RTL, actions are clear, and Welcome primary/secondary actions remain above the fold at 360×800. The review found dark native date segments/icon needed theme styling; `color-scheme` now follows the existing light/dark theme and the date segments/calendar icon correction was visually verified on deployed commit `d5d5a3f6b139394c860c531259fc3071f49f4b66`; final startup routing will be checked on the next Preview. Screenshots are synthetic local QA artifacts outside Git. This is human inspection of browser-generated screenshots, not an interactive manual or physical-device pass. Automated keyboard/focus/touch/date/time-zone and history checks are distinct from visual browser review. Final local WebKit Welcome/date/theme coverage: **89 passing checks**. WebKit navigation to the protected Preview did not receive any response before timeout, including a focused diagnostic; deployed WebKit coverage remains pending. Chromium protected access works and is the deployed browser evidence. No interactive manual account UAT or physical phone was tested. Live auth/email/database checks listed above remain pending even when their synthetic browser equivalents pass.
+Visually inspected 24 screenshots of deployed Welcome/setup/Today/guest My Account at 320/360/390px and light/dark themes: all fit in RTL, actions are clear, and Welcome primary/secondary actions remain above the fold at 360×800. The review found dark native date segments/icon needed theme styling; `color-scheme` now follows the existing light/dark theme and the date segments/calendar icon correction was visually verified on deployed commit `d5d5a3f6b139394c860c531259fc3071f49f4b66`; authenticated startup/Back routing subsequently passed the full deployed regression. Screenshots are synthetic local QA artifacts outside Git. This is human inspection of browser-generated screenshots, not an interactive manual or physical-device pass. Automated keyboard/focus/touch/date/time-zone and history checks are distinct from visual browser review. Final local WebKit Welcome/date/theme coverage: **89 passing checks**. WebKit navigation to the protected Preview did not receive any response before timeout, including a focused diagnostic; deployed WebKit coverage remains pending. Chromium protected access works and is the deployed browser evidence. No interactive manual account UAT or physical phone was tested. Live auth/email/database checks listed above remain pending even when their synthetic browser equivalents pass.
 
 ## Nora/Oded Preview acceptance checklist
 
