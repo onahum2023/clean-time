@@ -1,9 +1,11 @@
-// Run from the repository root; defaults to localhost. QA_BASE_URL may name the exact PR Preview.
+// Run from the repository root; defaults to localhost. QA_BASE_URL may name an isolated loopback server or exact PR Preview.
 const fs=require('node:fs'),path=require('node:path');
 const {chromium,webkit}=require('playwright');
 if(process.env.QA_BASE_URL){
  const url=new URL(process.env.QA_BASE_URL);
- if(url.origin!==process.env.QA_BASE_URL||url.username||url.password||url.protocol!=='https:'||!url.hostname.endsWith('.vercel.app'))throw new Error('QA_BASE_URL must be an exact HTTPS Vercel Preview origin');
+ const local=url.protocol==='http:'&&url.hostname==='127.0.0.1';
+ const preview=url.protocol==='https:'&&url.hostname.endsWith('.vercel.app');
+ if(url.origin!==process.env.QA_BASE_URL||url.username||url.password||(!local&&!preview))throw new Error('QA_BASE_URL must be an exact loopback HTTP or HTTPS Vercel Preview origin');
 }
 (async()=>{
  const browser=await (process.env.QA_ENGINE==='webkit'?webkit:chromium).launch({headless:true});

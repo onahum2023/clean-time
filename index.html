@@ -8,7 +8,27 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="זמן נקי">
-<title>זמן נקי</title>
+<title>זמן נקי | אפליקציה חינמית בעברית למעקב וכלים להחלמה</title>
+<meta name="description" content="זמן נקי היא אפליקציה חינמית בעברית לאנשים בהחלמה מהתמכרות: מעקב אחר הזמן הנקי, יומן אישי, הכרת תודה ותכנית יומית. אפשר להתחיל בלי הרשמה.">
+<link rel="canonical" href="https://www.clean-time.app/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="זמן נקי">
+<meta property="og:title" content="זמן נקי | אפליקציה חינמית בעברית למעקב וכלים להחלמה">
+<meta property="og:description" content="כלים קטנים ליום שלך בהחלמה: זמן נקי, יומן, הכרת תודה ותכנית יומית. בחינם ובעברית, ואפשר להתחיל בלי הרשמה.">
+<meta property="og:url" content="https://www.clean-time.app/">
+<meta property="og:image" content="https://www.clean-time.app/icon-512.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:alt" content="הסמל של זמן נקי">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="זמן נקי | אפליקציה חינמית בעברית למעקב וכלים להחלמה">
+<meta name="twitter:description" content="כלים קטנים ליום שלך בהחלמה. בחינם ובעברית, ואפשר להתחיל בלי הרשמה.">
+<meta name="twitter:image" content="https://www.clean-time.app/icon-512.png">
+<meta name="twitter:image:alt" content="הסמל של זמן נקי">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.clean-time.app/#website","url":"https://www.clean-time.app/","name":"זמן נקי","alternateName":"Clean Time","inLanguage":"he"},{"@type":"WebApplication","@id":"https://www.clean-time.app/#application","url":"https://www.clean-time.app/","name":"זמן נקי","description":"אפליקציה חינמית בעברית לאנשים בהחלמה מהתמכרות, למעקב אחר הזמן הנקי ולכלים יומיים. אפשר להתחיל בלי הרשמה. עצמאית ואינה מוצר טיפולי.","inLanguage":"he","applicationCategory":"LifestyleApplication","operatingSystem":"Any","browserRequirements":"JavaScript is required for the interactive recovery tools.","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"ILS"}}]}
+</script>
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#F7F5F0">
 <link rel="icon" href="/icon-192.png">
@@ -62,6 +82,9 @@ button,input,textarea,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent-ink);outline-offset:3px;border-radius:6px}
 
 .app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 20px calc(88px + env(safe-area-inset-bottom,0px))}
+.public-introduction{padding-block:20px}
+.public-introduction a{display:inline-block;min-height:44px;padding-block:8px;color:var(--accent-ink)}
+.public-introduction nav{display:flex;gap:24px;flex-wrap:wrap}
 header{position:relative;display:flex;align-items:center;justify-content:space-between;padding:20px 0 10px}
 header h1{min-width:0;max-width:100%;overflow-wrap:anywhere;font-family:var(--sans);font-weight:600;font-size:1.35rem;margin:0}
 header.has-milestone h1{padding-left:80px}
@@ -292,7 +315,14 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 </head>
 <body>
 <div class="app">
-  <header>
+  <section class="public-introduction" id="publicIntroduction" aria-labelledby="publicTitle">
+    <h2 id="publicTitle">זמן נקי — כלים קטנים ליום שלך בהחלמה</h2>
+    <p>זמן נקי היא אפליקציה חינמית בעברית לאנשים בהחלמה מהתמכרות. אפשר לעקוב אחר הזמן הנקי, לכתוב ביומן אישי, לשמור הכרת תודה ולבנות תכנית להיום.</p>
+    <p>אפשר להתחיל בלי הרשמה. במצב אורח הנתונים נשמרים בדפדפן במכשיר שלך. השימוש בכלים דורש JavaScript.</p>
+    <p>זמן נקי עצמאית ואינה קשורה לאנ-איי (מכורים אנונימיים) ואינה מטעמם. היא אינה מוצר טיפולי, אפליקציה רפואית או שירות חירום.</p>
+    <nav aria-label="מידע ציבורי"><a href="/about/">אודות זמן נקי</a><a href="/privacy/">פרטיות</a></nav>
+  </section>
+  <header hidden>
     <h1 id="greet">זמן נקי</h1>
     <div id="milestone" class="milestone-badge" role="img" hidden>
       <svg viewBox="0 0 80 112" aria-hidden="true" focusable="false">
@@ -615,6 +645,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       <h4>משוב</h4>
       <p>נשמח לשמוע מה עובד ומה חסר: <a href="mailto:hello@clean-time.app" dir="ltr">hello@clean-time.app</a></p>
       <button class="btn ghost" data-go="feedback">משוב</button>
+      <p><a href="/about/">אודות באתר</a> · <a href="/privacy/">פרטיות באתר</a></p>
       <p class="ver" id="appVer"></p>
   </section>
 </div>
@@ -647,7 +678,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.12.9';
+const APP_VERSION='2026.10.12.10';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -1692,6 +1723,7 @@ let hasSession=false; try{hasSession=!!localStorage.getItem(AUTH_KEY);}catch(e){
 const initial=fromLink||(!S.date&&(M.uid||hasSession))?'startup':S.date?'counter':'welcome';
 history.replaceState({screen:initial},'');
 show(initial,false);
+$('publicIntroduction').hidden=true;
 renderSync();
 if(urlP.has('error_code')||urlP.has('error')){
   cleanUrl(); openAuth('login'); setMsg(errText(urlP.get('error_code')||urlP.get('error')),true);

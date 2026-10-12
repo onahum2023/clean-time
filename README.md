@@ -6,8 +6,10 @@ A free Hebrew app for people in recovery from addiction. It counts your clean ti
 
 **Open the app: https://clean-time.app**
 
+The production site redirects to `https://www.clean-time.app/`, the canonical origin. Public [About](https://www.clean-time.app/about/) and [Privacy](https://www.clean-time.app/privacy/) pages and a short initial-HTML introduction work without JavaScript. Interactive recovery tools require JavaScript. These public pages ship with SEO/GEO Phase 1 after its approved production release.
+
 > Not affiliated with or endorsed by Narcotics Anonymous or NA Israel.
-> This app is not a medical or emergency service. NA Israel info line: 033-747474.
+> This app is not a treatment product, medical or emergency service. NA Israel info line: 033-747474.
 
 ## What's inside
 
@@ -31,11 +33,11 @@ A free Hebrew app for people in recovery from addiction. It counts your clean ti
 
 **Readings (קריאות).** Quick links to the daily reading, NA Israel meetings, literature and the NA info line. You can add your own links.
 
-**Personal links (הקישורים שלי).** A private, flat list under Tools. Save a title, an HTTPS or telephone URL, and an optional note; edit, delete or open each link. Guest bookmarks stay on the device; signed-in bookmarks use the existing personal backup.
+**Personal links (הקישורים שלי).** A private, flat list under Tools. Save a title, an HTTPS or telephone URL, and an optional note; edit, delete or open each link. Bookmarks stay on the device and join the complete recovery-state backup only after encrypted backup is activated.
 
 ## Your privacy
 
-- You don't need an account. Guest onboarding asks only for a start date and recovery type. Without an account, data stays in this device's browser.
+- You don't need an account. Guest onboarding asks only for a start date and recovery type. Without an account, data stays in this device's browser. Local recovery data is not encrypted at rest in this release; cloud-backup encryption does not extend to browser storage or the unencrypted JSON export.
 - Registered accounts use email magic links. Once you save your recovery key and activate encrypted backup, the complete recovery state is encrypted on your device before sync. The stored cloud copy is not readable from Supabase alone without the encryption key. This guarantee excludes device compromise or malicious JavaScript delivered in the future. Email and minimal authentication/sync metadata remain available. Existing legacy backups are migrated only through the guarded recovery-key flow.
 - Email verification opens recovery-key setup; it does not activate backup. You may finish later and continue locally, with a reminder on Today/My Account. Settings and My Account share the same backup status. Backup is active only after encrypted write/readback verification; failures retain local data and retry material. A later sync error retains the last verified backup status.
 - New devices need the recovery key. Clean Time cannot recover encrypted cloud content without it or a working trusted device. Local data and the trusted device key remain stored on your device for this release.
