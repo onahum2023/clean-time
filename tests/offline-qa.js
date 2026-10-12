@@ -26,7 +26,7 @@ async(page)=>{
  await activeWorker.evaluate(()=>{caches.open=self.qaOpen;delete self.qaOpen;delete self.qaCacheFailures;});
  // Update lifecycle with a bounded synthetic HTTP origin; no deployed/production server mutation.
  let version='2026.10.12.5';const root=process.cwd(),worker=fs.readFileSync('service-worker.js','utf8'),html=fs.readFileSync('index.html','utf8');
- const files=new Set(['service-worker.js','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','assets/backend-config.js','assets/sync-crypto.js','assets/appearance.js','assets/recovery-dates.js','assets/fonts/Assistant-Variable.ttf','assets/gong.wav']);
+ const files=new Set(['service-worker.js','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','assets/backend-config.js','assets/sync-crypto.js','assets/appearance.js','assets/analytics.js','assets/recovery-dates.js','assets/fonts/Assistant-Variable.ttf','assets/gong.wav']);
  const server=http.createServer((req,res)=>{
   const file=new URL(req.url,'http://localhost').pathname.slice(1);res.setHeader('Cache-Control','no-store');
   if(!file||file==='index.html'){res.setHeader('Content-Type','text/html');res.end(html.replace(/const APP_VERSION='[^']+'/,"const APP_VERSION='"+version+"'"));return;}

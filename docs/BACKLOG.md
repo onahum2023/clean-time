@@ -66,7 +66,7 @@ See [delivery reconciliation](TRACK-A.md) and GitHub #37. #35 Home/navigation is
 - Optional email magic-link account and multi-device backup/sync.
 - Client-side encrypted cloud recovery state with recovery key.
 - Supabase RLS design: one row per user, own row only.
-- No ads or analytics.
+- No ads or recovery-action tracking; only minimal anonymous home-page analytics.
 - NA Israel links/helpline and explicit non-affiliation disclaimer.
 
 For implementation/QA history, see the focused documents in `docs/` rather than adding release narrative here.

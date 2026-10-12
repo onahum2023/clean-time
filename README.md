@@ -1,12 +1,12 @@
 # זמן נקי (Clean Time)
 
-אפליקציה חינמית בעברית למי שנמצא/ת בהחלמה מהתמכרות. סופרת את הזמן הנקי, ועוזרת לחיות יום אחד בכל פעם: תכנית להיום, יומן, הכרת תודה וקישורים לקריאות. בלי פרסומות, בלי מעקב, ובלי צורך בהרשמה.
+אפליקציה חינמית בעברית למי שנמצא/ת בהחלמה מהתמכרות. סופרת את הזמן הנקי, ועוזרת לחיות יום אחד בכל פעם: תכנית להיום, יומן, הכרת תודה וקישורים לקריאות. בלי פרסומות, בלי מעקב אחר פעולות החלמה, ובלי צורך בהרשמה.
 
 A free Hebrew app for people in recovery from addiction. It counts your clean time and helps you take it one day at a time. No ads, no tracking, no account needed.
 
 **Open the app: https://clean-time.app**
 
-The production site redirects to `https://www.clean-time.app/`, the canonical origin. Public [About](https://www.clean-time.app/about/) and [Privacy](https://www.clean-time.app/privacy/) pages and a short initial-HTML introduction work without JavaScript. Interactive recovery tools require JavaScript. These public pages ship with SEO/GEO Phase 1 after its approved production release.
+The canonical production origin is `https://clean-time.app/`; the www domain redirects to it with HTTP 308. Public [About](https://clean-time.app/about/) and [Privacy](https://clean-time.app/privacy/) pages and a short initial-HTML introduction work without JavaScript. Interactive recovery tools require JavaScript. These public pages ship with SEO/GEO Phase 1 after its approved production release.
 
 > Not affiliated with or endorsed by Narcotics Anonymous or NA Israel.
 > This app is not a treatment product, medical or emergency service. NA Israel info line: 033-747474.
@@ -41,7 +41,7 @@ The production site redirects to `https://www.clean-time.app/`, the canonical or
 - Registered accounts use email magic links. Once you save your recovery key and activate encrypted backup, the complete recovery state is encrypted on your device before sync. The stored cloud copy is not readable from Supabase alone without the encryption key. This guarantee excludes device compromise or malicious JavaScript delivered in the future. Email and minimal authentication/sync metadata remain available. Existing legacy backups are migrated only through the guarded recovery-key flow.
 - Email verification opens recovery-key setup; it does not activate backup. You may finish later and continue locally, with a reminder on Today/My Account. Settings and My Account share the same backup status. Backup is active only after encrypted write/readback verification; failures retain local data and retry material. A later sync error retains the last verified backup status.
 - New devices need the recovery key. Clean Time cannot recover encrypted cloud content without it or a working trusted device. Local data and the trusted device key remain stored on your device for this release.
-- There are no ads, no analytics and nothing is sold or shared.
+- There are no ads and personal information is not sold or shared for commercial purposes. Minimal cookie-free Vercel Web Analytics counts eligible home-page loads only; it never tracks recovery actions or sends recovery/account data. See [Analytics validation](docs/ANALYTICS-QA.md).
 - Device and cloud-data deletion are available from settings/My Account. Cloud deletion requires an unlocked backup and writes an encrypted empty state; it does not delete the login account. See [encryption and migration notes](docs/ENCRYPTION-QA.md) for design, migration and limitations.
 
 ## How to use it

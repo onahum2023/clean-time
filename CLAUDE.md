@@ -16,7 +16,7 @@ Clean Time (זמן נקי) is a free, Hebrew-first recovery companion. Preserve 
 - Guest mode requires no registration and keeps recovery data on the device.
 - Registered access is email magic-link only. Do not add passwords or silently create an account from the returning-user path.
 - Account creation/guest conversion and “I already have an account” are distinct flows.
-- Do not add analytics, advertising, tracking, gamification or commercial pressure.
+- Only the approved minimal anonymous home-page Vercel Web Analytics is allowed. Do not add recovery-action tracking, custom events, advertising, gamification or commercial pressure.
 - Do not make medical/treatment claims.
 
 ## Data and compatibility

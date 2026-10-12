@@ -15,4 +15,4 @@ Allow: /apple-touch-icon.png$
 Allow: /manifest.webmanifest$
 Disallow: /*?
 
-Sitemap: https://www.clean-time.app/sitemap.xml
+Sitemap: https://clean-time.app/sitemap.xml
