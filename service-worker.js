@@ -1,5 +1,5 @@
 // Only this version's static shell is cached. Recovery/Auth responses never enter CacheStorage.
-const VERSION='2026.10.12.5';
+const VERSION='2026.10.12.6';
 const PREFIX='clean-time-shell-v1-',CACHE=PREFIX+VERSION;
 const SHELL=['/','/manifest.webmanifest','/icon-192.png','/icon-512.png','/icon-maskable-512.png','/apple-touch-icon.png','/assets/backend-config.js','/assets/sync-crypto.js','/assets/appearance.js','/assets/recovery-dates.js','/assets/fonts/Assistant-Variable.ttf','/assets/gong.wav'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{
@@ -26,8 +26,8 @@ self.addEventListener('fetch',event=>{
  const path=url.pathname==='/index.html'?'/':url.pathname;
  if(!SHELL.includes(path))return;
  event.respondWith((async()=>{
-  const cached=await (await caches.open(CACHE)).match(path);
+  try{const cached=await (await caches.open(CACHE)).match(path);if(cached)return cached;}catch(e){}
   // Missing/unavailable storage falls back to the network without caching arbitrary content.
-  return cached||fetch(request);
+  return fetch(request);
  })());
 });

@@ -26,6 +26,6 @@ Visual walkthrough: ignored `.playwright-mcp/track-a/{before,after}-{home,tools}
 
 ## Review sequence
 
-PRs are deliberately stacked: #39 (main) → #40 → #42 → #43 → offline-shell PR. Review each against its immediate predecessor. No merge is authorized. After an approved parent merge, retarget/rebase the next PR onto actual main and reverify its new exact head/Preview before considering the next merge. Draft implementation does not close the original issues or complete release/security/physical-device gates.
+PRs are deliberately stacked: #39 (main) → #40 → #42 → #43 → #44. Review each against its immediate predecessor. No merge is authorized. After an approved parent merge, retarget/rebase the next PR onto actual main and reverify its new exact head/Preview before considering the next merge. Draft implementation does not close the original issues or complete release/security/physical-device gates.
 
 PIN #28 is entirely deferred by the owner; #16 and #6 remain open because final Step 10 questions are skipped for now. Approved footer Settings/Account placement is implemented. Curated palette/fonts remain editable review choices, while preference sync is excluded as scoped.

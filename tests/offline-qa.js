@@ -20,6 +20,10 @@ async(page)=>{
  const assets=await page.evaluate(async()=>Promise.all(['/assets/fonts/Assistant-Variable.ttf','/assets/gong.wav','/icon-192.png'].map(async u=>(await fetch(u)).ok)));check(assets.every(Boolean),'Local font/audio/icon fetch offline');
  check(await page.evaluate(async()=>{try{await fetch('/auth/v1/synthetic?code=SYNTHETIC');return false;}catch(e){return true;}}),'Auth/query requests do not fall back to cached shell');
  await context.setOffline(false);await page.waitForFunction(()=>document.getElementById('offlineStatus').hidden);check(true,'Online status resumes without clearing local data');
+ const activeWorker=context.serviceWorkers()[0];
+ await activeWorker.evaluate(()=>{self.qaOpen=caches.open.bind(caches);caches.open=async()=>{self.qaCacheFailures=(self.qaCacheFailures||0)+1;throw Error('synthetic cache denial');};});
+ await page.reload();check(await activeWorker.evaluate(()=>self.qaCacheFailures>0)&&await page.locator('#counter').isVisible()&&await page.evaluate(()=>JSON.parse(localStorage.getItem('cleantime-he-v1')).unknown==='נשמר'),'Cache-storage failure falls back online without recovery loss');
+ await activeWorker.evaluate(()=>{caches.open=self.qaOpen;delete self.qaOpen;delete self.qaCacheFailures;});
  // Update lifecycle with a bounded synthetic HTTP origin; no deployed/production server mutation.
  let version='2026.10.12.5';const root=process.cwd(),worker=fs.readFileSync('service-worker.js','utf8'),html=fs.readFileSync('index.html','utf8');
  const files=new Set(['service-worker.js','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','assets/backend-config.js','assets/sync-crypto.js','assets/appearance.js','assets/recovery-dates.js','assets/fonts/Assistant-Variable.ttf','assets/gong.wav']);
