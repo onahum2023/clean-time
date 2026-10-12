@@ -1,0 +1,9 @@
+@font-face{font-family:Assistant;src:url('/assets/fonts/Assistant-Variable.ttf') format('truetype');font-style:normal;font-weight:200 800;font-display:swap}
+:root{color-scheme:light dark;--bg:#F7F5F0;--ink:#26302D;--link:#315E53}
+@media(prefers-color-scheme:dark){:root{--bg:#191E1B;--ink:#EDF0E9;--link:#A9D7C9}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:19px/1.7 Assistant,Arial,sans-serif}
+main{max-width:680px;margin:auto;padding:24px 20px 48px;overflow-wrap:anywhere}
+h1,h2{line-height:1.3}h1{font-size:2rem}h2{font-size:1.35rem;margin-top:32px}
+a{color:var(--link)}nav{display:flex;gap:24px;flex-wrap:wrap}nav a{display:inline-block;padding-block:10px;min-height:44px}
+:focus-visible{outline:2px solid var(--link);outline-offset:4px}

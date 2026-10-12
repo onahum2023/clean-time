@@ -1,0 +1,18 @@
+User-agent: *
+Disallow: /
+Allow: /$
+Allow: /index.html$
+Allow: /about/$
+Allow: /about/index.html$
+Allow: /privacy/$
+Allow: /privacy/index.html$
+Allow: /sitemap.xml$
+Allow: /assets/
+Allow: /icon-192.png$
+Allow: /icon-512.png$
+Allow: /icon-maskable-512.png$
+Allow: /apple-touch-icon.png$
+Allow: /manifest.webmanifest$
+Disallow: /*?
+
+Sitemap: https://www.clean-time.app/sitemap.xml

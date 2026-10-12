@@ -11,7 +11,8 @@ if(env==='preview'){
  config={environment:'preview',url,key};
 }
 fs.mkdirSync(OUT,{recursive:true});
-for(const file of ['index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','service-worker.js'])fs.copyFileSync(path.join(ROOT,file),path.join(OUT,file));
+for(const file of ['index.html','robots.txt','sitemap.xml','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','service-worker.js'])fs.copyFileSync(path.join(ROOT,file),path.join(OUT,file));
+for(const directory of ['about','privacy'])fs.cpSync(path.join(ROOT,directory),path.join(OUT,directory),{recursive:true});
 fs.cpSync(path.join(ROOT,'assets'),path.join(OUT,'assets'),{recursive:true,filter:file=>path.basename(file)!=='.DS_Store'});
 fs.writeFileSync(path.join(OUT,'assets/backend-config.js'),'window.CleanTimeBackend = '+JSON.stringify(config)+';\n');
 console.log('Static build complete: '+config.environment+' backend configuration');
