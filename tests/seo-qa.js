@@ -44,7 +44,7 @@ async(page)=>{
   const body=await get('/'+slug+'/');check(body.includes('href="'+canonical+'/'+slug+'/"')&&body.includes('property="og:url" content="'+canonical+'/'+slug+'/"'),'Public '+slug+' self-canonical/OG in raw HTML');
  }
  const c=await browser.newContext();await c.route('**/*',r=>new URL(r.request().url()).origin===origin?r.fallback():r.abort());
- await c.addInitScript(()=>localStorage.setItem('cleantime-he-v1',JSON.stringify({date:'2025-01-01',from:'אחר',linksV:2,links:[],journal:[{id:1,text:'SYNTHETIC_PRIVATE_SENTINEL',created:1}],updatedAt:1})));
+ await c.addInitScript(()=>{if(!localStorage.getItem('cleantime-he-v1'))localStorage.setItem('cleantime-he-v1',JSON.stringify({date:'2025-01-01',from:'אחר',linksV:2,links:[],journal:[{id:1,text:'SYNTHETIC_PRIVATE_SENTINEL',created:1}],updatedAt:1}));});
  const p=await c.newPage();await p.goto(origin);await p.locator('#counter').waitFor();
  check(!await p.locator('#publicIntroduction').isVisible(),'Existing guest enters app without public-intro duplication');
  const before=await p.evaluate(()=>localStorage.getItem('cleantime-he-v1'));
