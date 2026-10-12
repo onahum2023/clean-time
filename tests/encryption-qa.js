@@ -33,6 +33,7 @@ async(page)=>{
    }
   });
   await c.addInitScript(({local,material,registered,meta,KEY,CK,MK,uid,email})=>{
+   window.qaAnalytics=[];let analytics=null;Object.defineProperty(window,'CleanTimeAnalytics',{get:()=>analytics,set:value=>{analytics={...value,event(name){window.qaAnalytics.push(name);}};}});
    if(!localStorage.getItem('qa-seeded')){
     if(local)localStorage.setItem(KEY,JSON.stringify(local));
     if(material)localStorage.setItem(CK,JSON.stringify(material));
@@ -88,6 +89,7 @@ async(page)=>{
  await s.p.screenshot({path:'/private/tmp/clean-time-encryption-360.png',fullPage:true,mask:[s.p.locator('#recoveryOutput')],maskColor:'#e4dfd5'});
  check(await s.p.locator('#recoveryOutput').getAttribute('dir')==='ltr'&&(await s.p.locator('#recoveryGenerated').innerText()).includes('אינו סיסמת'),'LTR recovery key and passwordless explanation');
  await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('גיבוי מוצפן פעיל'));
+ check(await s.p.evaluate(()=>window.qaAnalytics.filter(n=>n==='backup_activated').length===1),'Analytics backup event follows successful verified activation once');
  check(s.calls.uploads.length===1&&s.cloud().data.v===1&&s.cloud().data.alg==='A256GCM','New account creates versioned AES-256-GCM envelope');
  check(s.cloud().data.kdf.name==='HKDF'&&s.cloud().data.kdf.hash==='SHA-256'&&s.cloud().data.kdf.info==='clean-time/v1/recovery-kek/A256GCM'&&!('iterations' in s.cloud().data.kdf),'HKDF profile has explicit KEK domain separation and no work factor');
  const plain=await s.plain();check(same(plain,cloudState(await read(s.p))),'Encrypted upload representation round trip restores identical whole state');
@@ -102,6 +104,7 @@ async(page)=>{
  check(await s.p.locator('#recoveryOutput').inputValue()==='','Setup recovery key removed from DOM after acknowledgement');
  check(s.calls.logs.length===0&&s.calls.errors.length===0&&s.calls.network.length===0,'No secrets/SDK errors logged; no external requests');
  const reloadUploads=s.calls.uploads.length;await s.p.reload();await settle(s.p);
+ check(await s.p.evaluate(()=>!window.qaAnalytics?.includes('backup_activated')),'Analytics does not count trusted restoration as activation');
  check((await status(s.p)).includes('גיבוי מוצפן פעיל')&&s.calls.uploads.length===reloadUploads,'Trusted device reopens with cached key and no upload');
  s.setVerify(true);await s.p.reload();await settle(s.p);
  check((await status(s.p)).includes('הגיבוי המוצפן האחרון אומת')&&(await stored(s.p)).confirmed,'Later sync error retains last verified backup status');
@@ -120,6 +123,7 @@ async(page)=>{
  check(await s.p.locator('#recoveryInput').inputValue()==='','Entered recovery key cleared on failure');
  await s.p.locator('#recoveryInput').fill(recovery.toLowerCase().replace(/-/g,' '));await s.p.locator('#unlockRecovery').click();await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('גיבוי מוצפן פעיל'));
  check(same(cloudState(await read(s.p)),plain)&&s.calls.uploads.length===0,'Correct recovery key on new device decrypts and applies whole cloud state');
+ check(await s.p.evaluate(()=>!window.qaAnalytics.includes('backup_activated')),'Analytics new-device unlock does not count as backup activation');
  check((await stored(s.p)).confirmed,'New device retains verified usable DEK');await s.c.close();
  // Combined UAT journeys while the registered whole-state backup is encrypted.
  s=await scenario({row,material});await s.p.locator('[data-tab="counter"]').click();
@@ -205,6 +209,7 @@ async(page)=>{
  s=await scenario();s.holdWrite();await s.p.locator('#makeRecoveryKey').click();await s.p.locator('#recoveryGenerated').waitFor();
  await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();
  await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('ממתין לאימות'));
+ check(await s.p.evaluate(()=>!window.qaAnalytics.includes('backup_activated')),'Analytics pending upload emits no activation');
  check((await status(s.p)).includes('עדיין לא פעיל')&&(await s.p.locator('#setSub').textContent())===(await status(s.p))&&s.calls.uploads.length===0,'Initial upload in progress: shared pending status, never active');
  s.releaseWrite();await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('גיבוי מוצפן פעיל'));
  check(s.calls.uploads.length===1&&(await stored(s.p)).confirmed,'Only verified write/readback activates backup');await s.c.close();
@@ -214,6 +219,7 @@ async(page)=>{
   await s.p.locator('#makeRecoveryKey').click();await s.p.locator('#recoveryGenerated').waitFor();
   await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();
   await s.p.waitForFunction(()=>document.getElementById('encryptionMsg').textContent.includes('לא הושלם'));
+  check(await s.p.evaluate(()=>!window.qaAnalytics.includes('backup_activated')),'Analytics failed '+failure+' emits no activation');
   check(!(await status(s.p)).includes('גיבוי מוצפן פעיל')&&(await s.p.locator('#setSub').textContent())===(await status(s.p))&&!((await stored(s.p)).confirmed),'Initial '+failure+': consistent error, no false active status');
   check(same({...await read(s.p),updatedAt:full.updatedAt},full),'Initial '+failure+': local content retained');
   const retryMaterial=await stored(s.p);

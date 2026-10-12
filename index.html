@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="referrer" content="no-referrer">
-<script defer src="/assets/analytics.js" data-enabled="true" data-script-src="/_vercel/insights/script.js" data-view-endpoint="/_vercel/insights/view"></script>
+<script defer src="/assets/analytics.js" data-enabled="true" data-script-src="/_vercel/insights/script.js" data-view-endpoint="/_vercel/insights/view" data-event-endpoint="/_vercel/insights/event" data-custom-events="true"></script>
 <script src="/assets/appearance.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -680,7 +680,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.12.11';
+const APP_VERSION='2026.10.12.12';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -741,6 +741,14 @@ const $=id=>document.getElementById(id);
 $('appVer').textContent='גרסה '+APP_VERSION;
 
 /* ---------- Tabs ---------- */
+// Observational hooks only; the optional module cannot block any app flow.
+const analytics=(method,...args)=>{try{
+ if(window.CleanTimeAnalytics)return window.CleanTimeAnalytics[method]?.(...args);
+ // Session callbacks may finish before the deferred local module executes.
+ // Preserve only the scalar creation time for its bounded registration check.
+ if(method==='registrationConfirmed')window.CleanTimeAnalyticsInitial={...window.CleanTimeAnalyticsInitial,registrationCreatedAt:args[0]};
+}catch{}};
+let analyticsNavigationReady=false;
 let current='counter';
 const SCREENS=['counter','planner','journal','gratitude','readings','bookmarks','settings','tools','about','welcome','startup','onboarding','meditation','inventory','auth','account','feedback'];
 function show(tab,record=true){
@@ -776,12 +784,14 @@ function show(tab,record=true){
   if(tab==='meditation')renderTimer();
   renderMilestone();
   if(record){const heading=$(tab).querySelector('h1,h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}}
+  analytics('navigate',tab,analyticsNavigationReady);
   window.scrollTo(0,0);
 }
 document.querySelectorAll('[data-tab],[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.tab||b.dataset.go));
 $('openSettings').onclick=()=>show(current==='settings'?(S.date?'counter':signedIn()?'account':'welcome'):'settings');
 let authMode='create';
 function openAuth(mode,record=true){
+  if(record&&mode!=='login'&&(current!=='auth'||authMode!==mode))analytics('event','registration_started');
   authMode=mode;
   const create=mode==='create',convert=mode==='convert';
   $('authTitle').textContent=create?'יצירת חשבון':convert?'יצירת חשבון והפעלת גיבוי':'כבר יש לי חשבון';
@@ -814,7 +824,7 @@ $('guestForm').onsubmit=ev=>{
   ev.preventDefault();
   if(!validateRecoveryDate('oDate')||!$('guestForm').reportValidity())return;
   S.date=$('oDate').value;S.from=$('oFrom').value;
-  if(save())show('counter');
+  if(save()){analytics('event','guest_started',{},true);show('counter');}
 };
 
 function validateRecoveryDate(id,focus=true){
@@ -1287,6 +1297,7 @@ $('exportRecovery').onclick=()=>{
     const data={format:'clean-time-recovery',version:1,exportedAt:new Date().toISOString(),data:portableRecovery(S)};
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
     link.href=url;link.download='clean-time-'+todayKey()+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+    analytics('event','export_completed');
     $('exportStatus').textContent='הקובץ הועבר להורדה. אם לא נשמר, כדאי לנסות דרך דפדפן המכשיר.';
   }catch(e){$('exportStatus').textContent='לא הצלחנו ליצור את הקובץ. הנתונים במכשיר לא שונו.';}
 };
@@ -1343,6 +1354,7 @@ function loadSupabase(){
       const next=session?session.user:null;
       if(user?.id!==next?.id)clearEncryption();
       user=next;
+      if(ev==='SIGNED_IN'&&next)analytics('registrationConfirmed',Date.parse(next.created_at));
       /* never call supabase from inside this callback */
       setTimeout(async()=>{renderSync();if(ev==='SIGNED_IN'){await sync();if(current==='auth'||current==='startup')show(cryptoState==='active'&&S.date?'counter':'account');}},0);
     });
@@ -1381,7 +1393,8 @@ $('loginForm').onsubmit=async ev=>{
     if(!save())return;
   }else if(authMode==='convert'&&!S.name){S.name=$('aName').value.trim();if(!save())return;}
   $('lSend').disabled=true;setMsg('שולח...');
-  try{await sendLogin(email,authMode);setMsg('שלחנו קישור למייל. פתיחת הקישור מאמתת את החשבון. כדי להפעיל גיבוי מוצפן, ממשיכים לשמירת מפתח שחזור ולאימות הגיבוי הראשון. לא הגיע? כדאי לבדוק גם בדואר זבל / Spam.');}
+  const analyticsMode=authMode,analyticsStartedAt=Date.now();
+  try{await sendLogin(email,authMode);analytics('registrationRequested',analyticsMode,analyticsStartedAt);setMsg('שלחנו קישור למייל. פתיחת הקישור מאמתת את החשבון. כדי להפעיל גיבוי מוצפן, ממשיכים לשמירת מפתח שחזור ולאימות הגיבוי הראשון. לא הגיע? כדאי לבדוק גם בדואר זבל / Spam.');}
   catch(e){setMsg(authMode==='login'&&/otp_disabled|signup_disabled|user_not_found/.test(e.code||'')?'לא מצאנו חשבון עם כתובת המייל הזו. אפשר ליצור חשבון חדש.':errText(e),true);}
   $('lSend').disabled=false;
 };
@@ -1530,8 +1543,11 @@ async function upload(previous,state=syncedState()){
   const restored=await SyncCrypto.decrypt(stored.data,dataKey,id,stored.updated_at);
   if(canonicalState(restored)!==canonicalState(state))throw new Error('Cloud verification failed');
   if(user?.id!==id||epoch!==cryptoEpoch)throw new Error('Account changed');
+  const firstVerifiedBackup=!keyMaterial.confirmed;
   keyMaterial.confirmed=true;storeMaterial(keyMaterial);
-  cryptoState='active';return state.updatedAt;
+  cryptoState='active';
+  if(firstVerifiedBackup)analytics('event','backup_activated',{},true);
+  return state.updatedAt;
 }
 /* Pull/decrypt before normalizing or conflict resolution. Runs one at a time. */
 async function sync(){
@@ -1558,7 +1574,9 @@ async function sync(){
         }
         remote=await SyncCrypto.decrypt(remote,dataKey,id,row.updated_at);
         if(user?.id!==id||epoch!==cryptoEpoch)break;
+        const firstVerifiedBackup=!keyMaterial.confirmed&&!lockedRow;
         keyMaterial.confirmed=true;storeMaterial(keyMaterial);cryptoState='active';lockedRow=null;
+        if(firstVerifiedBackup)analytics('event','backup_activated',{},true);
       }else if(cryptoState==='active'||(await loadMaterial(id)&&keyMaterial.confirmed)){
         // A trusted device must never silently accept a downgrade or missing encrypted row.
         throw new Error('Encrypted row changed');
@@ -1616,6 +1634,7 @@ async function startSync(){
   sbReady=true;
   user=data&&data.session?data.session.user:null;
   if(fromLink){
+    if(user)analytics('registrationConfirmed',Date.parse(user.created_at));
     fromLink=false; cleanUrl();
     if(!user){openAuth('login');setMsg(errText(error||'otp_expired'),true);}
   }
@@ -1725,12 +1744,21 @@ let hasSession=false; try{hasSession=!!localStorage.getItem(AUTH_KEY);}catch(e){
 const initial=fromLink||(!S.date&&(M.uid||hasSession))?'startup':S.date?'counter':'welcome';
 history.replaceState({screen:initial},'');
 show(initial,false);
+analyticsNavigationReady=true;
+window.CleanTimeAnalyticsInitial={...window.CleanTimeAnalyticsInitial,screen:current};
 $('publicIntroduction').hidden=true;
 renderSync();
 if(urlP.has('error_code')||urlP.has('error')){
   cleanUrl(); openAuth('login'); setMsg(errText(urlP.get('error_code')||urlP.get('error')),true);
 }
-if(fromLink||M.uid||hasSession)startSync();
+const analyticsReturningGuest=!!S.date;
+function analyticsStarted(){
+ const mode=user?'registered':sbReady||(!M.uid&&!hasSession)?(analyticsReturningGuest?'guest':'visitor'):'unknown';
+ const entry=mode==='registered'?'registered':mode==='guest'?'returning_guest':mode==='visitor'?'new_guest':'unknown';
+ window.CleanTimeAnalyticsInitial={...window.CleanTimeAnalyticsInitial,screen:current,start:[mode,entry]};
+ analytics('started',mode,entry);
+}
+if(fromLink||M.uid||hasSession)startSync().finally(analyticsStarted);else analyticsStarted();
 // Updates wait for existing windows to close; never force reload an active editor.
 let shellRegistration=null;
 function showConnectivity(){
