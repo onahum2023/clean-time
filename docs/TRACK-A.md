@@ -5,7 +5,7 @@ GitHub #37 is the coordinated scope. Baseline: main `aafcbe1` (merged #33). No o
 | Batch | Issues | Baseline finding / delivery |
 | --- | --- | --- |
 | Daily experience | #35 | Home duplicates Tools; five ordered daily actions and flat supplemental destinations in this PR. Shared Settings/Account moved to footer after owner approval. |
-| Appearance / feedback | #36, #27 | Existing accent color belongs to recovery state; device-local background/font preferences absent. Review candidate adds local appearance and Home feedback/fallback; see APPEARANCE-FEEDBACK-QA.md. |
+| Appearance / feedback | #36, #27 | Existing accent color belongs to recovery state; device-local background/font preferences absent. Review candidate adds local appearance and About feedback/fallback; see APPEARANCE-FEEDBACK-QA.md. |
 | Recovery flow | #25, #26 | Settings can change date/time without confirmation, already retains history. Review candidate adds confirmation/history retention and optional quiet calendar milestones; see RECOVERY-FLOW-QA.md. |
 | Portability | #24 | Review candidate exports complete legacy/unknown recovery fields while excluding auth/key stores; see EXPORT-QA.md. |
 | Offline | #23 | Review candidate adds a versioned static-only offline shell with safe waiting updates; see OFFLINE-QA.md. |
@@ -31,3 +31,5 @@ PRs are deliberately stacked: #39 (main) → #40 → #42 → #43 → #44. Review
 PIN #28 is entirely deferred by the owner; #16 and #6 remain open because final Step 10 questions are skipped for now. Approved footer Settings/Account placement is implemented. Curated palette/fonts remain editable review choices, while preference sync is excluded as scoped.
 
 Owner Preview refinement (2026-10-12): Home heading is **התחברות**, centered above the action list, with the labels/order above. This supersedes the original #35 ordering; all other screens and footer destinations are retained. The refinement is a separate commit in cumulative review PR #44.
+
+Owner Preview refinement (2026-10-12): the Feedback entry moves from Home into About. Feedback returns to About, including for fresh visitors before setup. Milestones remain optional/off by default in Settings (#26, delivery PR #42), with the latest reached milestone shown below the Home counter when enabled.

@@ -15,7 +15,7 @@ A free Hebrew app for people in recovery from addiction. It counts your clean ti
 
 **First visit.** Welcome introduces the app with its existing logo and Hebrew wordmark, a short purpose/origin paragraph and four non-interactive feature explanations before the entry actions; **מתחילים** opens a separate setup asking only for a recovery date and type. No name, email or phone is required. Existing configured users open Today. Native date pickers show a Hebrew confirmation with the month written out. About/privacy is available before setup.
 
-**Today (היום).** The clean-time counter and five daily actions in order: daily reading, journal, gratitude, plan and Step 10. Recovery Tools, About and shared Settings/Account stay in the footer. Feedback has a separate Home entry.
+**Today (היום).** The clean-time counter and five daily actions in order: daily reading, journal, gratitude, plan and Step 10. Recovery Tools, About and shared Settings/Account stay in the footer. Feedback is reached from About.
 
 **Daily plan (התכנית שלי להיום).** One checklist per calendar day. Add, edit, delete and check items. Each new day starts empty; previous plans remain accessible.
 

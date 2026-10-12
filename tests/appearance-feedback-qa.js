@@ -15,12 +15,14 @@ async(page)=>{
  check(await page.evaluate(()=>localStorage.getItem('cleantime-he-v1'))===saved,'Preferences do not rewrite recovery state/timestamp');
  await page.locator('#openSettings').click();await page.locator('#resetAppearance').click();check(await page.evaluate(()=>document.documentElement.dataset.background==='default'&&document.documentElement.dataset.font==='assistant'),'Reset to original appearance');
  await page.evaluate(()=>localStorage.setItem('cleantime-he-appearance','{"background":"invalid","font":"unavailable"}'));await page.reload();check(await page.evaluate(()=>document.documentElement.dataset.background==='default'&&document.documentElement.dataset.font==='assistant'),'Invalid preference falls back safely');
- await page.locator('#counter [data-go=feedback]').click();check(await page.locator('#feedback').isVisible(),'Feedback directly reachable from Home');
+ check(await page.locator('#counter [data-go=feedback]').count()===0,'Feedback removed from Home');
+ await page.locator('[data-tab=about]').click();await page.locator('#about [data-go=feedback]').click();check(await page.locator('#feedback').isVisible(),'Feedback reachable from About');
  const link=await page.locator('#feedbackMail').getAttribute('href');check(link.startsWith('mailto:hello@clean-time.app?subject=')&&!link.includes('body='),'Feedback has no automatic recovery-data payload');
  check((await page.locator('#feedback').innerText()).includes('רגישים')&&(await page.locator('#feedback').innerText()).includes('hello@clean-time.app'),'Privacy warning and visible mobile email fallback');
  await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{value:{writeText:async()=>{throw Error('blocked');}},configurable:true}));await page.locator('#copyFeedbackEmail').click();check((await page.locator('#feedbackStatus').innerText()).includes('לסמן ולהעתיק'),'Clipboard failure has selectable address fallback');
- await page.goBack();check(await page.locator('#counter').isVisible(),'Feedback Back returns Home');
+ await page.locator('#feedbackBack').click();check(await page.locator('#about').isVisible(),'Feedback Back returns About');
  await page.locator('#openSettings').click();await page.evaluate(()=>{Storage.prototype.setItem=()=>{throw Error('quota');};});await page.locator('#backgroundChoice').selectOption('sage');check((await page.locator('#appearanceStatus').innerText()).includes('לא נשמר'),'Storage failure is visible');
  check(await page.evaluate(()=>localStorage.getItem('cleantime-he-v1'))===saved,'Feedback and storage failure preserve recovery data');
+ const c=await page.context().browser().newContext();await c.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());const p=await c.newPage();await p.goto(origin);await p.locator('#welcome [data-go=about]').click();await p.locator('#about [data-go=feedback]').click();check(await p.locator('#feedback').isVisible()&&await p.locator('#feedbackBack').isVisible(),'Fresh visitor can open feedback before setup');await p.locator('#feedbackBack').click();check(await p.locator('#about').isVisible()&&await p.evaluate(()=>localStorage.getItem('cleantime-he-v1'))===null,'Fresh visitor returns About without creating recovery state');await c.close();
  return {passed:results.length,results};
 }

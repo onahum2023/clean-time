@@ -358,7 +358,6 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
         <button data-go="inventory">חשבון נפש יומי / צעד 10</button>
       </div>
     </div>
-    <button class="btn ghost" data-go="feedback" style="margin-top:18px">משוב</button>
   </section>
 
   <!-- Planner -->
@@ -563,6 +562,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
     <button class="btn ghost" id="authBack">חזרה</button>
   </section>
   <section id="feedback" hidden>
+    <button class="btn ghost" id="feedbackBack">חזרה לאודות</button>
     <h2>משוב</h2>
     <p>מה עובד לך, ומה אפשר לשפר?</p>
     <p class="note">אפשר לשלוח משוב במייל. עדיף לא לכלול פרטי החלמה אישיים או רגישים. אין צורך לצרף את הנתונים שלך.</p>
@@ -594,6 +594,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       <p>הקוד של האפליקציה פתוח לכולם ב-<a href="https://github.com/onahum2023/clean-time" target="_blank" rel="noopener">GitHub</a>.</p>
       <h4>משוב</h4>
       <p>נשמח לשמוע מה עובד ומה חסר: <a href="mailto:hello@clean-time.app" dir="ltr">hello@clean-time.app</a></p>
+      <button class="btn ghost" data-go="feedback">משוב</button>
       <p class="ver" id="appVer"></p>
   </section>
 </div>
@@ -626,7 +627,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.12.7';
+const APP_VERSION='2026.10.12.8';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -1192,6 +1193,7 @@ $('resetAppearance').onclick=()=>{
   const ok=CleanTimeAppearance.save({background:'default',font:'assistant'});$('backgroundChoice').value='default';$('fontChoice').value='assistant';
   $('appearanceStatus').textContent=ok?'המראה המקורי נשמר.':'המראה הוחזר, אבל לא נשמר במכשיר.';
 };
+$('feedbackBack').onclick=()=>history.back();
 $('copyFeedbackEmail').onclick=async()=>{
   try{await navigator.clipboard.writeText('hello@clean-time.app');$('feedbackStatus').textContent='הכתובת הועתקה.';}
   catch(e){$('feedbackStatus').textContent='אפשר לסמן ולהעתיק את הכתובת שמופיעה כאן.';}
