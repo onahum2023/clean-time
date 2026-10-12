@@ -16,7 +16,9 @@ for(const directory of ['about','privacy'])fs.cpSync(path.join(ROOT,directory),p
 fs.cpSync(path.join(ROOT,'assets'),path.join(OUT,'assets'),{recursive:true,filter:file=>path.basename(file)!=='.DS_Store'});
 // Vercel v2 supplies project-specific public paths. Retain the verified legacy
 // endpoint when that build configuration is absent; never accept remote URLs.
-const analytics=JSON.parse(process.env.VERCEL_OBSERVABILITY_CLIENT_CONFIG||'{}').analytics||{};
+// Preview never loads Analytics, so its unused generated provider paths cannot
+// block an otherwise valid isolated staging build. Production is unchanged.
+const analytics=env==='preview'?{}:JSON.parse(process.env.VERCEL_OBSERVABILITY_CLIENT_CONFIG||'{}').analytics||{};
 const scriptSrc=analytics.scriptSrc||'/_vercel/insights/script.js',viewEndpoint=analytics.viewEndpoint||'/_vercel/insights/view';
 const safePath=value=>typeof value==='string'&&/^\/[A-Za-z0-9_/-]+$/.test(value)&&!value.includes('//')&&!value.split('/').includes('..');
 if(!safePath(scriptSrc.replace(/\.js$/,''))||!scriptSrc.endsWith('/script.js')||!safePath(viewEndpoint)||!viewEndpoint.endsWith('/view'))throw new Error('Invalid public Analytics paths');

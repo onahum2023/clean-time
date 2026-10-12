@@ -42,6 +42,7 @@ async(page)=>{
   check(html.includes('data-script-src="/unique-analytics/script.js"')&&html.includes('data-view-endpoint="/unique-analytics/view"'),'Build uses supplied current project paths');
   for(const scriptSrc of ['https://external.invalid/script.js','//external.invalid/script.js','/bad/../script.js','/bad/script.js?private=SYNTHETIC'])check(build('production',{scriptSrc}).status!==0,'Remote/invalid Analytics config fails closed');
   check(build('preview',{}).status===0&&fs.readFileSync(path.join(tmp,'index.html'),'utf8').includes('data-enabled="false"'),'Preview build ships disabled instrumentation');
+  check(build('preview',{scriptSrc:'/generated-provider/script.v2.js',viewEndpoint:'/generated-provider/intake'}).status===0&&fs.readFileSync(path.join(tmp,'index.html'),'utf8').includes('data-enabled="false"'),'Unused generated Analytics paths cannot block an isolated Preview');
   check(fs.existsSync(path.join(tmp,'assets/analytics.js')),'Build includes bootstrap asset');
  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
  return {passed:results.length,results};
