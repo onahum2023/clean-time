@@ -166,12 +166,13 @@ nav.tabs svg{width:22px;height:22px}
 #counter .since{margin-top:16px}
 #counter .count.single .num{font-size:clamp(4rem,24vw,7rem)}
 #counter .num{font-size:clamp(3rem,17vw,5.5rem)}
-.today-actions{width:100%;text-align:right;margin-top:32px}
+.today-actions{width:100%;text-align:right;margin-top:20px}
 .today-actions h2{font-size:1.4rem;margin:0 0 12px}
 .tool-links{display:grid;gap:0;width:100%;padding:0 14px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
-.tool-links button:last-child{border-bottom:0}
-.tool-links button{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:54px;text-align:right;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer;padding:12px 4px;color:var(--ink)}
-.tool-links button::after{content:'‹';color:var(--accent-ink);font-size:1.5rem}
+.tool-links > :last-child{border-bottom:0}
+.tool-links button,.tool-links a{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:54px;text-align:right;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer;padding:10px 4px;color:var(--ink)}
+.tool-links button::after,.tool-links a::after{content:'‹';color:var(--accent-ink);font-size:1.5rem}
+ .tool-links a{text-decoration:none}
 .tool-links .primary{color:var(--accent-ink);font-weight:600}
 .del,.edit-btn{min-width:44px;min-height:44px;padding:8px;border:0;background:none;cursor:pointer;color:var(--muted)}
 .edit-btn{font-size:.85rem}
@@ -278,9 +279,6 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <div class="app">
   <header>
     <h1 id="greet">זמן נקי</h1>
-    <button class="icon-btn" id="openSettings" hidden aria-label="הגדרות">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-    </button>
   </header>
 
   <p id="storageMsg" role="alert" hidden></p>
@@ -339,13 +337,13 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
     <div class="since" id="since"></div>
     <div class="hint">הקשה על המספר משנה תצוגה</div>
     <div class="today-actions">
-      <h2>רק להיום</h2>
-      <div class="tool-links">
-        <button class="primary" data-go="planner">התכנית שלי להיום</button>
+      <h2>להיום</h2>
+      <div class="tool-links" aria-label="פעולות יומיות">
+        <a class="primary" id="dailyReading" href="https://www.naisrael.org.il/just-for-today/" target="_blank" rel="noopener noreferrer" aria-label="רק להיום — נפתח בחלון חדש">רק להיום</a>
+        <button data-go="planner">תכנון יומי</button>
         <button data-go="gratitude">הכרת תודה</button>
-        <button data-go="meditation">מדיטציה</button>
+        <button data-go="journal">ככה זה עכשיו</button>
         <button data-go="inventory">חשבון נפש יומי / צעד 10</button>
-        <button data-go="readings">משאבי החלמה</button>
       </div>
     </div>
   </section>
@@ -416,12 +414,11 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   <section id="tools" hidden>
     <h2>כלים להחלמה</h2>
     <p class="sub">מה שמתאים לך עכשיו.</p>
-    <div class="tool-links">
-      <button data-go="planner">התכנית שלי להיום</button><button data-go="gratitude">הכרת תודה</button>
-      <button data-go="meditation">מדיטציה</button><button data-go="inventory">חשבון נפש יומי / צעד 10</button>
-      <button data-go="journal">יומן אישי</button><button data-go="readings">משאבי החלמה</button>
+    <div class="tool-links" id="recoveryDestinations">
+      <button data-go="meditation">מדיטציה</button>
       <button data-go="bookmarks">הקישורים שלי</button>
     </div>
+    <button class="btn ghost" data-go="readings">עריכת משאבי החלמה</button>
   </section>
 
   <section id="meditation" hidden>
@@ -574,11 +571,12 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   <div class="box"><h3 id="askT"></h3><p id="askP"></p><div class="acts" id="askB"></div></div>
 </div>
 
-<nav class="tabs" id="tabs" hidden>
-  <div class="inner" aria-label="ניווט ראשי">
+<nav class="tabs" id="tabs" aria-label="ניווט ראשי" hidden>
+  <div class="inner">
     <button data-tab="counter" aria-current="page">היום</button>
-    <button data-tab="tools">כלים</button>
+    <button data-tab="tools">כלים להחלמה</button>
     <button data-tab="about">אודות</button>
+    <button id="openSettings" hidden aria-label="הגדרות והחשבון שלי">הגדרות<br>וחשבון</button>
   </div>
 </nav>
 
@@ -586,7 +584,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/sync-crypto.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.07.3';
+const APP_VERSION='2026.10.12.1';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -669,13 +667,14 @@ function show(tab,record=true){
   $('aboutBack').hidden=tab!=='about'||!entering;
   const active=tab==='about'?'about':['counter','onboarding','settings','auth','account'].includes(tab)?'counter':'tools';
   document.querySelectorAll('nav.tabs button').forEach(b=>{
-    if(b.dataset.tab===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+    if(b.id==='openSettings'?['settings','account','auth'].includes(tab):b.dataset.tab===active&&!['settings','account','auth'].includes(tab))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   });
   if(tab==='settings')fillSettings();else applyColor();
   if(tab==='account')renderSync();
   if(tab==='counter'){render();renderSync();}
   if(tab==='planner'){planSelected=todayKey();renderP();}
   if(tab==='gratitude')renderG();
+  if(tab==='tools')renderToolResources();
   if(tab==='bookmarks')renderBookmarks();
   if(tab==='inventory')openInventory(todayKey());
   if(tab==='meditation')renderTimer();
@@ -1068,6 +1067,14 @@ $('bTitle').oninput=()=>$('bTitle').setCustomValidity('');
 
 /* ---------- Readings ---------- */
 let editing=false;
+function renderToolResources(){
+  const box=$('recoveryDestinations');box.querySelectorAll('a,.unavailable-resource').forEach(e=>e.remove());
+  S.links.filter(l=>l.url!=='https://www.naisrael.org.il/just-for-today/').forEach(l=>{
+    const url=safeLinkUrl(l.url),el=document.createElement(url?'a':'span');
+    if(url)linkTarget(el,url);else el.className='unavailable-resource';
+    el.textContent=l.title||l.url;box.appendChild(el);
+  });
+}
 function renderL(){
   const ul=$('lList'); ul.innerHTML='';
   $('editLinks').textContent=editing?'סיום':'עריכה';

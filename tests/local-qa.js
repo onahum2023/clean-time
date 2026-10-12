@@ -15,7 +15,7 @@ async (page) => {
   const oldDay='2025-02-10';
   const read=()=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
   const go=async id=>{
-    await page.locator('[data-tab="tools"]').click();await page.locator(`#tools [data-go="${id}"]`).click();
+    const home=['planner','gratitude','journal','inventory'].includes(id);await page.locator('[data-tab="'+(home?'counter':'tools')+'"]').click();await page.locator(`#${home?'counter':'tools'} [data-go="${id}"]`).click();
   };
   const seed=async data=>{await page.evaluate(({key,data})=>{localStorage.clear();if(data)localStorage.setItem(key,JSON.stringify(data));},{key,data});await page.reload();};
   await page.setViewportSize({width:360,height:800});
@@ -31,7 +31,7 @@ async (page) => {
     const state=await read();check(state.date==='2025-01-01'&&state.from===from&&state.name===''&&await page.locator('#counter').isVisible(),`Guest onboarding: ${from}`);
   }
   check((await page.locator('#count').innerText()).trim().length>0,'Clean-time counter visible');
-  for(const id of ['planner','gratitude','meditation','inventory','readings']){
+  for(const id of ['planner','gratitude','journal','inventory']){
     await page.locator(`#counter [data-go="${id}"]`).click();check(await page.locator(`#${id}`).isVisible(),`Today opens ${id}`);await page.locator('[data-tab="counter"]').click();
   }
   await go('gratitude');
@@ -122,7 +122,7 @@ async (page) => {
   },{key,fixture});
   await adaptMock(context);const cloud=await context.newPage();await cloud.goto(origin);await cloud.waitForTimeout(500);
   await activate(cloud);await cloud.evaluate(()=>window.qaUploads=[]);
-  await cloud.locator('[data-tab="tools"]').click();await cloud.locator('#tools [data-go="inventory"]').click();await cloud.locator('#iHistory').selectOption(oldDay);
+  await cloud.locator('[data-tab="counter"]').click();await cloud.locator('#counter [data-go="inventory"]').click();await cloud.locator('#iHistory').selectOption(oldDay);
   check(await cloud.locator('#iSummary').inputValue()==='סיכום מהענן','Mock signed-in cloud pull loads inventory');
   await cloud.locator('#iSummary').fill('סיכום מעודכן');await cloud.waitForTimeout(2400);
   const uploads=await cloud.evaluate(()=>window.qaUploads),decrypted=await cloud.evaluate(()=>qaPlain());

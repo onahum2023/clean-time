@@ -26,7 +26,7 @@ async(page)=>{
  check(await p.evaluate(k=>JSON.parse(localStorage.getItem(k)).gratitude.length===0&&typeof JSON.parse(localStorage.getItem(k)).plans==='object',key),'Sparse old cloud row normalizes missing collections');
  await activate(p);await p.evaluate(()=>window.qaUploads=[]);
  await p.locator('#openSettings').click();await p.locator('#sDate').fill('2025-01-01');await p.locator('#saveSettings').click();
- await p.evaluate(()=>window.qaOnline=false);await p.locator('[data-tab="tools"]').click();await p.locator('#tools [data-go="inventory"]').click();await p.locator('#iSummary').fill('נכתב ללא חיבור');await p.waitForTimeout(2200);
+ await p.evaluate(()=>window.qaOnline=false);await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="inventory"]').click();await p.locator('#iSummary').fill('נכתב ללא חיבור');await p.waitForTimeout(2200);
  check(await p.evaluate(()=>window.qaUploads.length===0&&JSON.parse(localStorage.getItem('cleantime-he-sync')).dirty),'Offline registered edit is local and pending; no upload');
  await p.evaluate(()=>{window.qaOnline=true;window.dispatchEvent(new Event('online'));});await p.waitForTimeout(300);
  check(await p.evaluate(async()=>window.qaUploads.length===1&&Object.values((await qaPlain()).inventory).some(e=>e.summary==='נכתב ללא חיבור')&&!JSON.parse(localStorage.getItem('cleantime-he-sync')).dirty),'Reconnect uploads pending inventory and clears dirty flag');

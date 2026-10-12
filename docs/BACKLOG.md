@@ -18,6 +18,9 @@ GitHub Issues are the source of truth for active work. This file is a compact ro
 - [x] Personal links/bookmarks
 - [x] Self-hosted Assistant font and safe external-link handling
 - [x] Privacy/About copy and feedback address polish (PR #15)
+- [x] Branded Welcome and focused guest setup (#32, PR #33)
+- [x] Truthful verified encrypted-backup state (#30, PR #33)
+- [x] Hebrew written-month recovery-date confirmation (#31, PR #33)
 
 ## P0 — before wider public promotion
 
@@ -26,9 +29,13 @@ GitHub Issues are the source of truth for active work. This file is a compact ro
 - [ ] **#17 Real account/cloud deletion:** remove the user's cloud row and Auth identity, not only replace recovery state with an encrypted empty state.
 - [ ] **#18 Production security headers:** CSP, frame protection, referrer policy and nosniff without breaking auth/sync/PWA behavior.
 - [ ] **#19 Production auth/SMTP/RLS verification:** live delivery/redirect checks and cross-account isolation using test accounts only. One fresh Gmail Inbox delivery has passed; broader provider/RLS verification remains.
-- [ ] **#30 Backup activation state after email verification:** make all screens distinguish verified account vs encrypted-backup-active state.
+- [ ] **#34 Remaining staging backup activation/failure/independent-browser QA.**
 - [ ] **#21 Physical Android/PWA validation.**
 - [ ] **#22 Retire legacy Vercel-origin handoff safely.**
+
+## Track A — coordinated product work
+
+See [delivery reconciliation](TRACK-A.md) and GitHub #37. #35 Home/navigation is first, then #36/#27 appearance/feedback, #25/#26 recovery flow, separate #24 export and #23 offline PRs, #28 PIN pending reset decisions, and #16/#6 pending approved prompts. PR implementation does not imply product acceptance or issue closure.
 
 ## P1 — soon after
 
@@ -50,7 +57,7 @@ GitHub Issues are the source of truth for active work. This file is a compact ro
 - [ ] Daily check-in/reminders.
 - [ ] Quick sponsor-call action.
 - [ ] Meeting finder, ideally using a feed agreed with NA Israel.
-- [ ] **#31 Clarify recovery-date format in Hebrew UI.**
+
 
 ## Established foundations
 

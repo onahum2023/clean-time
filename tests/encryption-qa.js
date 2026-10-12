@@ -128,7 +128,7 @@ async(page)=>{
  await s.p.locator('#openSettings').click();await s.p.locator('#myAccount').click();await s.p.goBack();await visible('settings');await s.p.goForward();await visible('account');
  const historyLength=await s.p.evaluate(()=>history.length);await s.p.evaluate(()=>window.dispatchEvent(new Event('focus')));await settle(s.p);
  check(await s.p.evaluate(()=>history.length)===historyLength,'Encrypted sync/rerender adds no history entries');
- await s.p.locator('[data-tab="tools"]').click();await s.p.locator('#tools [data-go="journal"]').click();await s.p.locator('#jNew').click();await s.p.locator('#jText').fill('encrypted editor synthetic');await s.p.goBack();
+ await s.p.locator('[data-tab="counter"]').click();await s.p.locator('#counter [data-go="journal"]').click();await s.p.locator('#jNew').click();await s.p.locator('#jText').fill('encrypted editor synthetic');await s.p.goBack();
  check(!await s.p.locator('#jEditor').isVisible()&&await s.p.locator('#journal').isVisible(),'Encrypted Journal Back commits and closes editor');await s.p.goForward();check(await s.p.locator('#jText').inputValue()==='encrypted editor synthetic','Encrypted Journal Forward retains editor content');await s.p.locator('#jDone').click();
  await s.p.locator('[data-tab="counter"]').click();await s.p.locator('#counter [data-go="inventory"]').click();
  check(await s.p.locator('#iPlaceholders,[data-slot]').count()===0,'Encrypted Step 10 keeps placeholder controls hidden');
