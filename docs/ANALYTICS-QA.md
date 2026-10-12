@@ -4,9 +4,17 @@
 
 `assets/analytics.js` owns the vanilla HTML Vercel command API, one provider script, manual page views and allowlisted custom events. No npm dependency, tracking database or additional vendor is added. `index.html`, `/about/` and `/privacy/` load the module. Public documents remain readable without JavaScript.
 
-Production reads only the public `analytics.scriptSrc`, `viewEndpoint` and `eventEndpoint` fields in `VERCEL_OBSERVABILITY_CLIENT_CONFIG`. Resilient Intake paths are opaque: dotted/versioned filenames, relative paths and ingestion paths without `/view` or `/event` suffixes are accepted. The old suffix validator caused production deployment `dpl_D7S9dhB2pT862N9z4V1EEr1XXACM` at `d98bb556c9d12cde040baf04524fb9727c38e95a` to fail. The replacement requires short same-origin paths and rejects remote/protocol-relative URLs, traversal, encoded characters, query strings, fragments, whitespace and attribute injection. Absent fields use Vercel's documented legacy endpoints. Present malformed fields fail the production build. Only the validated public paths are logged.
+Production reads only the public `analytics.scriptSrc`, `viewEndpoint` and `eventEndpoint` fields in `VERCEL_OBSERVABILITY_CLIENT_CONFIG`. Resilient Intake paths are opaque: dotted/versioned filenames, relative paths and ingestion paths without `/view` or `/event` suffixes are accepted. The old validator required a leading slash and fixed suffixes; it rejected relative provider paths and caused production deployment `dpl_D7S9dhB2pT862N9z4V1EEr1XXACM` at `d98bb556c9d12cde040baf04524fb9727c38e95a` to fail. The replacement requires short same-origin paths and rejects remote/protocol-relative URLs, traversal, encoded characters, query strings, fragments, whitespace and attribute injection. Absent fields use Vercel's documented legacy endpoints. Present malformed fields fail the production build. Only the validated public paths are logged.
 
 Preview remains disabled for analytics and requires the existing isolated staging URL and publishable key. Its unused Analytics configuration cannot block a staging build, including malformed JSON. The two public staging variables are scoped only to Preview on `codex/analytics-product-usage` in the existing `nu-cielo/clean-time` project. No Supabase project, Auth, SQL, encryption format or recovery-state changes are needed.
+
+The automatic Git Preview at implementation SHA `a2c8b303269d58fe8083fef348b55de7c9fbe546` logged Vercel's actual generated configuration, before normalization:
+
+```json
+{"scriptSrc":"0d7fd8e8f05ff8e1/script.js","viewEndpoint":"0d7fd8e8f05ff8e1/view","eventEndpoint":"0d7fd8e8f05ff8e1/event"}
+```
+
+The regression feeds these exact public values into the **production-mode** build and verifies success. The generated provider script is identical to the current script fetched from the production fallback. The historical failed deployment's resolved build value could not be retrieved through the public configuration API; the raw-format evidence above comes from this project's new automatic Git build. The next automatic production build itself remains a post-merge acceptance gate.
 
 ### Navigation and counting
 
@@ -36,12 +44,12 @@ These are reporting paths, not new HTTP routes. Actual URL queries/fragments, hi
 | `guest_started` | Guest form validated and local save succeeded | None. Once per document; restoration never counts. |
 | `registration_started` | Enter create/convert form through explicit navigation | None. Reopening counts; rerender/Back restoration does not. |
 | `registration_completed` | Authenticated return following a successful registration request in this browser tab, and account creation timestamp consistent with that request | None. Anonymous bounded intent consumed once. Sending an email alone does not count. Older accounts are excluded. |
-| `backup_activated` | First transition from unconfirmed key material to a verified encrypted backup, following successful write/readback/decrypt or verification retry | None. Once per document. Already confirmed startup/sync never counts. |
+| `backup_activated` | First transition from unconfirmed key material to a verified encrypted backup, following successful write/readback/decrypt or verification retry | None. Once per document. Already confirmed startup/sync and new-device key unlock never count. |
 | `tool_opened` | Explicit screen transition, including Back/Forward, to a tool | One fixed `tool` property. Initial restoration and same-screen rerenders excluded. |
 | `guest_upgraded` | Confirmed new registration as above with convert intent | None. Once per document. |
 | `export_completed` | Recovery JSON generated and handed to browser download | None. Each successful handoff; cannot establish final disk save. |
 
-Registration intent uses a separate `sessionStorage` key containing only `create`/`convert` and a request time, expires after one hour and is removed on confirmation. No email, account identity, token or recovery information is stored there. It survives same-tab reload; another browser/tab may not have it. Account creation time is checked in memory and never emitted. Missing timestamps, blocked storage and clock skew may undercount. This measures observed completions, not an exact identity-bound funnel. An existing account's login never counts as new registration when its creation predates the intent.
+Registration intent uses a separate `sessionStorage` key containing only `create`/`convert` and a request time, expires after one hour and is removed on confirmation. No email, account identity, token or recovery information is stored there. It survives same-tab reload; another browser/tab may not have it. Account creation time is checked in memory and never emitted. If the session callback finishes before the deferred local module loads, that scalar observation is retained only in memory for the same bounded check. Missing timestamps, blocked storage and clock skew may undercount. This measures observed completions, not an exact identity-bound funnel. An existing account's login never counts as new registration when its creation predates the intent.
 
 ## Provider capabilities and limits
 
@@ -77,6 +85,18 @@ QA_BASE_URL=http://127.0.0.1:8784 NODE_PATH=/path/to/playwright/node_modules nod
 `tests/analytics-qa.js` fulfills all apex requests locally, with synthetic recovery/account/referrer/attribution sentinels, never a live account. It covers build paths/guards, property rejection, navigation/editor history, Back/Forward, guest creation, old/new auth classification, conversion, export download, offline reconnection and blocked Analytics. Set `CT_ANALYTICS_PROVIDER_SCRIPT` to a locally fetched, unmodified public Vercel script for actual provider-payload compatibility. Its bot classification is neutralized only in that completely locally fulfilled synthetic fixture; this cannot prove hosted ingestion. `tests/encryption-qa.js` separately observes the event hook during synthetic verified/pending/failed backup cases.
 
 Local/hosted evidence is recorded in the PR. A successful build, downloaded script or synthetic provider request is not production acceptance. Preview analytics are deliberately disabled.
+
+### Recorded pre-merge evidence (2026-10-12)
+
+Implementation head: `a2c8b303269d58fe8083fef348b55de7c9fbe546`, [PR #49](https://github.com/onahum2023/clean-time/pull/49).
+
+- Full local synthetic Chromium regression: **1,078 checks, zero failed suites**, including **149 Analytics** and **123 encryption/backup** checks. All existing suites passed. Inline/script syntax and `git diff --check` passed.
+- Focused synthetic WebKit Analytics: **149 checks, zero failed suites**. Chromium and WebKit both execute the unmodified current provider script fetched from this project's generated path, with all traffic fulfilled locally. No live intake is claimed.
+- Automatic Git Preview: **READY**, deployment `dpl_FJ5HNUabxgbigiFVxA7qYxKusDS8`, [exact implementation Preview](https://clean-time-lwnvf9mth-nu-cielo.vercel.app). GitHub's Vercel check passed. Protected HTTP inspection verified the app version, disabled analytics and isolated staging config.
+- Hosted synthetic checks on that exact Preview: backend isolation **25**, Welcome/guest/account mocks **180**, navigation/Back/Forward **47**, export **16** = **268 checks, zero failed suites**. Access used the existing short-lived Vercel credential scoped to this exact origin, without exporting browser state or using live Supabase accounts.
+- Pro/Analytics enablement and Git mapping were verified read-only. Only two existing public staging values were added as branch-scoped Preview overrides. No production deployment, Supabase changes, live-account actions or migrations were performed.
+
+Production ordinary-browser ingestion, dashboard traffic/custom-event panels, real registered lifecycle, and physical-device evidence remain **pending**. The failed production deployment remains unchanged until review and merge. The documentation-only delivery commit preserves the tested runtime; its final automatic Preview identity is recorded in the PR.
 
 After review and authorized merge:
 
