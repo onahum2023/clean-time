@@ -57,7 +57,7 @@ Important:
 
 ## Current product surfaces
 
-Bottom navigation: Today / Tools / About. Settings is reached from the gear.
+Bottom navigation: Today / Recovery Tools / About / shared Settings and Account. Home has five ordered daily actions; Tools supplements those with flat direct destinations.
 
 Core tools: clean-time counter, Daily Plan checklist, Gratitude log, Journal, Meditation timer, Daily Inventory / Step 10, recovery readings/resources and personal bookmarks. My Account contains identity, sync/encryption status, sign-out and deletion controls.
 

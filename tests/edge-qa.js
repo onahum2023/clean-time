@@ -10,7 +10,7 @@ async (page)=>{
  let data=await p.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
  check(data.linksV===2&&data.links.some(l=>l.title==='אישי')&&data.gratitude[0].ts===fixture.gratitude[0].ts&&data.updatedAt===10,'Existing links migration preserves personal data and sync timestamp');
  const serialized=JSON.stringify(data);await p.reload();check(await p.evaluate(k=>localStorage.getItem(k),key)===serialized,'Existing links migration is idempotent');
- await p.locator('[data-tab="tools"]').click();await p.locator('#tools [data-go="inventory"]').click();
+ await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="inventory"]').click();
  await p.evaluate(k=>{window.originalSetItem=Storage.prototype.setItem;Storage.prototype.setItem=function(name,value){if(name===k)throw new DOMException('Quota','QuotaExceededError');return window.originalSetItem.call(this,name,value);};},key);
  await p.locator('#iSummary').fill('לא נשמר');
  check(await p.locator('#storageMsg').isVisible()&&await p.locator('#iStatus').innerText()==='לא נשמר במכשיר','Storage failure is visible; inventory does not claim success');
@@ -21,11 +21,11 @@ async (page)=>{
   window.RealDate=Date;const n=new Date();n.setHours(23,59,59,0);window.clockNow=n.getTime();
   window.Date=class extends window.RealDate{constructor(...args){super(...(args.length?args:[window.clockNow]));}static now(){return window.clockNow;}};
  });
- await p.locator('[data-tab="tools"]').click();await p.locator('#tools [data-go="planner"]').click();await p.locator('#pInput').fill('אתמול');await p.locator('#pAdd').click();
+ await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="planner"]').click();await p.locator('#pInput').fill('אתמול');await p.locator('#pAdd').click();
  const previousDay=await p.locator('#pHistory').inputValue();await p.evaluate(()=>window.clockNow+=2000);await p.waitForTimeout(1200);
  check(await p.locator('#pList .plan-item').count()===0&&await p.locator('#pHistory').inputValue()!==previousDay,'Midnight opens a fresh daily plan');
  check((await p.evaluate(k=>JSON.parse(localStorage.getItem(k)),key)).plans[previousDay][0].text==='אתמול','Midnight retains prior plan');
- await p.locator('[data-tab="tools"]').click();await p.locator('#tools [data-go="gratitude"]').click();await p.locator('#gInput').fill('היום');await p.locator('#gAdd').click();
+ await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="gratitude"]').click();await p.locator('#gInput').fill('היום');await p.locator('#gAdd').click();
  await p.evaluate(()=>window.clockNow+=86400000);await p.waitForTimeout(1200);
  check(await p.locator('#gList h3').count()===3,'Midnight moves gratitude into history and adds a fresh today group');
  await p.evaluate(()=>window.Date=window.RealDate);

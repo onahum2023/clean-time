@@ -56,9 +56,9 @@ async(page)=>{
  for(const target of ['gratitude','planner']){
   await p.locator('#counter [data-go="'+target+'"]').click();await visible(target);await p.goBack();await visible('counter');await p.goForward();await visible(target);await p.goBack();await visible('counter');
  }
- await p.locator('[data-tab="tools"]').click();await p.locator('#tools [data-go="journal"]').click();await p.goBack();await visible('tools');await p.goForward();await visible('journal');
+ await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="journal"]').click();await p.goBack();await visible('counter');await p.goForward();await visible('journal');
  await p.locator('#jNew').click();await p.locator('#jText').fill('synthetic editor');await p.goBack();check(!await p.locator('#jEditor').isVisible()&&await p.locator('#journal').isVisible(),'Android/editor Back closes and commits editor before leaving Journal');
- await p.goForward();check(await p.locator('#jEditor').isVisible()&&await p.locator('#jText').inputValue()==='synthetic editor','Forward restores saved Journal editor');await p.locator('#jDone').click();await p.goBack();await visible('tools');
+ await p.goForward();check(await p.locator('#jEditor').isVisible()&&await p.locator('#jText').inputValue()==='synthetic editor','Forward restores saved Journal editor');await p.locator('#jDone').click();await p.goBack();await visible('counter');
  await p.locator('[data-tab="counter"]').click();await p.locator('#openSettings').click();await p.goBack();await visible('counter');await p.goForward();await visible('settings');
  const length=await p.evaluate(()=>history.length);await p.locator('#sFrom').fill('synthetic');await p.waitForTimeout(1100);check(await p.evaluate(()=>history.length)===length,'Passive rerenders do not push history');
  await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="inventory"]').click();
