@@ -10,6 +10,8 @@ async(page)=>{
  try{
   check(build('production',{}).status===0,'Production legacy fallback builds');
   for(const file of ['index.html','about/index.html','privacy/index.html'])check(fs.readFileSync(path.join(tmp,file),'utf8').includes('data-enabled="true"'),'Production instruments '+file);
+  const observed={scriptSrc:'0d7fd8e8f05ff8e1/script.js',viewEndpoint:'0d7fd8e8f05ff8e1/view',eventEndpoint:'0d7fd8e8f05ff8e1/event'};
+  check(build('production',observed).status===0,'Vercel generated relative intake configuration builds in production mode');
   const dynamic={scriptSrc:'/generated.path/script.v2.min.js',viewEndpoint:'/generated.path/intake/view.v2',eventEndpoint:'generated.path/intake/event.v2'};
   check(build('production',dynamic).status===0,'Opaque dotted/versioned and relative Vercel paths build');
   const html=fs.readFileSync(path.join(tmp,'index.html'),'utf8');
@@ -48,7 +50,7 @@ async(page)=>{
  // Browser uses the real SPA with synthetic Supabase and Analytics transports.
  const provider=process.env.CT_ANALYTICS_PROVIDER_SCRIPT?fs.readFileSync(process.env.CT_ANALYTICS_PROVIDER_SCRIPT,'utf8'):String.raw`(()=>{const s=document.currentScript;let before=e=>e,path='/',route='/';window.va=(n,p)=>{if(n==='beforeSend')before=p;if(n==='pageview'){path=p.path;route=p.route;send('pageview');}if(n==='event')send('event',p);};function send(type,p){const e=before({type,url:location.origin+path,payload:p});if(e)fetch(type==='pageview'?s.dataset.viewEndpoint:s.dataset.eventEndpoint,{method:'POST',body:JSON.stringify({o:e.url,dp:route,r:document.referrer,...(type==='event'?{en:e.payload.name,ed:e.payload.data}:{})})});}(window.vaq||[]).forEach(a=>window.va(...a));})();`;
  const browser=page.context().browser(),origin='https://clean-time.app';
- async function scenario({local=null,registered=false,callback=false,failProvider=false,offline=false,storageBlocked=false}={}){
+ async function scenario({local=null,registered=false,callback=false,failProvider=false,offline=false,storageBlocked=false,newRegistration=false}={}){
   const c=await browser.newContext({serviceWorkers:'block',acceptDownloads:true,userAgent:'Synthetic Analytics Protocol QA'}),calls=[];
   await c.route('**/*',async route=>{
    const req=route.request(),url=new URL(req.url());
@@ -63,22 +65,23 @@ async(page)=>{
    if(!file.startsWith(process.cwd()+'/')||!fs.existsSync(file))return route.fulfill({status:404,body:''});
    return route.fulfill({path:file});
   });
-  await c.addInitScript(({local,registered,offline,storageBlocked})=>{
+  await c.addInitScript(({local,registered,offline,storageBlocked,newRegistration})=>{
    if(local&&!localStorage.getItem('seeded')){localStorage.setItem('cleantime-he-v1',JSON.stringify(local));localStorage.setItem('seeded','1');}
    // A seeded attribution must never suppress a legitimate visit or leak identity.
    localStorage.setItem('__va_attribution',JSON.stringify({userId:'PRIVATE_ATTRIBUTION',traits:{email:'PRIVATE_EMAIL'}}));
    if(registered){localStorage.setItem('cleantime-he-auth','SYNTHETIC');localStorage.setItem('cleantime-he-sync',JSON.stringify({uid:'PRIVATE_UID'}));}
+   if(newRegistration)sessionStorage.setItem('clean-time-analytics-registration',JSON.stringify({mode:'convert',startedAt:Date.now()-100}));
    window.qaOnline=!offline;Object.defineProperty(navigator,'onLine',{get:()=>window.qaOnline});
    // Only this locally fulfilled provider fixture bypasses bot classification.
    Object.defineProperty(navigator,'webdriver',{get:()=>false});
    Object.defineProperty(document,'referrer',{configurable:true,get:()=> 'https://acquisition.invalid/private/PRIVATE?email=PRIVATE#PRIVATE'});
    if(storageBlocked){const set=sessionStorage.setItem.bind(sessionStorage);sessionStorage.setItem=(k,v)=>{throw Error('Synthetic blocked storage');};}
-   const auth={onAuthStateChange(cb){window.qaAuth=cb;},getSession:async()=>({data:{session:registered?{user:{id:'PRIVATE_UID',email:'PRIVATE_EMAIL',created_at:'2020-01-01T00:00:00Z'}}:null}}),signInWithOtp:async()=>({}),signOut:async()=>({})};
+   const auth={onAuthStateChange(cb){window.qaAuth=cb;},getSession:async()=>({data:{session:registered?{user:{id:'PRIVATE_UID',email:'PRIVATE_EMAIL',created_at:newRegistration?new Date().toISOString():'2020-01-01T00:00:00Z'}}:null}}),signInWithOtp:async()=>({}),signOut:async()=>({})};
    const client={auth,from:()=>({select:()=>({eq:()=>({maybeSingle:async()=>({data:null})})})})};
    window.supabase={createClient:()=>client};
    const append=Element.prototype.appendChild;Element.prototype.appendChild=function(el){if(el.tagName==='SCRIPT'&&el.src.includes('supabase-js')){setTimeout(()=>el.onload(),0);return el;}return append.call(this,el);};
    window.confirm=()=>true;
-  },{local,registered,offline,storageBlocked});
+  },{local,registered,offline,storageBlocked,newRegistration});
   const p=await c.newPage();p.setDefaultTimeout(5000);await p.goto(origin+(callback?'/?code=PRIVATE#access_token=PRIVATE':''));
   await p.waitForTimeout(250);
   return {p,c,calls,settle:()=>p.waitForTimeout(100)};
@@ -127,6 +130,8 @@ async(page)=>{
  check(s.calls.filter(x=>!x.en).length===1&&s.calls.find(x=>!x.en).o===origin+'/app/gratitude'&&!s.calls.some(x=>x.en==='tool_opened'),'Offline reconnect sends current view without old tool events');await s.c.close();
  s=await scenario({failProvider:true});await s.p.locator('#welcomeStart').click();await s.p.locator('#oDate').fill('2025-01-01');await s.p.locator('#oFrom').selectOption({index:1});await s.p.locator('#guestForm button[type="submit"]').click();
  check(await s.p.locator('#counter').isVisible()&&s.calls.length===0,'Blocked analytics cannot block guest onboarding');await s.c.close();
+ s=await scenario({local,registered:true,callback:true,newRegistration:true});
+ check(s.calls.filter(x=>x.en==='registration_completed').length===1&&s.calls.filter(x=>x.en==='guest_upgraded').length===1,'Same-tab magic-link document return preserves confirmed registration before deferred module');await s.c.close();
  // Public documents have exactly one page view, even with sensitive URL parameters.
  for(const slug of ['about','privacy']){
   s=await scenario();s.calls.length=0;await s.p.goto(origin+'/'+slug+'/?private=PRIVATE#PRIVATE');await s.settle();

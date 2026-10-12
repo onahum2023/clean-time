@@ -742,7 +742,12 @@ $('appVer').textContent='גרסה '+APP_VERSION;
 
 /* ---------- Tabs ---------- */
 // Observational hooks only; the optional module cannot block any app flow.
-const analytics=(method,...args)=>{try{window.CleanTimeAnalytics?.[method]?.(...args);}catch{}};
+const analytics=(method,...args)=>{try{
+ if(window.CleanTimeAnalytics)return window.CleanTimeAnalytics[method]?.(...args);
+ // Session callbacks may finish before the deferred local module executes.
+ // Preserve only the scalar creation time for its bounded registration check.
+ if(method==='registrationConfirmed')window.CleanTimeAnalyticsInitial={...window.CleanTimeAnalyticsInitial,registrationCreatedAt:args[0]};
+}catch{}};
 let analyticsNavigationReady=false;
 let current='counter';
 const SCREENS=['counter','planner','journal','gratitude','readings','bookmarks','settings','tools','about','welcome','startup','onboarding','meditation','inventory','auth','account','feedback'];
@@ -1740,7 +1745,7 @@ const initial=fromLink||(!S.date&&(M.uid||hasSession))?'startup':S.date?'counter
 history.replaceState({screen:initial},'');
 show(initial,false);
 analyticsNavigationReady=true;
-window.CleanTimeAnalyticsInitial={screen:current};
+window.CleanTimeAnalyticsInitial={...window.CleanTimeAnalyticsInitial,screen:current};
 $('publicIntroduction').hidden=true;
 renderSync();
 if(urlP.has('error_code')||urlP.has('error')){
@@ -1750,7 +1755,7 @@ const analyticsReturningGuest=!!S.date;
 function analyticsStarted(){
  const mode=user?'registered':sbReady||(!M.uid&&!hasSession)?(analyticsReturningGuest?'guest':'visitor'):'unknown';
  const entry=mode==='registered'?'registered':mode==='guest'?'returning_guest':mode==='visitor'?'new_guest':'unknown';
- window.CleanTimeAnalyticsInitial={screen:current,start:[mode,entry]};
+ window.CleanTimeAnalyticsInitial={...window.CleanTimeAnalyticsInitial,screen:current,start:[mode,entry]};
  analytics('started',mode,entry);
 }
 if(fromLink||M.uid||hasSession)startSync().finally(analyticsStarted);else analyticsStarted();

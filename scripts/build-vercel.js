@@ -37,7 +37,7 @@ for(const file of ['index.html','about/index.html','privacy/index.html']){
 // regression evidence. Malformed unused config still cannot block Preview.
 if(env==='preview')try{
  const generated=JSON.parse(process.env.VERCEL_OBSERVABILITY_CLIENT_CONFIG||'{}').analytics;
- if(generated)console.log('Unused Preview Analytics paths: '+JSON.stringify(Object.fromEntries(['scriptSrc','viewEndpoint','eventEndpoint'].filter(key=>generated[key]!==undefined).map(key=>[key,publicPath(generated[key])]))));
+ if(generated)console.log('Unused Preview Analytics paths: '+JSON.stringify(Object.fromEntries(['scriptSrc','viewEndpoint','eventEndpoint'].filter(key=>generated[key]!==undefined).map(key=>{publicPath(generated[key]);return [key,generated[key]];}))));
 }catch{}
 // Only these three validated public paths are logged; no environment dump.
 if(env==='production')console.log('Public Analytics paths: '+JSON.stringify({scriptSrc,viewEndpoint,eventEndpoint}));

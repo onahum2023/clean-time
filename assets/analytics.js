@@ -107,6 +107,7 @@
    const initial=window.CleanTimeAnalyticsInitial;
    navigate(initial.screen);window.CleanTimeAnalyticsInitial=null;
    if(initial.start)window.CleanTimeAnalytics.started(...initial.start);
+   if(Number.isFinite(initial.registrationCreatedAt))registrationConfirmed(initial.registrationCreatedAt);
   }
   // No offline event backlog. Reconnection sends only the current visible view.
   window.addEventListener('offline',()=>{pendingView=true;waitingEvents=[];});
