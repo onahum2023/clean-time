@@ -58,7 +58,7 @@ Open `http://127.0.0.1:8765`. See [the Welcome/backup/date Preview UAT report](d
 
 ## Local preferences and portability
 
-Settings offers a small device-local background/font palette, reset to the existing appearance, optional quiet milestones, and confirmed recovery-date/time updates that retain all history. Preferences require no account and appearance/milestone choices do not sync. A full portable JSON download includes legacy/unknown recovery fields but excludes login/key stores. The export is unencrypted; keep the file private.
+Settings offers a small device-local background/font palette, reset to the existing appearance, small milestone key-tag badges on Home (hideable in Settings), and confirmed recovery-date/time updates that retain all history. Preferences require no account and appearance/milestone choices do not sync. A full portable JSON download includes legacy/unknown recovery fields but excludes login/key stores. The export is unencrypted; keep the file private.
 
 Track A delivery/reconciliation and acceptance boundaries: [docs/TRACK-A.md](docs/TRACK-A.md), [offline checks](docs/OFFLINE-QA.md). PIN is deferred and final Step 10 questions remain pending owner content.
 

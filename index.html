@@ -62,8 +62,14 @@ button,input,textarea,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent-ink);outline-offset:3px;border-radius:6px}
 
 .app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 20px calc(88px + env(safe-area-inset-bottom,0px))}
-header{display:flex;align-items:center;justify-content:space-between;padding:20px 0 10px}
-header h1{font-family:var(--sans);font-weight:600;font-size:1.35rem;margin:0}
+header{position:relative;display:flex;align-items:center;justify-content:space-between;padding:20px 0 10px}
+header h1{min-width:0;max-width:100%;overflow-wrap:anywhere;font-family:var(--sans);font-weight:600;font-size:1.35rem;margin:0}
+header.has-milestone h1{padding-left:80px}
+.milestone-badge{position:absolute;left:0;top:12px;width:64px;height:90px;pointer-events:none;filter:drop-shadow(0 2px 1px #0002);z-index:1}
+.milestone-badge svg{display:block;width:100%;height:100%}
+.milestone-badge text{font-family:var(--sans);fill:var(--badge-ink);text-anchor:middle}
+.milestone-badge .badge-number{font-size:23px;font-weight:700;font-variant-numeric:tabular-nums}
+.milestone-badge .badge-unit{font-size:13px;font-weight:600}
 .icon-btn{background:none;border:0;padding:8px;border-radius:50%;cursor:pointer;color:var(--muted);display:grid;place-items:center}
 .icon-btn:hover{color:var(--ink)}
 .icon-btn{min-width:44px;min-height:44px}
@@ -288,6 +294,21 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <div class="app">
   <header>
     <h1 id="greet">זמן נקי</h1>
+    <div id="milestone" class="milestone-badge" role="img" hidden>
+      <svg viewBox="0 0 80 112" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="badgeMetal" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#D5D9D7"/><stop offset=".5" stop-color="#66726F"/><stop offset="1" stop-color="#EBEEEB"/></linearGradient>
+          <linearGradient id="badgeFace" x1="0" x2="0" y1="0" y2="1"><stop stop-color="var(--badge-light)"/><stop offset="1" stop-color="var(--badge-fill)"/></linearGradient>
+        </defs>
+        <circle cx="40" cy="14" r="11.5" fill="none" stroke="url(#badgeMetal)" stroke-width="3"/>
+        <path d="M32 36C26 43 15 62 13 78C10 97 20 108 40 108C60 108 70 97 67 78C65 62 54 43 48 36Z" fill="url(#badgeFace)" stroke="var(--badge-edge)" stroke-width="2"/>
+        <path d="M29 43C23 53 18 67 17 80C15 95 24 103 40 103C56 103 65 95 63 80" fill="none" stroke="var(--badge-light)" stroke-width="1.5" opacity=".75"/>
+        <rect x="34" y="23" width="12" height="20" rx="3" fill="var(--badge-fill)" stroke="var(--badge-edge)"/>
+        <circle cx="40" cy="34" r="3" fill="#D5D9D7" stroke="var(--badge-edge)"/>
+        <text id="milestoneNumber" class="badge-number" x="40" y="72"></text>
+        <text id="milestoneUnit" class="badge-unit" x="40" y="89" direction="rtl"></text>
+      </svg>
+    </div>
   </header>
 
   <p id="storageMsg" role="alert" hidden></p>
@@ -347,7 +368,6 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
     <div class="dots" id="dots"><span></span><span></span><span></span></div>
     <div class="since" id="since"></div>
     <div class="hint">הקשה על המספר משנה תצוגה</div>
-    <p class="note" id="milestone" hidden></p>
     <div class="today-actions">
       <h2>התחברות</h2>
       <div class="tool-links" aria-label="פעולות יומיות">
@@ -476,8 +496,8 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       <button class="btn secondary" id="myAccount">החשבון שלי</button>
     </div>
     <div class="settings-foot">
-      <label class="field"><span><input type="checkbox" id="showMilestones"> הצגת ציוני דרך שקטים</span></label>
-      <p class="note">תאריך של ציון הדרך האחרון, בלי התראות או חגיגות.</p>
+      <label class="field"><span><input type="checkbox" id="showMilestones"> הצגת תגי ציוני דרך</span></label>
+      <p class="note">תג קטן של ציון הדרך האחרון במסך הבית. אפשר להסתיר אותו כאן.</p>
       <p class="msg" role="status" id="milestoneStatus"></p>
       <h3>מראה</h3>
       <p class="note">הבחירה נשמרת רק במכשיר הזה, גם עם חשבון.</p>
@@ -627,7 +647,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.12.8';
+const APP_VERSION='2026.10.12.9';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -721,6 +741,7 @@ function show(tab,record=true){
   if(tab==='bookmarks')renderBookmarks();
   if(tab==='inventory')openInventory(todayKey());
   if(tab==='meditation')renderTimer();
+  renderMilestone();
   if(record){const heading=$(tab).querySelector('h1,h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}}
   window.scrollTo(0,0);
 }
@@ -815,7 +836,31 @@ const fmt=n=>n.toLocaleString('he-IL');
 const pad=n=>String(n).padStart(2,'0');
 const unit=(n,label)=>`<span class="unit"><span class="num">${n}</span><span class="lbl">${label}</span></span>`;
 
-function milestonesEnabled(){try{return localStorage.getItem('cleantime-he-milestones')==='true';}catch(e){return false;}}
+function milestonesEnabled(){try{return localStorage.getItem('cleantime-he-milestones')!=='false';}catch(e){return false;}}
+const BADGE_COLORS={
+ orange:{fill:'#E79A45',light:'#F2B465',edge:'#96511D',ink:'#3B2614'},
+ green:{fill:'#356B48',light:'#467953',edge:'#254F34',ink:'#FFFFFF'},
+ red:{fill:'#B42335',light:'#C42E40',edge:'#751525',ink:'#FFF2BE'},
+ blue:{fill:'#173C96',light:'#284DAD',edge:'#102969',ink:'#FFF2BE'},
+ yellow:{fill:'#F1D53A',light:'#F7E26A',edge:'#9A841B',ink:'#3D3416'},
+ ivory:{fill:'#EFEDDC',light:'#FBF9EB',edge:'#96947D',ink:'#484632'},
+ gray:{fill:'#57636A',light:'#68767D',edge:'#39464B',ink:'#FFFFFF'},
+ black:{fill:'#262C30',light:'#3E484D',edge:'#14191C',ink:'#F4DA97'}
+};
+function renderMilestone(s,n){
+ const el=$('milestone'),home=current==='counter';
+ const last=home&&milestonesEnabled()?CleanTimeDates.milestones(s===undefined?startDate():s,n||new Date()).at(-1):null,visible=home&&!!last;
+ el.hidden=!visible;$('greet').closest('header').classList.toggle('has-milestone',visible);
+ if(!visible){el.removeAttribute('aria-label');el.removeAttribute('title');return;}
+ const key=last.id+'|'+last.date.getTime();
+ if(el.dataset.badgeKey!==key){
+  const colors=BADGE_COLORS[last.tone];for(const [name,value] of Object.entries(colors))el.style.setProperty('--badge-'+name,value);
+  $('milestoneNumber').textContent=last.count;$('milestoneUnit').textContent=last.unit;
+  el.dataset.badgeKey=key;el.dataset.milestone=last.id;
+ }
+ const label='ציון דרך בהחלמה: '+last.label+' · '+last.date.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'});
+ if(el.getAttribute('aria-label')!==label){el.setAttribute('aria-label',label);el.title=label;}
+}
 $('showMilestones').onchange=()=>{try{localStorage.setItem('cleantime-he-milestones',String($('showMilestones').checked));$('milestoneStatus').textContent='הבחירה נשמרה במכשיר הזה.';}catch(e){$('milestoneStatus').textContent='הבחירה לא נשמרה במכשיר.';}render();};
 
 /* ---------- Counter render ---------- */
@@ -824,8 +869,7 @@ function render(){
   const chip=$('fromChip');
   chip.hidden=!S.from; chip.textContent=S.from?`החלמה מ${S.from}`:'';
   const s=startDate(), n=new Date(), c=$('count');
-  const reached=milestonesEnabled()?CleanTimeDates.milestones(s,n):[],last=reached.at(-1);
-  $('milestone').hidden=!last;$('milestone').textContent=last?'ציון דרך בדרך שלך: '+last.label+' · '+last.date.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'}):'';
+  renderMilestone(s,n);
   document.querySelectorAll('#dots span').forEach((el,i)=>el.classList.toggle('on',i===S.mode));
   if(!s){c.className='count';c.innerHTML='';$('since').textContent='';return;}
   $('since').textContent='מאז '+s.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'});
