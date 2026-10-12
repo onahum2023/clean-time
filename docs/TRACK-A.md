@@ -1,6 +1,6 @@
 # Track A delivery and reconciliation
 
-GitHub #37 is the coordinated scope. Baseline: main `aafcbe1` (merged #33). No original issue is closed here; acceptance remains with the product owner. Production recovery data, configuration and schema are out of scope.
+GitHub #37 is the coordinated scope. Baseline: main `aafcbe1` (merged #33). Delivery reconciliation updated 2026-10-12: issues #35, #36, #27, #25, #26, #24, #23 and #38 have been implemented, production-deployed and closed. #28 and #16/#6 remain open. Production security, backup QA and physical device acceptance remain separate. Production recovery data, configuration and schema are out of scope.
 
 | Batch | Issues | Baseline finding / delivery |
 | --- | --- | --- |
@@ -23,6 +23,10 @@ Product owner approved moving shared Settings/Account access to the footer; the 
 Synthetic Chromium: **649 checks**, zero failed suites. Navigation coverage adds 46 checks for ordered actions, direct destinations, Back/Forward, RTL/no overflow at 320/360/390/1280px in both themes, reload and byte-preserved recovery fixtures. Existing upgrade and encryption suites remain green. JavaScript syntax and diff whitespace pass.
 
 Visual walkthrough: ignored `.playwright-mcp/track-a/{before,after}-{home,tools}.png`, 360×800, synthetic guest. Home's fifth action is visible; the footer remains separate. Browser history checks model installed-app Back, but physical Android/PWA acceptance remains #21. Real external reading return/mobile tab behavior and real staging Auth/backup lifecycle are not implied by mocked checks.
+
+## Status after release (2026-10-12)
+
+Merged PRs: #39 Home, #40 appearance/feedback, #42 date/milestone, #43 export, #44 offline, #46 badge refinement, #48 canonical/analytics foundation, #49 SPA analytics. Eight associated issues were closed as completed: #35, #36, #27, #25, #26, #24, #23 and #38. Vercel production Analytics is receiving metrics; custom-event-level dashboard validation remains a follow-up check. Staging backend was deleted; #41 tracks obsolete Preview variables and #34 remains blocked for independent live backup tests. Keep #37 open only for #28 and #16/#6. Historical review notes below describe pre-merge work and are not current blockers.
 
 ## Review sequence
 
