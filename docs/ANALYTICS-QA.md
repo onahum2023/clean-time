@@ -31,7 +31,9 @@ The local bootstrap is part of the versioned offline shell. Vercel's provider sc
 
 ## Preview and production gates
 
-The Vercel project is `clean-time`, `prj_6MhMelClmBk0S83h1kXE90rslkjr`, linked to `onahum2023/clean-time`, production branch `main`. Protection remains `all_except_custom_domains`. Preview uses the existing isolated staging backend; no backend/project setting is changed. Existing staging variables are scoped to earlier feature branches, so the review Preview is built using the already-configured `codex/seo-geo-phase-1` Preview scope and deployed as protected prebuilt static output. The PR branch's automatic build may fail its staging-config guard because it has no scoped variables; use the explicit Preview linked in the PR.
+The Vercel project is `clean-time`, `prj_6MhMelClmBk0S83h1kXE90rslkjr`, linked to `onahum2023/clean-time`, production branch `main`. Protection remains `all_except_custom_domains`. PR #48's automatic Git Preview uses `CLEAN_TIME_SUPABASE_URL` and `CLEAN_TIME_SUPABASE_PUBLISHABLE_KEY` scoped only to Preview on `codex/canonical-domain-web-analytics`, copied from the existing isolated `codex/seo-geo-phase-1` staging configuration. It no longer needs the prebuilt workaround. Only these two branch-scoped Vercel variables were added; production variables, production deployment and Supabase project configuration were not changed.
+
+The build-time guard remains unchanged: a Preview build requires the exact isolated staging URL and a publishable key, and rejects missing values, the production URL, any other project URL and secret-like/invalid keys. The automatic deployment, latest commit, Vercel check and hosted QA results are recorded in PR #48.
 
 Keep this PR unmerged until reviewed. Production acceptance is pending the approved deployment:
 
