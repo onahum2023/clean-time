@@ -15,7 +15,7 @@ A free Hebrew app for people in recovery from addiction. It counts your clean ti
 
 **First visit.** Welcome introduces the app with its existing logo and Hebrew wordmark, a short purpose/origin paragraph and four non-interactive feature explanations before the entry actions; **מתחילים** opens a separate setup asking only for a recovery date and type. No name, email or phone is required. Existing configured users open Today. Native date pickers show a Hebrew confirmation with the month written out. About/privacy is available before setup.
 
-**Today (היום).** The clean-time counter and direct access to your daily recovery tools.
+**Today (היום).** The clean-time counter and five daily actions in order: daily reading, plan, gratitude, journal and Step 10. Recovery Tools, About and shared Settings/Account stay in the footer. Feedback has a separate Home entry.
 
 **Daily plan (התכנית שלי להיום).** One checklist per calendar day. Add, edit, delete and check items. Each new day starts empty; previous plans remain accessible.
 
@@ -44,7 +44,7 @@ A free Hebrew app for people in recovery from addiction. It counts your clean ti
 
 ## How to use it
 
-Open the app in your phone's browser. On Android, choose "Install app" (התקנת אפליקציה) to add it to your home screen.
+Open the app in your phone's browser. After one successful connected load, its static shell and local tools are available offline. Updates wait until all app windows close; a notice explains when one is ready. On Android, choose "Install app" (התקנת אפליקציה) to add it to your home screen.
 
 ## Local review
 
@@ -55,6 +55,12 @@ python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
 Open `http://127.0.0.1:8765`. See [the Welcome/backup/date Preview UAT report](docs/WELCOME-BACKUP-UAT.md) and [the UX update and UAT report](docs/UX-1.0-UAT.md) for storage changes, automated QA, and remaining manual checks.
+
+## Local preferences and portability
+
+Settings offers a small device-local background/font palette, reset to the existing appearance, optional quiet milestones, and confirmed recovery-date/time updates that retain all history. Preferences require no account and appearance/milestone choices do not sync. A full portable JSON download includes legacy/unknown recovery fields but excludes login/key stores. The export is unencrypted; keep the file private.
+
+Track A delivery/reconciliation and acceptance boundaries: [docs/TRACK-A.md](docs/TRACK-A.md), [offline checks](docs/OFFLINE-QA.md). PIN is deferred and final Step 10 questions remain pending owner content.
 
 ## Feedback
 

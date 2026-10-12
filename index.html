@@ -291,6 +291,8 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   </header>
 
   <p id="storageMsg" role="alert" hidden></p>
+  <p class="note" id="offlineStatus" role="status" hidden></p>
+  <p class="note" id="updateNotice" role="status" hidden>יש גרסה חדשה. כדי לעבור אליה, אפשר לסגור את כל חלונות זמן נקי ולפתוח מחדש. אין צורך למחוק נתונים.</p>
   <section id="startup" hidden aria-live="polite">
     <h2>בודקים את החשבון והגיבוי</h2>
     <p class="sub">הנתונים במכשיר נשמרים. עוד רגע ממשיכים.</p>
@@ -624,7 +626,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.12.4';
+const APP_VERSION='2026.10.12.5';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -1649,6 +1651,21 @@ if(urlP.has('error_code')||urlP.has('error')){
   cleanUrl(); openAuth('login'); setMsg(errText(urlP.get('error_code')||urlP.get('error')),true);
 }
 if(fromLink||M.uid||hasSession)startSync();
+// Updates wait for existing windows to close; never force reload an active editor.
+let shellRegistration=null;
+function showConnectivity(){
+  $('offlineStatus').hidden=navigator.onLine;$('offlineStatus').textContent='אפשר להשתמש בכלים המקומיים בלי חיבור. סנכרון, אם הופעל, ינסה שוב כשהחיבור יחזור.';
+}
+showConnectivity();window.addEventListener('offline',showConnectivity);
+window.addEventListener('online',()=>{showConnectivity();shellRegistration?.update().catch(()=>{});});
+if('serviceWorker' in navigator&&!onOldHost){
+  navigator.serviceWorker.register('/service-worker.js',{updateViaCache:'none'}).then(reg=>{
+    shellRegistration=reg;
+    const notice=()=>{$('updateNotice').hidden=!reg.waiting;};notice();
+    reg.addEventListener('updatefound',()=>{const worker=reg.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)$('updateNotice').hidden=false;else notice();});});
+    reg.update().catch(()=>{});
+  }).catch(()=>{if(navigator.onLine){$('offlineStatus').hidden=false;$('offlineStatus').textContent='השימוש בלי חיבור לא הוכן במכשיר הזה. אפשר להמשיך כשהחיבור זמין.';}});
+}
 if(onOldHost)moveOut(); /* temporary, see Domain move */
 })();
 </script>

@@ -11,7 +11,12 @@ if(env==='preview'){
  config={environment:'preview',url,key};
 }
 fs.mkdirSync(OUT,{recursive:true});
-for(const file of ['index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png'])fs.copyFileSync(path.join(ROOT,file),path.join(OUT,file));
+for(const file of ['index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','service-worker.js'])fs.copyFileSync(path.join(ROOT,file),path.join(OUT,file));
 fs.cpSync(path.join(ROOT,'assets'),path.join(OUT,'assets'),{recursive:true,filter:file=>path.basename(file)!=='.DS_Store'});
 fs.writeFileSync(path.join(OUT,'assets/backend-config.js'),'window.CleanTimeBackend = '+JSON.stringify(config)+';\n');
 console.log('Static build complete: '+config.environment+' backend configuration');
+
+// Couple every built app shell to this application's explicit release version.
+const version=source.match(/const APP_VERSION='([^']+)'/)[1];
+const worker=fs.readFileSync(path.join(ROOT,'service-worker.js'),'utf8').replace(/const VERSION='[^']+'/,"const VERSION='"+version+"'");
+fs.writeFileSync(path.join(OUT,'service-worker.js'),worker);
