@@ -3,7 +3,8 @@ async(page)=>{
  await page.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
  await page.addInitScript(()=>{if(!localStorage.getItem('cleantime-he-v1'))localStorage.setItem('cleantime-he-v1',JSON.stringify({date:'2025-01-01',time:'10:00',from:'אחר',linksV:2,links:[],journal:[{id:1,text:'סינתטי',created:1}],gratitude:[{id:2,text:'תודה',created:1}],plans:{'2024-01-01':[{id:3,text:'ישן',done:true}]},inventory:{'2024-01-01':{summary:'ישן',answers:{old:'נשמר'},future:'unknown'}},bookmarks:[{id:4,title:'בדיקה',url:'https://example.invalid'}],unknownRecovery:{value:'נשמר'},updatedAt:1}));});
  await page.goto(origin);const read=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('cleantime-he-v1'))),before=await read();
- check(await page.locator('#milestone').isHidden(),'Milestones are optional and initially off');
+ check(await page.locator('#milestone').isVisible(),'Reached milestone badge appears by default');
+ await page.locator('#openSettings').click();await page.locator('#showMilestones').uncheck();await page.locator('[data-tab=counter]').click();check(await page.locator('#milestone').isHidden(),'Explicit hide preference removes badge');await page.reload();check(await page.locator('#milestone').isHidden(),'Explicit hide choice survives reload');
  await page.locator('#openSettings').click();await page.locator('#sDate').fill('2026-01-01');await page.locator('#saveSettings').click();
  check(await page.locator('#ask').isVisible()&&(await page.locator('#askP').innerText()).includes('נשמרים'),'Changing date explicitly confirms retained history');
  await page.locator('#askB button').filter({hasText:'ביטול'}).click();check(JSON.stringify(await read())===JSON.stringify(before),'Cancel does not change state/timestamp');
