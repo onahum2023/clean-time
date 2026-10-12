@@ -6,7 +6,7 @@ The app remains a static, inline SPA. A short, ordinary HTML introduction explai
 
 The exact requested title, Hebrew description, canonical, Open Graph, square-icon summary social card and modest WebSite/WebApplication JSON-LD are in initial HTML. Schema has no ratings, medical/treatment claims, people or user-specific content. Public copy retains NA independence and the non-treatment/medical/emergency boundary.
 
-Production `https://clean-time.app/` was verified to redirect 308 to `https://www.clean-time.app/`, which returns 200. Canonicals, social URLs and the sitemap therefore use `www`. The GitHub repository homepage was set and verified as the requested `https://clean-time.app`. Vercel project mapping: `clean-time`, `prj_6MhMelClmBk0S83h1kXE90rslkjr`. Slash normalization keeps the public directory URLs consistent.
+The current canonical origin is `https://clean-time.app/`; the www domain redirects 308 to the apex. Canonicals, social URLs, JSON-LD and the sitemap use HTTPS on the apex. Vercel project mapping: `clean-time`, `prj_6MhMelClmBk0S83h1kXE90rslkjr`. Slash normalization keeps the public directory URLs consistent.
 
 The sitemap contains only `/`, `/about/` and `/privacy/`. Robots permits those documents and public rendering assets, and excludes other paths and callback/query URLs. Robots is crawl guidance, not access control. Privacy comes from the existing browser-local state and authenticated/encrypted sync boundary: no public recovery-state endpoints, snapshots, user routes, exports or data are added. Public information pages contain no scripts, forms or account controls, and cannot read device storage. Preview retains the existing isolated staging backend configuration.
 

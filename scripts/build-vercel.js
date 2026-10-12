@@ -14,6 +14,16 @@ fs.mkdirSync(OUT,{recursive:true});
 for(const file of ['index.html','robots.txt','sitemap.xml','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','service-worker.js'])fs.copyFileSync(path.join(ROOT,file),path.join(OUT,file));
 for(const directory of ['about','privacy'])fs.cpSync(path.join(ROOT,directory),path.join(OUT,directory),{recursive:true});
 fs.cpSync(path.join(ROOT,'assets'),path.join(OUT,'assets'),{recursive:true,filter:file=>path.basename(file)!=='.DS_Store'});
+// Vercel v2 supplies project-specific public paths. Retain the verified legacy
+// endpoint when that build configuration is absent; never accept remote URLs.
+// Preview never loads Analytics, so its unused generated provider paths cannot
+// block an otherwise valid isolated staging build. Production is unchanged.
+const analytics=env==='preview'?{}:JSON.parse(process.env.VERCEL_OBSERVABILITY_CLIENT_CONFIG||'{}').analytics||{};
+const scriptSrc=analytics.scriptSrc||'/_vercel/insights/script.js',viewEndpoint=analytics.viewEndpoint||'/_vercel/insights/view';
+const safePath=value=>typeof value==='string'&&/^\/[A-Za-z0-9_/-]+$/.test(value)&&!value.includes('//')&&!value.split('/').includes('..');
+if(!safePath(scriptSrc.replace(/\.js$/,''))||!scriptSrc.endsWith('/script.js')||!safePath(viewEndpoint)||!viewEndpoint.endsWith('/view'))throw new Error('Invalid public Analytics paths');
+const analyticsTag='<script defer src="/assets/analytics.js" data-enabled="'+(env==='production')+'" data-script-src="'+scriptSrc+'" data-view-endpoint="'+viewEndpoint+'"></script>';
+fs.writeFileSync(path.join(OUT,'index.html'),source.replace(/<script defer src="\/assets\/analytics\.js"[^>]*><\/script>/,analyticsTag));
 fs.writeFileSync(path.join(OUT,'assets/backend-config.js'),'window.CleanTimeBackend = '+JSON.stringify(config)+';\n');
 console.log('Static build complete: '+config.environment+' backend configuration');
 

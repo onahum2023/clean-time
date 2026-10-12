@@ -1,7 +1,7 @@
 // Raw HTTP + JS-disabled public navigation. Synthetic storage only, no backend traffic.
 async(page)=>{
  const fs=require('fs'),path=require('path'),os=require('os'),{spawnSync}=require('child_process');
- const origin=process.env.QA_BASE_URL||'http://127.0.0.1:8765',canonical='https://www.clean-time.app',results=[];
+ const origin=process.env.QA_BASE_URL||'http://127.0.0.1:8765',canonical='https://clean-time.app',results=[];
  const check=(v,label)=>{if(!v)throw Error(label);results.push(label);};
  const headers=process.env.QA_BASE_URL&&process.env.VERCEL_OIDC_TOKEN?{'x-vercel-trusted-oidc-idp-token':process.env.VERCEL_OIDC_TOKEN}:{};
  const get=async route=>{const r=await page.context().request.get(origin+route,{headers});check(r.status()===200,'Raw HTTP 200 '+route);return r.text();};
@@ -54,7 +54,8 @@ async(page)=>{
  try{
   const run=spawnSync(process.execPath,['scripts/build-vercel.js'],{encoding:'utf8',env:{...process.env,VERCEL_ENV:'preview',CT_BUILD_OUTPUT:tmp,CLEAN_TIME_SUPABASE_URL:'https://uffvbfmfsesdhjzzjiyu.supabase.co',CLEAN_TIME_SUPABASE_PUBLISHABLE_KEY:'sb_publishable_SYNTHETIC_QA_ONLY'}});
   check(run.status===0,'Preview build completes with synthetic staging config');
-  for(const file of ['index.html','robots.txt','sitemap.xml','about/index.html','privacy/index.html','assets/public.css'])check(fs.readFileSync(path.join(tmp,file),'utf8')===fs.readFileSync(file,'utf8'),'Build preserves public artifact '+file);
+  const withoutAnalytics=html=>html.replace(/<script defer src="\/assets\/analytics\.js"[^>]*><\/script>/,'');
+  for(const file of ['index.html','robots.txt','sitemap.xml','about/index.html','privacy/index.html','assets/public.css'])check(withoutAnalytics(fs.readFileSync(path.join(tmp,file),'utf8'))===withoutAnalytics(fs.readFileSync(file,'utf8')),'Build preserves public artifact '+file);
  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
  return {passed:results.length,results};
 }
