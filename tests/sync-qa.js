@@ -25,7 +25,7 @@ async(page)=>{
  check(await p.evaluate(k=>JSON.parse(localStorage.getItem(k)).inventory['2025-02-10'].summary==='ענן בלבד',key),'Explicit cloud conflict choice loads daily inventory');
  check(await p.evaluate(k=>JSON.parse(localStorage.getItem(k)).gratitude.length===0&&typeof JSON.parse(localStorage.getItem(k)).plans==='object',key),'Sparse old cloud row normalizes missing collections');
  await activate(p);await p.evaluate(()=>window.qaUploads=[]);
- await p.locator('#openSettings').click();await p.locator('#sDate').fill('2025-01-01');await p.locator('#saveSettings').click();
+ await p.locator('#openSettings').click();await p.locator('#sDate').fill('2025-01-01');await p.locator('#saveSettings').click();if(await p.locator('#ask').isVisible())await p.locator('#askB button').filter({hasText:'עדכון התאריך'}).click();
  await p.evaluate(()=>window.qaOnline=false);await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="inventory"]').click();await p.locator('#iSummary').fill('נכתב ללא חיבור');await p.waitForTimeout(2200);
  check(await p.evaluate(()=>window.qaUploads.length===0&&JSON.parse(localStorage.getItem('cleantime-he-sync')).dirty),'Offline registered edit is local and pending; no upload');
  await p.evaluate(()=>{window.qaOnline=true;window.dispatchEvent(new Event('online'));});await p.waitForTimeout(300);

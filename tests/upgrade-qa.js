@@ -85,7 +85,7 @@ async(page)=>{
  check((await s.p.locator('#accountState').innerText()).includes('חשבון רשום')&&(await s.p.locator('#syncStatus').innerText()).length>0,'Existing account and sync status work normally');
  await activate(s.p);s.calls.uploads.length=0;
  // A normal recovery preference edit must preserve every recovery collection/unknown key.
- await s.p.locator('#account [data-go=settings]').click();await s.p.locator('#sTime').fill('09:45');await s.p.locator('#saveSettings').click();
+ await s.p.locator('#account [data-go=settings]').click();await s.p.locator('#sTime').fill('09:45');await s.p.locator('#saveSettings').click();if(await s.p.locator('#ask').isVisible())await s.p.locator('#askB button').filter({hasText:'עדכון התאריך'}).click();
  await s.p.waitForFunction(key=>!JSON.parse(localStorage.getItem(key)).dirty,META);await s.p.waitForTimeout(100);
  const edited=await read(s.p),expected={...clone(full),time:'09:45',updatedAt:edited.updatedAt};
  check(same(edited,expected)&&edited.updatedAt>timestamp,'Post-upgrade normal edit changes only chosen field and timestamp');
