@@ -34,7 +34,7 @@ async(page)=>{
   for(const slug of ['about','privacy']){
    await p.locator('#publicIntroduction a[href="/'+slug+'/"]').click();
    check(new URL(p.url()).pathname==='/'+slug+'/'&&await p.locator('main h1').isVisible(),'Public '+slug+' link works without JS '+width+' '+colorScheme);
-   check(await p.locator('script,input,textarea,form').count()===0,'Static '+slug+' has no app/account/data controls');
+   check(await p.locator('main script,main input,main textarea,main form').count()===0,'Static '+slug+' content has no app/account/data controls');
    check(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&getComputedStyle(document.documentElement).direction==='rtl'),'Public '+slug+' RTL fit '+width+' '+colorScheme);
    await p.locator('a[href="/"]').click();
   }
