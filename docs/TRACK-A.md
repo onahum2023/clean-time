@@ -5,7 +5,7 @@ GitHub #37 is the coordinated scope. Baseline: main `aafcbe1` (merged #33). No o
 | Batch | Issues | Baseline finding / delivery |
 | --- | --- | --- |
 | Daily experience | #35 | Home duplicates Tools; five ordered daily actions and flat supplemental destinations in this PR. Shared Settings/Account moved to footer after owner approval. |
-| Appearance / feedback | #36, #27 | Existing accent color belongs to recovery state; device-local background/font preferences absent. About has email only; needs prominent feedback and fallback. |
+| Appearance / feedback | #36, #27 | Existing accent color belongs to recovery state; device-local background/font preferences absent. Review candidate adds local appearance and Home feedback/fallback; see APPEARANCE-FEEDBACK-QA.md. |
 | Recovery flow | #25, #26 | Settings can change date/time without confirmation, already retains history. No milestones. |
 | Portability | #24 | No complete JSON download. Unknown/legacy recovery fields must survive export; auth/key stores excluded. |
 | Offline | #23 | Manifest/icons exist; no offline service worker. Keep separate from export because updates/auth need independent review. |

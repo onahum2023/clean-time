@@ -71,6 +71,8 @@ async(page)=>{
  check(await s.p.evaluate(({AUTH,META,KEY,session,id})=>JSON.stringify(JSON.parse(localStorage.getItem(AUTH)))===JSON.stringify(session)&&JSON.parse(localStorage.getItem(META)).uid===id&&!!JSON.parse(localStorage.getItem(KEY)).date,{AUTH,META,KEY,session,id:identity.id}),'All existing storage keys and auth envelope remain readable');
  check(s.calls.clientOptions.every(o=>o.auth.storageKey===AUTH&&o.auth.persistSession&&o.auth.flowType==='implicit'),'Existing Supabase auth storage/config preserved');
  await s.p.locator('#openSettings').click();check(await s.p.locator('#myAccount').isVisible()&&!await s.p.locator('#createAccount').isVisible(),'Existing account recognized in settings without registration CTA');
+ await s.p.locator('#backgroundChoice').selectOption('sand');await s.p.locator('#fontChoice').selectOption('arial');
+ check(same(await read(s.p),full)&&s.calls.uploads.length===0,'Registered appearance preferences leave recovery and uploads untouched');
  await s.p.locator('#myAccount').click();
  await s.p.goBack();await s.p.waitForFunction(()=>!document.getElementById('settings').hidden);
  check(await s.p.locator('#settings').isVisible(),'Registered My Account Back restores Settings');
