@@ -29,24 +29,20 @@ GitHub Issues are the source of truth for active work. This file is a compact ro
 - [ ] **#17 Real account/cloud deletion:** remove the user's cloud row and Auth identity, not only replace recovery state with an encrypted empty state.
 - [ ] **#18 Production security headers:** CSP, frame protection, referrer policy and nosniff without breaking auth/sync/PWA behavior.
 - [ ] **#19 Production auth/SMTP/RLS verification:** live delivery/redirect checks and cross-account isolation using test accounts only. One fresh Gmail Inbox delivery has passed; broader provider/RLS verification remains.
-- [ ] **#34 Remaining staging backup activation/failure/independent-browser QA.**
+- [ ] **#34 Remaining backup activation/failure/independent-browser QA.** The former paid staging backend was deleted; isolated live-service testing is blocked until a suitable test environment exists.
 - [ ] **#21 Physical Android/PWA validation.**
 - [ ] **#22 Retire legacy Vercel-origin handoff safely.**
 
-## Track A — coordinated product work
+## Track A — delivery reconciled 2026-10-12
 
-See [delivery reconciliation](TRACK-A.md) and GitHub #37. #35 Home/navigation is first, then #36/#27 appearance/feedback, #25/#26 recovery flow, separate #24 export and #23 offline PRs, #28 PIN pending reset decisions, and #16/#6 pending approved prompts. PR implementation does not imply product acceptance or issue closure.
+Completed and closed: #35 (Home/navigation; PR #39), #36 and #27 (appearance/feedback; PR #40), #25 (date reset; PR #42), #26 (milestones; PRs #42/#46), #24 (JSON export; PR #43), #23 (offline PWA; PR #44), and #38 (Web Analytics; PRs #48/#49). Production Vercel Analytics is receiving metrics; detailed custom-event reporting is still a monitoring check, not a release blocker. See [delivery reconciliation](TRACK-A.md) and coordinating #37, retained open solely for pending #28 (optional PIN decision) and #16/#6 (approved final Step 10 content).
 
 ## P1 — soon after
 
-- [ ] **#23 Offline app-shell support.**
-- [ ] **#24 Export all recovery data as JSON.**
 - [ ] Supabase plan/backup operational review.
-- [ ] **#25 Gentle clean-date reset flow.**
-- [ ] **#26 Recovery milestones without streak pressure.**
-- [ ] **#27 In-app feedback entry point.**
 - [ ] **#28 Optional local PIN lock.**
 - [ ] **#29 Privacy-safe error monitoring.**
+- [ ] **#41 Retire obsolete branch-scoped Vercel Preview references to the deleted staging backend.**
 
 ## P2 — later
 
@@ -66,7 +62,7 @@ See [delivery reconciliation](TRACK-A.md) and GitHub #37. #35 Home/navigation is
 - Optional email magic-link account and multi-device backup/sync.
 - Client-side encrypted cloud recovery state with recovery key.
 - Supabase RLS design: one row per user, own row only.
-- No ads or recovery-action tracking; only minimal anonymous home-page analytics.
+- No advertising. Vercel Web Analytics measures public pageviews, fixed SPA screens and allowlisted aggregate product events, without transmitting recovery content or account identifiers.
 - NA Israel links/helpline and explicit non-affiliation disclaimer.
 
 For implementation/QA history, see the focused documents in `docs/` rather than adding release narrative here.
