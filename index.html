@@ -176,7 +176,7 @@ nav.tabs svg{width:22px;height:22px}
 #counter .count.single .num{font-size:clamp(4rem,24vw,7rem)}
 #counter .num{font-size:clamp(3rem,17vw,5.5rem)}
 .today-actions{width:100%;text-align:right;margin-top:20px}
-.today-actions h2{font-size:1.4rem;margin:0 0 12px}
+.today-actions h2{font-size:1.4rem;margin:0 0 12px;text-align:center}
 .tool-links{display:grid;gap:0;width:100%;padding:0 14px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
 .tool-links > :last-child{border-bottom:0}
 .tool-links button,.tool-links a{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:54px;text-align:right;border:0;border-bottom:1px solid var(--line);background:none;cursor:pointer;padding:10px 4px;color:var(--ink)}
@@ -349,12 +349,12 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
     <div class="hint">הקשה על המספר משנה תצוגה</div>
     <p class="note" id="milestone" hidden></p>
     <div class="today-actions">
-      <h2>להיום</h2>
+      <h2>התחברות</h2>
       <div class="tool-links" aria-label="פעולות יומיות">
         <a class="primary" id="dailyReading" href="https://www.naisrael.org.il/just-for-today/" target="_blank" rel="noopener noreferrer" aria-label="רק להיום — נפתח בחלון חדש">רק להיום</a>
-        <button data-go="planner">תכנון יומי</button>
+        <button data-go="journal">ככה זה עכשיו (יומן)</button>
         <button data-go="gratitude">הכרת תודה</button>
-        <button data-go="journal">ככה זה עכשיו</button>
+        <button data-go="planner">תכנית רק להיום</button>
         <button data-go="inventory">חשבון נפש יומי / צעד 10</button>
       </div>
     </div>
@@ -626,7 +626,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.12.6';
+const APP_VERSION='2026.10.12.7';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};

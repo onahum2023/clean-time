@@ -16,7 +16,7 @@ The stale roadmap entries for #30/#31/#32 are implemented in merged PR #33. Live
 
 ## Daily experience candidate
 
-Before: Home offered planner, gratitude, meditation, Step 10 and a resources category; Tools repeated these and journal. After: Home offers **רק להיום → תכנון יומי → הכרת תודה → ככה זה עכשיו → חשבון נפש יומי / צעד 10**. The reading opens the exact NA Israel URL in a separate tab with `noopener noreferrer`; Clean Time state/navigation remain available in the original tab. Footer has Today, Recovery Tools, About and shared Settings/Account. Tools has meditation/bookmarks plus direct safe resource links, excludes the Home daily-reading duplicate, and retains a separate resource-edit action. Saved custom/legacy links are preserved; unsafe links remain visible but cannot open.
+Before: Home offered planner, gratitude, meditation, Step 10 and a resources category; Tools repeated these and journal. After: Home offers **רק להיום → ככה זה עכשיו (יומן) → הכרת תודה → תכנית רק להיום → חשבון נפש יומי / צעד 10**. The reading opens the exact NA Israel URL in a separate tab with `noopener noreferrer`; Clean Time state/navigation remain available in the original tab. Footer has Today, Recovery Tools, About and shared Settings/Account. Tools has meditation/bookmarks plus direct safe resource links, excludes the Home daily-reading duplicate, and retains a separate resource-edit action. Saved custom/legacy links are preserved; unsafe links remain visible but cannot open.
 
 Product owner approved moving shared Settings/Account access to the footer; the top gear is removed for both guest and registered users. No data migration or auth/encryption change.
 
@@ -29,3 +29,5 @@ Visual walkthrough: ignored `.playwright-mcp/track-a/{before,after}-{home,tools}
 PRs are deliberately stacked: #39 (main) → #40 → #42 → #43 → #44. Review each against its immediate predecessor. No merge is authorized. After an approved parent merge, retarget/rebase the next PR onto actual main and reverify its new exact head/Preview before considering the next merge. Draft implementation does not close the original issues or complete release/security/physical-device gates.
 
 PIN #28 is entirely deferred by the owner; #16 and #6 remain open because final Step 10 questions are skipped for now. Approved footer Settings/Account placement is implemented. Curated palette/fonts remain editable review choices, while preference sync is excluded as scoped.
+
+Owner Preview refinement (2026-10-12): Home heading is **התחברות**, centered above the action list, with the labels/order above. This supersedes the original #35 ordering; all other screens and footer destinations are retained. The refinement is a separate commit in cumulative review PR #44.
