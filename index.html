@@ -486,6 +486,12 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       <button class="btn ghost" id="resetAppearance">חזרה למראה המקורי</button>
       <p class="msg" role="status" id="appearanceStatus"></p>
     </div>
+    <div class="settings-foot">
+      <h3>עותק של הנתונים שלך</h3>
+      <p class="note">קובץ JSON של כל נתוני ההחלמה הזמינים במכשיר הזה, גם רשומות ישנות. קובץ זה אינו מוצפן — כדאי לשמור אותו במקום פרטי. הוא אינו כולל מפתחות שחזור או פרטי התחברות. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.</p>
+      <button class="btn secondary" id="exportRecovery">הורדת כל הנתונים כ־JSON</button>
+      <p class="msg" id="exportStatus" role="status"></p>
+    </div>
     <div class="settings-foot" id="settingsFoot">
       <button class="btn danger" id="reset">מחיקת כל הנתונים</button>
     </div>
@@ -618,7 +624,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.12.3';
+const APP_VERSION='2026.10.12.4';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -1187,6 +1193,21 @@ $('resetAppearance').onclick=()=>{
 $('copyFeedbackEmail').onclick=async()=>{
   try{await navigator.clipboard.writeText('hello@clean-time.app');$('feedbackStatus').textContent='הכתובת הועתקה.';}
   catch(e){$('feedbackStatus').textContent='אפשר לסמן ולהעתיק את הכתובת שמופיעה כאן.';}
+};
+function portableRecovery(value){
+  // Full normalized recovery state, including unknown/legacy content; never enumerate other stores.
+  const reserved=new Set(['access_token','refresh_token','id_token','authorization','recoveryKey','dataKey','keyMaterial','pendingKey','rawDek','dek','wrappedKey','wrapIv','kdf','auth','session','crypto']);
+  return JSON.parse(JSON.stringify(normalize(value),(key,item)=>reserved.has(key)?undefined:item));
+}
+$('exportRecovery').onclick=()=>{
+  if(storageError){$('exportStatus').textContent='לא ניתן ליצור עותק מלא: יש לבדוק את הנתונים השמורים במכשיר.';return;}
+  commitJ();
+  try{
+    const data={format:'clean-time-recovery',version:1,exportedAt:new Date().toISOString(),data:portableRecovery(S)};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download='clean-time-'+todayKey()+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+    $('exportStatus').textContent='הקובץ הועבר להורדה. אם לא נשמר, כדאי לנסות דרך דפדפן המכשיר.';
+  }catch(e){$('exportStatus').textContent='לא הצלחנו ליצור את הקובץ. הנתונים במכשיר לא שונו.';}
 };
 function resetLocal(){
   try{localStorage.removeItem(KEY);}catch(e){}

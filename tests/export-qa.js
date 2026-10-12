@@ -1,0 +1,17 @@
+async(page)=>{
+ const fs=require('fs'),results=[],check=(v,s)=>{if(!v)throw Error(s);results.push(s);};const origin=process.env.QA_BASE_URL||'http://127.0.0.1:8765';
+ await page.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
+ await page.addInitScript(()=>{localStorage.setItem('cleantime-he-v1',JSON.stringify({name:'בדיקה',date:'2025-01-01',time:'12:00',from:'אחר',color:'teal',mode:2,linksV:2,links:[{id:9,title:'ישן',url:'https://example.invalid',unknown:'נשמר'}],journal:[{id:1,text:'יומן עבר',created:1,legacy:'נשמר'}],gratitude:[{id:2,text:'תודה',created:1}],plans:{'2024-01-01':[{id:3,text:'תכנית עבר',done:true}]},inventory:{'2024-01-01':{summary:'ישן',answers:{q1:'תשובה ישנה'},future:'נשמר'}},bookmarks:[{id:4,title:'בדיקה',url:'https://example.invalid',note:'הערה'}],unknownRecovery:{value:'נשמר'},access_token:'SYNTHETIC_TOKEN',recoveryKey:'SYNTHETIC_KEY',updatedAt:1}));localStorage.setItem('cleantime-he-crypto','SYNTHETIC_CRYPTO_STORE');localStorage.setItem('unrelated-session','SYNTHETIC_SESSION_STORE');});
+ await page.goto(origin);const before=await page.evaluate(()=>localStorage.getItem('cleantime-he-v1'));await page.locator('#openSettings').click();
+ check((await page.locator('#settings').innerText()).includes('אינו מוצפן'),'Plaintext export privacy warning');
+ for(const width of [320,390,1280]){await page.setViewportSize({width,height:800});const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#exportRecovery').click()]);const text=fs.readFileSync(await download.path(),'utf8'),parsed=JSON.parse(text),data=parsed.data;
+  check(download.suggestedFilename().match(/^clean-time-\d{4}-\d{2}-\d{2}\.json$/)&&parsed.format==='clean-time-recovery'&&parsed.version===1,'Portable JSON file/schema '+width);
+  check(['journal','gratitude','plans','inventory','bookmarks','links','unknownRecovery'].every(k=>JSON.stringify(data[k])===JSON.stringify(JSON.parse(before)[k])),'Complete history/legacy/unknown content '+width);
+  check(data.name==='בדיקה'&&data.date==='2025-01-01'&&data.time==='12:00'&&data.mode===2&&text.includes('תשובה ישנה'),'UTF-8 profile/preferences/old hidden answers '+width);
+  check(!text.includes('SYNTHETIC_TOKEN')&&!text.includes('SYNTHETIC_KEY')&&!text.includes('SYNTHETIC_CRYPTO_STORE')&&!text.includes('SYNTHETIC_SESSION_STORE'),'No tokens/key/session stores '+width);
+ }
+ check(await page.evaluate(()=>localStorage.getItem('cleantime-he-v1'))===before,'Export does not alter recovery state/timestamp');
+ await page.evaluate(()=>URL.createObjectURL=()=>{throw Error('unsupported');});await page.locator('#exportRecovery').click();check((await page.locator('#exportStatus').innerText()).includes('לא הצלחנו')&&await page.evaluate(()=>localStorage.getItem('cleantime-he-v1'))===before,'Download failure preserves state with visible fallback');
+ const c=await page.context().browser().newContext();await c.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());await c.addInitScript(()=>localStorage.setItem('cleantime-he-v1','{invalid'));const p=await c.newPage();await p.goto(origin);await p.evaluate(()=>document.getElementById('settings').hidden=false);await p.locator('#exportRecovery').click();check((await p.locator('#exportStatus').innerText()).includes('לא ניתן')&&await p.evaluate(()=>localStorage.getItem('cleantime-he-v1'))==='{invalid','Malformed saved recovery cannot silently export defaults');await c.close();
+ return {passed:results.length,results};
+}
