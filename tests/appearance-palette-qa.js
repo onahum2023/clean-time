@@ -13,17 +13,20 @@ async(page)=>{
   const luminance=color=>{ctx.clearRect(0,0,1,1);ctx.fillStyle=color;ctx.fillRect(0,0,1,1);return [...ctx.getImageData(0,0,1,1).data].slice(0,3).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}).reduce((n,v,i)=>n+v*[.2126,.7152,.0722][i],0);};
   const contrast=(a,b)=>{const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);};
   let count=0;
-  for(const theme of ['light','dark'])for(const background of CleanTimeAppearance.backgrounds)for(const font of CleanTimeAppearance.fonts)for(const accent of CleanTimeAppearance.accents){
+  const profileColors=['#477E72','#2C78A8','#4B57A3','#874778','#5F7230','#B04A5A'];
+  for(const theme of ['light','dark'])for(const background of CleanTimeAppearance.backgrounds)for(const font of CleanTimeAppearance.fonts)for(const accent of CleanTimeAppearance.accents)for(const profileColor of accent==='profile'?profileColors:[profileColors[0]]){
+   root.style.setProperty('--accent',profileColor);
    root.dataset.theme=theme;CleanTimeAppearance.save({background,font,accent});const b=getComputedStyle(body),bt=getComputedStyle(button);
    span.style.color='var(--muted)';const muted=getComputedStyle(span).color;
    span.style.color='var(--accent-ink)';const focus=getComputedStyle(span).color;
-   const label=[theme,background,font,accent].join('/');
-   if(contrast(b.color,b.backgroundColor)<4.5||contrast(muted,b.backgroundColor)<4.5||contrast(bt.color,bt.backgroundColor)<4.5||contrast(focus,b.backgroundColor)<3)failures.push(label);
+   const label=[theme,background,font,accent,profileColor].join('/');
+   const status=document.getElementById('appearanceStatus');status.classList.remove('err');const statusColor=getComputedStyle(status).color;status.classList.add('err');const errorColor=getComputedStyle(status).color;status.classList.remove('err');
+   if(contrast(b.color,b.backgroundColor)<4.5||contrast(muted,b.backgroundColor)<4.5||contrast(bt.color,bt.backgroundColor)<4.5||contrast(statusColor,b.backgroundColor)<4.5||contrast(errorColor,b.backgroundColor)<4.5||contrast(focus,b.backgroundColor)<3)failures.push(label);
    count++;
   }
   span.remove();delete root.dataset.theme;return {count,failures};
  });
- check(matrix.count===540&&matrix.failures.length===0,'All 540 theme/background/font/accent combinations meet text/button/focus contrast: '+matrix.failures.join(','));
+ check(matrix.count===990&&matrix.failures.length===0,'All 990 theme/background/font/accent/profile-color combinations meet text/button/status/error/focus contrast: '+matrix.failures.join(','));
  await page.locator('#backgroundChoice').selectOption('lavender');await page.locator('#fontChoice').selectOption('tahoma');await page.locator('#accentChoice').selectOption('plum');
  await page.reload();check(await page.evaluate(()=>document.documentElement.dataset.background==='lavender'&&document.documentElement.dataset.font==='tahoma'&&document.documentElement.dataset.accent==='plum'),'All preferences persist after refresh');
  check(await page.evaluate(()=>localStorage.getItem('cleantime-he-v1'))===saved,'Preferences leave recovery state unchanged');
