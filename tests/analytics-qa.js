@@ -19,8 +19,8 @@ async(page)=>{
   for(const key of ['scriptSrc','viewEndpoint','eventEndpoint'])for(const value of ['https://external.invalid/x','//external.invalid/x','/x/../view','/x/./view','/x?email=PRIVATE','/x#token','/x%2fsecret','/x\\secret','/x" onload="bad',null,4,''])check(build('production',{[key]:value}).status!==0,'Invalid '+key+' rejected '+JSON.stringify(value));
   check(build('preview',{scriptSrc:'invalid-unused'}, {VERCEL_OBSERVABILITY_CLIENT_CONFIG:'invalid-unused-json'}).status===0,'Preview ignores unused malformed observability configuration');
   check(fs.readFileSync(path.join(tmp,'index.html'),'utf8').includes('data-enabled="false"'),'Preview instrumentation disabled');
-  check(build('preview',{}, {CLEAN_TIME_SUPABASE_URL:'https://aefhjgmiwgajdhgyhelm.supabase.co'}).status!==0,'Preview production backend rejected');
-  check(build('preview',{}, {CLEAN_TIME_SUPABASE_PUBLISHABLE_KEY:''}).status!==0,'Preview missing public key rejected');
+  check(build('preview',{}, {CLEAN_TIME_SUPABASE_URL:'https://aefhjgmiwgajdhgyhelm.supabase.co'}).status===0&&fs.readFileSync(path.join(tmp,'assets/backend-config.js'),'utf8').includes('"url":null'),'Preview production input remains disabled');
+  check(build('preview',{}, {CLEAN_TIME_SUPABASE_PUBLISHABLE_KEY:''}).status===0&&fs.readFileSync(path.join(tmp,'assets/backend-config.js'),'utf8').includes('"backupDisabled":true'),'Preview without a key remains disabled');
   check(build('production',{}, {CLEAN_TIME_ANALYTICS_CUSTOM_EVENTS:'false'}).status===0&&fs.readFileSync(path.join(tmp,'index.html'),'utf8').includes('data-custom-events="false"'),'Pageviews-only option for unsupported plan');
  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
  // Unit boundary: extra data is stripped, unknown events/tools/URLs are rejected.
