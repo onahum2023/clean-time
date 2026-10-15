@@ -342,7 +342,8 @@ window.CleanTimeMessages={
     "הנתונים שלך שמורים בטלפון הזה, ואפשר להעביר אותם לכתובת החדשה בלחיצה אחת.": "Your data is saved on this phone. You can transfer it to the new address with one tap.",
     "עיקרון רוחני ליום (אנגלית)": "A Spiritual Principle a Day (English)",
     "חלק מהקריאות החיצוניות בעברית בלבד. תוכן הקישורים אינו מתורגם.": "Some external readings are Hebrew-only. Linked content is not translated.",
-    "עברית": "Hebrew"
+    "עברית": "Hebrew",
+    "הגדרות ההחלמה השתנו. יש לפתוח אותן מחדש לפני שמירה.": "Recovery settings changed. Open them again before saving."
   },
   "ru": {
     "+ הוספת קישור": "+ Добавить ссылку",
