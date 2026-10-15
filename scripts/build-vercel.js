@@ -1,4 +1,5 @@
 const fs=require('node:fs'),path=require('node:path');
+require('./security-headers.js');
 const ROOT=path.resolve(__dirname,'..'),OUT=path.resolve(process.env.CT_BUILD_OUTPUT||path.join(ROOT,'dist'));
 if(OUT===ROOT||OUT===path.parse(OUT).root)throw new Error('Unsafe build output');
 const env=process.env.VERCEL_ENV||'development',source=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
