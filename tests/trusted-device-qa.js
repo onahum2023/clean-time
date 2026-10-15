@@ -11,6 +11,7 @@ async(page)=>{
  const open=async()=>{
   context=await chromium.launchPersistentContext(profile,{headless:true,...(process.env.QA_CHROMIUM_EXECUTABLE?{executablePath:process.env.QA_CHROMIUM_EXECUTABLE}:{}),...(process.env.QA_NO_SANDBOX==='1'?{args:['--no-sandbox']}:{}),viewport:{width:360,height:800}});
   await context.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
+  await context.route('**/assets/backend-config.js',r=>r.fulfill({contentType:'application/javascript',body:'window.CleanTimeBackend={environment:"local",url:"http://127.0.0.1:54321",key:"sb_publishable_SYNTHETIC_QA_ONLY"};'}));
   await context.exposeFunction('ctRead',()=>cloud);
   await context.exposeFunction('ctWrite',row=>{uploads++;cloud={data:row.data,updated_at:row.updated_at};return {data:[{user_id:row.user_id}],error:null};});
   await context.addInitScript(()=>{
