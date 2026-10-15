@@ -69,7 +69,7 @@ async(page)=>{
   await p.setViewportSize({width,height:800});await p.locator('#iSummary').fill('א'.repeat(600));
   check(await p.evaluate(()=>{const w=document.documentElement.clientWidth;return document.documentElement.scrollWidth<=w&&[...document.querySelectorAll('#inventory input,#inventory textarea,#inventory select')].every(e=>{const b=e.getBoundingClientRect();return b.left>=0&&b.right<=w&&e.scrollWidth<=e.clientWidth;});}),'Step 10 fields and page fit '+width+'px');
  }
- await p.setViewportSize({width:360,height:800});await p.screenshot({path:'/private/tmp/clean-time-uat-step10-360.png',fullPage:true});
+ await p.setViewportSize({width:360,height:800});await p.screenshot({path:'/tmp/clean-time-uat-step10-360.png',fullPage:true});
  check(await p.evaluate(()=>window.qaErrors.length===0),'UAT journeys have no browser errors');await c.close();
  return {passed:results.length,results};
 }

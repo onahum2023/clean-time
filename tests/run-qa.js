@@ -8,7 +8,7 @@ if(process.env.QA_BASE_URL){
  if(url.origin!==process.env.QA_BASE_URL||url.username||url.password||(!local&&!preview))throw new Error('QA_BASE_URL must be an exact loopback HTTP or HTTPS Vercel Preview origin');
 }
 (async()=>{
- const browser=await (process.env.QA_ENGINE==='webkit'?webkit:chromium).launch({headless:true});
+ const browser=await (process.env.QA_ENGINE==='webkit'?webkit:chromium).launch({headless:true,...(process.env.QA_CHROMIUM_EXECUTABLE&&process.env.QA_ENGINE!=='webkit'?{executablePath:process.env.QA_CHROMIUM_EXECUTABLE}:{}),...(process.env.QA_NO_SANDBOX==='1'?{args:['--no-sandbox']}: {})});
  require('./preview-access.js').attachPreviewAccess(browser);
  let total=0,failed=0;
  try{

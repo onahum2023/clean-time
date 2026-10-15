@@ -1324,7 +1324,7 @@ const PRODUCTION_SUPA_URL='https://aefhjgmiwgajdhgyhelm.supabase.co';
 const PRODUCTION_SUPA_KEY='sb_publishable_0R5rSCEhM5INCy-5zLwGsA_j51Ty39v';
 const backend=window.CleanTimeBackend;
 const previewHost=location.hostname.endsWith('.vercel.app')&&location.hostname!=='clean-time-eight.vercel.app';
-const stagingConfig=backend?.environment==='preview'&&backend.url==='https://uffvbfmfsesdhjzzjiyu.supabase.co'&&/^sb_publishable_[A-Za-z0-9_-]+$/.test(backend.key||'');
+const stagingConfig=false; // Live Preview backup is disabled until isolated infrastructure is reviewed.
 // A missing/incorrect Preview asset must never silently connect to production.
 const SUPA_URL=previewHost?(stagingConfig?backend.url:null):PRODUCTION_SUPA_URL;
 const SUPA_KEY=previewHost?(stagingConfig?backend.key:null):PRODUCTION_SUPA_KEY;
