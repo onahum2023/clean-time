@@ -19,3 +19,9 @@ is changed by this PR.
 Local synthetic browser verification uses the actual configured response headers.
 Production-response and real magic-link/sync acceptance remain unexecuted until an
 authorized release. Do not close #18 based on Preview/local evidence alone.
+
+Cached-client correction: app/worker now advance together to 2026.10.15.16. The
+actual baseline cached installation upgrades after all app windows close; the
+reopened cached HTML retains/enforces CSP, blocks an unhashed script and still
+loads offline with synthetic history intact. Updated verification: 20 offline/
+upgrade + 10 fresh HTTP/CSP checks passed. Hashes were regenerated for this version.
