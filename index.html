@@ -80,6 +80,27 @@ button,input,textarea,select{font:inherit;color:inherit}
 @media(prefers-color-scheme:dark){:root[data-background="sage"]:not([data-theme="light"]){--bg:#17211B;--muted:#A6B3AA}:root[data-background="sand"]:not([data-theme="light"]){--bg:#241F19;--muted:#A6B3AA}}
 :root[data-font="arial"]{--sans:Arial,sans-serif}
 :root[data-font="serif"]{--sans:"Times New Roman",serif}
+:root[data-font="tahoma"]{--sans:Tahoma,"Assistant",Arial,sans-serif}
+:root[data-font="verdana"]{--sans:Verdana,"Assistant",Arial,sans-serif}
+:root[data-background="mist"]{--bg:#EDF2F0}
+:root[data-background="lavender"]{--bg:#F1EDF7}
+:root[data-background="rose"]{--bg:#F7ECEE}
+:root[data-background="peach"]{--bg:#F8EEE5}
+:root[data-background="sky"]{--bg:#EAF1F8}
+:root[data-background="stone"]{--bg:#EEEDE9}
+:root:is([data-background="mist"],[data-background="lavender"],[data-background="rose"],[data-background="peach"],[data-background="sky"],[data-background="stone"]){--muted:#5F6B67;--dark-bg:#1B2120}
+:root[data-background="lavender"]{--dark-bg:#211D28}
+:root[data-background="rose"]{--dark-bg:#281E23}
+:root[data-background="peach"]{--dark-bg:#282019}
+:root[data-background="sky"]{--dark-bg:#1A222B}
+:root[data-background="stone"]{--dark-bg:#22221F}
+:root:is([data-background="mist"],[data-background="lavender"],[data-background="rose"],[data-background="peach"],[data-background="sky"],[data-background="stone"])[data-theme="dark"]{--bg:var(--dark-bg);--muted:#A6B3AA}
+@media(prefers-color-scheme:dark){:root:is([data-background="mist"],[data-background="lavender"],[data-background="rose"],[data-background="peach"],[data-background="sky"],[data-background="stone"]):not([data-theme="light"]){--bg:var(--dark-bg);--muted:#A6B3AA}}
+:root[data-accent="teal"]{--accent:#477E72!important}
+:root[data-accent="sky"]{--accent:#2C78A8!important}
+:root[data-accent="plum"]{--accent:#874778!important}
+:root[data-accent="olive"]{--accent:#5F7230!important}
+:root[data-accent="rose"]{--accent:#B04A5A!important}
 .appearance-preview{padding:14px;background:var(--bg);border:1px solid var(--line);border-radius:12px}
 :focus-visible{outline:2px solid var(--accent-ink);outline-offset:3px;border-radius:6px}
 
@@ -533,8 +554,10 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
       <p class="msg" role="status" id="milestoneStatus"></p>
       <h3>מראה</h3>
       <p class="note">הבחירה נשמרת רק במכשיר הזה, גם עם חשבון.</p>
-      <label class="field"><span>רקע</span><select id="backgroundChoice"><option value="default">הרקע הנוכחי</option><option value="sage">מרווה בהירה</option><option value="sand">חול בהיר</option></select></label>
-      <label class="field"><span>גופן</span><select id="fontChoice"><option value="assistant">Assistant — הגופן הנוכחי</option><option value="arial">Arial — פשוט וברור</option><option value="serif">גופן ספר</option></select></label>
+      <label class="field"><span>רקע</span><select id="backgroundChoice"><option value="default">הרקע הנוכחי</option><option value="sage">מרווה בהירה</option><option value="sand">חול בהיר</option><option value="mist">ערפל</option><option value="lavender">לבנדר</option><option value="rose">ורוד עדין</option><option value="peach">אפרסק</option><option value="sky">שמיים</option><option value="stone">אבן</option></select></label>
+      <label class="field"><span>גופן</span><select id="fontChoice"><option value="assistant">Assistant — הגופן הנוכחי</option><option value="arial">Arial — פשוט וברור</option><option value="serif">גופן ספר</option><option value="tahoma">Tahoma</option><option value="verdana">Verdana</option></select></label>
+      <p class="note">גופני מערכת יוצגו אם הם זמינים במכשיר. אחרת יופיע גופן חלופי קריא.</p>
+      <label class="field"><span>צבע הדגשה במכשיר הזה</span><select id="accentChoice"><option value="profile">הצבע הנוכחי</option><option value="teal">טורקיז</option><option value="sky">כחול</option><option value="plum">שזיף</option><option value="olive">זית</option><option value="rose">ורד</option></select></label>
       <p class="appearance-preview">זמן נקי — יום אחד בכל פעם. כך ייראה הטקסט שלך.</p>
       <button class="btn ghost" id="resetAppearance">חזרה למראה המקורי</button>
       <p class="msg" role="status" id="appearanceStatus"></p>
@@ -680,7 +703,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.15.10';
+const APP_VERSION='2026.10.15.12';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -1250,7 +1273,7 @@ function fillSettings(){
   $('sName').value=S.name;$('sDate').value=S.date;$('sTime').value=S.time;$('sFrom').value=S.from;
   confirmRecoveryDate('sDate');pickColor=S.color; renderSwatches();
   $('showMilestones').checked=milestonesEnabled();
-  const appearance=CleanTimeAppearance.read();$('backgroundChoice').value=appearance.background;$('fontChoice').value=appearance.font;
+  const appearance=CleanTimeAppearance.read();$('backgroundChoice').value=appearance.background;$('fontChoice').value=appearance.font;$('accentChoice').value=appearance.accent;
 }
 function renderSwatches(boxId='swatches'){
   const box=$(boxId);box.innerHTML='';
@@ -1272,12 +1295,12 @@ $('saveSettings').onclick=async()=>{
   if(!signedIn())S.name=$('sName').value.trim();S.date=date;S.time=time;S.from=$('sFrom').value.trim();S.color=pickColor;
   if(save()){applyColor();show('counter');}else S=previous;
 };
-for(const id of ['backgroundChoice','fontChoice'])$(id).onchange=()=>{
-  const ok=CleanTimeAppearance.save({background:$('backgroundChoice').value,font:$('fontChoice').value});
+for(const id of ['backgroundChoice','fontChoice','accentChoice'])$(id).onchange=()=>{
+  const ok=CleanTimeAppearance.save({background:$('backgroundChoice').value,font:$('fontChoice').value,accent:$('accentChoice').value});
   $('appearanceStatus').textContent=ok?'המראה נשמר במכשיר הזה.':'המראה מוצג כרגע, אבל לא נשמר במכשיר.';
 };
 $('resetAppearance').onclick=()=>{
-  const ok=CleanTimeAppearance.save({background:'default',font:'assistant'});$('backgroundChoice').value='default';$('fontChoice').value='assistant';
+  const ok=CleanTimeAppearance.save({background:'default',font:'assistant',accent:'profile'});$('backgroundChoice').value='default';$('fontChoice').value='assistant';$('accentChoice').value='profile';
   $('appearanceStatus').textContent=ok?'המראה המקורי נשמר.':'המראה הוחזר, אבל לא נשמר במכשיר.';
 };
 $('feedbackBack').onclick=()=>history.back();
