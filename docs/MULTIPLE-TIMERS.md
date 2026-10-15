@@ -46,3 +46,13 @@ round-trip compatibility. Existing encryption and upgrade suites remain required
 their exact-state expectations now include only the documented additive fields
 where migration is persisted/exported. Physical-device and live service acceptance
 remain #21/#34. Nora's independent migration review is a merge prerequisite.
+
+Independent-review corrections: remote plaintext and decrypted states are fully
+normalized before conflict selection or upload, including when local timestamps
+are newer. Unsupported versions/duplicate IDs never become overwrite candidates.
+Main Settings binds to the displayed primary, account, crypto generation and
+state timestamp; a cloud pull during confirmation rejects the stale edit. Added
+13 encryption/integration checks (138 total) plus a real main-normalizer and
+serializer round trip in the timer suite (23 total). Focused recovery/upgrade
+checks remain 29 + 57. The cache/app version remains 2026.10.15.13 in this draft;
+no production release has occurred.

@@ -1318,8 +1318,12 @@ $('timerForm').onsubmit=async ev=>{
  const timers=(S.timers||[]).filter(t=>t.id!==timer.id);timers.splice(old?S.timers.findIndex(t=>t.id===old.id):timers.length,0,timer);
  if(persistTimers({...S,timers,primaryTimerId:S.primaryTimerId||timer.id}))closeTimer();
 };
+let settingsBinding=null;
+const bindSettings=()=>({primary:S.primaryTimerId,stamp:S.updatedAt,epoch:cryptoEpoch,account:user?.id||M.uid||null,timer:JSON.stringify(S.timers?.find(t=>t.id===S.primaryTimerId))});
+const settingsCurrent=binding=>binding&&JSON.stringify(binding)===JSON.stringify(bindSettings());
 let pickColor=S.color;
 function fillSettings(){
+  settingsBinding=bindSettings();
   renderTimerSettings();
   $('setTitle').textContent='הגדרות החלמה';
   renderSync();
@@ -1342,6 +1346,8 @@ function renderSwatches(boxId='swatches'){
   });
 }
 $('saveSettings').onclick=async()=>{
+  const binding=settingsBinding;
+  if(!settingsCurrent(binding)){storageNotice('הגדרות ההחלמה השתנו. יש לפתוח אותן מחדש לפני שמירה.');return;}
   if(!validateRecoveryDate('sDate'))return;
   const date=$('sDate').value,time=$('sTime').value;
   if(S.date&&(date!==S.date||(time||'00:00')!==(S.time||'00:00'))){
@@ -1349,6 +1355,7 @@ $('saveSettings').onclick=async()=>{
     if(!approved)return;
   }
   const previous=JSON.parse(JSON.stringify(S));
+  if(!settingsCurrent(binding)){storageNotice('הגדרות ההחלמה השתנו. יש לפתוח אותן מחדש לפני שמירה.');return;}
   if(!signedIn())S.name=$('sName').value.trim();S.date=date;S.time=time;S.from=$('sFrom').value.trim();S.color=pickColor;
   if(save()){applyColor();show('counter');}else S=previous;
 };
@@ -1674,6 +1681,7 @@ async function sync(){
         }
         remote=await SyncCrypto.decrypt(remote,dataKey,id,row.updated_at);
         if(user?.id!==id||epoch!==cryptoEpoch)break;
+        remote=normalize(remote);
         const firstVerifiedBackup=!keyMaterial.confirmed&&!lockedRow;
         keyMaterial.confirmed=true;storeMaterial(keyMaterial);cryptoState='active';lockedRow=null;
         if(firstVerifiedBackup)analytics('event','backup_activated',{},true);
@@ -1683,6 +1691,9 @@ async function sync(){
       }
       if(user?.id!==id||epoch!==cryptoEpoch)break;
       const rT=remote?(encrypted?Date.parse(row.updated_at):(remote.updatedAt||Date.parse(row.updated_at)||0)):0;
+      // Validate before timestamp/conflict selection: an unsupported remote
+      // schema must never be replaced by an older client's valid local copy.
+      if(remote)remote=normalize(remote);
       if(M.uid!==id){
         if(hasData(remote)&&hasData(S)){
           const pick=await ask('נמצאו נתונים בשני המקומות','יש נתונים גם במכשיר הזה וגם בענן. אילו נתונים לשמור? הנתונים האחרים יוחלפו.',

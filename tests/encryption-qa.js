@@ -54,7 +54,7 @@ async(page)=>{
   if(registered)await p.waitForFunction(()=>!!document.getElementById('encryptionMsg').textContent||!document.getElementById('ask').hidden||/הגיבוי המוצפן עדיין לא הופעל|גיבוי מוצפן פעיל|מפתח שחזור נדרש/.test(document.getElementById('encryptionStatus').textContent));
   if(registered&&!await p.locator('#account').isVisible()&&!await p.locator('#ask').isVisible()){await p.locator('#openSettings').click();await p.locator('#myAccount').click();}
   const plain=async()=>p.evaluate(async row=>{const m=JSON.parse(localStorage.getItem('cleantime-he-crypto'));return SyncCrypto.decrypt(row.data,await SyncCrypto.importDek(m.raw),m.uid,row.updated_at);},cloud);
-  return {c,p,calls,cloud:()=>structuredClone(cloud),plain,setFail:v=>fail=v,setCas:v=>casMiss=v,setVerify:v=>verifyFail=v,setRace:v=>raceRow=v,holdWrite:()=>hold=true,releaseWrite:()=>{hold=false;release?.();}};
+  return {c,p,calls,cloud:()=>structuredClone(cloud),plain,setCloud:v=>cloud=structuredClone(v),setFail:v=>fail=v,setCas:v=>casMiss=v,setVerify:v=>verifyFail=v,setRace:v=>raceRow=v,holdWrite:()=>hold=true,releaseWrite:()=>{hold=false;release?.();}};
  }
  const read=p=>p.evaluate(k=>JSON.parse(localStorage.getItem(k)),KEY);
  const stored=p=>p.evaluate(k=>JSON.parse(localStorage.getItem(k)),CK);
@@ -273,8 +273,28 @@ async(page)=>{
  s=await scenario({local:multiple});
  await s.p.locator('#makeRecoveryKey').click();await s.p.locator('#recoveryGenerated').waitFor();const multipleRecovery=await s.p.locator('#recoveryOutput').inputValue();
  await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();await settle(s.p);
- const multipleRow=s.cloud();check((await s.plain()).timers.length===2&&s.calls.uploads.length===1,'Registered multi-timer state uploads as a complete encrypted record');await s.c.close();
+ const multipleRow=s.cloud(),multipleMaterial=await stored(s.p);check((await s.plain()).timers.length===2&&s.calls.uploads.length===1,'Registered multi-timer state uploads as a complete encrypted record');await s.c.close();
  s=await scenario({local:null,row:multipleRow,meta:false});await s.p.locator('#recoveryInput').fill(multipleRecovery);await s.p.locator('#unlockRecovery').click();await settle(s.p);
  check((await read(s.p)).timers.length===2&&(await read(s.p)).primaryTimerId==='legacy-primary'&&s.calls.uploads.length===0,'Independent context restores all encrypted timers without a rewrite');await s.c.close();
+ // A cloud pull changing primary while the main Settings confirmation is open
+ // must not redirect the saved edit to the newly selected timer.
+ s=await scenario({local:multiple,row:multipleRow,material:multipleMaterial});
+ await s.p.locator('#account [data-go=settings]').click();await s.p.locator('#sDate').fill('2025-03-01');await s.p.locator('#saveSettings').click();await s.p.locator('#ask').waitFor();
+ const switched=require(process.cwd()+'/assets/recovery-timers.js').project({...await read(s.p),primaryTimerId:'additional-synthetic',updatedAt:Date.parse(multipleRow.updated_at)+10000});
+ const switchedRow=await s.p.evaluate(async({switched,material,uid})=>{const time=new Date(switched.updatedAt).toISOString();const data={...switched};delete data.mode;return {data:await SyncCrypto.encrypt(data,await SyncCrypto.importDek(material.raw),material,uid,time),updated_at:time};},{switched,material:multipleMaterial,uid});
+ s.setCloud(switchedRow);await s.p.evaluate(()=>window.dispatchEvent(new Event('focus')));await s.p.waitForFunction(()=>JSON.parse(localStorage.getItem('cleantime-he-v1')).primaryTimerId==='additional-synthetic');
+ await s.p.locator('#askB').getByRole('button',{name:'עדכון התאריך',exact:true}).click();
+ check(same((await read(s.p)).timers,switched.timers)&&s.calls.uploads.length===0&&same(s.cloud(),switchedRow),'Stale primary-date confirmation cannot edit either timer or upload');await s.c.close();
+ // Unsupported remote records must be protected regardless of timestamp,
+ // encryption or first-login local-choice opportunities.
+ await page.goto(origin);
+ for(const encrypted of [false,true])for(const kind of ['version','duplicates'])for(const mode of ['local-newer','equal','first-login']){
+  const remoteTime=1750000000000,valid=require(process.cwd()+'/assets/recovery-timers.js').normalize({...full,updatedAt:remoteTime});
+  const malformed=kind==='version'?{...valid,timersVersion:2}:{...valid,timers:[...valid.timers,{...valid.timers[0]}]};
+  const remoteRow=encrypted?await page.evaluate(async({malformed,material,uid})=>{const time=new Date(malformed.updatedAt).toISOString();return {data:await SyncCrypto.encrypt(malformed,await SyncCrypto.importDek(material.raw),material,uid,time),updated_at:time};},{malformed,material:multipleMaterial,uid}):{data:malformed,updated_at:new Date(remoteTime).toISOString()};
+  const local={...full,updatedAt:mode==='equal'?remoteTime:remoteTime+10000};
+  s=await scenario({local,row:remoteRow,material:encrypted?multipleMaterial:null,meta:mode!=='first-login'});
+  check(s.calls.uploads.length===0&&same(await read(s.p),local)&&same(s.cloud(),remoteRow)&&await s.p.locator('#ask').isHidden(),'Malformed remote protected: '+encrypted+'/'+kind+'/'+mode);await s.c.close();
+ }
  return {passed:results.length,results};
 }

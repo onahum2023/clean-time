@@ -9,6 +9,13 @@ async(page)=>{
  const multi=normalize({...migrated,timers:[...migrated.timers,second]});
  const older=normalize({...multi,date:'2024-03-01',from:'עישון'});
  check(older.timers[0].date==='2024-03-01'&&older.timers[0].category==='smoking'&&JSON.stringify(older.timers[1])===JSON.stringify(second),'Older client scalar edit updates only primary and retains secondary fields');
+ const oldSource=require('child_process').execFileSync('git',['show','fb2d244835ea8adf652dfcffe393943371666347:index.html'],{encoding:'utf8'}),sandbox={};
+ require('vm').createContext(sandbox);
+ require('vm').runInContext(oldSource.slice(oldSource.indexOf('const DEFAULT='),oldSource.indexOf('function load(){')).replace('let S=load();','')+';this.oldNormalize=normalize;',sandbox);
+ sandbox.S=sandbox.oldNormalize(multi);sandbox.S.date='2024-03-02';sandbox.LOCAL_ONLY=['mode'];
+ require('vm').runInContext(oldSource.slice(oldSource.indexOf('function syncedState(){'),oldSource.indexOf('async function readRow('))+';this.oldSnapshot=syncedState();',sandbox);
+ const oldRoundTrip=normalize(JSON.parse(JSON.stringify(sandbox.oldSnapshot)));
+ check(oldRoundTrip.timers[0].date==='2024-03-02'&&JSON.stringify(oldRoundTrip.timers[1])===JSON.stringify(second),'Actual main legacy normalizer and sync serializer retain secondary timers on edit');
  for(const malformed of [{...multi,timersVersion:2},{...multi,primaryTimerId:'missing'},{...multi,timers:[second,second]},{...multi,timers:[{...second,date:'2025-02-30'}]},{...multi,timers:{}}]){
   let rejected=false;try{normalize(malformed);}catch(e){rejected=true;}check(rejected,'Malformed timer schema fails closed');
  }
