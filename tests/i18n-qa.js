@@ -24,6 +24,22 @@ async(page)=>{
   check(await page.locator('#tDateError').textContent()===await page.evaluate(()=>CleanTimeI18n.t('תאריך תחילת ההחלמה לא יכול להיות בעתיד.')),'Date validation localized '+language);
   await page.locator('#cancelTimer').click();await page.locator('[data-tab=counter]').click();
  }
+ for(const language of ['he','en','ru']){
+  const context=await page.context().browser().newContext();
+  try{
+   await context.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
+   await context.addInitScript(language=>{
+    localStorage.setItem('cleantime-language',language);window.supabase={createClient:()=>({auth:{onAuthStateChange(){},getSession:async()=>({data:{session:null}}),signInWithOtp:async()=>({})}})};
+    const append=Element.prototype.appendChild;Element.prototype.appendChild=function(el){if(el.tagName==='SCRIPT'&&el.src.includes('supabase-js')){setTimeout(()=>el.onload(),0);return el;}return append.call(this,el);};
+   },language);
+   const p=await context.newPage();await p.goto(origin);await p.locator('#welcomeStart').click();await p.locator('#oFrom').selectOption('סמים');await p.locator('#oDate').fill('2025-01-01');
+   check(await p.locator('#oFrom').inputValue()==='סמים','Fresh guest option identifier is stable '+language);await p.locator('#guestForm button').click();
+   check(await p.evaluate(key=>{const state=JSON.parse(localStorage.getItem(key));return state.from==='סמים'&&state.timers[0].category==='drugs';},key),'Fresh guest stores language-independent recovery category '+language);
+   await p.evaluate(()=>localStorage.removeItem('cleantime-he-v1'));await p.reload();await p.locator('#onboardingLogin').click();await p.locator('#authCreate').click();await p.locator('#aFrom').selectOption('סמים');await p.locator('#aDate').fill('2025-01-01');await p.locator('#lEmail').fill('onboarding@example.invalid');
+   check(await p.locator('#aFrom').inputValue()==='סמים','Fresh account option identifier is stable '+language);await p.locator('#lSend').click();
+   check(await p.evaluate(key=>{const state=JSON.parse(localStorage.getItem(key));return state.from==='סמים'&&state.timers[0].category==='drugs';},key),'Fresh account stores language-independent recovery category '+language);
+  }finally{await context.close();}
+ }
  for(const language of ['en','ru']){
   const context=await page.context().browser().newContext({viewport:{width:360,height:800}});let cloud=null,uploads=0;
   try{
@@ -50,5 +66,17 @@ async(page)=>{
   await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.origin!=='https://clean-time.app')return route.abort();const file=require('path').join(process.cwd(),url.pathname==='/'?'index.html':url.pathname.slice(1));return fs.existsSync(file)&&fs.statSync(file).isFile()?route.fulfill({path:file}):route.fulfill({status:404,body:''});});
   const p=await context.newPage();await p.goto('https://clean-time.app');check(await p.locator('html').getAttribute('lang')==='he'&&await p.evaluate(()=>!CleanTimeI18n.setLanguage('en')),'Production language gate keeps Hebrew');
  }finally{await context.close();}
+ for(const [origin,config,expected] of [
+  ['https://production-build.vercel.app',{environment:'production'},'he'],
+  ['https://unknown.example.invalid',null,'he'],
+  ['https://custom-preview.example.invalid',{environment:'preview',backupDisabled:true},'ru']
+ ]){
+  const context=await page.context().browser().newContext();
+  try{
+   await context.addInitScript(()=>localStorage.setItem('cleantime-language','ru'));
+   await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.origin!==origin)return route.abort();if(url.pathname==='/assets/backend-config.js')return route.fulfill({contentType:'application/javascript',body:'window.CleanTimeBackend='+JSON.stringify(config)});const file=require('path').join(process.cwd(),url.pathname==='/'?'index.html':url.pathname.slice(1));return fs.existsSync(file)&&fs.statSync(file).isFile()?route.fulfill({path:file}):route.fulfill({status:404,body:''});});
+   const p=await context.newPage();await p.goto(origin);check(await p.locator('html').getAttribute('lang')===expected,'Build-aware draft-language gate '+origin);
+  }finally{await context.close();}
+ }
  return {passed:results.length,results};
 }
