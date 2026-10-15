@@ -60,6 +60,10 @@ async(page)=>{
     if(req.method()==='POST')calls.push(JSON.parse(req.postData()));check(!req.headers().referer,'Analytics HTTP request excludes sensitive Referer header');return route.fulfill({status:200,body:'{}'});
    }
    if(url.pathname==='/service-worker.js')return route.abort();
+   if(url.pathname==='/assets/backend-config.js'){
+    const source=fs.readFileSync('index.html','utf8');
+    return route.fulfill({contentType:'application/javascript',body:'window.CleanTimeBackend='+JSON.stringify({environment:'production',url:source.match(/const PRODUCTION_SUPA_URL='([^']+)'/)[1],key:source.match(/const PRODUCTION_SUPA_KEY='([^']+)'/)[1]})});
+   }
    let file=path.resolve(process.cwd(),url.pathname==='/'?'index.html':'.'+url.pathname);
    if(fs.existsSync(file)&&fs.statSync(file).isDirectory())file=path.join(file,'index.html');
    if(!file.startsWith(process.cwd()+'/')||!fs.existsSync(file))return route.fulfill({status:404,body:''});
