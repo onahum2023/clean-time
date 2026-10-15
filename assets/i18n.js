@@ -15,6 +15,13 @@
   const readingLanguage=document.getElementById('readingLanguage');if(readingLanguage){if(language==='he')readingLanguage.remove();else readingLanguage.textContent=t('עברית');}
   for(const el of document.querySelectorAll('[data-i18n]'))el.textContent=t(el.dataset.i18n);
   for(const attr of ['aria-label','placeholder','title'])for(const el of document.querySelectorAll('[data-i18n-'+attr+']'))el.setAttribute(attr,t(el.getAttribute('data-i18n-'+attr)));
+  // Optional appearance expansion uses the same stable preference values. Only
+  // these known UI controls are translated; custom recovery labels stay verbatim.
+  const appearance={backgroundChoice:{default:'הרקע הנוכחי',sage:'מרווה בהירה',sand:'חול בהיר',mist:'ערפל',lavender:'לבנדר',rose:'ורוד עדין',peach:'אפרסק',sky:'שמיים',stone:'אבן'},fontChoice:{assistant:'Assistant — הגופן הנוכחי',arial:'Arial — פשוט וברור',serif:'גופן ספר',tahoma:'Tahoma',verdana:'Verdana'},accentChoice:{profile:'הצבע הנוכחי',teal:'טורקיז',sky:'כחול',plum:'שזיף',olive:'זית',rose:'ורד'}};
+  for(const [id,labels] of Object.entries(appearance))for(const option of document.getElementById(id)?.options||[])if(labels[option.value])option.textContent=t(labels[option.value]);
+  const accent=document.getElementById('accentChoice');if(accent)accent.closest('label').querySelector('span').textContent=t('צבע הדגשה במכשיר הזה');
+  const fontNote='גופני מערכת יוצגו אם הם זמינים במכשיר. אחרת יופיע גופן חלופי קריא.';
+  for(const note of document.querySelectorAll('#settings .note'))if(note.textContent===fontNote)note.textContent=t(fontNote);
   const select=document.getElementById('languageChoice');if(select){select.value=language;for(const option of select.options)if(option.value!=='he')option.disabled=production;}
  };
  document.documentElement.lang=language;document.documentElement.dir=language==='he'?'rtl':'ltr';
