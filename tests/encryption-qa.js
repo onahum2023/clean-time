@@ -8,7 +8,7 @@ async(page)=>{
   journal:[{id:'j',text:'יומן סינתטי סודי',created:1,updated:2}],gratitude:[{id:'g',text:'תודה סינתטית סודית',ts:3}],
   inventory:{'2025-01-01':{summary:'סיכום סינתטי סודי',answers:{q:'תשובה סודית',placeholder_1:'old synthetic answer',future_prompt:'keep'},questionnaireVersion:'placeholder-v1',extra:{keep:true}}},plans:{'2025-01-01':[{id:'p',text:'תכנית סודית',done:false}]},
   bookmarks:[{id:'b',title:'כותרת סודית',url:'https://example.invalid/private',note:'הערה סודית'}],links:[{id:'l',title:'משאב סודי',url:'https://example.invalid/secret'}],extra:{text:'תוכן עתידי סודי'},updatedAt:1750000000000};
- const cloudState=s=>{const d=structuredClone(s);delete d.mode;return d;};
+ const cloudState=s=>{const d=require(process.cwd()+'/assets/recovery-timers.js').normalize(structuredClone(s));delete d.mode;return d;};
  const canonical=v=>JSON.stringify(v,(_,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(k=>[k,x[k]])):x);
  const same=(a,b)=>canonical(a)===canonical(b);
  async function scenario({local=full,row=null,material=null,registered=true,meta=true}={}){
@@ -221,7 +221,7 @@ async(page)=>{
   await s.p.waitForFunction(()=>document.getElementById('encryptionMsg').textContent.includes('לא הושלם'));
   check(await s.p.evaluate(()=>!window.qaAnalytics.includes('backup_activated')),'Analytics failed '+failure+' emits no activation');
   check(!(await status(s.p)).includes('גיבוי מוצפן פעיל')&&(await s.p.locator('#setSub').textContent())===(await status(s.p))&&!((await stored(s.p)).confirmed),'Initial '+failure+': consistent error, no false active status');
-  check(same({...await read(s.p),updatedAt:full.updatedAt},full),'Initial '+failure+': local content retained');
+  check(same(require(process.cwd()+'/assets/recovery-timers.js').normalize({...await read(s.p),updatedAt:full.updatedAt}),require(process.cwd()+'/assets/recovery-timers.js').normalize(full)),'Initial '+failure+': local content retained');
   const retryMaterial=await stored(s.p);
   s.setFail(false);s.setVerify(false);await s.p.reload();await settle(s.p);
   check((await status(s.p)).includes('גיבוי מוצפן פעיל')&&s.calls.uploads.length===1&&(await stored(s.p)).wrappedKey===retryMaterial.wrappedKey,'Initial '+failure+': reload retries with same key and one upload');
@@ -238,7 +238,7 @@ async(page)=>{
  s=await scenario({row:legacy});
  check(s.calls.uploads.length===0&&same(s.cloud(),legacy)&&same(await read(s.p),full),'Legacy migration waits for acknowledgement; neither side destroyed');
  s.setFail(true);await s.p.locator('#makeRecoveryKey').click();await s.p.locator('#recoveryGenerated').waitFor();await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();await s.p.waitForFunction(()=>document.getElementById('encryptionMsg').textContent.includes('לא הושלם'));
- check(same(s.cloud(),legacy)&&same({...await read(s.p),updatedAt:full.updatedAt},full),'Failed migration write preserves plaintext cloud and complete local content');
+ check(same(s.cloud(),legacy)&&same(require(process.cwd()+'/assets/recovery-timers.js').normalize({...await read(s.p),updatedAt:full.updatedAt}),require(process.cwd()+'/assets/recovery-timers.js').normalize(full)),'Failed migration write preserves plaintext cloud and complete local content');
  check(!(await status(s.p)).includes('גיבוי מוצפן פעיל')&&(await stored(s.p))&&!JSON.parse(await s.p.evaluate(k=>localStorage.getItem(k),CK)).confirmed,'Failed migration retains retry material without marking active');
  s.setFail(false);await s.p.locator('#retryEncryption').click();await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('גיבוי מוצפן פעיל'));
  check(s.cloud().data.v===1&&same({...await s.plain(),updatedAt:full.updatedAt},cloudState(full)),'Retry migrates selected legacy state without content loss');
@@ -268,5 +268,13 @@ async(page)=>{
  check((await status(s.p)).includes('מפתח שחזור נדרש')&&s.calls.uploads.length===0,'Keys from another account are ignored');await s.c.close();
  check(require('node:fs').readFileSync('index.html','utf8').includes('נתוני ההחלמה מוצפנים במכשיר לפני שהם נשמרים בגיבוי בענן')&&require('node:fs').readFileSync('index.html','utf8').includes('המידע במכשיר עצמו נשאר זמין לאפליקציה בזמן השימוש'),'Privacy copy describes encrypted cloud backup and local availability');
  check(!/type=["']password|signInWithPassword|resetPasswordForEmail|updateUser\(/.test(require('node:fs').readFileSync('index.html','utf8')),'No password input/login/reset introduced');
+ const multiple=require(process.cwd()+'/assets/recovery-timers.js').normalize(full);
+ multiple.timers.push({id:'additional-synthetic',category:'alcohol',label:'סינתטי נוסף',date:'2025-01-01',time:''});
+ s=await scenario({local:multiple});
+ await s.p.locator('#makeRecoveryKey').click();await s.p.locator('#recoveryGenerated').waitFor();const multipleRecovery=await s.p.locator('#recoveryOutput').inputValue();
+ await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();await settle(s.p);
+ const multipleRow=s.cloud();check((await s.plain()).timers.length===2&&s.calls.uploads.length===1,'Registered multi-timer state uploads as a complete encrypted record');await s.c.close();
+ s=await scenario({local:null,row:multipleRow,meta:false});await s.p.locator('#recoveryInput').fill(multipleRecovery);await s.p.locator('#unlockRecovery').click();await settle(s.p);
+ check((await read(s.p)).timers.length===2&&(await read(s.p)).primaryTimerId==='legacy-primary'&&s.calls.uploads.length===0,'Independent context restores all encrypted timers without a rewrite');await s.c.close();
  return {passed:results.length,results};
 }

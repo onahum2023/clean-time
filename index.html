@@ -400,6 +400,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
     <div class="dots" id="dots"><span></span><span></span><span></span></div>
     <div class="since" id="since"></div>
     <div class="hint">הקשה על המספר משנה תצוגה</div>
+    <details id="additionalTimers" hidden><summary>מסלולי החלמה נוספים</summary><ul class="list" id="additionalTimerList"></ul></details>
     <div class="today-actions">
       <h2>התחברות</h2>
       <div class="tool-links" aria-label="פעולות יומיות">
@@ -524,6 +525,22 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
     </label>
     <div class="field"><span>צבע</span><div class="swatches" id="swatches" role="radiogroup" aria-label="צבע"></div></div>
     <button class="btn" id="saveSettings" style="width:100%;margin-top:8px">שמירת הגדרות החלמה</button>
+    <div class="settings-foot" id="timerSettings">
+      <h3>מסלולי ההחלמה שלי</h3>
+      <p class="note">התאריך למעלה שייך למסלול הראשי. היומן וכל הכלים היומיים משותפים לכל המסלולים.</p>
+      <ul class="list" id="timerList"></ul>
+      <button class="btn secondary" id="addTimer" type="button">הוספת מסלול החלמה</button>
+      <form id="timerForm" hidden>
+        <h4 id="timerFormTitle">מסלול החלמה</h4>
+        <label class="field"><span>סוג החלמה</span><select id="tCategory"><option value="drugs">סמים</option><option value="alcohol">אלכוהול</option><option value="gambling">הימורים</option><option value="food">אכילת יתר</option><option value="smoking">עישון</option><option value="other">אחר</option></select></label>
+        <label class="field"><span>שם אישי (לא חובה)</span><input id="tLabel" type="text" maxlength="40"></label>
+        <label class="field"><span>תחילת ההחלמה</span><input id="tDate" type="date" required></label>
+        <label class="field"><span>שעה (לא חובה)</span><input id="tTime" type="time"></label>
+        <p class="msg err" id="timerError" role="alert" hidden></p>
+        <button class="btn" type="submit">שמירת מסלול</button>
+        <button class="btn ghost" type="button" id="cancelTimer">ביטול</button>
+      </form>
+    </div>
     <div class="sync">
       <button class="btn secondary" id="myAccount">החשבון שלי</button>
     </div>
@@ -678,9 +695,10 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/backend-config.js"></script>
 <script src="assets/sync-crypto.js"></script>
 <script src="assets/recovery-dates.js"></script>
+<script src="assets/recovery-timers.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.15.11';
+const APP_VERSION='2026.10.15.13';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -713,13 +731,15 @@ function normalize(saved){
       .map((l,i)=>l.id<=defs.length?Object.assign({},l,{id:Date.now()+i}):l);
     d.links=defs.concat(own); d.linksV=2;
   }
-  return d;
+  return CleanTimeTimers.normalize(d);
 }
 function load(){
   try{
     const r=localStorage.getItem(KEY);
     if(r){
       const raw=JSON.parse(r), d=normalize(raw);
+      // Timer migration is lazy: preserve untouched legacy bytes/timestamps until
+      // the next explicit saved change; deterministic IDs make repeated loads safe.
       if(!raw.linksV)writeLocal(d);
       return d;
     }
@@ -736,7 +756,7 @@ function writeLocal(d){
   catch(e){storageNotice('השינוי לא נשמר במכשיר. ייתכן שהאחסון מלא או חסום.');return false;}
 }
 /* every data change goes through save(): it stamps updatedAt and queues a cloud push */
-function save(){S.updatedAt=Date.now();const ok=writeLocal();if(ok)queuePush();return ok;}
+function save(){try{Object.assign(S,CleanTimeTimers.normalize(S));}catch(e){storageNotice('הנתונים לא תקינים ולא הוחלפו. יש לגבות אותם לפני המשך שימוש.');return false;}S.updatedAt=Date.now();const ok=writeLocal();if(ok)queuePush();return ok;}
 const $=id=>document.getElementById(id);
 $('appVer').textContent='גרסה '+APP_VERSION;
 
@@ -841,7 +861,7 @@ function confirmRecoveryDate(id){
   const date=parts?new Date(Number(parts[1]),Number(parts[2])-1,Number(parts[3]),12):null;
   $(id+'Confirmation').textContent=date&&!isNaN(date)?'התאריך שנבחר: '+date.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'}):'';
 }
-for(const id of ['oDate','aDate','sDate']){
+for(const id of ['oDate','aDate','sDate','tDate']){
   const input=$(id),message=document.createElement('span');
   message.id=id+'Error';message.className='msg err';message.setAttribute('role','alert');message.hidden=true;
   const confirmation=document.createElement('span');confirmation.id=id+'Confirmation';confirmation.className='date-confirmation';confirmation.setAttribute('aria-live','polite');
@@ -908,6 +928,7 @@ $('showMilestones').onchange=()=>{try{localStorage.setItem('cleantime-he-milesto
 
 /* ---------- Counter render ---------- */
 function render(){
+  renderAdditionalTimers();
   $('greet').textContent=S.name?`שלום, ${S.name}`:'זמן נקי';
   const chip=$('fromChip');
   chip.hidden=!S.from; chip.textContent=S.from?`החלמה מ${S.from}`:'';
@@ -1241,8 +1262,65 @@ $('editLinks').onclick=()=>{editing=!editing;if(!editing)S.links=S.links.filter(
 $('addLink').onclick=()=>{S.links.push({id:Date.now(),title:'',url:''});save();renderL();};
 
 /* ---------- Settings ---------- */
+let timerEditId=null;
+const timerLabel=timer=>timer.label||CleanTimeTimers.names[timer.category];
+const timerStart=timer=>new Date(timer.date+'T'+(timer.time||'00:00')+':00');
+function timerDescription(timer){
+ const start=timerStart(timer),now=new Date(),milestone=CleanTimeDates.milestones(start,now).at(-1);
+ return fmt(totalDays(start,now))+' ימים נקיים'+(milestone?' · '+milestone.label:'');
+}
+function renderAdditionalTimers(){
+ const others=(S.timers||[]).filter(t=>t.id!==S.primaryTimerId),list=$('additionalTimerList');
+ $('additionalTimers').hidden=!others.length;list.replaceChildren();
+ for(const timer of others){const li=document.createElement('li'),text=document.createElement('span');text.textContent=timerLabel(timer)+' — '+timerDescription(timer);li.append(text);list.append(li);}
+}
+function persistTimers(next){
+ const previous=S;S=CleanTimeTimers.project(next);
+ if(!save()){S=previous;return false;}
+ renderTimerSettings();render();fillSettings();return true;
+}
+function renderTimerSettings(){
+ $('timerSettings').hidden=!S.date;$('timerList').replaceChildren();
+ for(const timer of S.timers||[]){
+  const li=document.createElement('li'),content=document.createElement('div'),title=document.createElement('strong'),info=document.createElement('p'),actions=document.createElement('div');
+  li.style.flexWrap='wrap';content.style.width='100%';actions.className='row';actions.style.flexWrap='wrap';
+  title.textContent=timerLabel(timer)+(timer.id===S.primaryTimerId?' · ראשי':'');info.textContent=timerDescription(timer);content.append(title,info);
+  actions.append(actionButton('עריכה',()=>openTimer(timer)));
+  if(timer.id!==S.primaryTimerId)actions.append(actionButton('הגדרה כראשי',()=>persistTimers({...S,primaryTimerId:timer.id})));
+  const remove=actionButton('הסרה',async()=>{
+   const yes=await ask('הסרת מסלול החלמה','יוסר רק המסלול הזה. היומן וכל ההיסטוריה המשותפת יישמרו.',[{label:'הסרת המסלול',value:true,cls:'danger'},{label:'ביטול',value:false,cls:'ghost'}]);
+   if(!yes)return;
+   if(!S.timers?.some(t=>t.id===timer.id)||S.timers.length<2)return;
+   const timers=S.timers.filter(t=>t.id!==timer.id);
+   if(persistTimers({...S,timers,primaryTimerId:S.primaryTimerId===timer.id?timers[0].id:S.primaryTimerId}))closeTimer();
+  },'btn danger');remove.disabled=S.timers.length===1;
+  if(remove.disabled)remove.title='יש להשאיר לפחות מסלול החלמה אחד';
+  actions.append(remove);li.append(content,actions);$('timerList').append(li);
+ }
+}
+function closeTimer(){timerEditId=null;$('timerForm').hidden=true;$('addTimer').hidden=false;$('timerError').hidden=true;}
+function openTimer(timer){
+ timerEditId=timer?.id||null;$('tCategory').value=timer?.category||'other';$('tLabel').value=timer?.label||'';$('tDate').value=timer?.date||'';$('tTime').value=timer?.time||'';
+ $('tDate').max=todayKey();$('tDateError').hidden=true;$('tDateConfirmation').textContent='';$('timerError').hidden=true;$('timerForm').hidden=false;$('addTimer').hidden=true;$('tCategory').focus();
+}
+$('addTimer').onclick=()=>openTimer(null);$('cancelTimer').onclick=closeTimer;
+$('timerForm').onsubmit=async ev=>{
+ ev.preventDefault();if(!validateRecoveryDate('tDate')||!$('timerForm').reportValidity())return;
+ const old=(S.timers||[]).find(t=>t.id===timerEditId);
+ if(timerEditId&&!old){$('timerError').textContent='המסלול השתנה במכשיר אחר. יש לפתוח אותו מחדש.';$('timerError').hidden=false;return;}
+ const timer={...old,id:old?.id||crypto.randomUUID(),category:$('tCategory').value,label:$('tLabel').value.trim(),date:$('tDate').value,time:$('tTime').value};
+ if(old&&old.category!==timer.category)delete timer.legacyFrom;
+ if((S.timers||[]).some(t=>t.id!==timer.id&&t.category===timer.category&&timerLabel(t)===timerLabel(timer))){$('timerError').textContent='למסלול נוסף מאותו סוג יש לבחור שם אישי שונה.';$('timerError').hidden=false;return;}
+ if(old&&(old.date!==timer.date||old.time!==timer.time)){
+  const yes=await ask('עדכון תאריך המסלול','רק חישוב הזמן במסלול הזה ישתנה. שאר המסלולים וכל ההיסטוריה יישמרו.',[{label:'עדכון התאריך',value:true},{label:'ביטול',value:false,cls:'ghost'}]);if(!yes)return;
+  if(JSON.stringify(S.timers.find(t=>t.id===old.id))!==JSON.stringify(old)){$('timerError').textContent='המסלול השתנה במכשיר אחר. יש לפתוח אותו מחדש.';$('timerError').hidden=false;return;}
+ }
+ const timers=(S.timers||[]).filter(t=>t.id!==timer.id);timers.splice(old?S.timers.findIndex(t=>t.id===old.id):timers.length,0,timer);
+ if(persistTimers({...S,timers,primaryTimerId:S.primaryTimerId||timer.id}))closeTimer();
+};
 let pickColor=S.color;
 function fillSettings(){
+  renderTimerSettings();
   $('setTitle').textContent='הגדרות החלמה';
   renderSync();
   $('settingsFoot').hidden=!S.date||signedIn();
