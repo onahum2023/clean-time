@@ -29,6 +29,7 @@ async(page)=>{
  const files=new Set(['service-worker.js','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','assets/backend-config.js','assets/sync-crypto.js','assets/appearance.js','assets/analytics.js','assets/recovery-dates.js','assets/fonts/Assistant-Variable.ttf','assets/gong.wav']);
  const server=http.createServer((req,res)=>{
   const file=new URL(req.url,'http://localhost').pathname.slice(1);res.setHeader('Cache-Control','no-store');
+  if(version===newVersion)for(const {key,value} of JSON.parse(fs.readFileSync('vercel.json')).headers[0].headers)res.setHeader(key,value);
   if(!file||file==='index.html'){res.setHeader('Content-Type','text/html');res.end((version===oldVersion?oldHtml:html).replace(/const APP_VERSION='[^']+'/,"const APP_VERSION='"+version+"'"));return;}
   if(!files.has(file)){res.writeHead(404);res.end();return;}
   if(file.endsWith('.js'))res.setHeader('Content-Type','application/javascript');
@@ -53,6 +54,10 @@ async(page)=>{
   p=await c.newPage();await p.goto(updateOrigin);await p.waitForFunction(value=>document.getElementById('appVer').textContent.includes(value),newVersion);
   check(await p.evaluate(()=>JSON.parse(localStorage.getItem('cleantime-he-v1')).unknown==='נשמר'),'Safe reopen activates new shell without recovery loss');
   check(await p.evaluate(()=>window.CleanTimeBackend.backupDisabled===true),'Cached baseline upgrade replaces retired backend configuration');
+  check(await p.evaluate(async()=>{const name=(await caches.keys()).find(k=>k.startsWith('clean-time-shell-v1-'));return !!(await (await caches.open(name)).match('/')).headers.get('content-security-policy');}),'Updated cached HTML retains CSP response header');
+  await p.evaluate(()=>{const script=document.createElement('script');script.textContent='window.qaUnsafeInline=true';document.body.append(script);});
+  check(await p.evaluate(()=>!window.qaUnsafeInline),'Reopened cached shell enforces CSP against an unhashed script');
+  await c.setOffline(true);await p.reload();check(await p.locator('#counter').isVisible()&&await p.evaluate(()=>JSON.parse(localStorage.getItem('cleantime-he-v1')).unknown==='נשמר'),'Updated CSP-protected shell still reopens offline with local history');await c.setOffline(false);
   const keys=await p.evaluate(()=>caches.keys());check(keys.includes('clean-time-shell-v1-'+newVersion)&&!keys.includes('clean-time-shell-v1-'+oldVersion)&&keys.includes('unrelated-synthetic-cache'),'Upgrade cleans only its obsolete shell cache');
   const urls=await p.evaluate(async()=>{const cache=await caches.open('clean-time-shell-v1-'+(await caches.keys()).find(k=>k.startsWith('clean-time-shell-v1-')).slice('clean-time-shell-v1-'.length));return (await cache.keys()).map(r=>r.url);});check(!urls.some(u=>u.includes('?')||u.includes('supabase')||u.includes('auth')),'Cache contains no callback/auth/API URLs');
  }finally{await c.close();await new Promise(resolve=>server.close(resolve));}
