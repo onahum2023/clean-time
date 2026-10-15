@@ -193,8 +193,10 @@ h3{font-family:var(--sans);font-weight:600;font-size:1.25rem;margin:0 0 4px}
 .sync .sub{margin-bottom:12px}
 .sync form{display:grid;gap:8px}
 .sync .who{margin:0 0 2px;overflow-wrap:anywhere}
-.msg{font-size:.9rem;margin:10px 0 0;color:var(--accent)}
+.msg{font-size:.9rem;margin:10px 0 0;color:var(--accent-ink)}
 .msg.err{color:#B3413B}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .msg.err{color:#FFB4AB}}
+:root[data-theme="dark"] .msg.err{color:#FFB4AB}
 .msg:empty{display:none}
 .modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px}
 .modal .box{background:var(--surface);border-radius:18px;padding:24px;width:100%;max-width:420px}
@@ -703,7 +705,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.15.12';
+const APP_VERSION='2026.10.15.15';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};

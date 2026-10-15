@@ -11,8 +11,8 @@ Roman, Tahoma and Verdana are system font requests, not redistributed font files
 available glyphs depend on the device and readable fallbacks are explicit. No
 remote font/CDN dependency was added. Native device inspection remains necessary.
 
-`appearance-palette-qa.js` evaluates all 540 background/font/accent/light-dark
-combinations for 4.5:1 body, muted and button contrast and 3:1 focus contrast. It
+`appearance-palette-qa.js` evaluates all 990 background/font/accent/light-dark
+combinations (including all six profile colors) for 4.5:1 body, muted, button, status and error contrast and 3:1 focus contrast. It
 also checks persistence, reset, unchanged recovery bytes and 360px Hebrew layout.
 The prior appearance/feedback suite remains required. System-font rendering and
 physical-device preferences need manual UAT; technical contrast is not font UAT.
