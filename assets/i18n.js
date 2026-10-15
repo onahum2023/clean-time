@@ -2,8 +2,10 @@
 (function(){
  'use strict';
  const key='cleantime-language',catalog=window.CleanTimeMessages;
- const production=['clean-time.app','www.clean-time.app','clean-time-eight.vercel.app'].includes(location.hostname);
- let language='he';try{const stored=localStorage.getItem(key);if(['he','en','ru'].includes(stored)&&(!production||stored==='he'))language=stored;}catch(e){}
+ const backend=window.CleanTimeBackend;
+ const production=backend?.environment==='production'||['clean-time.app','www.clean-time.app','clean-time-eight.vercel.app'].includes(location.hostname);
+ const draftsAllowed=!production&&(backend?.environment==='preview'||['127.0.0.1','localhost'].includes(location.hostname));
+ let language='he';try{const stored=localStorage.getItem(key);if(['he','en','ru'].includes(stored)&&(draftsAllowed||stored==='he'))language=stored;}catch(e){}
  const t=value=>{
   if(typeof value!=='string'||language==='he')return value;
   const normalized=value.trim().replace(/\s+/g,' '),translated=catalog[language]?.[normalized]??catalog.en[normalized];
@@ -12,6 +14,10 @@
  };
  const apply=()=>{
   if(language!=='he')document.title=t('זמן נקי');
+  // Legacy recovery options originally use implicit text values. Pin their
+  // original identifiers before translating labels so language never rewrites
+  // category data during fresh guest/account onboarding.
+  for(const id of ['oFrom','aFrom'])for(const option of document.getElementById(id)?.options||[])if(!option.hasAttribute('value'))option.setAttribute('value',option.textContent);
   const readingLanguage=document.getElementById('readingLanguage');if(readingLanguage){if(language==='he')readingLanguage.remove();else readingLanguage.textContent=t('עברית');}
   for(const el of document.querySelectorAll('[data-i18n]'))el.textContent=t(el.dataset.i18n);
   for(const attr of ['aria-label','placeholder','title'])for(const el of document.querySelectorAll('[data-i18n-'+attr+']'))el.setAttribute(attr,t(el.getAttribute('data-i18n-'+attr)));
@@ -22,11 +28,11 @@
   const accent=document.getElementById('accentChoice');if(accent)accent.closest('label').querySelector('span').textContent=t('צבע הדגשה במכשיר הזה');
   const fontNote='גופני מערכת יוצגו אם הם זמינים במכשיר. אחרת יופיע גופן חלופי קריא.';
   for(const note of document.querySelectorAll('#settings .note'))if(note.textContent===fontNote)note.textContent=t(fontNote);
-  const select=document.getElementById('languageChoice');if(select){select.value=language;for(const option of select.options)if(option.value!=='he')option.disabled=production;}
+  const select=document.getElementById('languageChoice');if(select){select.value=language;for(const option of select.options)if(option.value!=='he')option.disabled=!draftsAllowed;}
  };
  document.documentElement.lang=language;document.documentElement.dir=language==='he'?'rtl':'ltr';
  window.CleanTimeI18n={t,language,locale:{he:'he-IL',en:'en-US',ru:'ru-RU'}[language],production,apply,setLanguage:value=>{
-  if(!['he','en','ru'].includes(value)||production&&value!=='he')return false;
+  if(!['he','en','ru'].includes(value)||!draftsAllowed&&value!=='he')return false;
   try{localStorage.setItem(key,value);return true;}catch(e){return false;}
  }};
  document.addEventListener('DOMContentLoaded',apply);
