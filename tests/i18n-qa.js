@@ -40,6 +40,20 @@ async(page)=>{
    check(await p.evaluate(key=>{const state=JSON.parse(localStorage.getItem(key));return state.from==='סמים'&&state.timers[0].category==='drugs';},key),'Fresh account stores language-independent recovery category '+language);
   }finally{await context.close();}
  }
+ for(const language of ['he','en','ru']){
+  const context=await page.context().browser().newContext();
+  try{
+   const multiple=require(process.cwd()+'/assets/recovery-timers.js').normalize(fixture);multiple.timers.push({id:'custom-drugs',category:'drugs',label:'Drugs',date:'2025-01-01',time:''});
+   await context.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
+   await context.addInitScript(({language,multiple,key})=>{localStorage.setItem('cleantime-language',language);if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(multiple));},{language,multiple,key});
+   const p=await context.newPage();await p.goto(origin);await p.locator('#openSettings').click();await p.locator('#timerList li').nth(1).getByRole('button').first().click();await p.locator('#tDate').fill('2025-02-01');await p.locator('#timerForm button[type=submit]').click();await p.locator('#askB button').first().click();
+   check(await p.evaluate(key=>{const state=JSON.parse(localStorage.getItem(key));return state.timers.length===2&&state.timers[1].date==='2025-02-01'&&state.timers[1].label==='Drugs';},key),'Default/custom labels remain editable independently of display language '+language);
+   for(const label of ['Drugs','']){
+    await p.locator('#addTimer').click();await p.locator('#tCategory').selectOption('drugs');await p.locator('#tLabel').fill(label);await p.locator('#tDate').fill('2025-01-01');await p.locator('#timerForm button[type=submit]').click();
+    check(await p.locator('#timerError').isVisible()&&await p.evaluate(key=>JSON.parse(localStorage.getItem(key)).timers.length===2,key),'Stable duplicate custom/default identity rejected '+language+'/'+label);await p.locator('#cancelTimer').click();
+   }
+  }finally{await context.close();}
+ }
  for(const language of ['en','ru']){
   const context=await page.context().browser().newContext({viewport:{width:360,height:800}});let cloud=null,uploads=0;
   try{

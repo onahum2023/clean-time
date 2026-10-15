@@ -1259,8 +1259,8 @@ function renderL(){
     const li=document.createElement('li');li.className='link-item';
     if(editing){
       const w=document.createElement('div');w.className='link-edit';
-      const ti=document.createElement('input');ti.type='text';ti.value=l.title;ti.placeholder='כותרת';ti.setAttribute('aria-label','כותרת');
-      const ui=document.createElement('input');ui.type='text';ui.inputMode='url';ui.value=l.url;ui.placeholder='https://';ui.dir='ltr';ui.setAttribute('aria-label','כתובת');
+      const ti=document.createElement('input');ti.type='text';ti.value=l.title;ti.placeholder=translateUI('כותרת');ti.setAttribute('aria-label',translateUI('כותרת'));
+      const ui=document.createElement('input');ui.type='text';ui.inputMode='url';ui.value=l.url;ui.placeholder='https://';ui.dir='ltr';ui.setAttribute('aria-label',translateUI('כתובת'));
       ti.oninput=()=>{l.title=ti.value;save();}; ui.oninput=()=>{const raw=ui.value.trim(),url=safeLinkUrl(raw);ui.setCustomValidity(raw&&!url?LINK_ERROR:'');if(!raw||url){l.url=url||'';save();}};ui.onchange=()=>ui.reportValidity();
       const del=document.createElement('button');del.className='del';del.innerHTML='&times;';del.setAttribute('aria-label',translateUI('מחיקת קישור'));
       del.onclick=()=>{S.links=S.links.filter(x=>x.id!==l.id);save();renderL();};
@@ -1281,6 +1281,7 @@ $('addLink').onclick=()=>{S.links.push({id:Date.now(),title:'',url:''});save();r
 /* ---------- Settings ---------- */
 let timerEditId=null;
 const timerLabel=timer=>timer.label||translateUI(CleanTimeTimers.names[timer.category]);
+const timerIdentityLabel=timer=>(timer.label||'').trim();
 const timerStart=timer=>new Date(timer.date+'T'+(timer.time||'00:00')+':00');
 const localizedMilestone=milestone=>CleanTimeI18n.language==='he'?milestone.label:fmt(milestone.count)+' '+translateUI(milestone.unit);
 function timerDescription(timer){
@@ -1312,7 +1313,7 @@ function renderTimerSettings(){
    const timers=S.timers.filter(t=>t.id!==timer.id);
    if(persistTimers({...S,timers,primaryTimerId:S.primaryTimerId===timer.id?timers[0].id:S.primaryTimerId}))closeTimer();
   },'btn danger');remove.disabled=S.timers.length===1;
-  if(remove.disabled)remove.title='יש להשאיר לפחות מסלול החלמה אחד';
+  if(remove.disabled)remove.title=translateUI('יש להשאיר לפחות מסלול החלמה אחד');
   actions.append(remove);li.append(content,actions);$('timerList').append(li);
  }
 }
@@ -1328,7 +1329,7 @@ $('timerForm').onsubmit=async ev=>{
  if(timerEditId&&!old){$('timerError').textContent=translateUI('המסלול השתנה במכשיר אחר. יש לפתוח אותו מחדש.');$('timerError').hidden=false;return;}
  const timer={...old,id:old?.id||crypto.randomUUID(),category:$('tCategory').value,label:$('tLabel').value.trim(),date:$('tDate').value,time:$('tTime').value};
  if(old&&old.category!==timer.category)delete timer.legacyFrom;
- if((S.timers||[]).some(t=>t.id!==timer.id&&t.category===timer.category&&timerLabel(t)===timerLabel(timer))){$('timerError').textContent=translateUI('למסלול נוסף מאותו סוג יש לבחור שם אישי שונה.');$('timerError').hidden=false;return;}
+ if((S.timers||[]).some(t=>t.id!==timer.id&&t.category===timer.category&&timerIdentityLabel(t)===timerIdentityLabel(timer))){$('timerError').textContent=translateUI('למסלול נוסף מאותו סוג יש לבחור שם אישי שונה.');$('timerError').hidden=false;return;}
  if(old&&(old.date!==timer.date||old.time!==timer.time)){
   const yes=await ask(translateUI('עדכון תאריך המסלול'),translateUI('רק חישוב הזמן במסלול הזה ישתנה. שאר המסלולים וכל ההיסטוריה יישמרו.'),[{label:translateUI('עדכון התאריך'),value:true},{label:translateUI('ביטול'),value:false,cls:'ghost'}]);if(!yes)return;
   if(JSON.stringify(S.timers.find(t=>t.id===old.id))!==JSON.stringify(old)){$('timerError').textContent=translateUI('המסלול השתנה במכשיר אחר. יש לפתוח אותו מחדש.');$('timerError').hidden=false;return;}
