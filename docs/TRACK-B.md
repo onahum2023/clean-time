@@ -33,3 +33,12 @@ No live staging runner should be invoked against the retired backend.
 - #17: any privileged deletion endpoint needs isolated service verification and
   explicit deployment/configuration authorization before production use.
 - Nora reviews sensitive changes through the owner's authorized Slack workflow.
+
+Independent review correction: Preview/development/disabled config is now
+host-independent and authoritative. Only explicit production configuration on
+recognized production hosts can use production. Source review has no backend;
+synthetic QA injects an explicit loopback emulator target and mocks the SDK.
+Missing build environment produces disabled development output; unknown modes
+fail. Foundation app/worker version is 2026.10.15.10. Added 42 origin/startup/build
+checks and upgraded the real baseline cached shell to the new disabled shell
+across close/reopen (17 offline checks). Configuration/account checks: 25 + 27.
