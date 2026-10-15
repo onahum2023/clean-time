@@ -44,3 +44,13 @@ English/Russian native-speaker review, complete Russian copy/plurals, physical
 font rendering, assistive technology and real Auth/email continuation remain manual
 release requirements. Desktop technical checks cannot approve recovery terminology.
 Keep #45 open for those gates and the Russian completion work.
+
+Final review corrections: legacy guest/account option values are pinned before
+translating their display text. Duplicate-timer checks compare persisted category
+and trimmed custom-label identity; translated category names are presentation
+only. Fresh onboarding and the same default/custom `Drugs` timer fixture are
+covered in all three languages. Backend config loads before localization so all
+production builds (including immutable Vercel URLs), recognized production hosts
+and unknown non-Preview origins keep unreviewed languages disabled. Explicit
+Preview and loopback environments can use the drafts. Reading-editor labels and
+the last-timer tooltip also pass through the catalog.
