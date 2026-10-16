@@ -680,7 +680,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.12.12';
+const APP_VERSION='2026.10.15.10';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -1323,11 +1323,13 @@ $('reset').onclick=async()=>{
 const PRODUCTION_SUPA_URL='https://aefhjgmiwgajdhgyhelm.supabase.co';
 const PRODUCTION_SUPA_KEY='sb_publishable_0R5rSCEhM5INCy-5zLwGsA_j51Ty39v';
 const backend=window.CleanTimeBackend;
-const previewHost=location.hostname.endsWith('.vercel.app')&&location.hostname!=='clean-time-eight.vercel.app';
-const stagingConfig=backend?.environment==='preview'&&backend.url==='https://uffvbfmfsesdhjzzjiyu.supabase.co'&&/^sb_publishable_[A-Za-z0-9_-]+$/.test(backend.key||'');
-// A missing/incorrect Preview asset must never silently connect to production.
-const SUPA_URL=previewHost?(stagingConfig?backend.url:null):PRODUCTION_SUPA_URL;
-const SUPA_KEY=previewHost?(stagingConfig?backend.key:null):PRODUCTION_SUPA_KEY;
+const productionHost=['clean-time.app','www.clean-time.app','clean-time-eight.vercel.app'].includes(location.hostname);
+const productionConfig=productionHost&&backend?.environment==='production'&&backend.url===PRODUCTION_SUPA_URL&&backend.key===PRODUCTION_SUPA_KEY&&!backend.backupDisabled;
+// An explicitly configured local emulator is permitted only from loopback. It
+// cannot select any remote backend. The source default has no live connection.
+const localConfig=location.hostname==='127.0.0.1'&&backend?.environment==='local'&&backend.url==='http://127.0.0.1:54321'&&/^sb_publishable_[A-Za-z0-9_-]+$/.test(backend.key||'')&&!backend.backupDisabled;
+const SUPA_URL=productionConfig||localConfig?backend.url:null;
+const SUPA_KEY=productionConfig||localConfig?backend.key:null;
 const SUPA_JS='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js';
 const SUPA_SRI='sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok';
 const AUTH_KEY='cleantime-he-auth', SYNC_KEY='cleantime-he-sync', CRYPTO_KEY='cleantime-he-crypto';

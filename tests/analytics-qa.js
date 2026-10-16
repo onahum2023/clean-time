@@ -19,8 +19,8 @@ async(page)=>{
   for(const key of ['scriptSrc','viewEndpoint','eventEndpoint'])for(const value of ['https://external.invalid/x','//external.invalid/x','/x/../view','/x/./view','/x?email=PRIVATE','/x#token','/x%2fsecret','/x\\secret','/x" onload="bad',null,4,''])check(build('production',{[key]:value}).status!==0,'Invalid '+key+' rejected '+JSON.stringify(value));
   check(build('preview',{scriptSrc:'invalid-unused'}, {VERCEL_OBSERVABILITY_CLIENT_CONFIG:'invalid-unused-json'}).status===0,'Preview ignores unused malformed observability configuration');
   check(fs.readFileSync(path.join(tmp,'index.html'),'utf8').includes('data-enabled="false"'),'Preview instrumentation disabled');
-  check(build('preview',{}, {CLEAN_TIME_SUPABASE_URL:'https://aefhjgmiwgajdhgyhelm.supabase.co'}).status!==0,'Preview production backend rejected');
-  check(build('preview',{}, {CLEAN_TIME_SUPABASE_PUBLISHABLE_KEY:''}).status!==0,'Preview missing public key rejected');
+  check(build('preview',{}, {CLEAN_TIME_SUPABASE_URL:'https://aefhjgmiwgajdhgyhelm.supabase.co'}).status===0&&fs.readFileSync(path.join(tmp,'assets/backend-config.js'),'utf8').includes('"url":null'),'Preview production input remains disabled');
+  check(build('preview',{}, {CLEAN_TIME_SUPABASE_PUBLISHABLE_KEY:''}).status===0&&fs.readFileSync(path.join(tmp,'assets/backend-config.js'),'utf8').includes('"backupDisabled":true'),'Preview without a key remains disabled');
   check(build('production',{}, {CLEAN_TIME_ANALYTICS_CUSTOM_EVENTS:'false'}).status===0&&fs.readFileSync(path.join(tmp,'index.html'),'utf8').includes('data-custom-events="false"'),'Pageviews-only option for unsupported plan');
  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
  // Unit boundary: extra data is stripped, unknown events/tools/URLs are rejected.
@@ -60,6 +60,10 @@ async(page)=>{
     if(req.method()==='POST')calls.push(JSON.parse(req.postData()));check(!req.headers().referer,'Analytics HTTP request excludes sensitive Referer header');return route.fulfill({status:200,body:'{}'});
    }
    if(url.pathname==='/service-worker.js')return route.abort();
+   if(url.pathname==='/assets/backend-config.js'){
+    const source=fs.readFileSync('index.html','utf8');
+    return route.fulfill({contentType:'application/javascript',body:'window.CleanTimeBackend='+JSON.stringify({environment:'production',url:source.match(/const PRODUCTION_SUPA_URL='([^']+)'/)[1],key:source.match(/const PRODUCTION_SUPA_KEY='([^']+)'/)[1]})});
+   }
    let file=path.resolve(process.cwd(),url.pathname==='/'?'index.html':'.'+url.pathname);
    if(fs.existsSync(file)&&fs.statSync(file).isDirectory())file=path.join(file,'index.html');
    if(!file.startsWith(process.cwd()+'/')||!fs.existsSync(file))return route.fulfill({status:404,body:''});
@@ -97,7 +101,10 @@ async(page)=>{
  check(s.calls.filter(x=>!x.en&&x.o===origin+'/app/journal').length===1&&s.calls.filter(x=>x.en==='tool_opened'&&x.ed.tool==='journal').length===1,'Tool navigation: one pageview and one tool event');
  await s.p.locator('#jNew').click();await s.p.locator('#jText').fill('PRIVATE_JOURNAL');await s.p.locator('#jDone').click();await s.settle();
  check(s.calls.filter(x=>!x.en&&x.o===origin+'/app/journal').length===1,'Editor history/rerender does not duplicate tool pageview');
- await s.p.evaluate(()=>history.back());await s.settle();await s.p.evaluate(()=>history.forward());await s.settle();
+ await s.p.evaluate(()=>history.back());await s.p.waitForFunction(()=>!document.getElementById('counter').hidden);await s.settle();
+ await s.p.evaluate(()=>history.forward());await s.p.waitForFunction(()=>!document.getElementById('journal').hidden);await s.settle();
+ const historyDeadline=Date.now()+5000;
+ while(s.calls.filter(x=>!x.en&&x.o===origin+'/app/journal').length<2&&Date.now()<historyDeadline)await new Promise(resolve=>setTimeout(resolve,25));
  check(s.calls.filter(x=>!x.en&&x.o===origin+'/app/journal').length===2,'Back/Forward tracks real screen return once');
  await s.p.locator('#openSettings').click();
  const download=s.p.waitForEvent('download');await s.p.locator('#exportRecovery').click();await download;await s.settle();

@@ -86,7 +86,7 @@ async(page)=>{
  }
  await s.p.setViewportSize({width:360,height:800});await s.p.emulateMedia({colorScheme:'light'});
 
- await s.p.screenshot({path:'/private/tmp/clean-time-encryption-360.png',fullPage:true,mask:[s.p.locator('#recoveryOutput')],maskColor:'#e4dfd5'});
+ await s.p.screenshot({path:'/tmp/clean-time-encryption-360.png',fullPage:true,mask:[s.p.locator('#recoveryOutput')],maskColor:'#e4dfd5'});
  check(await s.p.locator('#recoveryOutput').getAttribute('dir')==='ltr'&&(await s.p.locator('#recoveryGenerated').innerText()).includes('אינו סיסמת'),'LTR recovery key and passwordless explanation');
  await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('גיבוי מוצפן פעיל'));
  check(await s.p.evaluate(()=>window.qaAnalytics.filter(n=>n==='backup_activated').length===1),'Analytics backup event follows successful verified activation once');

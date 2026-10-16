@@ -1,14 +1,15 @@
 const fs=require('node:fs'),path=require('node:path');
 const ROOT=path.resolve(__dirname,'..'),OUT=path.resolve(process.env.CT_BUILD_OUTPUT||path.join(ROOT,'dist'));
 if(OUT===ROOT||OUT===path.parse(OUT).root)throw new Error('Unsafe build output');
-const env=process.env.VERCEL_ENV||'production',source=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
+const env=process.env.VERCEL_ENV||'development',source=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
+if(!['production','preview','development'].includes(env))throw new Error('Unknown build environment');
 const productionUrl=source.match(/const PRODUCTION_SUPA_URL='([^']+)'/)[1];
 const productionKey=source.match(/const PRODUCTION_SUPA_KEY='([^']+)'/)[1];
 let config={environment:'production',url:productionUrl,key:productionKey};
-if(env==='preview'){
- const url=process.env.CLEAN_TIME_SUPABASE_URL,key=process.env.CLEAN_TIME_SUPABASE_PUBLISHABLE_KEY;
- if(url!=='https://uffvbfmfsesdhjzzjiyu.supabase.co'||!/^sb_publishable_[A-Za-z0-9_-]+$/.test(key||''))throw new Error('Preview requires the isolated staging URL and a publishable key');
- config={environment:'preview',url,key};
+if(env!=='production'){
+ // The paid staging project was retired. Preview remains guest-only, even if
+ // obsolete branch variables are still present. Never fall back to production.
+ config={environment:env,url:null,key:null,backupDisabled:true};
 }
 fs.mkdirSync(OUT,{recursive:true});
 for(const file of ['index.html','robots.txt','sitemap.xml','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','service-worker.js'])fs.copyFileSync(path.join(ROOT,file),path.join(OUT,file));

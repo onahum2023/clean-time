@@ -8,8 +8,19 @@ if(process.env.QA_BASE_URL){
  if(url.origin!==process.env.QA_BASE_URL||url.username||url.password||(!local&&!preview))throw new Error('QA_BASE_URL must be an exact loopback HTTP or HTTPS Vercel Preview origin');
 }
 (async()=>{
- const browser=await (process.env.QA_ENGINE==='webkit'?webkit:chromium).launch({headless:true});
+ const browser=await (process.env.QA_ENGINE==='webkit'?webkit:chromium).launch({headless:true,...(process.env.QA_CHROMIUM_EXECUTABLE&&process.env.QA_ENGINE!=='webkit'?{executablePath:process.env.QA_CHROMIUM_EXECUTABLE}:{}),...(process.env.QA_NO_SANDBOX==='1'?{args:['--no-sandbox']}: {})});
  require('./preview-access.js').attachPreviewAccess(browser);
+ // Explicit local-emulator configuration for synthetic SDK mocks. Source/local
+ // builds without this config stay offline and never default to production.
+ const newContext=browser.newContext.bind(browser);
+ browser.newContext=async options=>{
+  const context=await newContext(options);
+  await context.route('**/assets/backend-config.js',route=>{
+   const url=new URL(route.request().url());
+   return url.hostname==='127.0.0.1'?route.fulfill({contentType:'application/javascript',body:'window.CleanTimeBackend={environment:"local",url:"http://127.0.0.1:54321",key:"sb_publishable_SYNTHETIC_QA_ONLY"};'}):route.fallback();
+  });
+  return context;
+ };
  let total=0,failed=0;
  try{
   const suites=process.argv.slice(2).length?process.argv.slice(2):fs.readdirSync('tests').filter(f=>f.endsWith('-qa.js')&&f!=='run-qa.js').sort();
