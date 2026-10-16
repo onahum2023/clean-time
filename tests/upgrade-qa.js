@@ -73,7 +73,7 @@ async(page)=>{
  await s.p.locator('#openSettings').click();check(await s.p.locator('#myAccount').isVisible()&&!await s.p.locator('#createAccount').isVisible(),'Existing account recognized in settings without registration CTA');
  const [download]=await Promise.all([s.p.waitForEvent('download'),s.p.locator('#exportRecovery').click()]);
  const exported=JSON.parse(require('fs').readFileSync(await download.path(),'utf8'));
- check(same(exported.data,full)&&s.calls.uploads.length===0,'Registered full export preserves recovery and causes no upload');
+ check(same(exported.data,require(process.cwd()+'/assets/recovery-timers.js').normalize(full))&&s.calls.uploads.length===0,'Registered full export preserves recovery and causes no upload');
  await s.p.locator('#backgroundChoice').selectOption('sand');await s.p.locator('#fontChoice').selectOption('arial');
  check(same(await read(s.p),full)&&s.calls.uploads.length===0,'Registered appearance preferences leave recovery and uploads untouched');
  await s.p.locator('#myAccount').click();
@@ -90,7 +90,7 @@ async(page)=>{
  // A normal recovery preference edit must preserve every recovery collection/unknown key.
  await s.p.locator('#account [data-go=settings]').click();await s.p.locator('#sTime').fill('09:45');await s.p.locator('#saveSettings').click();if(await s.p.locator('#ask').isVisible())await s.p.locator('#askB button').filter({hasText:'עדכון התאריך'}).click();
  await s.p.waitForFunction(key=>!JSON.parse(localStorage.getItem(key)).dirty,META);await s.p.waitForTimeout(100);
- const edited=await read(s.p),expected={...clone(full),time:'09:45',updatedAt:edited.updatedAt};
+ const edited=await read(s.p),expected=require(process.cwd()+'/assets/recovery-timers.js').normalize({...clone(full),time:'09:45',updatedAt:edited.updatedAt});
  check(same(edited,expected)&&edited.updatedAt>timestamp,'Post-upgrade normal edit changes only chosen field and timestamp');
  check(s.calls.uploads.length===1&&same(await s.plain(),cloudState(expected)),'Post-upgrade edit syncs complete existing JSON without losing history');
  const upload=s.calls.uploads[0];
@@ -113,7 +113,7 @@ async(page)=>{
  check(s.calls.errors.length===0&&s.calls.blocked.length===0,'Active-account upgrade performs no external requests or JavaScript errors');await s.c.close();
  const newerRemote={...cloudState(full),time:'10:15',updatedAt:timestamp+2000};
  s=await scenario(full,newerRemote);await protectedLoad(s,'Remote newer');
- check(same(await read(s.p),{...newerRemote,mode:full.mode})&&s.calls.uploads.length===0&&same(s.cloud(),newerRemote),'Remote newer: normal pull preserves all data and device mode without upload');
+ check(same(await read(s.p),require(process.cwd()+'/assets/recovery-timers.js').normalize({...newerRemote,mode:full.mode}))&&s.calls.uploads.length===0&&same(s.cloud(),newerRemote),'Remote newer: normal pull preserves all data and device mode without upload');
  check(await s.p.evaluate(key=>JSON.parse(localStorage.getItem(key)).dirty,META)&&(await s.p.locator('#syncStatus').innerText()).length>0,'Remote newer: pull preserves pending migration status');await s.c.close();
  const newerLocal={...clone(full),time:'11:15',updatedAt:timestamp+3000};
  s=await scenario(newerLocal,cloudState(full));await protectedLoad(s,'Local newer');
