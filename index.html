@@ -629,7 +629,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M-12 134Q36 43 117 17M-4 152Q40 63 129 35M55 49l-5-13m31-2 2-14m21 16 10-10M33 69l-12-7"/></svg>
       <div class="page-heading"><h2>אודות זמן נקי</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M8 27h7l6-3c3-1 5 3 2 5l-5 2m-3-4 1-6c1-3 4-2 4 0v4m3 4 8-4c4-2 6 2 3 4l-11 7H8"/><path d="M28 9v5m-7 0 3 3m11-3-3 3"/></svg></div>
       <p>זמן נקי היא מרחב פשוט למי שבהחלמה: לזכור את הדרך שעברת, ולהיעזר בכלים קטנים להיום.</p>
-      <p>האפליקציה חינמית, בלי פרסומות, בלי מעקב אחר פעולות החלמה ובלי לחץ מסחרי. מדידה אנונימית מצומצמת סופרת טעינות של דף הבית בלבד.</p>
+      <p>האפליקציה חינמית, בלי פרסומות, בלי מעקב אחר פעולות החלמה ובלי לחץ מסחרי. מדידה אנונימית ללא עוגיות באמצעות Vercel Web Analytics כוללת ביקורים ציבוריים, מסכי אפליקציה קבועים ופעולות מוצר מצרפיות שאושרו מראש. תוכן החלמה ופרטי חשבון אינם נשלחים למדידה. פרטים במדיניות הפרטיות.</p>
       <p>האפליקציה אינה קשורה לאנ-איי (מכורים אנונימיים) ואינה מטעמם. הקישורים לאנ-איי ישראל מופיעים לנוחות בלבד.</p>
       <p>זו לא אפליקציה רפואית ולא שירות חירום.<br>צריכים עזרה עכשיו?</p>
       <ul class="help">
@@ -652,7 +652,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   </section>
 </div>
 
-<div class="editor" id="jEditor" hidden role="dialog" aria-label="רשומה ביומן">
+<div class="editor" id="jEditor" hidden role="dialog" aria-modal="true" aria-label="רשומה ביומן">
   <div class="bar">
     <button class="btn ghost" id="jDone">סיום</button>
     <time id="jWhen"></time>
@@ -680,7 +680,7 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 <script src="assets/recovery-dates.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.15.10';
+const APP_VERSION='2026.10.15.11';
 const KEY='cleantime-he-v1';
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
@@ -1089,12 +1089,14 @@ function renderJ(){
     li.appendChild(t);ul.appendChild(li);
   });
 }
+let journalReturnFocus=null;
 function openJ(entry){
+  journalReturnFocus=document.activeElement;
   jCur=entry||{id:uid(),text:'',created:Date.now(),updated:Date.now()};
   $('jText').value=jCur.text; $('jWhen').textContent=fmtWhen(jCur.created); $('jSaved').textContent='';
   $('jEditor').hidden=false;
   try{history.pushState({screen:'journal',j:1,entryId:jCur.id},'');}catch(e){}
-  if(!entry)$('jText').focus();
+  syncModalFocus();$('jText').focus();
 }
 /* saves the open entry; an empty entry is removed instead */
 function commitJ(){
@@ -1110,7 +1112,7 @@ function commitJ(){
     jCur=e; $('jSaved').textContent=save()?'נשמר':'לא נשמר במכשיר';
   }
 }
-function closeJ(){commitJ();jCur=null;$('jEditor').hidden=true;renderJ();}
+function closeJ(){commitJ();jCur=null;$('jEditor').hidden=true;syncModalFocus();renderJ();if(journalReturnFocus?.isConnected&&journalReturnFocus.getClientRects().length)journalReturnFocus.focus();else $('jNew').focus();}
 function leaveJ(){if(history.state&&history.state.j)history.back();else closeJ();}
 $('jNew').onclick=()=>openJ(null);
 $('jText').oninput=()=>{$('jSaved').textContent='';clearTimeout(jTimer);jTimer=setTimeout(commitJ,600);};
@@ -1127,7 +1129,7 @@ window.addEventListener('popstate',ev=>{
   if(tab==='auth')openAuth(state.authMode||'login',false);else show(tab,false);
   if(tab==='journal'&&state&&state.j){
     const entry=S.journal.find(e=>e.id===state.entryId);
-    if(entry){jCur=entry;$('jText').value=entry.text;$('jWhen').textContent=fmtWhen(entry.created);$('jSaved').textContent='';$('jEditor').hidden=false;}
+    if(entry){jCur=entry;$('jText').value=entry.text;$('jWhen').textContent=fmtWhen(entry.created);$('jSaved').textContent='';$('jEditor').hidden=false;syncModalFocus();$('jText').focus();}
   }
 });
 window.addEventListener('pagehide',commitJ);
@@ -1428,16 +1430,34 @@ function renderSync(){
 }
 
 /* a modal with buttons; resolves with the chosen button's value */
+function activeModal(){return !$('ask').hidden?$('ask'):!$('jEditor').hidden?$('jEditor'):null;}
+function syncModalFocus(){
+  const modal=activeModal();document.querySelector('.app').inert=!!modal;$('tabs').inert=!!modal;
+  $('jEditor').inert=!!modal&&modal!==$('jEditor');
+}
+const modalFocusable=modal=>[...modal.querySelectorAll('button,input,textarea,select,a[href],[tabindex]')].filter(el=>!el.disabled&&el.tabIndex>=0&&el.getClientRects().length);
+document.addEventListener('focusin',ev=>{const modal=activeModal();if(modal&&!modal.contains(ev.target))modalFocusable(modal)[0]?.focus();});
+document.addEventListener('keydown',ev=>{
+  const modal=activeModal();if(!modal)return;
+  if(ev.key==='Escape'&&modal===$('jEditor')){ev.preventDefault();leaveJ();return;}
+  if(ev.key==='Tab'){
+    const items=modalFocusable(modal),first=items[0],last=items.at(-1);
+    if(!first){ev.preventDefault();return;}
+    if(ev.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){ev.preventDefault();last.focus();}
+    else if(!ev.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){ev.preventDefault();first.focus();}
+  }
+});
 function ask(title,text,buttons){
+  const returnFocus=document.activeElement;
   return new Promise(res=>{
     $('askT').textContent=title; $('askP').textContent=text;
     const box=$('askB'); box.innerHTML='';
     buttons.forEach(b=>{
       const el=document.createElement('button');el.className='btn'+(b.cls?' '+b.cls:'');el.textContent=b.label;
-      el.onclick=()=>{$('ask').hidden=true;res(b.value);};
+      el.onclick=()=>{$('ask').hidden=true;syncModalFocus();if(returnFocus?.isConnected&&returnFocus.getClientRects().length)returnFocus.focus();res(b.value);};
       box.appendChild(el);
     });
-    $('ask').hidden=false; box.firstChild.focus();
+    $('ask').hidden=false;syncModalFocus();box.firstChild.focus();
   });
 }
 
