@@ -59,12 +59,30 @@ async(page)=>{
   const p=await context.newPage();await p.goto(origin);await p.locator('#onboardingLogin').click();await p.locator('#authCreate').click();
   await p.locator('#aDate').fill('2024-01-01');await p.locator('#aFrom').selectOption('סמים');await p.locator('#lEmail').fill('synthetic@example.invalid');await p.locator('#aAddSecond').check();await p.locator('#aSecondCategory').selectOption('alcohol');await p.locator('#aSecondDate').fill('2099-01-01');await p.locator('#lSend').click();
   check(await p.evaluate(()=>qaRequests.length)===0&&await p.locator('#aSecondDateError').isVisible(),'Future second date blocks mocked account request');
+  p.once('dialog',dialog=>dialog.dismiss());await p.locator('[data-language=en]').click();
+  check(await p.locator('html').getAttribute('lang')==='he'&&await p.locator('#aDate').inputValue()==='2024-01-01'&&await p.locator('#aSecondDate').inputValue()==='2099-01-01','Canceling account-setup language change preserves unfinished form');
   await p.locator('#aSecondDate').fill('2025-01-01');await p.locator('#lSend').click();await p.waitForFunction(()=>qaRequests.length===1);
   check(await p.evaluate(key=>JSON.parse(localStorage.getItem(key)).timers.length===2,key),'Account creation preserves both timers before synthetic email');
   await p.locator('#lSend').click();await p.waitForFunction(()=>qaRequests.length===2);
   check(await p.evaluate(key=>JSON.parse(localStorage.getItem(key)).timers.length===2,key),'Retrying synthetic account link never duplicates second timer');
-  await p.locator('#authBack').click();await p.locator('#settingsLogin').click();await p.locator('#lEmail').fill('synthetic@example.invalid');await p.locator('#lSend').click();await p.waitForFunction(()=>qaRequests.length===3);
-  check(await p.locator('#aSecondFields').evaluate(el=>el.disabled)&&await p.evaluate(()=>qaRequests[2].options.shouldCreateUser===false),'Returning login excludes optional create fields');
+  await p.locator('#aAddSecond').uncheck();await p.locator('#aFrom').selectOption('אלכוהול');await p.locator('#lSend').click();await p.waitForFunction(()=>qaRequests.length===3);
+  check(await p.evaluate(key=>{const s=JSON.parse(localStorage.getItem(key));return s.timers.length===1&&s.timers[0].category==='alcohol';},key),'Unchecking setup timer and changing primary never retains hidden duplicate');
+  await p.locator('#aAddSecond').check();await p.locator('#lSend').click();
+  check(await p.locator('#aSecondError').isVisible()&&await p.evaluate(()=>qaRequests.length)===3,'Re-enabling duplicate identity rejects before mocked request');
+  await p.locator('#aSecondLabel').fill('Synthetic second');await p.locator('#lSend').click();await p.waitForFunction(()=>qaRequests.length===4);
+  check(await p.evaluate(key=>JSON.parse(localStorage.getItem(key)).timers.length===2,key),'Re-enabling optional timer after retry keeps exactly two');
+  await p.locator('#authBack').click();await p.locator('#settingsLogin').click();await p.locator('#lEmail').fill('synthetic@example.invalid');await p.locator('#lSend').click();await p.waitForFunction(()=>qaRequests.length===5);
+  check(await p.locator('#aSecondFields').evaluate(el=>el.disabled)&&await p.evaluate(()=>qaRequests[4].options.shouldCreateUser===false),'Returning login excludes optional create fields');
+  await p.locator('#authBack').click();await p.locator('#openSettings').click();p.once('dialog',dialog=>dialog.accept());await p.locator('#reset').click();await p.locator('#welcomeStart').click();
+  check(!await p.locator('#oAddSecond').isChecked()&&await p.locator('#aSecondFields').evaluate(el=>el.disabled)&&!await p.locator('#aShowSecond').isChecked(),'Reset clears both onboarding timer drafts and visibility choices');
+  check(await p.locator('#aSecondLabel').inputValue()===''&&await p.locator('#aSecondDate').inputValue()===''&&await p.locator('#aSecondCategory').inputValue()==='','Deleted second-timer values are not exposed in another setup');
+  await p.locator('#oDate').fill('2024-02-01');await p.locator('#oFrom').selectOption('סמים');await p.locator('#oAddSecond').check();await p.locator('#oSecondCategory').selectOption('alcohol');await p.locator('#oSecondDate').fill('2025-02-01');await p.locator('#oSecondLabel').fill('Unfinished synthetic');
+  p.once('dialog',dialog=>dialog.dismiss());await p.locator('[data-language=en]').click();
+  check(await p.locator('html').getAttribute('lang')==='he'&&await p.locator('#oSecondLabel').inputValue()==='Unfinished synthetic'&&await p.locator('#oDate').inputValue()==='2024-02-01','Canceling guest-setup language change preserves all timer fields');
+  p.once('dialog',dialog=>dialog.accept());await p.locator('[data-language=en]').click();await p.waitForFunction(()=>document.documentElement.lang==='en');
+  check(await p.locator('#welcome').isVisible()&&await p.evaluate(key=>!localStorage.getItem(key),key),'Only explicit confirmation discards unsaved setup and changes language');
+  await p.locator('#welcomeStart').click();await p.locator('#oDate').fill('2024-03-01');await p.locator('#oFrom').selectOption('סמים');await p.locator('#guestForm button[type=submit]').click();
+  check(await p.evaluate(key=>{const s=JSON.parse(localStorage.getItem(key));return s.timers.length===1&&s.timers[0].date==='2024-03-01'&&!JSON.stringify(s).includes('Synthetic second');},key),'Fresh setup after deletion never resurrects previous second timer');
  }finally{await context.close();}
  return {passed:results.length,results};
 }

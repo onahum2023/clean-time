@@ -16,7 +16,7 @@ async(page)=>{
  require('vm').runInContext(oldSource.slice(oldSource.indexOf('function syncedState(){'),oldSource.indexOf('async function readRow('))+';this.oldSnapshot=syncedState();',sandbox);
  const oldRoundTrip=normalize(JSON.parse(JSON.stringify(sandbox.oldSnapshot)));
  check(oldRoundTrip.timers[0].date==='2024-03-02'&&JSON.stringify(oldRoundTrip.timers[1])===JSON.stringify(second),'Actual main legacy normalizer and sync serializer retain secondary timers on edit');
- for(const malformed of [{...multi,timersVersion:2},{...multi,primaryTimerId:'missing'},{...multi,timers:[second,second]},{...multi,timers:[{...second,date:'2025-02-30'}]},{...multi,timers:{}}]){
+ for(const malformed of [{...fixture,timersVersion:2},{...fixture,timersVersion:1},{...multi,timersVersion:2},{...multi,primaryTimerId:'missing'},{...multi,timers:[second,second]},{...multi,timers:[{...second,date:'2025-02-30'}]},{...multi,timers:{}}]){
   let rejected=false;try{normalize(malformed);}catch(e){rejected=true;}check(rejected,'Malformed timer schema fails closed');
  }
  check(normalize({...normalize({date:''}),date:'2025-01-01',from:'אחר'}).timers.length===1,'Onboarding after empty-state migration creates primary');

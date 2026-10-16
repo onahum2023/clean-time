@@ -288,9 +288,9 @@ async(page)=>{
  // Unsupported remote records must be protected regardless of timestamp,
  // encryption or first-login local-choice opportunities.
  await page.goto(origin);
- for(const encrypted of [false,true])for(const kind of ['version','duplicates'])for(const mode of ['local-newer','equal','first-login']){
+ for(const encrypted of [false,true])for(const kind of ['version','missing-array','duplicates'])for(const mode of ['local-newer','equal','first-login']){
   const remoteTime=1750000000000,valid=require(process.cwd()+'/assets/recovery-timers.js').normalize({...full,updatedAt:remoteTime});
-  const malformed=kind==='version'?{...valid,timersVersion:2}:{...valid,timers:[...valid.timers,{...valid.timers[0]}]};
+  const malformed=kind==='duplicates'?{...valid,timers:[...valid.timers,{...valid.timers[0]}]}:{...valid,timersVersion:2};if(kind==='missing-array')delete malformed.timers;
   const remoteRow=encrypted?await page.evaluate(async({malformed,material,uid})=>{const time=new Date(malformed.updatedAt).toISOString();return {data:await SyncCrypto.encrypt(malformed,await SyncCrypto.importDek(material.raw),material,uid,time),updated_at:time};},{malformed,material:multipleMaterial,uid}):{data:malformed,updated_at:new Date(remoteTime).toISOString()};
   const local={...full,updatedAt:mode==='equal'?remoteTime:remoteTime+10000};
   s=await scenario({local,row:remoteRow,material:encrypted?multipleMaterial:null,meta:mode!=='first-login'});
