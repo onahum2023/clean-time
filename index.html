@@ -108,6 +108,34 @@ button,input,textarea,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent-ink);outline-offset:3px;border-radius:6px}
 
 .app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 20px calc(88px + env(safe-area-inset-bottom,0px))}
+.language-bar{position:sticky;top:0;z-index:4;flex-shrink:0;background:var(--bg);padding-top:env(safe-area-inset-top,0px)}
+.language-switcher{display:flex;align-items:center;justify-content:flex-end;direction:ltr;font-size:.95rem;line-height:1.2}
+.language-switcher button{border:0;background:none;padding:8px 6px;min-width:44px;min-height:44px;cursor:pointer;font-weight:400}
+.language-switcher button[aria-pressed="true"]{font-weight:700}
+.language-switcher button:disabled{color:var(--muted);cursor:default}
+.language-switcher span{padding-inline:2px}
+#languageStatus{margin:0;font-size:.85rem}
+.second-toggle{display:flex;align-items:center;gap:10px;min-height:44px;margin-block:12px;cursor:pointer}
+.second-toggle input{width:20px;height:20px;flex-shrink:0;accent-color:var(--accent-ink)}
+.second-fields{border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 20px;min-width:0;background:var(--surface)}
+.second-fields legend{font-weight:600;padding-inline:6px}
+.home-display{width:100%;margin:0 0 20px;text-align:start}
+.home-display .second-toggle{font-size:.9rem;margin:0}
+.display-modes{display:flex;gap:4px;border:1px solid var(--line);border-radius:12px;padding:4px;margin-block:8px}
+.display-modes button{flex:1;min-width:0;min-height:44px;font-size:.8rem;line-height:1.3;padding:6px;border:0;border-radius:8px;background:none;cursor:pointer}
+.display-modes button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+#homeTimerPick{width:100%;margin-top:8px}
+#primaryTimerDisplay{width:100%;text-align:center}
+#primaryTimerDisplay .from-chip{display:inline-block}
+#homeTimerCards{width:100%;display:grid;gap:12px;margin-bottom:12px}
+#homeTimerCards.equal-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+.home-timer-card{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:14px;text-align:start;overflow-wrap:anywhere}
+.home-timer-card h3{font-size:.95rem;font-weight:600;margin:0 0 4px}
+.home-timer-card .timer-days{font-size:1.65rem;font-weight:600;line-height:1.3;display:block}
+.home-timer-card .timer-unit{font-size:.85rem;font-weight:400}
+.equal-cards .timer-unit{display:block;margin-top:4px}
+.home-timer-card p{font-size:.8rem;color:var(--muted);margin:4px 0 0}
+#homeTimerPick{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit}
 .public-introduction{padding-block:20px}
 .public-introduction a{display:inline-block;min-height:44px;padding-block:8px;color:var(--accent-ink)}
 .public-introduction nav{display:flex;gap:24px;flex-wrap:wrap}
@@ -353,6 +381,14 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 </head>
 <body>
 <div class="app">
+  <div class="language-bar">
+    <nav class="language-switcher" id="languageSelector" aria-label="שפה" data-i18n-aria-label="שפה" dir="ltr">
+      <button type="button" data-language="en" lang="en" aria-label="English" aria-pressed="false">En</button><span aria-hidden="true">|</span>
+      <button type="button" data-language="he" lang="he" aria-label="עברית" aria-pressed="true">עב</button><span aria-hidden="true">|</span>
+      <button type="button" data-language="ru" lang="ru" aria-label="Русский" aria-pressed="false">рус</button>
+    </nav>
+    <p id="languageStatus" role="alert" hidden></p>
+  </div>
   <section class="public-introduction" id="publicIntroduction" aria-labelledby="publicTitle">
     <h2 id="publicTitle"><span data-i18n="זמן נקי — כלים קטנים ליום שלך בהחלמה">זמן נקי — כלים קטנים ליום שלך בהחלמה</span></h2>
     <p><span data-i18n="זמן נקי היא אפליקציה חינמית בעברית לאנשים בהחלמה מהתמכרות. אפשר לעקוב אחר הזמן הנקי, לכתוב ביומן אישי, לשמור הכרת תודה ולבנות תכנית להיום.">זמן נקי היא אפליקציה חינמית בעברית לאנשים בהחלמה מהתמכרות. אפשר לעקוב אחר הזמן הנקי, לכתוב ביומן אישי, לשמור הכרת תודה ולבנות תכנית להיום.</span></p>
@@ -431,12 +467,25 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
     <div id="backupReminder" hidden><p id="backupReminderText" role="status"></p><button class="btn secondary" id="resumeBackup"><span data-i18n="השלמת הגיבוי המוצפן">השלמת הגיבוי המוצפן</span></button></div>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M15 101h450M130 101a110 110 0 0 1 220 0M160 101a80 80 0 0 1 160 0M190 101a50 50 0 0 1 100 0M44 120h392M84 139h312"/></svg>
     <svg class="page-art daybreak" viewBox="0 0 68 34" aria-hidden="true" focusable="false"><path d="M4 26h60M23 26a11 11 0 0 1 22 0M34 3v5M13 12l4 4m38-4-4 4M12 31h44"/></svg>
+    <div class="home-display" id="homeDisplay" hidden>
+      <label class="second-toggle"><input type="checkbox" id="showHomeTimers"><span data-i18n="הצגת מסלולים נוספים בבית">הצגת מסלולים נוספים בבית</span></label>
+      <div id="homeDisplayOptions" hidden>
+        <div class="display-modes" id="timerDisplayModes" role="group" aria-label="תצוגת טיימרים" data-i18n-aria-label="תצוגת טיימרים">
+          <button type="button" data-display="single" aria-pressed="true" data-i18n="אחד בכל פעם">אחד בכל פעם</button>
+          <button type="button" data-display="compact" aria-pressed="false" data-i18n="ראשי ומשני קטן">ראשי ומשני קטן</button>
+          <button type="button" data-display="cards" aria-pressed="false" data-i18n="כרטיסים שווים">כרטיסים שווים</button>
+        </div>
+        <select id="homeTimerPick" aria-label="הטיימר המוצג" data-i18n-aria-label="הטיימר המוצג"></select>
+      </div>
+    </div>
+    <div id="primaryTimerDisplay">
     <div class="from-chip" id="fromChip" hidden></div>
     <button class="count" id="count" aria-live="polite" aria-label="זמן נקי, הקשה משנה תצוגה" data-i18n-aria-label="זמן נקי, הקשה משנה תצוגה"></button>
     <div class="dots" id="dots"><span></span><span></span><span></span></div>
     <div class="since" id="since"></div>
     <div class="hint"><span data-i18n="הקשה על המספר משנה תצוגה">הקשה על המספר משנה תצוגה</span></div>
-    <details id="additionalTimers" hidden><summary><span data-i18n="מסלולי החלמה נוספים">מסלולי החלמה נוספים</span></summary><ul class="list" id="additionalTimerList"></ul></details>
+    </div>
+    <div id="homeTimerCards" hidden></div>
     <div class="today-actions">
       <h2><span data-i18n="התחברות">התחברות</span></h2>
       <div class="tool-links" aria-label="פעולות יומיות" data-i18n-aria-label="פעולות יומיות">
@@ -584,9 +633,6 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
       <label class="field"><span><input type="checkbox" id="showMilestones"><span data-i18n="הצגת תגי ציוני דרך"> הצגת תגי ציוני דרך</span></span></label>
       <p class="note"><span data-i18n="תג קטן של ציון הדרך האחרון במסך הבית. אפשר להסתיר אותו כאן.">תג קטן של ציון הדרך האחרון במסך הבית. אפשר להסתיר אותו כאן.</span></p>
       <p class="msg" role="status" id="milestoneStatus"></p>
-      <label class="field"><span data-i18n="שפה">שפה</span><select id="languageChoice"><option value="he">עברית</option><option value="en">English — draft</option><option value="ru">Русский — частичный черновик</option></select></label>
-      <p class="note" data-i18n="תרגומים לבדיקה בלבד. נדרשת בדיקת דוברי שפת אם לפני פרסום.">תרגומים לבדיקה בלבד. נדרשת בדיקת דוברי שפת אם לפני פרסום.</p>
-      <p class="msg" id="languageStatus" role="status"></p>
       <h3><span data-i18n="מראה">מראה</span></h3>
       <p class="note"><span data-i18n="הבחירה נשמרת רק במכשיר הזה, גם עם חשבון.">הבחירה נשמרת רק במכשיר הזה, גם עם חשבון.</span></p>
       <label class="field"><span><span data-i18n="רקע">רקע</span></span><select id="backgroundChoice"><option value="default">הרקע הנוכחי</option><option value="sage">מרווה בהירה</option><option value="sand">חול בהיר</option><option value="mist">ערפל</option><option value="lavender">לבנדר</option><option value="rose">ורוד עדין</option><option value="peach">אפרסק</option><option value="sky">שמיים</option><option value="stone">אבן</option></select></label>
@@ -730,7 +776,8 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
     <button data-tab="counter" aria-current="page"><span data-i18n="היום">היום</span></button>
     <button data-tab="tools"><span data-i18n="כלים להחלמה">כלים להחלמה</span></button>
     <button data-tab="about"><span data-i18n="אודות">אודות</span></button>
-    <button id="openSettings" hidden aria-label="הגדרות והחשבון שלי" data-i18n-aria-label="הגדרות והחשבון שלי"><span data-i18n="הגדרות">הגדרות</span><br><span data-i18n="וחשבון">וחשבון</span></button>
+    <button id="openSettings" hidden aria-label="הגדרות" data-i18n-aria-label="הגדרות"><span data-i18n="הגדרות">הגדרות</span></button>
+    <button id="openAccount" data-tab="account"><span data-i18n="חשבון">חשבון</span></button>
   </div>
 </nav>
 
@@ -739,7 +786,7 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 <script src="assets/recovery-timers.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.15.22';
+const APP_VERSION='2026.10.16.3';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -801,6 +848,42 @@ function writeLocal(d){
 function save(){try{Object.assign(S,CleanTimeTimers.normalize(S));}catch(e){storageNotice('הנתונים לא תקינים ולא הוחלפו. יש לגבות אותם לפני המשך שימוש.');return false;}S.updatedAt=Date.now();const ok=writeLocal();if(ok)queuePush();return ok;}
 const $=id=>document.getElementById(id);
 $('appVer').textContent=translateUI('גרסה ')+APP_VERSION;
+// Optional setup fields share the same stable category identities in both entry paths.
+const setupSecondIds={},setupDrafts={o:false,a:false};
+for(const prefix of ['o','a']){
+ const block=document.createElement('div');
+ block.innerHTML=`<label class="second-toggle"><input type="checkbox" id="${prefix}AddSecond" aria-controls="${prefix}SecondFields" aria-expanded="false"><span data-i18n="הוספת טיימר נוסף">הוספת טיימר נוסף</span></label>
+ <fieldset class="second-fields" id="${prefix}SecondFields" hidden disabled><legend data-i18n="טיימר נוסף (לא חובה)">טיימר נוסף (לא חובה)</legend>
+ <label class="field"><span data-i18n="החלמה מ־">החלמה מ־</span><select id="${prefix}SecondCategory" required><option value="" disabled selected data-i18n="בחירה">בחירה</option>${Object.entries(CleanTimeTimers.names).map(([code,label])=>`<option value="${code}" data-i18n="${label}">${label}</option>`).join('')}</select></label>
+ <label class="field"><span data-i18n="שם אישי (לא חובה)">שם אישי (לא חובה)</span><input type="text" id="${prefix}SecondLabel" maxlength="40"></label>
+ <label class="field"><span data-i18n="תאריך תחילת הניקיון / ההחלמה">תאריך תחילת הניקיון / ההחלמה</span><input type="date" id="${prefix}SecondDate" required></label>
+ <label class="second-toggle"><input type="checkbox" id="${prefix}ShowSecond"><span data-i18n="הצגת הטיימר הנוסף במסך הבית">הצגת הטיימר הנוסף במסך הבית</span></label>
+ <p class="note" data-i18n="אפשר לשנות את התצוגה בהמשך. הטיימרים תמיד זמינים בהגדרות.">אפשר לשנות את התצוגה בהמשך. הטיימרים תמיד זמינים בהגדרות.</p><p class="msg err" id="${prefix}SecondError" role="alert" hidden></p></fieldset>`;
+ if(prefix==='o')$('guestForm').insertBefore(block,$('guestForm').querySelector('button[type="submit"]'));else $('authProfile').append(block);
+ $(prefix+'AddSecond').onchange=()=>{const on=$(prefix+'AddSecond').checked;$(prefix+'SecondFields').hidden=!on;$(prefix+'SecondFields').disabled=!on;$(prefix+'AddSecond').setAttribute('aria-expanded',String(on));};
+}
+for(const [id,prefix] of [['guestForm','o'],['loginForm','a']])for(const type of ['input','change'])$(id).addEventListener(type,()=>{if(prefix==='o'||authMode==='create')setupDrafts[prefix]=true;});
+function onboardingTimers(prefix,base){
+ const next=CleanTimeTimers.normalize(base),error=$(prefix+'SecondError');error.hidden=true;
+ if(!$(prefix+'AddSecond').checked){
+  const timers=next.timers.filter(t=>t.id!==setupSecondIds[prefix]);
+  return CleanTimeTimers.project({...next,timers,primaryTimerId:timers.some(t=>t.id===next.primaryTimerId)?next.primaryTimerId:timers[0]?.id||null});
+ }
+ if(!validateRecoveryDate(prefix+'SecondDate'))return null;
+ const timer={id:setupSecondIds[prefix]||(setupSecondIds[prefix]=crypto.randomUUID()),category:$(prefix+'SecondCategory').value,label:$(prefix+'SecondLabel').value.trim(),date:$(prefix+'SecondDate').value,time:''};
+ if(next.timers.some(t=>t.id!==timer.id&&t.category===timer.category&&timerIdentityLabel(t)===timerIdentityLabel(timer))){error.textContent=translateUI('למסלול נוסף מאותו סוג יש לבחור שם אישי שונה.');error.hidden=false;$(prefix+'SecondLabel').focus();return null;}
+ return CleanTimeTimers.project({...next,timers:[...next.timers.filter(t=>t.id!==timer.id),timer]});
+}
+function rememberOnboardingDisplay(prefix){setupDrafts[prefix]=false;saveHomeDisplay({show:$(prefix+'AddSecond').checked&&$(prefix+'ShowSecond').checked,mode:'compact'});}
+function resetSetupTimers(){
+ for(const prefix of ['o','a']){
+  setupDrafts[prefix]=false;
+  delete setupSecondIds[prefix];$(prefix+'AddSecond').checked=false;$(prefix+'AddSecond').setAttribute('aria-expanded','false');$(prefix+'SecondFields').hidden=true;$(prefix+'SecondFields').disabled=true;
+  for(const suffix of ['SecondCategory','SecondLabel','SecondDate'])$(prefix+suffix).value='';
+  $(prefix+'ShowSecond').checked=false;$(prefix+'SecondError').hidden=true;$(prefix+'SecondDateError').hidden=true;$(prefix+'SecondDateConfirmation').textContent='';$(prefix+'SecondDate').removeAttribute('aria-invalid');
+ }
+ displayedTimerId=null;saveHomeDisplay({show:false,mode:'single'});
+}
 
 /* ---------- Tabs ---------- */
 // Observational hooks only; the optional module cannot block any app flow.
@@ -833,7 +916,7 @@ function show(tab,record=true){
   $('aboutBack').hidden=tab!=='about'||!entering;
   const active=tab==='about'?'about':['counter','onboarding','settings','auth','account'].includes(tab)?'counter':'tools';
   document.querySelectorAll('nav.tabs button').forEach(b=>{
-    if(b.id==='openSettings'?['settings','account','auth'].includes(tab):b.dataset.tab===active&&!['settings','account','auth'].includes(tab))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+    if(b.id==='openSettings'?tab==='settings':b.id==='openAccount'?['account','auth'].includes(tab):b.dataset.tab===active&&!['settings','account','auth'].includes(tab))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   });
   if(tab==='settings')fillSettings();else applyColor();
   if(tab==='account')renderSync();
@@ -859,6 +942,7 @@ function openAuth(mode,record=true){
   $('authTitle').textContent=create?translateUI('יצירת חשבון'):convert?translateUI('יצירת חשבון והפעלת גיבוי'):translateUI('כבר יש לי חשבון');
   $('authSub').textContent=translateUI('הכניסה תמיד דרך קישור למייל. המייל מזהה את החשבון והגיבוי.')+(convert?translateUI(' הנתונים במכשיר יישמרו.'):'')+translateUI(' הגיבוי יופעל לאחר שמירת מפתח שחזור להצפנה במכשיר. המפתח אינו סיסמת הכניסה.');
   $('authProfile').hidden=!create;$('aDate').required=create;$('aFrom').required=create;
+  $('aSecondFields').disabled=!create||!$('aAddSecond').checked;
   $('authNameField').hidden=!(create||(convert&&!S.name));
   $('aName').value=S.name;$('aDate').value=S.date;$('aTime').value=S.time;$('aFrom').value=S.from;pickColor=S.color;renderSwatches('aSwatches');
   $('lEmail').setCustomValidity('');$('lEmail').value='';$('lSend').textContent=mode==='login'?translateUI('שליחת קישור כניסה למייל'):translateUI('יצירת חשבון ושליחת קישור למייל');
@@ -885,8 +969,9 @@ $('backToOnboarding').onclick=()=>show('welcome');
 $('guestForm').onsubmit=ev=>{
   ev.preventDefault();
   if(!validateRecoveryDate('oDate')||!$('guestForm').reportValidity())return;
-  S.date=$('oDate').value;S.from=$('oFrom').value;
-  if(save()){analytics('event','guest_started',{},true);show('counter');}
+  const next=onboardingTimers('o',{...S,date:$('oDate').value,from:$('oFrom').value});if(!next)return;
+  const previous=S;S=next;
+  if(save()){rememberOnboardingDisplay('o');analytics('event','guest_started',{},true);show('counter');}else S=previous;
 };
 
 function validateRecoveryDate(id,focus=true){
@@ -903,7 +988,7 @@ function confirmRecoveryDate(id){
   const date=parts?new Date(Number(parts[1]),Number(parts[2])-1,Number(parts[3]),12):null;
   $(id+'Confirmation').textContent=date&&!isNaN(date)?translateUI('התאריך שנבחר: ')+date.toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'}):'';
 }
-for(const id of ['oDate','aDate','sDate','tDate']){
+for(const id of ['oDate','aDate','sDate','tDate','oSecondDate','aSecondDate']){
   const input=$(id),message=document.createElement('span');
   message.id=id+'Error';message.className='msg err';message.setAttribute('role','alert');message.hidden=true;
   const confirmation=document.createElement('span');confirmation.id=id+'Confirmation';confirmation.className='date-confirmation';confirmation.setAttribute('aria-live','polite');
@@ -953,8 +1038,8 @@ const BADGE_COLORS={
  black:{fill:'#262C30',light:'#3E484D',edge:'#14191C',ink:'#F4DA97'}
 };
 function renderMilestone(s,n){
- const el=$('milestone'),home=current==='counter';
- const last=home&&milestonesEnabled()?CleanTimeDates.milestones(s===undefined?startDate():s,n||new Date()).at(-1):null,visible=home&&!!last;
+ const el=$('milestone'),home=current==='counter'&&!(homeDisplay.show&&homeDisplay.mode==='cards'&&S.timers?.length>1);
+ const shown=homeTimer(),last=home&&milestonesEnabled()?CleanTimeDates.milestones(s===undefined?(shown?timerStart(shown):startDate()):s,n||new Date()).at(-1):null,visible=home&&!!last;
  el.hidden=!visible;$('greet').closest('header').classList.toggle('has-milestone',visible);
  if(!visible){el.removeAttribute('aria-label');el.removeAttribute('title');return;}
  const key=last.id+'|'+last.date.getTime();
@@ -973,8 +1058,9 @@ function render(){
   renderAdditionalTimers();
   $('greet').textContent=S.name?translateUI('שלום')+', '+S.name:translateUI('זמן נקי');
   const chip=$('fromChip');
-  chip.hidden=!S.from; chip.textContent=S.from?translateUI('החלמה מ־')+' '+(S.timers?.length?timerLabel(S.timers.find(timer=>timer.id===S.primaryTimerId)):S.from):'';
-  const s=startDate(), n=new Date(), c=$('count');
+  const shown=homeTimer();
+  chip.hidden=!S.from; chip.textContent=S.from?translateUI('החלמה מ־')+' '+(shown?timerLabel(shown):S.from):'';
+  const s=shown?timerStart(shown):startDate(), n=new Date(), c=$('count');
   renderMilestone(s,n);
   document.querySelectorAll('#dots span').forEach((el,i)=>el.classList.toggle('on',i===S.mode));
   if(!s){c.className='count';c.innerHTML='';$('since').textContent='';return;}
@@ -1003,7 +1089,7 @@ $('count').onclick=()=>{
 };
 setInterval(()=>{
   if(current==='counter')render();
-  if(planDay!==todayKey()){renderP();renderG();$('oDate').max=todayKey();$('sDate').max=todayKey();$('aDate').max=todayKey();}
+  if(planDay!==todayKey()){renderP();renderG();for(const id of ['oDate','sDate','aDate','oSecondDate','aSecondDate'])$(id).max=todayKey();}
 },1000);
 
 /* ---------- Gratitude ---------- */
@@ -1315,10 +1401,24 @@ function timerDescription(timer){
  return fmt(totalDays(start,now))+translateUI(' ימים נקיים')+(milestone?' · '+localizedMilestone(milestone):'');
 }
 function renderAdditionalTimers(){
- const others=(S.timers||[]).filter(t=>t.id!==S.primaryTimerId),list=$('additionalTimerList');
- $('additionalTimers').hidden=!others.length;list.replaceChildren();
- for(const timer of others){const li=document.createElement('li'),text=document.createElement('span');text.textContent=timerLabel(timer)+' — '+timerDescription(timer);li.append(text);list.append(li);}
+ const timers=S.timers||[],multiple=timers.length>1,on=multiple&&homeDisplay.show;
+ $('homeDisplay').hidden=!multiple;$('showHomeTimers').checked=on;$('homeDisplayOptions').hidden=!on;
+ $('primaryTimerDisplay').hidden=on&&homeDisplay.mode==='cards';$('homeTimerPick').hidden=!on||homeDisplay.mode!=='single';
+ for(const button of $('timerDisplayModes').querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.display===homeDisplay.mode));
+ const picker=$('homeTimerPick');
+ if(picker.dataset.options!==JSON.stringify(timers.map(t=>[t.id,timerLabel(t)]))){picker.replaceChildren(...timers.map(timer=>Object.assign(document.createElement('option'),{value:timer.id,textContent:timerLabel(timer)})));picker.dataset.options=JSON.stringify(timers.map(t=>[t.id,timerLabel(t)]));}
+ picker.value=homeTimer()?.id||'';
+ const cards=$('homeTimerCards'),displayed=on&&homeDisplay.mode!=='single'?timers.filter(t=>homeDisplay.mode==='cards'||t.id!==S.primaryTimerId):[];
+ cards.hidden=!displayed.length;cards.classList.toggle('equal-cards',homeDisplay.mode==='cards');cards.replaceChildren();
+ for(const timer of displayed){const card=document.createElement('article'),title=document.createElement('h3'),days=document.createElement('span'),since=document.createElement('p'),milestone=document.createElement('p');card.className='home-timer-card';title.textContent=timerLabel(timer);days.className='timer-days';days.textContent=fmt(totalDays(timerStart(timer),new Date()))+' ';const unit=document.createElement('span');unit.className='timer-unit';unit.textContent=translateUI('ימים נקיים');days.append(unit);since.textContent=translateUI('מאז ')+timerStart(timer).toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'});const last=CleanTimeDates.milestones(timerStart(timer),new Date()).at(-1);milestone.textContent=last?localizedMilestone(last):'';card.append(title,days,since,milestone);cards.append(card);}
 }
+let homeDisplay={show:false,mode:'single'},displayedTimerId=null;
+try{const stored=JSON.parse(localStorage.getItem('cleantime-timer-display'));if(stored&&['single','compact','cards'].includes(stored.mode))homeDisplay={show:stored.show===true,mode:stored.mode};}catch(e){}
+function saveHomeDisplay(value){homeDisplay={...homeDisplay,...value};try{localStorage.setItem('cleantime-timer-display',JSON.stringify(homeDisplay));}catch(e){storageNotice(translateUI('הבחירה לא נשמרה במכשיר.'));}}
+function homeTimer(){return (S.timers||[]).find(t=>t.id===(homeDisplay.show&&homeDisplay.mode==='single'?displayedTimerId:S.primaryTimerId))||(S.timers||[]).find(t=>t.id===S.primaryTimerId);}
+$('showHomeTimers').onchange=()=>{saveHomeDisplay({show:$('showHomeTimers').checked});render();};
+$('timerDisplayModes').onclick=event=>{const button=event.target.closest('button[data-display]');if(button){saveHomeDisplay({mode:button.dataset.display});render();}};
+$('homeTimerPick').onchange=()=>{displayedTimerId=$('homeTimerPick').value;render();};
 function persistTimers(next){
  const previous=S;S=CleanTimeTimers.project(next);
  if(!save()){S=previous;return false;}
@@ -1379,7 +1479,7 @@ function fillSettings(){
   $('sName').value=S.name;$('sDate').value=S.date;$('sTime').value=S.time;$('sFrom').value=S.from;
   confirmRecoveryDate('sDate');pickColor=S.color; renderSwatches();
   $('showMilestones').checked=milestonesEnabled();
-  const appearance=CleanTimeAppearance.read();$('backgroundChoice').value=appearance.background;$('fontChoice').value=appearance.font;$('languageChoice').value=CleanTimeI18n.language;$('accentChoice').value=appearance.accent;
+  const appearance=CleanTimeAppearance.read();$('backgroundChoice').value=appearance.background;$('fontChoice').value=appearance.font;$('accentChoice').value=appearance.accent;
 }
 function renderSwatches(boxId='swatches'){
   const box=$(boxId);box.innerHTML='';
@@ -1412,7 +1512,13 @@ $('resetAppearance').onclick=()=>{
   const ok=CleanTimeAppearance.save({background:'default',font:'assistant',accent:'profile'});$('backgroundChoice').value='default';$('fontChoice').value='assistant';$('accentChoice').value='profile';
   $('appearanceStatus').textContent=ok?translateUI('המראה המקורי נשמר.'):translateUI('המראה הוחזר, אבל לא נשמר במכשיר.');
 };
-$('languageChoice').onchange=()=>{if(CleanTimeI18n.setLanguage($('languageChoice').value))location.reload();else $('languageStatus').textContent=translateUI('לא ניתן לשמור את בחירת השפה במכשיר.');};
+$('languageSelector').onclick=event=>{
+  const button=event.target.closest('button[data-language]');
+  if(!button||button.disabled||button.dataset.language===CleanTimeI18n.language)return;
+  if(Object.values(setupDrafts).some(Boolean)&&!confirm(translateUI('שינוי שפה ינקה פרטים שטרם נשמרו בטופס הזה. להמשיך?')))return;
+  if(CleanTimeI18n.setLanguage(button.dataset.language))location.reload();
+  else{$('languageStatus').textContent=translateUI('לא ניתן לשמור את בחירת השפה במכשיר.');$('languageStatus').hidden=false;}
+};
 $('feedbackBack').onclick=()=>history.back();
 $('copyFeedbackEmail').onclick=async()=>{
   try{await navigator.clipboard.writeText('hello@clean-time.app');$('feedbackStatus').textContent=translateUI('הכתובת הועתקה.');}
@@ -1436,6 +1542,7 @@ $('exportRecovery').onclick=()=>{
 };
 function resetLocal(){
   try{localStorage.removeItem(KEY);}catch(e){}
+  resetSetupTimers();
   storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();$('oDate').value='';$('oFrom').value='';confirmRecoveryDate('oDate');show('welcome');
 }
 $('accountDelete').onclick=()=>$('reset').onclick();
@@ -1526,8 +1633,8 @@ $('loginForm').onsubmit=async ev=>{
   // Persist the complete local profile before sending; it survives a reload or link return.
   // Sync still requires an authenticated user and the first-sign-in conflict choice.
   if(authMode==='create'){
-    Object.assign(S,{name:$('aName').value.trim(),date:$('aDate').value,time:$('aTime').value,from:$('aFrom').value,color:pickColor});
-    if(!save())return;
+    const next=onboardingTimers('a',{...S,name:$('aName').value.trim(),date:$('aDate').value,time:$('aTime').value,from:$('aFrom').value,color:pickColor});if(!next)return;
+    const previous=S;S=next;if(!save()){S=previous;return;}rememberOnboardingDisplay('a');
   }else if(authMode==='convert'&&!S.name){S.name=$('aName').value.trim();if(!save())return;}
   $('lSend').disabled=true;setMsg(translateUI('שולח...'));
   const analyticsMode=authMode,analyticsStartedAt=Date.now();
@@ -1900,6 +2007,7 @@ if(!onOldHost&&urlP.has('import')){
 /* ---------- Init ---------- */
 applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();storageNotice(storageError);
 $('oDate').max=todayKey();$('sDate').max=todayKey();$('aDate').max=todayKey();
+$('oSecondDate').max=todayKey();$('aSecondDate').max=todayKey();
 let hasSession=false; try{hasSession=!!localStorage.getItem(AUTH_KEY);}catch(e){}
 const initial=fromLink||(!S.date&&(M.uid||hasSession))?'startup':S.date?'counter':'welcome';
 history.replaceState({screen:initial},'');

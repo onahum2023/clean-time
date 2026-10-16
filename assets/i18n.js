@@ -28,7 +28,10 @@
   const accent=document.getElementById('accentChoice');if(accent)accent.closest('label').querySelector('span').textContent=t('צבע הדגשה במכשיר הזה');
   const fontNote='גופני מערכת יוצגו אם הם זמינים במכשיר. אחרת יופיע גופן חלופי קריא.';
   for(const note of document.querySelectorAll('#settings .note'))if(note.textContent===fontNote)note.textContent=t(fontNote);
-  const select=document.getElementById('languageChoice');if(select){select.value=language;for(const option of select.options)if(option.value!=='he')option.disabled=!draftsAllowed;}
+  for(const button of document.querySelectorAll('#languageSelector button[data-language]')){
+   button.setAttribute('aria-pressed',String(button.dataset.language===language));
+   button.disabled=button.dataset.language!=='he'&&!draftsAllowed;
+  }
  };
  document.documentElement.lang=language;document.documentElement.dir=language==='he'?'rtl':'ltr';
  window.CleanTimeI18n={t,language,locale:{he:'he-IL',en:'en-US',ru:'ru-RU'}[language],production,apply,setLanguage:value=>{

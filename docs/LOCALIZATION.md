@@ -11,8 +11,11 @@ completion is a separate follow-up; do not describe this PR as completed Russian
 translation. New languages/catalog entries must receive linguistic review.
 
 Unreviewed languages are **disabled on recognized production origins**, including
-when a non-Hebrew preference was saved elsewhere. Local/Preview Settings offers
-the drafts with a review notice. Enabling production languages requires a later
+when a non-Hebrew preference was saved elsewhere. A compact top selector
+(`En | עב | рус`) is present from the first welcome screen through setup and
+every main app screen. Its order stays left-to-right in every language; the
+current choice is bold and announced as pressed. Local/Preview permits the
+drafts; production keeps those choices disabled. Enabling them requires a later
 reviewed change after fluent/native-speaker UAT, especially NA terminology. No
 translation-quality approval is claimed here.
 
@@ -22,6 +25,11 @@ Language changes save only `cleantime-language` and reload to apply all UI/local
 choices; they do not stamp recovery data or trigger an upload. Export excludes
 device language preference. Dates use the selected locale; calendar storage keys
 and recovery dates remain ISO/language-independent.
+
+Switching language while guest/account setup contains entered fields requires an
+explicit discard confirmation before saving the language or reloading. Canceling
+keeps every primary/secondary field and the current language intact. No recovery
+drafts are copied into additional browser stores.
 
 Existing Hebrew built-in recovery types remain compatibility scalars, while the
 timer model uses stable category codes. User-defined labels and resource titles

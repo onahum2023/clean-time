@@ -11,7 +11,7 @@ async(page)=>{
  const missing=await page.evaluate(literals=>literals.map(s=>s.trim().replace(/\s+/g,' ')).filter(s=>/[א-ת]/.test(s)&&!Object.hasOwn(CleanTimeMessages.en,s)),literals);
  check(missing.length===0,'Every extracted dynamic message has an English draft: '+missing.join(','));
  for(const language of ['en','ru','he']){
-  await page.locator('#openSettings').click();await page.locator('#languageChoice').selectOption(language);await page.waitForLoadState('load');
+  await page.locator('#languageSelector [data-language='+language+']').click();await page.waitForLoadState('load');
   await page.waitForFunction(language=>document.documentElement.lang===language,language);
   check(await page.locator('html').getAttribute('dir')===(language==='he'?'rtl':'ltr'),'Correct direction '+language);
   check(await page.evaluate(key=>localStorage.getItem(key),key)===before,'Language leaves recovery bytes/timestamp unchanged '+language);

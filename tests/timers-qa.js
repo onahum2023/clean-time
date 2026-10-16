@@ -16,7 +16,7 @@ async(page)=>{
  require('vm').runInContext(oldSource.slice(oldSource.indexOf('function syncedState(){'),oldSource.indexOf('async function readRow('))+';this.oldSnapshot=syncedState();',sandbox);
  const oldRoundTrip=normalize(JSON.parse(JSON.stringify(sandbox.oldSnapshot)));
  check(oldRoundTrip.timers[0].date==='2024-03-02'&&JSON.stringify(oldRoundTrip.timers[1])===JSON.stringify(second),'Actual main legacy normalizer and sync serializer retain secondary timers on edit');
- for(const malformed of [{...multi,timersVersion:2},{...multi,primaryTimerId:'missing'},{...multi,timers:[second,second]},{...multi,timers:[{...second,date:'2025-02-30'}]},{...multi,timers:{}}]){
+ for(const malformed of [{...fixture,timersVersion:2},{...fixture,timersVersion:1},{...multi,timersVersion:2},{...multi,primaryTimerId:'missing'},{...multi,timers:[second,second]},{...multi,timers:[{...second,date:'2025-02-30'}]},{...multi,timers:{}}]){
   let rejected=false;try{normalize(malformed);}catch(e){rejected=true;}check(rejected,'Malformed timer schema fails closed');
  }
  check(normalize({...normalize({date:''}),date:'2025-01-01',from:'אחר'}).timers.length===1,'Onboarding after empty-state migration creates primary');
@@ -27,7 +27,7 @@ async(page)=>{
  check(await page.locator('#counter').isVisible()&&!(await read()).timers,'Existing guest opens without rewriting untouched legacy bytes');
  await page.locator('#openSettings').click();await page.locator('#addTimer').click();await page.locator('#tCategory').selectOption('alcohol');await page.locator('#tLabel').fill('סינתטי נוסף');await page.locator('#tDate').fill('2025-01-01');await page.locator('#timerForm button[type=submit]').click();
  let state=await read();check(state.timers.length===2&&state.date===fixture.date,'Adding a timer preserves primary date');
- const added=state.timers[1].id;await page.reload();await page.locator('#additionalTimers summary').click();check((await page.locator('#additionalTimerList').innerText()).includes('סינתטי נוסף'),'Secondary counter survives reload without crowding Home');
+ const added=state.timers[1].id;await page.reload();await page.locator('#showHomeTimers').check();await page.locator('[data-display=compact]').click();check((await page.locator('#homeTimerCards').innerText()).includes('סינתטי נוסף'),'Secondary counter survives reload and can be shown on Home');
  await page.locator('#openSettings').click();let row=page.locator('#timerList li').filter({hasText:'סינתטי נוסף'});await row.getByRole('button',{name:'עריכה',exact:true}).click();await page.locator('#tDate').fill('2025-02-01');await page.locator('#timerForm button[type=submit]').click();await page.locator('#askB').getByRole('button',{name:'עדכון התאריך',exact:true}).click();
  state=await read();check(state.timers[1].date==='2025-02-01'&&state.timers[0].date===fixture.date,'Editing/reset affects only selected timer');
  await row.getByRole('button',{name:'הגדרה כראשי',exact:true}).click();state=await read();check(state.primaryTimerId===added&&state.date==='2025-02-01'&&state.from==='סינתטי נוסף','Primary switch updates compatibility scalars');
