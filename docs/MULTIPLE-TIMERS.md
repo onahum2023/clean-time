@@ -1,5 +1,17 @@
 # Multiple recovery timers (#52)
 
+First-use guest and account-creation forms optionally add a second timer with its
+own category, custom label and start date. The additional fields stay disabled
+until selected. A separate unchecked checkbox opts into showing it on Home.
+Duplicate category/label identities and future dates reject before persistence.
+
+Home offers one-at-a-time switching, a primary timer with compact secondary cards,
+and equal cards. The visibility/layout preference is device-local under
+`cleantime-timer-display`; it never changes primary identity, recovery dates,
+timestamps or encrypted backup content. Hiding secondary timers leaves them
+available in Settings. Existing users start with a single primary display and
+can opt in without editing their timer records.
+
 `timersVersion:1`, `timers[]` and `primaryTimerId` are additive fields in the same
 local recovery object/encrypted row. Each timer has a stable ID, category code,
 optional custom label, date and time. Unknown fields and shared histories remain

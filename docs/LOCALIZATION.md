@@ -11,8 +11,11 @@ completion is a separate follow-up; do not describe this PR as completed Russian
 translation. New languages/catalog entries must receive linguistic review.
 
 Unreviewed languages are **disabled on recognized production origins**, including
-when a non-Hebrew preference was saved elsewhere. Local/Preview Settings offers
-the drafts with a review notice. Enabling production languages requires a later
+when a non-Hebrew preference was saved elsewhere. A compact top selector
+(`En | עב | рус`) is present from the first welcome screen through setup and
+every main app screen. Its order stays left-to-right in every language; the
+current choice is bold and announced as pressed. Local/Preview permits the
+drafts; production keeps those choices disabled. Enabling them requires a later
 reviewed change after fluent/native-speaker UAT, especially NA terminology. No
 translation-quality approval is claimed here.
 
