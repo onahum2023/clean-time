@@ -6,6 +6,11 @@ const {privatePath,credentialLike,recoveryExport,checkRepository}=require('../sc
 const root=path.resolve(__dirname,'..'),files=require('../scripts/public-files.json');
 function temporary(t){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ct-hygiene-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));return dir;}
 function write(root,file,body){const full=path.join(root,file);fs.mkdirSync(path.dirname(full),{recursive:true});fs.writeFileSync(full,body);}
+function copyBuildFixture(repo){
+ for(const file of [...files,'vercel.json',...fs.readdirSync(path.join(root,'scripts')).filter(n=>/\.(js|json)$/.test(n)).map(n=>'scripts/'+n)]){
+  const dest=path.join(repo,file);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(path.join(root,file),dest);
+ }
+}
 test('private artifact paths are blocked while public assets and synthetic fixtures remain allowed',()=>{
  for(const file of ['.env','.env.production','assets/.env','playwright/.auth/user.json','storageState.json','.codex/state.json','clean-time-2026-10-16.json','recovery-export.json','dev.sqlite3-wal','test-results/video.webm','screenshots/account.png'])assert.equal(privatePath(file),true,file);
  for(const file of [...files,'.env.example','tests/fixtures/recovery-data.json','assets/README.md'])assert.equal(privatePath(file),false,file);
@@ -35,9 +40,7 @@ test('tracked private files and credentials fail even when force-added; untracke
 });
 test('allowlisted build excludes accidental content, blocks stale outputs/symlinks and preserves backend isolation',t=>{
  const repo=temporary(t),out=path.join(repo,'dist');
- for(const file of [...files,'vercel.json',...fs.readdirSync(path.join(root,'scripts')).filter(n=>/\.(js|json)$/.test(n)).map(n=>'scripts/'+n)]){
-  const dest=path.join(repo,file);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(path.join(root,file),dest);
- }
+ copyBuildFixture(repo);
  for(const file of ['assets/private-export.json','assets/nested/.env','about/account.png','privacy/session.json','docs/private.md'])write(repo,file,'synthetic artifact');
  const build=env=>spawnSync(process.execPath,['scripts/build-vercel.js'],{cwd:repo,encoding:'utf8',env:{...process.env,VERCEL_ENV:env,CT_BUILD_OUTPUT:out,VERCEL_OBSERVABILITY_CLIENT_CONFIG:'{}'}});
  for(const env of ['preview','production','development']){
@@ -52,6 +55,26 @@ test('allowlisted build excludes accidental content, blocks stale outputs/symlin
  write(out,'assets/old-private.json','synthetic');assert.match(build('preview').stderr,/Unexpected build output/);fs.unlinkSync(path.join(out,'assets/old-private.json'));
  fs.unlinkSync(path.join(repo,'assets/gong.wav'));fs.symlinkSync(path.join(root,'assets/gong.wav'),path.join(repo,'assets/gong.wav'));
  assert.match(build('preview').stderr,/must not be a symlink/);
+});
+test('symlinked output ancestors cannot write to forbidden checkout destinations',t=>{
+ const tmp=temporary(t),repo=path.join(tmp,'checkout'),alias=path.join(tmp,'alias');
+ copyBuildFixture(repo);fs.symlinkSync(repo,alias,'dir');fs.mkdirSync(path.join(repo,'existing-output'));
+ const snapshot=()=>fs.readdirSync(repo,{recursive:true}).sort().map(file=>[file,fs.statSync(path.join(repo,file)).isFile()?fs.readFileSync(path.join(repo,file),'base64'):null]);
+ const before=snapshot();
+ const build=out=>spawnSync(process.execPath,['scripts/build-vercel.js'],{cwd:repo,encoding:'utf8',env:{...process.env,VERCEL_ENV:'preview',CT_BUILD_OUTPUT:out,VERCEL_OBSERVABILITY_CLIENT_CONFIG:'{}'}});
+ for(const dest of ['new-output','missing-parent/nested-output','existing-output','about']){
+  const run=build(path.join(alias,dest));
+  assert.notEqual(run.status,0,'Reject aliased checkout destination: '+dest);
+  assert.match(run.stderr,/dedicated output directory outside the repository/);
+  assert.deepEqual(snapshot(),before,'Rejected output must not create directories or overwrite source: '+dest);
+ }
+ // A symlinked ancestor targeting an external build directory is still safe.
+ const external=path.join(tmp,'external'),externalAlias=path.join(tmp,'external-alias');
+ fs.mkdirSync(external);fs.symlinkSync(external,externalAlias,'dir');
+ const run=build(path.join(externalAlias,'new-output'));
+ assert.equal(run.status,0,run.stderr);
+ assert.ok(fs.existsSync(path.join(external,'new-output/index.html')));
+ assert.deepEqual(snapshot(),before,'External output leaves checkout unchanged');
 });
 test('retired live runner stops before requiring browser tooling or making requests',()=>{
  const run=spawnSync(process.execPath,['tests/live/staging.js'],{cwd:root,encoding:'utf8'});

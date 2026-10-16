@@ -1,9 +1,8 @@
 const fs=require('node:fs'),path=require('node:path');
 require('./security-headers.js');
 const ROOT=path.resolve(__dirname,'..'),OUT=path.resolve(process.env.CT_BUILD_OUTPUT||path.join(ROOT,'dist'));
-if(OUT===ROOT||ROOT.startsWith(OUT+path.sep)||OUT===path.parse(OUT).root)throw new Error('Unsafe build output');
-if(OUT.startsWith(ROOT+path.sep)&&OUT!==path.join(ROOT,'dist'))throw new Error('Use dist or a dedicated output directory outside the repository');
 const publication=require('./publication.js');
+publication.validateDestination(ROOT,OUT);
 publication.validateSource(ROOT);
 publication.validateOutput(OUT);
 const env=process.env.VERCEL_ENV||'development',source=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');

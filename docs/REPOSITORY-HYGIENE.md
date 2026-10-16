@@ -106,8 +106,10 @@ and legitimate public contributor/support contact details are intentional.
 Vercel publishes `dist/` using **only** `scripts/public-files.json`. Adding an
 application asset requires explicitly updating that manifest. It includes the
 font's OFL license. Source docs/tests/agent guidance and unlisted assets are not
-copied. Symlinked assets/output and unexpected stale output files fail the build;
-use a clean dedicated output directory. No recursive directory publication remains.
+copied. Symlinked assets/output and unexpected stale output files fail the build.
+Output containment resolves the nearest existing ancestor before checking the
+destination, including when missing child directories follow a symlinked parent.
+Use a clean dedicated output directory. No recursive directory publication remains.
 The build leaves source application assets and production/Preview backend selection
 unchanged. Preview/development remain guest-only with backend access disabled.
 

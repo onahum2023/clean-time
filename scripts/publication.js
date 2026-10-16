@@ -2,6 +2,23 @@
 const fs=require('node:fs'),path=require('node:path');
 const files=require('./public-files.json');
 const {privatePath}=require('./repository-hygiene.js');
+function validateDestination(root,out){
+ // Resolve the nearest existing ancestor even when the output does not exist.
+ // Lexical containment alone misses paths through a symlinked parent.
+ let ancestor=path.resolve(out),missing=[];
+ while(true){
+  try{ancestor=fs.realpathSync(ancestor);break;}
+  catch(error){
+   if(error.code!=='ENOENT')throw error;
+   missing.unshift(path.basename(ancestor));
+   const parent=path.dirname(ancestor);if(parent===ancestor)throw error;
+   ancestor=parent;
+  }
+ }
+ const canonicalRoot=fs.realpathSync(root),canonicalOut=path.join(ancestor,...missing);
+ if(canonicalOut===canonicalRoot||canonicalRoot.startsWith(canonicalOut+path.sep)||canonicalOut===path.parse(canonicalOut).root)throw Error('Unsafe build output');
+ if(canonicalOut.startsWith(canonicalRoot+path.sep)&&canonicalOut!==path.join(canonicalRoot,'dist'))throw Error('Use dist or a dedicated output directory outside the repository');
+}
 function validateSource(root){
  for(const file of files){
   if(typeof file!=='string'||path.isAbsolute(file)||file.split('/').some(part=>!part||part==='.'||part==='..')||privatePath(file))throw Error('Unsafe publication manifest entry');
@@ -29,4 +46,4 @@ function validateOutput(out){
  }
  walk(out);
 }
-module.exports={files,validateSource,validateOutput};
+module.exports={files,validateDestination,validateSource,validateOutput};
