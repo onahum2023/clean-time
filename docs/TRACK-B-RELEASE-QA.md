@@ -53,7 +53,7 @@ BLOCKED evidence without tokens, account emails or recovery-key screenshots.
 5. Test magic-link return into browser/installed app with owner-assisted test mail;
    distinguish a different browser/profile from trusted-device reopen.
 6. For English/Russian, record native-speaker terminology/layout review separately.
-   Draft languages remain production-disabled until that acceptance is complete.
+   Hebrew, English and Russian selection is enabled; native-language review remains separate (#45).
 
 No physical device, live SMTP, real Auth/RLS or native-language pass is claimed by
 the local synthetic suites. Keep release-gate issues open until supporting evidence

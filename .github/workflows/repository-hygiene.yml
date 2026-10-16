@@ -1,0 +1,14 @@
+name: Repository hygiene
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - run: node scripts/repository-hygiene.js
+      - run: node --test tests/repository-hygiene.test.js
+      - run: node scripts/build-vercel.js
+        env:
+          VERCEL_ENV: preview

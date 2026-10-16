@@ -19,3 +19,47 @@ desktop.ini
 dist/
 .vercel/
 .env*.local
+
+# Credentials and local machine/agent configuration
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+.envrc
+.direnv/
+.codex/
+.agents/
+.mcp.json
+
+# Browser sessions and private QA artifacts (never publish these directories)
+.auth/
+playwright/.auth/
+*storage-state*.json
+*storageState*.json
+*auth-state*.json
+browser-profile/
+browser-profiles/
+playwright-report/
+test-results/
+qa-artifacts/
+screenshots/
+recordings/
+coverage/
+*.log
+
+# Unencrypted recovery downloads and local databases
+clean-time-*.json
+cleantime-*.json
+recovery-export*.json
+recovery-data*.json
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Deliberately synthetic fixtures may be reviewed and committed here.
+!tests/fixtures/
+!tests/fixtures/**

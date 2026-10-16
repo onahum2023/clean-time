@@ -4,7 +4,7 @@ Clean Time (זמן נקי) is a free, Hebrew-first recovery companion. Preserve 
 
 ## Architecture
 
-- Static SPA: `index.html` contains the application CSS/JS. There is no build step.
+- Static SPA: `index.html` contains the application CSS/JS. Vercel publishes only the explicit file list through `scripts/build-vercel.js`.
 - Production is deployed on Vercel. `main` auto-deploys.
 - PWA metadata/icons live at the repository root; fonts and gong audio are self-hosted under `assets/`.
 - Optional registered-user backup uses Supabase. Guest use must remain fully usable without an account.
@@ -69,6 +69,13 @@ Step 10 currently exposes the daily free-text reflection/history; final structur
 - Guest mode should not make unnecessary third-party requests.
 - Supabase JS is loaded only when account/auth/sync functionality requires it and is pinned with SRI.
 - Do not add remote fonts; Assistant is self-hosted.
+
+## Public repository hygiene
+
+Follow [repository hygiene](docs/REPOSITORY-HYGIENE.md) before committing or publishing.
+Cloud identity setup and fresh-session verification are documented there.
+Run `node scripts/repository-hygiene.js` and update `scripts/public-files.json`
+when deliberately adding a public asset. Keep private QA artifacts outside Git.
 
 ## QA and release discipline
 

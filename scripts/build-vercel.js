@@ -1,21 +1,26 @@
 const fs=require('node:fs'),path=require('node:path');
 require('./security-headers.js');
 const ROOT=path.resolve(__dirname,'..'),OUT=path.resolve(process.env.CT_BUILD_OUTPUT||path.join(ROOT,'dist'));
-if(OUT===ROOT||OUT===path.parse(OUT).root)throw new Error('Unsafe build output');
+const publication=require('./publication.js');
+publication.validateDestination(ROOT,OUT);
+publication.validateSource(ROOT);
+publication.validateOutput(OUT);
 const env=process.env.VERCEL_ENV||'development',source=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 if(!['production','preview','development'].includes(env))throw new Error('Unknown build environment');
 const productionUrl=source.match(/const PRODUCTION_SUPA_URL='([^']+)'/)[1];
 const productionKey=source.match(/const PRODUCTION_SUPA_KEY='([^']+)'/)[1];
 let config={environment:'production',url:productionUrl,key:productionKey};
 if(env!=='production'){
- // The paid staging project was retired. Preview remains guest-only, even if
+ // The staging project was retired. Preview remains guest-only, even if
  // obsolete branch variables are still present. Never fall back to production.
  config={environment:env,url:null,key:null,backupDisabled:true};
 }
 fs.mkdirSync(OUT,{recursive:true});
-for(const file of ['index.html','robots.txt','sitemap.xml','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','service-worker.js'])fs.copyFileSync(path.join(ROOT,file),path.join(OUT,file));
-for(const directory of ['about','privacy'])fs.cpSync(path.join(ROOT,directory),path.join(OUT,directory),{recursive:true});
-fs.cpSync(path.join(ROOT,'assets'),path.join(OUT,'assets'),{recursive:true,filter:file=>path.basename(file)!=='.DS_Store'});
+for(const file of publication.files){
+ const target=path.join(OUT,file);
+ fs.mkdirSync(path.dirname(target),{recursive:true});
+ fs.copyFileSync(path.join(ROOT,file),target);
+}
 // Vercel's resilient intake paths are opaque, not necessarily /script.js or /view.
 // Validate same-origin path syntax, rather than guessing provider suffixes.
 const publicPath=(value,fallback)=>{
@@ -50,3 +55,4 @@ console.log('Static build complete: '+config.environment+' backend configuration
 const version=source.match(/const APP_VERSION='([^']+)'/)[1];
 const worker=fs.readFileSync(path.join(ROOT,'service-worker.js'),'utf8').replace(/const VERSION='[^']+'/,"const VERSION='"+version+"'");
 fs.writeFileSync(path.join(OUT,'service-worker.js'),worker);
+publication.validateOutput(OUT);

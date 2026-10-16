@@ -7,7 +7,7 @@ operation is introduced by this preparation PR.
 
 ## Why a standalone admin DELETE is insufficient
 
-Current documented staging schema gives `user_data.user_id` an ownership policy,
+The archived staging schema gives `user_data.user_id` an ownership policy,
 but no foreign key to `auth.users`. Production schema has not been inspected.
 Supabase states that deleting an Auth user does not invalidate already-issued
 access JWTs until expiry. Deleting a row and then the Auth identity can leave a

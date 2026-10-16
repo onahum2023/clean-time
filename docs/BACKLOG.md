@@ -29,7 +29,7 @@ GitHub Issues are the source of truth for active work. This file is a compact ro
 - [ ] **#17 Real account/cloud deletion:** remove the user's cloud row and Auth identity, not only replace recovery state with an encrypted empty state.
 - [ ] **#18 Production security headers:** CSP, frame protection, referrer policy and nosniff without breaking auth/sync/PWA behavior.
 - [ ] **#19 Production auth/SMTP/RLS verification:** live delivery/redirect checks and cross-account isolation using test accounts only. One fresh Gmail Inbox delivery has passed; broader provider/RLS verification remains.
-- [ ] **#34 Remaining backup activation/failure/independent-browser QA.** The former paid staging backend was deleted; isolated live-service testing is blocked until a suitable test environment exists.
+- [ ] **#34 Remaining backup activation/failure/independent-browser QA.** The former staging backend was deleted; isolated live-service testing is blocked until a suitable test environment exists.
 - [ ] **#21 Physical Android/PWA validation.**
 - [ ] **#22 Retire legacy Vercel-origin handoff safely.**
 

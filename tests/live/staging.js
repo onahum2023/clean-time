@@ -1,3 +1,5 @@
+// Archived: the backend was retired on 2026-10-12. Keep historical implementation below.
+throw new Error('Retired staging runner: see docs/TRACK-B-RELEASE-QA.md; a reviewed isolated backend is required');
 // Explicit live staging runner. Not discovered by the synthetic regression runner.
 // Secrets stay in disposable browser/worker memory; stdin commands are never echoed.
 const fs=require('fs'),readline=require('readline'),{chromium}=require('playwright');
