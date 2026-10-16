@@ -4,8 +4,7 @@
  const key='cleantime-language',catalog=window.CleanTimeMessages;
  const backend=window.CleanTimeBackend;
  const production=backend?.environment==='production'||['clean-time.app','www.clean-time.app','clean-time-eight.vercel.app'].includes(location.hostname);
- const draftsAllowed=!production&&(backend?.environment==='preview'||['127.0.0.1','localhost'].includes(location.hostname));
- let language='he';try{const stored=localStorage.getItem(key);if(['he','en','ru'].includes(stored)&&(draftsAllowed||stored==='he'))language=stored;}catch(e){}
+ let language='he';try{const stored=localStorage.getItem(key);if(['he','en','ru'].includes(stored))language=stored;}catch(e){}
  const t=value=>{
   if(typeof value!=='string'||language==='he')return value;
   const normalized=value.trim().replace(/\s+/g,' '),translated=catalog[language]?.[normalized]??catalog.en[normalized];
@@ -30,12 +29,12 @@
   for(const note of document.querySelectorAll('#settings .note'))if(note.textContent===fontNote)note.textContent=t(fontNote);
   for(const button of document.querySelectorAll('#languageSelector button[data-language]')){
    button.setAttribute('aria-pressed',String(button.dataset.language===language));
-   button.disabled=button.dataset.language!=='he'&&!draftsAllowed;
+   button.disabled=false;
   }
  };
  document.documentElement.lang=language;document.documentElement.dir=language==='he'?'rtl':'ltr';
  window.CleanTimeI18n={t,language,locale:{he:'he-IL',en:'en-US',ru:'ru-RU'}[language],production,apply,setLanguage:value=>{
-  if(!['he','en','ru'].includes(value)||!draftsAllowed&&value!=='he')return false;
+  if(!['he','en','ru'].includes(value))return false;
   try{localStorage.setItem(key,value);return true;}catch(e){return false;}
  }};
  document.addEventListener('DOMContentLoaded',apply);

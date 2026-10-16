@@ -73,23 +73,30 @@ async(page)=>{
    check(await p.evaluate(key=>JSON.parse(localStorage.getItem(key)).journal[0].text==='היום',key),'Registered recovery text is unchanged '+language);
   }finally{await context.close();}
  }
- // Production public UI must not enable either unreviewed language.
+ // Every published language is selectable on the production origin too.
  const context=await page.context().browser().newContext();
  try{
-  await context.addInitScript(()=>localStorage.setItem('cleantime-language','ru'));
+  await context.addInitScript(()=>{if(!localStorage.getItem('cleantime-language'))localStorage.setItem('cleantime-language','ru');});
   await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.origin!=='https://clean-time.app')return route.abort();const file=require('path').join(process.cwd(),url.pathname==='/'?'index.html':url.pathname.slice(1));return fs.existsSync(file)&&fs.statSync(file).isFile()?route.fulfill({path:file}):route.fulfill({status:404,body:''});});
-  const p=await context.newPage();await p.goto('https://clean-time.app');check(await p.locator('html').getAttribute('lang')==='he'&&await p.evaluate(()=>!CleanTimeI18n.setLanguage('en')),'Production language gate keeps Hebrew');
+  const p=await context.newPage();await p.goto('https://clean-time.app');check(await p.locator('html').getAttribute('lang')==='ru','Production restores the selected language');
+  for(const language of ['en','ru','he']){
+   const button=p.locator('#languageSelector [data-language='+language+']');check(await button.isEnabled(),'Production language button enabled '+language);
+   await button.click();await p.waitForFunction(language=>document.documentElement.lang===language,language);
+   check(await p.locator('html').getAttribute('dir')===(language==='he'?'rtl':'ltr')&&await button.getAttribute('aria-pressed')==='true','Production click switches language and direction '+language);
+   await p.reload();check(await p.locator('html').getAttribute('lang')===language,'Production choice persists after reload '+language);
+  }
+  check(await p.evaluate(()=>!CleanTimeI18n.setLanguage('unsupported')),'Unsupported language still rejects');
  }finally{await context.close();}
  for(const [origin,config,expected] of [
-  ['https://production-build.vercel.app',{environment:'production'},'he'],
-  ['https://unknown.example.invalid',null,'he'],
+  ['https://production-build.vercel.app',{environment:'production'},'ru'],
+  ['https://unknown.example.invalid',null,'ru'],
   ['https://custom-preview.example.invalid',{environment:'preview',backupDisabled:true},'ru']
  ]){
   const context=await page.context().browser().newContext();
   try{
    await context.addInitScript(()=>localStorage.setItem('cleantime-language','ru'));
    await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.origin!==origin)return route.abort();if(url.pathname==='/assets/backend-config.js')return route.fulfill({contentType:'application/javascript',body:'window.CleanTimeBackend='+JSON.stringify(config)});const file=require('path').join(process.cwd(),url.pathname==='/'?'index.html':url.pathname.slice(1));return fs.existsSync(file)&&fs.statSync(file).isFile()?route.fulfill({path:file}):route.fulfill({status:404,body:''});});
-   const p=await context.newPage();await p.goto(origin);check(await p.locator('html').getAttribute('lang')===expected,'Build-aware draft-language gate '+origin);
+   const p=await context.newPage();await p.goto(origin);check(await p.locator('html').getAttribute('lang')===expected,'Language preference is independent of backend/build host '+origin);
   }finally{await context.close();}
  }
  return {passed:results.length,results};
