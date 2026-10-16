@@ -8,7 +8,7 @@ async(page)=>{
   journal:[{id:'j',text:'יומן סינתטי סודי',created:1,updated:2}],gratitude:[{id:'g',text:'תודה סינתטית סודית',ts:3}],
   inventory:{'2025-01-01':{summary:'סיכום סינתטי סודי',answers:{q:'תשובה סודית',placeholder_1:'old synthetic answer',future_prompt:'keep'},questionnaireVersion:'placeholder-v1',extra:{keep:true}}},plans:{'2025-01-01':[{id:'p',text:'תכנית סודית',done:false}]},
   bookmarks:[{id:'b',title:'כותרת סודית',url:'https://example.invalid/private',note:'הערה סודית'}],links:[{id:'l',title:'משאב סודי',url:'https://example.invalid/secret'}],extra:{text:'תוכן עתידי סודי'},updatedAt:1750000000000};
- const cloudState=s=>{const d=structuredClone(s);delete d.mode;return d;};
+ const cloudState=s=>{const d=require(process.cwd()+'/assets/recovery-timers.js').normalize(structuredClone(s));delete d.mode;return d;};
  const canonical=v=>JSON.stringify(v,(_,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(k=>[k,x[k]])):x);
  const same=(a,b)=>canonical(a)===canonical(b);
  async function scenario({local=full,row=null,material=null,registered=true,meta=true}={}){
@@ -54,7 +54,7 @@ async(page)=>{
   if(registered)await p.waitForFunction(()=>!!document.getElementById('encryptionMsg').textContent||!document.getElementById('ask').hidden||/הגיבוי המוצפן עדיין לא הופעל|גיבוי מוצפן פעיל|מפתח שחזור נדרש/.test(document.getElementById('encryptionStatus').textContent));
   if(registered&&!await p.locator('#account').isVisible()&&!await p.locator('#ask').isVisible()){await p.locator('#openSettings').click();await p.locator('#myAccount').click();}
   const plain=async()=>p.evaluate(async row=>{const m=JSON.parse(localStorage.getItem('cleantime-he-crypto'));return SyncCrypto.decrypt(row.data,await SyncCrypto.importDek(m.raw),m.uid,row.updated_at);},cloud);
-  return {c,p,calls,cloud:()=>structuredClone(cloud),plain,setFail:v=>fail=v,setCas:v=>casMiss=v,setVerify:v=>verifyFail=v,setRace:v=>raceRow=v,holdWrite:()=>hold=true,releaseWrite:()=>{hold=false;release?.();}};
+  return {c,p,calls,cloud:()=>structuredClone(cloud),plain,setCloud:v=>cloud=structuredClone(v),setFail:v=>fail=v,setCas:v=>casMiss=v,setVerify:v=>verifyFail=v,setRace:v=>raceRow=v,holdWrite:()=>hold=true,releaseWrite:()=>{hold=false;release?.();}};
  }
  const read=p=>p.evaluate(k=>JSON.parse(localStorage.getItem(k)),KEY);
  const stored=p=>p.evaluate(k=>JSON.parse(localStorage.getItem(k)),CK);
@@ -221,7 +221,7 @@ async(page)=>{
   await s.p.waitForFunction(()=>document.getElementById('encryptionMsg').textContent.includes('לא הושלם'));
   check(await s.p.evaluate(()=>!window.qaAnalytics.includes('backup_activated')),'Analytics failed '+failure+' emits no activation');
   check(!(await status(s.p)).includes('גיבוי מוצפן פעיל')&&(await s.p.locator('#setSub').textContent())===(await status(s.p))&&!((await stored(s.p)).confirmed),'Initial '+failure+': consistent error, no false active status');
-  check(same({...await read(s.p),updatedAt:full.updatedAt},full),'Initial '+failure+': local content retained');
+  check(same(require(process.cwd()+'/assets/recovery-timers.js').normalize({...await read(s.p),updatedAt:full.updatedAt}),require(process.cwd()+'/assets/recovery-timers.js').normalize(full)),'Initial '+failure+': local content retained');
   const retryMaterial=await stored(s.p);
   s.setFail(false);s.setVerify(false);await s.p.reload();await settle(s.p);
   check((await status(s.p)).includes('גיבוי מוצפן פעיל')&&s.calls.uploads.length===1&&(await stored(s.p)).wrappedKey===retryMaterial.wrappedKey,'Initial '+failure+': reload retries with same key and one upload');
@@ -238,7 +238,7 @@ async(page)=>{
  s=await scenario({row:legacy});
  check(s.calls.uploads.length===0&&same(s.cloud(),legacy)&&same(await read(s.p),full),'Legacy migration waits for acknowledgement; neither side destroyed');
  s.setFail(true);await s.p.locator('#makeRecoveryKey').click();await s.p.locator('#recoveryGenerated').waitFor();await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();await s.p.waitForFunction(()=>document.getElementById('encryptionMsg').textContent.includes('לא הושלם'));
- check(same(s.cloud(),legacy)&&same({...await read(s.p),updatedAt:full.updatedAt},full),'Failed migration write preserves plaintext cloud and complete local content');
+ check(same(s.cloud(),legacy)&&same(require(process.cwd()+'/assets/recovery-timers.js').normalize({...await read(s.p),updatedAt:full.updatedAt}),require(process.cwd()+'/assets/recovery-timers.js').normalize(full)),'Failed migration write preserves plaintext cloud and complete local content');
  check(!(await status(s.p)).includes('גיבוי מוצפן פעיל')&&(await stored(s.p))&&!JSON.parse(await s.p.evaluate(k=>localStorage.getItem(k),CK)).confirmed,'Failed migration retains retry material without marking active');
  s.setFail(false);await s.p.locator('#retryEncryption').click();await s.p.waitForFunction(()=>document.getElementById('encryptionStatus').textContent.includes('גיבוי מוצפן פעיל'));
  check(s.cloud().data.v===1&&same({...await s.plain(),updatedAt:full.updatedAt},cloudState(full)),'Retry migrates selected legacy state without content loss');
@@ -268,5 +268,33 @@ async(page)=>{
  check((await status(s.p)).includes('מפתח שחזור נדרש')&&s.calls.uploads.length===0,'Keys from another account are ignored');await s.c.close();
  check(require('node:fs').readFileSync('index.html','utf8').includes('נתוני ההחלמה מוצפנים במכשיר לפני שהם נשמרים בגיבוי בענן')&&require('node:fs').readFileSync('index.html','utf8').includes('המידע במכשיר עצמו נשאר זמין לאפליקציה בזמן השימוש'),'Privacy copy describes encrypted cloud backup and local availability');
  check(!/type=["']password|signInWithPassword|resetPasswordForEmail|updateUser\(/.test(require('node:fs').readFileSync('index.html','utf8')),'No password input/login/reset introduced');
+ const multiple=require(process.cwd()+'/assets/recovery-timers.js').normalize(full);
+ multiple.timers.push({id:'additional-synthetic',category:'alcohol',label:'סינתטי נוסף',date:'2025-01-01',time:''});
+ s=await scenario({local:multiple});
+ await s.p.locator('#makeRecoveryKey').click();await s.p.locator('#recoveryGenerated').waitFor();const multipleRecovery=await s.p.locator('#recoveryOutput').inputValue();
+ await s.p.locator('#recoverySaved').check();await s.p.locator('#activateEncryption').click();await settle(s.p);
+ const multipleRow=s.cloud(),multipleMaterial=await stored(s.p);check((await s.plain()).timers.length===2&&s.calls.uploads.length===1,'Registered multi-timer state uploads as a complete encrypted record');await s.c.close();
+ s=await scenario({local:null,row:multipleRow,meta:false});await s.p.locator('#recoveryInput').fill(multipleRecovery);await s.p.locator('#unlockRecovery').click();await settle(s.p);
+ check((await read(s.p)).timers.length===2&&(await read(s.p)).primaryTimerId==='legacy-primary'&&s.calls.uploads.length===0,'Independent context restores all encrypted timers without a rewrite');await s.c.close();
+ // A cloud pull changing primary while the main Settings confirmation is open
+ // must not redirect the saved edit to the newly selected timer.
+ s=await scenario({local:multiple,row:multipleRow,material:multipleMaterial});
+ await s.p.locator('#account [data-go=settings]').click();await s.p.locator('#sDate').fill('2025-03-01');await s.p.locator('#saveSettings').click();await s.p.locator('#ask').waitFor();
+ const switched=require(process.cwd()+'/assets/recovery-timers.js').project({...await read(s.p),primaryTimerId:'additional-synthetic',updatedAt:Date.parse(multipleRow.updated_at)+10000});
+ const switchedRow=await s.p.evaluate(async({switched,material,uid})=>{const time=new Date(switched.updatedAt).toISOString();const data={...switched};delete data.mode;return {data:await SyncCrypto.encrypt(data,await SyncCrypto.importDek(material.raw),material,uid,time),updated_at:time};},{switched,material:multipleMaterial,uid});
+ s.setCloud(switchedRow);await s.p.evaluate(()=>window.dispatchEvent(new Event('focus')));await s.p.waitForFunction(()=>JSON.parse(localStorage.getItem('cleantime-he-v1')).primaryTimerId==='additional-synthetic');
+ await s.p.locator('#askB').getByRole('button',{name:'עדכון התאריך',exact:true}).click();
+ check(same((await read(s.p)).timers,switched.timers)&&s.calls.uploads.length===0&&same(s.cloud(),switchedRow),'Stale primary-date confirmation cannot edit either timer or upload');await s.c.close();
+ // Unsupported remote records must be protected regardless of timestamp,
+ // encryption or first-login local-choice opportunities.
+ await page.goto(origin);
+ for(const encrypted of [false,true])for(const kind of ['version','missing-array','duplicates'])for(const mode of ['local-newer','equal','first-login']){
+  const remoteTime=1750000000000,valid=require(process.cwd()+'/assets/recovery-timers.js').normalize({...full,updatedAt:remoteTime});
+  const malformed=kind==='duplicates'?{...valid,timers:[...valid.timers,{...valid.timers[0]}]}:{...valid,timersVersion:2};if(kind==='missing-array')delete malformed.timers;
+  const remoteRow=encrypted?await page.evaluate(async({malformed,material,uid})=>{const time=new Date(malformed.updatedAt).toISOString();return {data:await SyncCrypto.encrypt(malformed,await SyncCrypto.importDek(material.raw),material,uid,time),updated_at:time};},{malformed,material:multipleMaterial,uid}):{data:malformed,updated_at:new Date(remoteTime).toISOString()};
+  const local={...full,updatedAt:mode==='equal'?remoteTime:remoteTime+10000};
+  s=await scenario({local,row:remoteRow,material:encrypted?multipleMaterial:null,meta:mode!=='first-login'});
+  check(s.calls.uploads.length===0&&same(await read(s.p),local)&&same(s.cloud(),remoteRow)&&await s.p.locator('#ask').isHidden(),'Malformed remote protected: '+encrypted+'/'+kind+'/'+mode);await s.c.close();
+ }
  return {passed:results.length,results};
 }

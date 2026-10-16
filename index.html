@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="referrer" content="no-referrer">
 <script defer src="/assets/analytics.js" data-enabled="true" data-script-src="/_vercel/insights/script.js" data-view-endpoint="/_vercel/insights/view" data-event-endpoint="/_vercel/insights/event" data-custom-events="true"></script>
+<script src="/assets/backend-config.js"></script>
+<script src="/assets/messages.js"></script>
+<script src="/assets/i18n.js"></script>
 <script src="/assets/appearance.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -80,10 +83,59 @@ button,input,textarea,select{font:inherit;color:inherit}
 @media(prefers-color-scheme:dark){:root[data-background="sage"]:not([data-theme="light"]){--bg:#17211B;--muted:#A6B3AA}:root[data-background="sand"]:not([data-theme="light"]){--bg:#241F19;--muted:#A6B3AA}}
 :root[data-font="arial"]{--sans:Arial,sans-serif}
 :root[data-font="serif"]{--sans:"Times New Roman",serif}
+:root[data-font="tahoma"]{--sans:Tahoma,"Assistant",Arial,sans-serif}
+:root[data-font="verdana"]{--sans:Verdana,"Assistant",Arial,sans-serif}
+:root[data-background="mist"]{--bg:#EDF2F0}
+:root[data-background="lavender"]{--bg:#F1EDF7}
+:root[data-background="rose"]{--bg:#F7ECEE}
+:root[data-background="peach"]{--bg:#F8EEE5}
+:root[data-background="sky"]{--bg:#EAF1F8}
+:root[data-background="stone"]{--bg:#EEEDE9}
+:root:is([data-background="mist"],[data-background="lavender"],[data-background="rose"],[data-background="peach"],[data-background="sky"],[data-background="stone"]){--muted:#5F6B67;--dark-bg:#1B2120}
+:root[data-background="lavender"]{--dark-bg:#211D28}
+:root[data-background="rose"]{--dark-bg:#281E23}
+:root[data-background="peach"]{--dark-bg:#282019}
+:root[data-background="sky"]{--dark-bg:#1A222B}
+:root[data-background="stone"]{--dark-bg:#22221F}
+:root:is([data-background="mist"],[data-background="lavender"],[data-background="rose"],[data-background="peach"],[data-background="sky"],[data-background="stone"])[data-theme="dark"]{--bg:var(--dark-bg);--muted:#A6B3AA}
+@media(prefers-color-scheme:dark){:root:is([data-background="mist"],[data-background="lavender"],[data-background="rose"],[data-background="peach"],[data-background="sky"],[data-background="stone"]):not([data-theme="light"]){--bg:var(--dark-bg);--muted:#A6B3AA}}
+:root[data-accent="teal"]{--accent:#477E72!important}
+:root[data-accent="sky"]{--accent:#2C78A8!important}
+:root[data-accent="plum"]{--accent:#874778!important}
+:root[data-accent="olive"]{--accent:#5F7230!important}
+:root[data-accent="rose"]{--accent:#B04A5A!important}
 .appearance-preview{padding:14px;background:var(--bg);border:1px solid var(--line);border-radius:12px}
 :focus-visible{outline:2px solid var(--accent-ink);outline-offset:3px;border-radius:6px}
 
 .app{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 20px calc(88px + env(safe-area-inset-bottom,0px))}
+.language-bar{position:sticky;top:0;z-index:4;flex-shrink:0;background:var(--bg);padding-top:env(safe-area-inset-top,0px)}
+.language-switcher{display:flex;align-items:center;justify-content:flex-end;direction:ltr;font-size:.95rem;line-height:1.2}
+.language-switcher button{border:0;background:none;padding:8px 6px;min-width:44px;min-height:44px;cursor:pointer;font-weight:400}
+.language-switcher button[aria-pressed="true"]{font-weight:700}
+.language-switcher button:disabled{color:var(--muted);cursor:default}
+.language-switcher span{padding-inline:2px}
+#languageStatus{margin:0;font-size:.85rem}
+.second-toggle{display:flex;align-items:center;gap:10px;min-height:44px;margin-block:12px;cursor:pointer}
+.second-toggle input{width:20px;height:20px;flex-shrink:0;accent-color:var(--accent-ink)}
+.second-fields{border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 20px;min-width:0;background:var(--surface)}
+.second-fields legend{font-weight:600;padding-inline:6px}
+.home-display{width:100%;margin:0 0 20px;text-align:start}
+.home-display .second-toggle{font-size:.9rem;margin:0}
+.display-modes{display:flex;gap:4px;border:1px solid var(--line);border-radius:12px;padding:4px;margin-block:8px}
+.display-modes button{flex:1;min-width:0;min-height:44px;font-size:.8rem;line-height:1.3;padding:6px;border:0;border-radius:8px;background:none;cursor:pointer}
+.display-modes button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+#homeTimerPick{width:100%;margin-top:8px}
+#primaryTimerDisplay{width:100%;text-align:center}
+#primaryTimerDisplay .from-chip{display:inline-block}
+#homeTimerCards{width:100%;display:grid;gap:12px;margin-bottom:12px}
+#homeTimerCards.equal-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+.home-timer-card{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:14px;text-align:start;overflow-wrap:anywhere}
+.home-timer-card h3{font-size:.95rem;font-weight:600;margin:0 0 4px}
+.home-timer-card .timer-days{font-size:1.65rem;font-weight:600;line-height:1.3;display:block}
+.home-timer-card .timer-unit{font-size:.85rem;font-weight:400}
+.equal-cards .timer-unit{display:block;margin-top:4px}
+.home-timer-card p{font-size:.8rem;color:var(--muted);margin:4px 0 0}
+#homeTimerPick{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit}
 .public-introduction{padding-block:20px}
 .public-introduction a{display:inline-block;min-height:44px;padding-block:8px;color:var(--accent-ink)}
 .public-introduction nav{display:flex;gap:24px;flex-wrap:wrap}
@@ -172,8 +224,10 @@ h3{font-family:var(--sans);font-weight:600;font-size:1.25rem;margin:0 0 4px}
 .sync .sub{margin-bottom:12px}
 .sync form{display:grid;gap:8px}
 .sync .who{margin:0 0 2px;overflow-wrap:anywhere}
-.msg{font-size:.9rem;margin:10px 0 0;color:var(--accent)}
+.msg{font-size:.9rem;margin:10px 0 0;color:var(--accent-ink)}
 .msg.err{color:#B3413B}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .msg.err{color:#FFB4AB}}
+:root[data-theme="dark"] .msg.err{color:#FFB4AB}
 .msg:empty{display:none}
 .modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px}
 .modal .box{background:var(--surface);border-radius:18px;padding:24px;width:100%;max-width:420px}
@@ -313,19 +367,37 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 .bookmark-content small{display:block;direction:ltr;text-align:start;font-weight:400;color:var(--muted);font-size:.85rem;overflow-wrap:anywhere}
 .bookmark-note{margin:8px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
 .bookmark-actions{display:flex;gap:16px;flex-wrap:wrap}
+:root[dir="ltr"] .link-item small{text-align:left}
+:root[dir="ltr"] .tabs .inner{direction:ltr}
+nav.tabs button{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.35;font-size:.85rem}
+nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.btn{white-space:normal}
+:root[dir="ltr"] .tool-links :is(a,button){text-align:left}
+:root[dir="ltr"] .today-actions{text-align:left}
+:root[dir="ltr"] .tool-links :is(a,button)::after{content:"›"}
+:root[lang="he"] #readingLanguage{display:none}
+#readingLanguage{font-size:.8rem;color:var(--muted)}
 </style>
 </head>
 <body>
 <div class="app">
+  <div class="language-bar">
+    <nav class="language-switcher" id="languageSelector" aria-label="שפה" data-i18n-aria-label="שפה" dir="ltr">
+      <button type="button" data-language="en" lang="en" aria-label="English" aria-pressed="false">En</button><span aria-hidden="true">|</span>
+      <button type="button" data-language="he" lang="he" aria-label="עברית" aria-pressed="true">עב</button><span aria-hidden="true">|</span>
+      <button type="button" data-language="ru" lang="ru" aria-label="Русский" aria-pressed="false">рус</button>
+    </nav>
+    <p id="languageStatus" role="alert" hidden></p>
+  </div>
   <section class="public-introduction" id="publicIntroduction" aria-labelledby="publicTitle">
-    <h2 id="publicTitle">זמן נקי — כלים קטנים ליום שלך בהחלמה</h2>
-    <p>זמן נקי היא אפליקציה חינמית בעברית לאנשים בהחלמה מהתמכרות. אפשר לעקוב אחר הזמן הנקי, לכתוב ביומן אישי, לשמור הכרת תודה ולבנות תכנית להיום.</p>
-    <p>אפשר להתחיל בלי הרשמה. במצב אורח הנתונים נשמרים בדפדפן במכשיר שלך. השימוש בכלים דורש JavaScript.</p>
-    <p>זמן נקי עצמאית ואינה קשורה לאנ-איי (מכורים אנונימיים) ואינה מטעמם. היא אינה מוצר טיפולי, אפליקציה רפואית או שירות חירום.</p>
-    <nav aria-label="מידע ציבורי"><a href="/about/">אודות זמן נקי</a><a href="/privacy/">פרטיות</a></nav>
+    <h2 id="publicTitle"><span data-i18n="זמן נקי — כלים קטנים ליום שלך בהחלמה">זמן נקי — כלים קטנים ליום שלך בהחלמה</span></h2>
+    <p><span data-i18n="זמן נקי היא אפליקציה חינמית בעברית לאנשים בהחלמה מהתמכרות. אפשר לעקוב אחר הזמן הנקי, לכתוב ביומן אישי, לשמור הכרת תודה ולבנות תכנית להיום.">זמן נקי היא אפליקציה חינמית בעברית לאנשים בהחלמה מהתמכרות. אפשר לעקוב אחר הזמן הנקי, לכתוב ביומן אישי, לשמור הכרת תודה ולבנות תכנית להיום.</span></p>
+    <p><span data-i18n="אפשר להתחיל בלי הרשמה. במצב אורח הנתונים נשמרים בדפדפן במכשיר שלך. השימוש בכלים דורש JavaScript.">אפשר להתחיל בלי הרשמה. במצב אורח הנתונים נשמרים בדפדפן במכשיר שלך. השימוש בכלים דורש JavaScript.</span></p>
+    <p><span data-i18n="זמן נקי עצמאית ואינה קשורה לאנ-איי (מכורים אנונימיים) ואינה מטעמם. היא אינה מוצר טיפולי, אפליקציה רפואית או שירות חירום.">זמן נקי עצמאית ואינה קשורה לאנ-איי (מכורים אנונימיים) ואינה מטעמם. היא אינה מוצר טיפולי, אפליקציה רפואית או שירות חירום.</span></p>
+    <nav aria-label="מידע ציבורי" data-i18n-aria-label="מידע ציבורי"><a href="/about/"><span data-i18n="אודות זמן נקי">אודות זמן נקי</span></a><a href="/privacy/"><span data-i18n="פרטיות">פרטיות</span></a></nav>
   </section>
   <header hidden>
-    <h1 id="greet">זמן נקי</h1>
+    <h1 id="greet"><span data-i18n="זמן נקי">זמן נקי</span></h1>
     <div id="milestone" class="milestone-badge" role="img" hidden>
       <svg viewBox="0 0 80 112" aria-hidden="true" focusable="false">
         <defs>
@@ -345,69 +417,83 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 
   <p id="storageMsg" role="alert" hidden></p>
   <p class="note" id="offlineStatus" role="status" hidden></p>
-  <p class="note" id="updateNotice" role="status" hidden>יש גרסה חדשה. כדי לעבור אליה, אפשר לסגור את כל חלונות זמן נקי ולפתוח מחדש. אין צורך למחוק נתונים.</p>
+  <p class="note" id="updateNotice" role="status" hidden><span data-i18n="יש גרסה חדשה. כדי לעבור אליה, אפשר לסגור את כל חלונות זמן נקי ולפתוח מחדש. אין צורך למחוק נתונים.">יש גרסה חדשה. כדי לעבור אליה, אפשר לסגור את כל חלונות זמן נקי ולפתוח מחדש. אין צורך למחוק נתונים.</span></p>
   <section id="startup" hidden aria-live="polite">
-    <h2>בודקים את החשבון והגיבוי</h2>
-    <p class="sub">הנתונים במכשיר נשמרים. עוד רגע ממשיכים.</p>
-    <button class="btn ghost" id="startupLocal" hidden>להמשיך במכשיר הזה</button>
+    <h2><span data-i18n="בודקים את החשבון והגיבוי">בודקים את החשבון והגיבוי</span></h2>
+    <p class="sub"><span data-i18n="הנתונים במכשיר נשמרים. עוד רגע ממשיכים.">הנתונים במכשיר נשמרים. עוד רגע ממשיכים.</span></p>
+    <button class="btn ghost" id="startupLocal" hidden><span data-i18n="להמשיך במכשיר הזה">להמשיך במכשיר הזה</span></button>
   </section>
   <section id="welcome" hidden aria-labelledby="welcomeTitle">
     <div class="welcome-brand">
       <img class="welcome-logo" src="/icon-512.png" width="88" height="88" alt="" aria-hidden="true">
-      <h1 id="welcomeTitle">זמן נקי</h1>
-      <p class="welcome-lead">מרחב פשוט ליום שלך בהחלמה</p>
-      <p class="welcome-origin">האפליקציה נולדה מצורך אישי במלווה פשוט בעברית למי שבהחלמה. כלים קטנים לתמיכה ביום שלך, בחינם ובלי לחץ.</p>
+      <h1 id="welcomeTitle"><span data-i18n="זמן נקי">זמן נקי</span></h1>
+      <p class="welcome-lead"><span data-i18n="מרחב פשוט ליום שלך בהחלמה">מרחב פשוט ליום שלך בהחלמה</span></p>
+      <p class="welcome-origin"><span data-i18n="האפליקציה נולדה מצורך אישי במלווה פשוט בעברית למי שבהחלמה. כלים קטנים לתמיכה ביום שלך, בחינם ובלי לחץ.">האפליקציה נולדה מצורך אישי במלווה פשוט בעברית למי שבהחלמה. כלים קטנים לתמיכה ביום שלך, בחינם ובלי לחץ.</span></p>
     </div>
     <div class="welcome-features" aria-labelledby="welcomeFeaturesTitle">
-      <h2 id="welcomeFeaturesTitle">מה יש כאן</h2>
+      <h2 id="welcomeFeaturesTitle"><span data-i18n="מה יש כאן">מה יש כאן</span></h2>
       <ul class="welcome-feature-list">
-        <li data-feature="counter"><svg class="page-art daybreak" viewBox="0 0 68 34" aria-hidden="true" focusable="false"><path d="M4 26h60M23 26a11 11 0 0 1 22 0M34 3v5M13 12l4 4m38-4-4 4M12 31h44"/></svg><div><h3>זמן נקי</h3><p>לראות את הזמן שעבר מאז תחילת ההחלמה.</p></div></li>
-        <li data-feature="planner"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg><div><h3>התכנית שלי להיום</h3><p>לבחור צעדים קטנים להיום ולעקוב אחריהם.</p></div></li>
-        <li data-feature="journal"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg><div><h3>ככה זה עכשיו</h3><p>יומן אישי למחשבות ולמה שעובר עליך עכשיו.</p></div></li>
-        <li data-feature="gratitude"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg><div><h3>הכרת תודה</h3><p>לשים לב לדברים הטובים ולחזור אליהם בהמשך.</p></div></li>
+        <li data-feature="counter"><svg class="page-art daybreak" viewBox="0 0 68 34" aria-hidden="true" focusable="false"><path d="M4 26h60M23 26a11 11 0 0 1 22 0M34 3v5M13 12l4 4m38-4-4 4M12 31h44"/></svg><div><h3><span data-i18n="זמן נקי">זמן נקי</span></h3><p><span data-i18n="לראות את הזמן שעבר מאז תחילת ההחלמה.">לראות את הזמן שעבר מאז תחילת ההחלמה.</span></p></div></li>
+        <li data-feature="planner"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg><div><h3><span data-i18n="התכנית שלי להיום">התכנית שלי להיום</span></h3><p><span data-i18n="לבחור צעדים קטנים להיום ולעקוב אחריהם.">לבחור צעדים קטנים להיום ולעקוב אחריהם.</span></p></div></li>
+        <li data-feature="journal"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg><div><h3><span data-i18n="ככה זה עכשיו">ככה זה עכשיו</span></h3><p><span data-i18n="יומן אישי למחשבות ולמה שעובר עליך עכשיו.">יומן אישי למחשבות ולמה שעובר עליך עכשיו.</span></p></div></li>
+        <li data-feature="gratitude"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg><div><h3><span data-i18n="הכרת תודה">הכרת תודה</span></h3><p><span data-i18n="לשים לב לדברים הטובים ולחזור אליהם בהמשך.">לשים לב לדברים הטובים ולחזור אליהם בהמשך.</span></p></div></li>
       </ul>
     </div>
     <div class="welcome-entry">
-      <button class="btn" id="welcomeStart">מתחילים</button>
-      <button class="btn ghost" id="onboardingLogin">כבר יש לי חשבון</button>
-      <p class="note">אין צורך בהרשמה. הנתונים נשמרים בדפדפן במכשיר הזה. גיבוי מוצפן וסנכרון הם אפשרות שאפשר להפעיל בהמשך.</p>
-      <button class="btn ghost" data-go="about">אודות זמן נקי ופרטיות</button>
+      <button class="btn" id="welcomeStart"><span data-i18n="מתחילים">מתחילים</span></button>
+      <button class="btn ghost" id="onboardingLogin"><span data-i18n="כבר יש לי חשבון">כבר יש לי חשבון</span></button>
+      <p class="note"><span data-i18n="אין צורך בהרשמה. הנתונים נשמרים בדפדפן במכשיר הזה. גיבוי מוצפן וסנכרון הם אפשרות שאפשר להפעיל בהמשך.">אין צורך בהרשמה. הנתונים נשמרים בדפדפן במכשיר הזה. גיבוי מוצפן וסנכרון הם אפשרות שאפשר להפעיל בהמשך.</span></p>
+      <button class="btn ghost" data-go="about"><span data-i18n="אודות זמן נקי ופרטיות">אודות זמן נקי ופרטיות</span></button>
     </div>
   </section>
   <section id="onboarding" hidden>
-    <h2>מתחילים בקצב שלך</h2>
-    <p class="sub">בוחרים תאריך תחילת החלמה וסוג החלמה, וממשיכים ליום שלך.</p>
+    <h2><span data-i18n="מתחילים בקצב שלך">מתחילים בקצב שלך</span></h2>
+    <p class="sub"><span data-i18n="בוחרים תאריך תחילת החלמה וסוג החלמה, וממשיכים ליום שלך.">בוחרים תאריך תחילת החלמה וסוג החלמה, וממשיכים ליום שלך.</span></p>
     <form id="guestForm">
-      <label class="field"><span>תאריך תחילת הניקיון / ההחלמה</span><input type="date" id="oDate" required></label>
-      <label class="field"><span>החלמה מ־</span><select id="oFrom" required>
-        <option value="" disabled selected>בחירה</option><option>אלכוהול</option><option>סמים</option><option>עישון</option><option>אוכל</option><option>אחר</option>
+      <label class="field"><span><span data-i18n="תאריך תחילת הניקיון / ההחלמה">תאריך תחילת הניקיון / ההחלמה</span></span><input type="date" id="oDate" required></label>
+      <label class="field"><span><span data-i18n="החלמה מ־">החלמה מ־</span></span><select id="oFrom" required>
+        <option value="" disabled selected data-i18n="בחירה">בחירה</option><option data-i18n="אלכוהול">אלכוהול</option><option data-i18n="סמים">סמים</option><option data-i18n="עישון">עישון</option><option data-i18n="אוכל">אוכל</option><option data-i18n="אחר">אחר</option>
       </select></label>
-      <p class="msg err" id="oFromError" role="alert" hidden>יש לבחור סוג החלמה.</p>
-      <button class="btn" type="submit">ממשיכים להיום</button>
+      <p class="msg err" id="oFromError" role="alert" hidden><span data-i18n="יש לבחור סוג החלמה.">יש לבחור סוג החלמה.</span></p>
+      <button class="btn" type="submit"><span data-i18n="ממשיכים להיום">ממשיכים להיום</span></button>
     </form>
-    <p class="note">בלי שם, מייל או טלפון. הנתונים נשמרים רק בדפדפן במכשיר הזה.</p>
-    <button class="btn ghost" id="setupBack">חזרה</button>
-    <button class="btn ghost" data-go="about">אודות ופרטיות</button>
+    <p class="note"><span data-i18n="בלי שם, מייל או טלפון. הנתונים נשמרים רק בדפדפן במכשיר הזה.">בלי שם, מייל או טלפון. הנתונים נשמרים רק בדפדפן במכשיר הזה.</span></p>
+    <button class="btn ghost" id="setupBack"><span data-i18n="חזרה">חזרה</span></button>
+    <button class="btn ghost" data-go="about"><span data-i18n="אודות ופרטיות">אודות ופרטיות</span></button>
   </section>
 
   <!-- Counter -->
   <section id="counter" hidden>
-    <div id="backupReminder" hidden><p id="backupReminderText" role="status"></p><button class="btn secondary" id="resumeBackup">השלמת הגיבוי המוצפן</button></div>
+    <div id="backupReminder" hidden><p id="backupReminderText" role="status"></p><button class="btn secondary" id="resumeBackup"><span data-i18n="השלמת הגיבוי המוצפן">השלמת הגיבוי המוצפן</span></button></div>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M15 101h450M130 101a110 110 0 0 1 220 0M160 101a80 80 0 0 1 160 0M190 101a50 50 0 0 1 100 0M44 120h392M84 139h312"/></svg>
     <svg class="page-art daybreak" viewBox="0 0 68 34" aria-hidden="true" focusable="false"><path d="M4 26h60M23 26a11 11 0 0 1 22 0M34 3v5M13 12l4 4m38-4-4 4M12 31h44"/></svg>
+    <div class="home-display" id="homeDisplay" hidden>
+      <label class="second-toggle"><input type="checkbox" id="showHomeTimers"><span data-i18n="הצגת מסלולים נוספים בבית">הצגת מסלולים נוספים בבית</span></label>
+      <div id="homeDisplayOptions" hidden>
+        <div class="display-modes" id="timerDisplayModes" role="group" aria-label="תצוגת טיימרים" data-i18n-aria-label="תצוגת טיימרים">
+          <button type="button" data-display="single" aria-pressed="true" data-i18n="אחד בכל פעם">אחד בכל פעם</button>
+          <button type="button" data-display="compact" aria-pressed="false" data-i18n="ראשי ומשני קטן">ראשי ומשני קטן</button>
+          <button type="button" data-display="cards" aria-pressed="false" data-i18n="כרטיסים שווים">כרטיסים שווים</button>
+        </div>
+        <select id="homeTimerPick" aria-label="הטיימר המוצג" data-i18n-aria-label="הטיימר המוצג"></select>
+      </div>
+    </div>
+    <div id="primaryTimerDisplay">
     <div class="from-chip" id="fromChip" hidden></div>
-    <button class="count" id="count" aria-live="polite" aria-label="זמן נקי, הקשה משנה תצוגה"></button>
+    <button class="count" id="count" aria-live="polite" aria-label="זמן נקי, הקשה משנה תצוגה" data-i18n-aria-label="זמן נקי, הקשה משנה תצוגה"></button>
     <div class="dots" id="dots"><span></span><span></span><span></span></div>
     <div class="since" id="since"></div>
-    <div class="hint">הקשה על המספר משנה תצוגה</div>
+    <div class="hint"><span data-i18n="הקשה על המספר משנה תצוגה">הקשה על המספר משנה תצוגה</span></div>
+    </div>
+    <div id="homeTimerCards" hidden></div>
     <div class="today-actions">
-      <h2>התחברות</h2>
-      <div class="tool-links" aria-label="פעולות יומיות">
-        <a class="primary" id="dailyReading" href="https://www.naisrael.org.il/just-for-today/" target="_blank" rel="noopener noreferrer" aria-label="רק להיום — נפתח בחלון חדש">רק להיום</a>
-        <button data-go="journal">ככה זה עכשיו (יומן)</button>
-        <button data-go="gratitude">הכרת תודה</button>
-        <button data-go="planner">תכנית רק להיום</button>
-        <button data-go="inventory">חשבון נפש יומי / צעד 10</button>
+      <h2><span data-i18n="התחברות">התחברות</span></h2>
+      <div class="tool-links" aria-label="פעולות יומיות" data-i18n-aria-label="פעולות יומיות">
+        <a class="primary" id="dailyReading" href="https://www.naisrael.org.il/just-for-today/" target="_blank" rel="noopener noreferrer" aria-label="רק להיום — נפתח בחלון חדש" data-i18n-aria-label="רק להיום — נפתח בחלון חדש"><span data-i18n="רק להיום">רק להיום</span><small id="readingLanguage"></small></a>
+        <button data-go="journal"><span data-i18n="ככה זה עכשיו (יומן)">ככה זה עכשיו (יומן)</span></button>
+        <button data-go="gratitude"><span data-i18n="הכרת תודה">הכרת תודה</span></button>
+        <button data-go="planner"><span data-i18n="תכנית רק להיום">תכנית רק להיום</span></button>
+        <button data-go="inventory"><span data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span></button>
       </div>
     </div>
   </section>
@@ -415,12 +501,12 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   <!-- Planner -->
   <section id="planner" hidden>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M30 160V120c0-24 76-20 76-50S55 45 55 10M17 128h27M85 83h28M43 27h26M136 28h36m-36 18h24M151 78h36m-36 18h24"/></svg>
-    <div class="page-heading"><h2>התכנית שלי להיום</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg></div>
+    <div class="page-heading"><h2><span data-i18n="התכנית שלי להיום">התכנית שלי להיום</span></h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg></div>
     <p class="sub" id="pDate"></p>
-    <label class="field"><span>תכניות שמורות</span><select id="pHistory" aria-label="תכניות שמורות"></select></label>
+    <label class="field"><span><span data-i18n="תכניות שמורות">תכניות שמורות</span></span><select id="pHistory" aria-label="תכניות שמורות" data-i18n-aria-label="תכניות שמורות"></select></label>
     <form class="row" id="pForm" onsubmit="return false">
-      <input type="text" id="pInput" placeholder="מה אני רוצה לעשות היום?" maxlength="200" aria-label="משימה חדשה">
-      <button class="btn" id="pAdd" type="submit">הוספה</button>
+      <input type="text" id="pInput" placeholder="מה אני רוצה לעשות היום?" maxlength="200" aria-label="משימה חדשה" data-i18n-aria-label="משימה חדשה" data-i18n-placeholder="מה אני רוצה לעשות היום?">
+      <button class="btn" id="pAdd" type="submit"><span data-i18n="הוספה">הוספה</span></button>
     </form>
     <ul class="list" id="pList"></ul>
   </section>
@@ -428,20 +514,20 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   <!-- Journal -->
   <section id="journal" hidden>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M23 16h101v121H23ZM40 16v121M51 40h56M51 61h56M51 82h43M51 103h50"/></svg>
-    <div class="page-heading"><h2>ככה זה עכשיו</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg></div>
-    <p class="sub">מחשבות, תובנות, רעיונות וזיכרונות. רק בשבילך.</p>
-    <button class="btn" id="jNew" style="width:100%">+ רשומה חדשה</button>
+    <div class="page-heading"><h2><span data-i18n="ככה זה עכשיו">ככה זה עכשיו</span></h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg></div>
+    <p class="sub"><span data-i18n="מחשבות, תובנות, רעיונות וזיכרונות. רק בשבילך.">מחשבות, תובנות, רעיונות וזיכרונות. רק בשבילך.</span></p>
+    <button class="btn" id="jNew" style="width:100%"><span data-i18n="+ רשומה חדשה">+ רשומה חדשה</span></button>
     <ul class="list" id="jList"></ul>
   </section>
 
   <!-- Gratitude -->
   <section id="gratitude" hidden>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M22 152C24 110 44 71 92 24M44 101C9 93 7 62 15 40c28 11 41 30 29 61ZM58 79C59 45 78 24 110 18c0 31-19 52-52 61ZM27 132c35 0 58-17 61-40-34-1-56 13-61 40Z"/></svg>
-    <div class="page-heading"><h2>הכרת תודה</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg></div>
-    <p class="sub">אפשר להוסיף דברים קטנים לאורך היום, ולחזור לתודות מימים קודמים.</p>
+    <div class="page-heading"><h2><span data-i18n="הכרת תודה">הכרת תודה</span></h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg></div>
+    <p class="sub"><span data-i18n="אפשר להוסיף דברים קטנים לאורך היום, ולחזור לתודות מימים קודמים.">אפשר להוסיף דברים קטנים לאורך היום, ולחזור לתודות מימים קודמים.</span></p>
     <form class="row" id="gForm" onsubmit="return false">
-      <input type="text" id="gInput" placeholder="על מה אני מודה היום?" maxlength="200" aria-label="פריט חדש">
-      <button class="btn" id="gAdd" type="submit">הוספה</button>
+      <input type="text" id="gInput" placeholder="על מה אני מודה היום?" maxlength="200" aria-label="פריט חדש" data-i18n-aria-label="פריט חדש" data-i18n-placeholder="על מה אני מודה היום?">
+      <button class="btn" id="gAdd" type="submit"><span data-i18n="הוספה">הוספה</span></button>
     </form>
     <ul class="list" id="gList"></ul>
   </section>
@@ -450,215 +536,234 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   <section id="readings" hidden>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M15 19Q65 8 110 30V126Q65 104 15 117ZM110 30q28-15 57-15M110 47q28-15 57-15M110 64q28-15 57-15M27 39q34-6 69 5M27 57q34-6 69 5M27 75q34-6 69 5M27 93q34-6 69 5"/></svg>
     <div class="readings-heading">
-      <div class="page-heading"><h2>משאבי החלמה</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M22 13c-5-4-11-4-16-3v23c6-1 11 0 16 3 5-3 10-4 16-3V10c-5-1-11-1-16 3Zm0 0v23M11 17c3 0 5 0 7 1m8 0c2-1 4-1 7-1"/></svg></div>
-      <button class="btn ghost" id="editLinks">עריכה</button>
+      <div class="page-heading"><h2><span data-i18n="משאבי החלמה">משאבי החלמה</span></h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M22 13c-5-4-11-4-16-3v23c6-1 11 0 16 3 5-3 10-4 16-3V10c-5-1-11-1-16 3Zm0 0v23M11 17c3 0 5 0 7 1m8 0c2-1 4-1 7-1"/></svg></div>
+      <button class="btn ghost" id="editLinks"><span data-i18n="עריכה">עריכה</span></button>
     </div>
-    <p class="sub">קישורים לקריאה היומית ולקריאות הפתיחה של הפגישה.</p>
-    <ul class="list" id="lList"></ul>
-    <button class="btn ghost" id="addLink" hidden>+ הוספת קישור</button>
-    <p class="note">הקישורים מהאתר הרשמי של מכורים אנונימיים ישראל. אפשר לשנות או להוסיף דרך "עריכה".</p>
+    <p class="sub"><span data-i18n="קישורים לקריאה היומית ולקריאות הפתיחה של הפגישה.">קישורים לקריאה היומית ולקריאות הפתיחה של הפגישה.</span></p>
+    <p class="note" data-i18n="חלק מהקריאות החיצוניות בעברית בלבד. תוכן הקישורים אינו מתורגם.">חלק מהקריאות החיצוניות בעברית בלבד. תוכן הקישורים אינו מתורגם.</p><ul class="list" id="lList"></ul>
+    <button class="btn ghost" id="addLink" hidden><span data-i18n="+ הוספת קישור">+ הוספת קישור</span></button>
+    <p class="note"><span data-i18n="הקישורים מהאתר הרשמי של מכורים אנונימיים ישראל. אפשר לשנות או להוסיף דרך &quot;עריכה&quot;.">הקישורים מהאתר הרשמי של מכורים אנונימיים ישראל. אפשר לשנות או להוסיף דרך "עריכה".</span></p>
   </section>
 
   <section id="bookmarks" hidden>
-    <div class="page-heading"><h2>הקישורים שלי</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 8h18v29l-9-6-9 6Z"/></svg></div>
-    <p class="sub">קישורים ששמרת לעצמך. נשמרים במכשיר, ובחשבון מחובר גם בגיבוי האישי.</p>
-    <button class="btn" id="bNew">+ הוספת קישור</button>
+    <div class="page-heading"><h2><span data-i18n="הקישורים שלי">הקישורים שלי</span></h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 8h18v29l-9-6-9 6Z"/></svg></div>
+    <p class="sub"><span data-i18n="קישורים ששמרת לעצמך. נשמרים במכשיר, ובחשבון מחובר גם בגיבוי האישי.">קישורים ששמרת לעצמך. נשמרים במכשיר, ובחשבון מחובר גם בגיבוי האישי.</span></p>
+    <button class="btn" id="bNew"><span data-i18n="+ הוספת קישור">+ הוספת קישור</span></button>
     <form id="bForm" hidden>
-      <h3 id="bFormTitle">הוספת קישור</h3>
-      <label class="field"><span>כותרת</span><input id="bTitle" type="text" required maxlength="200"></label>
-      <label class="field"><span>כתובת</span><input id="bUrl" type="text" inputmode="url" dir="ltr" required maxlength="2048" placeholder="https://" aria-describedby="bUrlHelp"></label>
-      <p class="note" id="bUrlHelp">אפשר לשמור כתובת https:// או קישור טלפון tel: בלבד.</p>
-      <label class="field"><span>הערה (לא חובה)</span><textarea id="bNote" maxlength="2000" rows="3"></textarea></label>
+      <h3 id="bFormTitle"><span data-i18n="הוספת קישור">הוספת קישור</span></h3>
+      <label class="field"><span><span data-i18n="כותרת">כותרת</span></span><input id="bTitle" type="text" required maxlength="200"></label>
+      <label class="field"><span><span data-i18n="כתובת">כתובת</span></span><input id="bUrl" type="text" inputmode="url" dir="ltr" required maxlength="2048" placeholder="https://" aria-describedby="bUrlHelp"></label>
+      <p class="note" id="bUrlHelp"><span data-i18n="אפשר לשמור כתובת https:// או קישור טלפון tel: בלבד.">אפשר לשמור כתובת https:// או קישור טלפון tel: בלבד.</span></p>
+      <label class="field"><span><span data-i18n="הערה (לא חובה)">הערה (לא חובה)</span></span><textarea id="bNote" maxlength="2000" rows="3"></textarea></label>
       <p class="note" id="bError" role="alert" hidden></p>
-      <div class="bookmark-actions"><button class="btn" type="submit">שמירה</button><button class="btn ghost" id="bCancel" type="button">ביטול</button></div>
+      <div class="bookmark-actions"><button class="btn" type="submit"><span data-i18n="שמירה">שמירה</span></button><button class="btn ghost" id="bCancel" type="button"><span data-i18n="ביטול">ביטול</span></button></div>
     </form>
     <ul class="list" id="bList"></ul>
   </section>
 
   <section id="tools" hidden>
-    <h2>כלים להחלמה</h2>
-    <p class="sub">מה שמתאים לך עכשיו.</p>
+    <h2><span data-i18n="כלים להחלמה">כלים להחלמה</span></h2>
+    <p class="sub"><span data-i18n="מה שמתאים לך עכשיו.">מה שמתאים לך עכשיו.</span></p>
     <div class="tool-links" id="recoveryDestinations">
-      <button data-go="meditation">מדיטציה</button>
-      <button data-go="bookmarks">הקישורים שלי</button>
+      <button data-go="meditation"><span data-i18n="מדיטציה">מדיטציה</span></button>
+      <button data-go="bookmarks"><span data-i18n="הקישורים שלי">הקישורים שלי</span></button>
     </div>
-    <button class="btn ghost" data-go="readings">עריכת משאבי החלמה</button>
+    <button class="btn ghost" data-go="readings"><span data-i18n="עריכת משאבי החלמה">עריכת משאבי החלמה</span></button>
   </section>
 
   <section id="meditation" hidden>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M-22 72a62 42 0 1 0 124 0 62 42 0 1 0-124 0M-44 72a84 60 0 1 0 168 0 84 60 0 1 0-168 0M-66 72a106 78 0 1 0 212 0 106 78 0 1 0-212 0"/></svg>
-    <div class="page-heading"><h2>מדיטציה</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle cx="22" cy="9" r="4"/><path d="M17 18c0-4 10-4 10 0l3 8 7 2M17 18l-3 8-7 2m12-2c-5 0-13 4-12 8 1 4 13 1 19-3m-1-5c5 0 13 4 12 8-1 4-13 1-19-3m1-11 1 6m5-6-1 6"/></svg></div><p class="sub">כמה דקות של שקט.</p>
-    <label class="field"><span>משך בדקות</span><select id="mDuration">
+    <div class="page-heading"><h2><span data-i18n="מדיטציה">מדיטציה</span></h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle cx="22" cy="9" r="4"/><path d="M17 18c0-4 10-4 10 0l3 8 7 2M17 18l-3 8-7 2m12-2c-5 0-13 4-12 8 1 4 13 1 19-3m-1-5c5 0 13 4 12 8-1 4-13 1-19-3m1-11 1 6m5-6-1 6"/></svg></div><p class="sub"><span data-i18n="כמה דקות של שקט.">כמה דקות של שקט.</span></p>
+    <label class="field"><span><span data-i18n="משך בדקות">משך בדקות</span></span><select id="mDuration">
       <option value="1">1</option><option value="3">3</option><option value="5" selected>5</option>
       <option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="30">30</option>
     </select></label>
-    <div class="timer" id="mCountdown" role="timer" aria-label="זמן שנותר">05:00</div>
-    <div class="timer-actions"><button class="btn" id="mStart">התחלה</button><button class="btn secondary" id="mReset">איפוס</button></div>
+    <div class="timer" id="mCountdown" role="timer" aria-label="זמן שנותר" data-i18n-aria-label="זמן שנותר">05:00</div>
+    <div class="timer-actions"><button class="btn" id="mStart"><span data-i18n="התחלה">התחלה</span></button><button class="btn secondary" id="mReset"><span data-i18n="איפוס">איפוס</span></button></div>
     <p class="msg" id="mStatus" role="status"></p>
-    <p class="note">גונג בפתיחה ובסיום. כשהמסך נעול, הצליל עשוי להישמע רק בחזרה לאפליקציה.</p>
+    <p class="note"><span data-i18n="גונג בפתיחה ובסיום. כשהמסך נעול, הצליל עשוי להישמע רק בחזרה לאפליקציה.">גונג בפתיחה ובסיום. כשהמסך נעול, הצליל עשוי להישמע רק בחזרה לאפליקציה.</span></p>
   </section>
 
   <section id="inventory" hidden>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M91 8C46 24 38 66 77 90 29 101 1 64 17 34M18 112h107M30 127h83M44 142h55"/></svg>
-    <div class="page-heading"><h2>חשבון נפש יומי / צעד 10</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg></div>
-    <p class="sub">רגע להתבוננות בסוף היום. אפשר לכתוב כאן סיכום חופשי של היום ומחשבות לסוף היום.</p>
-    <label class="field"><span>יום ההתבוננות</span><input type="date" id="iDay" required></label>
-    <label class="field"><span>ימים שמורים</span><select id="iHistory" aria-label="ימי חשבון נפש שמורים"></select></label>
-    <label class="field"><span>סיכום היום / מחשבות לסוף היום</span><textarea id="iSummary" placeholder="אפשר לכתוב כאן כמה מילים..."></textarea></label>
+    <div class="page-heading"><h2><span data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span></h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg></div>
+    <p class="sub"><span data-i18n="רגע להתבוננות בסוף היום. אפשר לכתוב כאן סיכום חופשי של היום ומחשבות לסוף היום.">רגע להתבוננות בסוף היום. אפשר לכתוב כאן סיכום חופשי של היום ומחשבות לסוף היום.</span></p>
+    <label class="field"><span><span data-i18n="יום ההתבוננות">יום ההתבוננות</span></span><input type="date" id="iDay" required></label>
+    <label class="field"><span><span data-i18n="ימים שמורים">ימים שמורים</span></span><select id="iHistory" aria-label="ימי חשבון נפש שמורים" data-i18n-aria-label="ימי חשבון נפש שמורים"></select></label>
+    <label class="field"><span><span data-i18n="סיכום היום / מחשבות לסוף היום">סיכום היום / מחשבות לסוף היום</span></span><textarea id="iSummary" placeholder="אפשר לכתוב כאן כמה מילים..." data-i18n-placeholder="אפשר לכתוב כאן כמה מילים..."></textarea></label>
     <p class="msg" id="iStatus" role="status"></p>
   </section>
 
   <!-- Settings -->
   <section id="settings" hidden>
-    <h2 id="setTitle">הגדרות</h2>
-    <p class="sub" id="setSub">הכול נשמר רק במכשיר הזה.</p>
-    <button class="btn ghost" id="backToOnboarding" hidden>חזרה להתחלה ללא חשבון</button>
-    <label class="field"><span>שם (לא חובה)</span><input type="text" id="sName" maxlength="40"></label>
+    <h2 id="setTitle"><span data-i18n="הגדרות">הגדרות</span></h2>
+    <p class="sub" id="setSub"><span data-i18n="הכול נשמר רק במכשיר הזה.">הכול נשמר רק במכשיר הזה.</span></p>
+    <button class="btn ghost" id="backToOnboarding" hidden><span data-i18n="חזרה להתחלה ללא חשבון">חזרה להתחלה ללא חשבון</span></button>
+    <label class="field"><span><span data-i18n="שם (לא חובה)">שם (לא חובה)</span></span><input type="text" id="sName" maxlength="40"></label>
     <div class="row">
-      <label class="field" style="flex:2"><span>תאריך הניקיון</span><input type="date" id="sDate"></label>
-      <label class="field" style="flex:1"><span>שעה (לא חובה)</span><input type="time" id="sTime"></label>
+      <label class="field" style="flex:2"><span><span data-i18n="תאריך הניקיון">תאריך הניקיון</span></span><input type="date" id="sDate"></label>
+      <label class="field" style="flex:1"><span><span data-i18n="שעה (לא חובה)">שעה (לא חובה)</span></span><input type="time" id="sTime"></label>
     </div>
-    <label class="field"><span>החלמה מ־</span>
-      <input type="text" id="sFrom" list="fromOpts" placeholder="למשל: סמים" maxlength="40">
+    <label class="field"><span><span data-i18n="החלמה מ־">החלמה מ־</span></span>
+      <input type="text" id="sFrom" list="fromOpts" placeholder="למשל: סמים" maxlength="40" data-i18n-placeholder="למשל: סמים">
       <datalist id="fromOpts"><option value="סמים"><option value="אלכוהול"><option value="הימורים"><option value="אכילת יתר"><option value="עישון"></datalist>
     </label>
-    <div class="field"><span>צבע</span><div class="swatches" id="swatches" role="radiogroup" aria-label="צבע"></div></div>
-    <button class="btn" id="saveSettings" style="width:100%;margin-top:8px">שמירת הגדרות החלמה</button>
+    <div class="field"><span><span data-i18n="צבע">צבע</span></span><div class="swatches" id="swatches" role="radiogroup" aria-label="צבע" data-i18n-aria-label="צבע"></div></div>
+    <button class="btn" id="saveSettings" style="width:100%;margin-top:8px"><span data-i18n="שמירת הגדרות החלמה">שמירת הגדרות החלמה</span></button>
+    <div class="settings-foot" id="timerSettings">
+      <h3><span data-i18n="מסלולי ההחלמה שלי">מסלולי ההחלמה שלי</span></h3>
+      <p class="note"><span data-i18n="התאריך למעלה שייך למסלול הראשי. היומן וכל הכלים היומיים משותפים לכל המסלולים.">התאריך למעלה שייך למסלול הראשי. היומן וכל הכלים היומיים משותפים לכל המסלולים.</span></p>
+      <ul class="list" id="timerList"></ul>
+      <button class="btn secondary" id="addTimer" type="button"><span data-i18n="הוספת מסלול החלמה">הוספת מסלול החלמה</span></button>
+      <form id="timerForm" hidden>
+        <h4 id="timerFormTitle"><span data-i18n="מסלול החלמה">מסלול החלמה</span></h4>
+        <label class="field"><span><span data-i18n="סוג החלמה">סוג החלמה</span></span><select id="tCategory"><option value="drugs" data-i18n="סמים">סמים</option><option value="alcohol" data-i18n="אלכוהול">אלכוהול</option><option value="gambling" data-i18n="הימורים">הימורים</option><option value="food" data-i18n="אכילת יתר">אכילת יתר</option><option value="smoking" data-i18n="עישון">עישון</option><option value="other" data-i18n="אחר">אחר</option></select></label>
+        <label class="field"><span><span data-i18n="שם אישי (לא חובה)">שם אישי (לא חובה)</span></span><input id="tLabel" type="text" maxlength="40"></label>
+        <label class="field"><span><span data-i18n="תחילת ההחלמה">תחילת ההחלמה</span></span><input id="tDate" type="date" required></label>
+        <label class="field"><span><span data-i18n="שעה (לא חובה)">שעה (לא חובה)</span></span><input id="tTime" type="time"></label>
+        <p class="msg err" id="timerError" role="alert" hidden></p>
+        <button class="btn" type="submit"><span data-i18n="שמירת מסלול">שמירת מסלול</span></button>
+        <button class="btn ghost" type="button" id="cancelTimer"><span data-i18n="ביטול">ביטול</span></button>
+      </form>
+    </div>
     <div class="sync">
-      <button class="btn secondary" id="myAccount">החשבון שלי</button>
+      <button class="btn secondary" id="myAccount"><span data-i18n="החשבון שלי">החשבון שלי</span></button>
     </div>
     <div class="settings-foot">
-      <label class="field"><span><input type="checkbox" id="showMilestones"> הצגת תגי ציוני דרך</span></label>
-      <p class="note">תג קטן של ציון הדרך האחרון במסך הבית. אפשר להסתיר אותו כאן.</p>
+      <label class="field"><span><input type="checkbox" id="showMilestones"><span data-i18n="הצגת תגי ציוני דרך"> הצגת תגי ציוני דרך</span></span></label>
+      <p class="note"><span data-i18n="תג קטן של ציון הדרך האחרון במסך הבית. אפשר להסתיר אותו כאן.">תג קטן של ציון הדרך האחרון במסך הבית. אפשר להסתיר אותו כאן.</span></p>
       <p class="msg" role="status" id="milestoneStatus"></p>
-      <h3>מראה</h3>
-      <p class="note">הבחירה נשמרת רק במכשיר הזה, גם עם חשבון.</p>
-      <label class="field"><span>רקע</span><select id="backgroundChoice"><option value="default">הרקע הנוכחי</option><option value="sage">מרווה בהירה</option><option value="sand">חול בהיר</option></select></label>
-      <label class="field"><span>גופן</span><select id="fontChoice"><option value="assistant">Assistant — הגופן הנוכחי</option><option value="arial">Arial — פשוט וברור</option><option value="serif">גופן ספר</option></select></label>
-      <p class="appearance-preview">זמן נקי — יום אחד בכל פעם. כך ייראה הטקסט שלך.</p>
-      <button class="btn ghost" id="resetAppearance">חזרה למראה המקורי</button>
+      <h3><span data-i18n="מראה">מראה</span></h3>
+      <p class="note"><span data-i18n="הבחירה נשמרת רק במכשיר הזה, גם עם חשבון.">הבחירה נשמרת רק במכשיר הזה, גם עם חשבון.</span></p>
+      <label class="field"><span><span data-i18n="רקע">רקע</span></span><select id="backgroundChoice"><option value="default">הרקע הנוכחי</option><option value="sage">מרווה בהירה</option><option value="sand">חול בהיר</option><option value="mist">ערפל</option><option value="lavender">לבנדר</option><option value="rose">ורוד עדין</option><option value="peach">אפרסק</option><option value="sky">שמיים</option><option value="stone">אבן</option></select></label>
+      <label class="field"><span><span data-i18n="גופן">גופן</span></span><select id="fontChoice"><option value="assistant">Assistant — הגופן הנוכחי</option><option value="arial">Arial — פשוט וברור</option><option value="serif">גופן ספר</option><option value="tahoma">Tahoma</option><option value="verdana">Verdana</option></select></label>
+      <p class="note">גופני מערכת יוצגו אם הם זמינים במכשיר. אחרת יופיע גופן חלופי קריא.</p>
+      <label class="field"><span>צבע הדגשה במכשיר הזה</span><select id="accentChoice"><option value="profile">הצבע הנוכחי</option><option value="teal">טורקיז</option><option value="sky">כחול</option><option value="plum">שזיף</option><option value="olive">זית</option><option value="rose">ורד</option></select></label>
+
+      <p class="appearance-preview"><span data-i18n="זמן נקי — יום אחד בכל פעם. כך ייראה הטקסט שלך.">זמן נקי — יום אחד בכל פעם. כך ייראה הטקסט שלך.</span></p>
+      <button class="btn ghost" id="resetAppearance"><span data-i18n="חזרה למראה המקורי">חזרה למראה המקורי</span></button>
       <p class="msg" role="status" id="appearanceStatus"></p>
     </div>
     <div class="settings-foot">
-      <h3>עותק של הנתונים שלך</h3>
-      <p class="note">קובץ JSON של כל נתוני ההחלמה הזמינים במכשיר הזה, גם רשומות ישנות. קובץ זה אינו מוצפן — כדאי לשמור אותו במקום פרטי. הוא אינו כולל מפתחות שחזור או פרטי התחברות. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.</p>
-      <button class="btn secondary" id="exportRecovery">הורדת כל הנתונים כ־JSON</button>
+      <h3><span data-i18n="עותק של הנתונים שלך">עותק של הנתונים שלך</span></h3>
+      <p class="note"><span data-i18n="קובץ JSON של כל נתוני ההחלמה הזמינים במכשיר הזה, גם רשומות ישנות. קובץ זה אינו מוצפן — כדאי לשמור אותו במקום פרטי. הוא אינו כולל מפתחות שחזור או פרטי התחברות. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.">קובץ JSON של כל נתוני ההחלמה הזמינים במכשיר הזה, גם רשומות ישנות. קובץ זה אינו מוצפן — כדאי לשמור אותו במקום פרטי. הוא אינו כולל מפתחות שחזור או פרטי התחברות. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.</span></p>
+      <button class="btn secondary" id="exportRecovery"><span data-i18n="הורדת כל הנתונים כ־JSON">הורדת כל הנתונים כ־JSON</span></button>
       <p class="msg" id="exportStatus" role="status"></p>
     </div>
     <div class="settings-foot" id="settingsFoot">
-      <button class="btn danger" id="reset">מחיקת כל הנתונים</button>
+      <button class="btn danger" id="reset"><span data-i18n="מחיקת כל הנתונים">מחיקת כל הנתונים</span></button>
     </div>
   </section>
   <!-- Account identity and encryption status are separate from recovery preferences. -->
   <section id="account" hidden>
-    <h2>החשבון שלי</h2>
+    <h2><span data-i18n="החשבון שלי">החשבון שלי</span></h2>
     <div id="accountGuest">
-      <p class="sub">הנתונים נשמרים בדפדפן במכשיר הזה. אין צורך בחשבון כדי להשתמש בזמן נקי.</p>
-      <p class="note">אפשר לבחור חשבון לגיבוי מוצפן ולסנכרון. הנתונים המקומיים יישמרו גם בתהליך ההרשמה.</p>
-      <button class="btn secondary" id="createAccount">יצירת חשבון וגיבוי מוצפן</button>
-      <button class="btn ghost" id="settingsLogin">כבר יש לי חשבון</button>
+      <p class="sub"><span data-i18n="הנתונים נשמרים בדפדפן במכשיר הזה. אין צורך בחשבון כדי להשתמש בזמן נקי.">הנתונים נשמרים בדפדפן במכשיר הזה. אין צורך בחשבון כדי להשתמש בזמן נקי.</span></p>
+      <p class="note"><span data-i18n="אפשר לבחור חשבון לגיבוי מוצפן ולסנכרון. הנתונים המקומיים יישמרו גם בתהליך ההרשמה.">אפשר לבחור חשבון לגיבוי מוצפן ולסנכרון. הנתונים המקומיים יישמרו גם בתהליך ההרשמה.</span></p>
+      <button class="btn secondary" id="createAccount"><span data-i18n="יצירת חשבון וגיבוי מוצפן">יצירת חשבון וגיבוי מוצפן</span></button>
+      <button class="btn ghost" id="settingsLogin"><span data-i18n="כבר יש לי חשבון">כבר יש לי חשבון</span></button>
     </div>
     <div id="syncIn" hidden>
-      <p class="who">שם: <b id="accountName"></b></p>
-      <p class="who">מייל: <b id="sEmail" dir="ltr"></b></p>
+      <p class="who"><span data-i18n="שם:">שם: </span><b id="accountName"></b></p>
+      <p class="who"><span data-i18n="מייל:">מייל: </span><b id="sEmail" dir="ltr"></b></p>
       <p id="accountState"></p>
       <p class="sub" id="syncStatus" role="status"></p>
       <p class="msg" id="accountMsg" role="status"></p>
       <div id="encryptionArea">
         <p id="encryptionStatus" role="status"></p>
         <div id="encryptionSetup" hidden>
-          <p class="note">הגיבוי יוצפן במכשיר לפני שיישלח לענן. תחילה צריך לשמור מפתח שחזור.</p>
-          <button class="btn secondary" id="makeRecoveryKey">יצירת מפתח שחזור</button>
+          <p class="note"><span data-i18n="הגיבוי יוצפן במכשיר לפני שיישלח לענן. תחילה צריך לשמור מפתח שחזור.">הגיבוי יוצפן במכשיר לפני שיישלח לענן. תחילה צריך לשמור מפתח שחזור.</span></p>
+          <button class="btn secondary" id="makeRecoveryKey"><span data-i18n="יצירת מפתח שחזור">יצירת מפתח שחזור</span></button>
           <div id="recoveryGenerated" hidden>
-            <p class="note">המפתח נדרש בחיבור מכשיר חדש. זמן נקי לא יכולה לשחזר את הגיבוי המוצפן בלעדיו. זה אינו סיסמת כניסה לחשבון.</p>
-            <label class="field"><span>מפתח השחזור — לשמור במקום בטוח</span><textarea id="recoveryOutput" dir="ltr" readonly rows="3" autocomplete="off" spellcheck="false" style="overflow-wrap:anywhere;font-family:monospace"></textarea></label>
-            <label class="field"><span><input type="checkbox" id="recoverySaved"> שמרתי את מפתח השחזור במקום בטוח</span></label>
-            <button class="btn" id="activateEncryption" disabled>הפעלת גיבוי מוצפן</button>
+            <p class="note"><span data-i18n="המפתח נדרש בחיבור מכשיר חדש. זמן נקי לא יכולה לשחזר את הגיבוי המוצפן בלעדיו. זה אינו סיסמת כניסה לחשבון.">המפתח נדרש בחיבור מכשיר חדש. זמן נקי לא יכולה לשחזר את הגיבוי המוצפן בלעדיו. זה אינו סיסמת כניסה לחשבון.</span></p>
+            <label class="field"><span><span data-i18n="מפתח השחזור — לשמור במקום בטוח">מפתח השחזור — לשמור במקום בטוח</span></span><textarea id="recoveryOutput" dir="ltr" readonly rows="3" autocomplete="off" spellcheck="false" style="overflow-wrap:anywhere;font-family:monospace"></textarea></label>
+            <label class="field"><span><input type="checkbox" id="recoverySaved"><span data-i18n="שמרתי את מפתח השחזור במקום בטוח"> שמרתי את מפתח השחזור במקום בטוח</span></span></label>
+            <button class="btn" id="activateEncryption" disabled><span data-i18n="הפעלת גיבוי מוצפן">הפעלת גיבוי מוצפן</span></button>
           </div>
         </div>
         <form id="recoveryForm" hidden>
-          <p class="note">כדי לפתוח את הגיבוי במכשיר הזה, צריך את מפתח השחזור שנשמר בעת הפעלת ההצפנה. בלי המפתח או מכשיר שכבר מחובר, אי אפשר לשחזר את התוכן המוצפן. אפשר להמשיך להשתמש בנתונים המקומיים.</p>
-          <label class="field"><span>מפתח שחזור</span><textarea id="recoveryInput" dir="ltr" rows="3" autocomplete="off" autocapitalize="characters" spellcheck="false" required></textarea></label>
-          <button class="btn" type="submit" id="unlockRecovery">פתיחת הגיבוי המוצפן</button>
+          <p class="note"><span data-i18n="כדי לפתוח את הגיבוי במכשיר הזה, צריך את מפתח השחזור שנשמר בעת הפעלת ההצפנה. בלי המפתח או מכשיר שכבר מחובר, אי אפשר לשחזר את התוכן המוצפן. אפשר להמשיך להשתמש בנתונים המקומיים.">כדי לפתוח את הגיבוי במכשיר הזה, צריך את מפתח השחזור שנשמר בעת הפעלת ההצפנה. בלי המפתח או מכשיר שכבר מחובר, אי אפשר לשחזר את התוכן המוצפן. אפשר להמשיך להשתמש בנתונים המקומיים.</span></p>
+          <label class="field"><span><span data-i18n="מפתח שחזור">מפתח שחזור</span></span><textarea id="recoveryInput" dir="ltr" rows="3" autocomplete="off" autocapitalize="characters" spellcheck="false" required></textarea></label>
+          <button class="btn" type="submit" id="unlockRecovery"><span data-i18n="פתיחת הגיבוי המוצפן">פתיחת הגיבוי המוצפן</span></button>
         </form>
         <p class="msg" id="encryptionMsg" role="status" aria-live="polite"></p>
-        <button class="btn ghost" id="retryEncryption" hidden>ניסיון סנכרון נוסף</button>
+        <button class="btn ghost" id="retryEncryption" hidden><span data-i18n="ניסיון סנכרון נוסף">ניסיון סנכרון נוסף</span></button>
       </div>
-      <button class="btn ghost" id="finishBackupLater" hidden>להשלים אחר כך ולהמשיך במכשיר הזה</button>
-      <button class="btn danger" id="signOut">התנתקות</button>
+      <button class="btn ghost" id="finishBackupLater" hidden><span data-i18n="להשלים אחר כך ולהמשיך במכשיר הזה">להשלים אחר כך ולהמשיך במכשיר הזה</span></button>
+      <button class="btn danger" id="signOut"><span data-i18n="התנתקות">התנתקות</span></button>
       <div class="settings-foot">
-        <button class="btn danger" id="accountDelete">מחיקת נתונים מהמכשיר / מהענן</button>
-        <p class="note">מחיקת הנתונים אינה מוחקת את חשבון ההתחברות. מחיקת החשבון עצמו עדיין אינה זמינה.</p>
+        <button class="btn danger" id="accountDelete"><span data-i18n="מחיקת נתונים מהמכשיר / מהענן">מחיקת נתונים מהמכשיר / מהענן</span></button>
+        <p class="note"><span data-i18n="מחיקת הנתונים אינה מוחקת את חשבון ההתחברות. מחיקת החשבון עצמו עדיין אינה זמינה.">מחיקת הנתונים אינה מוחקת את חשבון ההתחברות. מחיקת החשבון עצמו עדיין אינה זמינה.</span></p>
       </div>
     </div>
-    <button class="btn ghost" data-go="settings">הגדרות החלמה</button>
+    <button class="btn ghost" data-go="settings"><span data-i18n="הגדרות החלמה">הגדרות החלמה</span></button>
   </section>
   <section id="auth" hidden>
-    <h2 id="authTitle">יצירת חשבון</h2>
+    <h2 id="authTitle"><span data-i18n="יצירת חשבון">יצירת חשבון</span></h2>
     <p class="sub" id="authSub"></p>
     <div id="syncOut">
       <form id="loginForm">
-        <label class="field" id="authNameField"><span>שם (לא חובה)</span><input id="aName" maxlength="40" autocomplete="given-name"></label>
-        <label class="field"><span>כתובת מייל</span><input type="email" id="lEmail" required autocomplete="email" dir="ltr" maxlength="200"></label>
+        <label class="field" id="authNameField"><span><span data-i18n="שם (לא חובה)">שם (לא חובה)</span></span><input id="aName" maxlength="40" autocomplete="given-name"></label>
+        <label class="field"><span><span data-i18n="כתובת מייל">כתובת מייל</span></span><input type="email" id="lEmail" required autocomplete="email" dir="ltr" maxlength="200"></label>
         <div id="authProfile">
-          <label class="field"><span>תאריך תחילת הניקיון / ההחלמה</span><input type="date" id="aDate"></label>
-          <label class="field"><span>שעה (לא חובה)</span><input type="time" id="aTime"></label>
-          <label class="field"><span>החלמה מ־</span><select id="aFrom"><option value="" disabled selected>בחירה</option><option>אלכוהול</option><option>סמים</option><option>עישון</option><option>אוכל</option><option>אחר</option></select></label>
-          <div class="field"><span>צבע</span><div class="swatches" id="aSwatches" role="radiogroup" aria-label="צבע"></div></div>
+          <label class="field"><span><span data-i18n="תאריך תחילת הניקיון / ההחלמה">תאריך תחילת הניקיון / ההחלמה</span></span><input type="date" id="aDate"></label>
+          <label class="field"><span><span data-i18n="שעה (לא חובה)">שעה (לא חובה)</span></span><input type="time" id="aTime"></label>
+          <label class="field"><span><span data-i18n="החלמה מ־">החלמה מ־</span></span><select id="aFrom"><option value="" disabled selected data-i18n="בחירה">בחירה</option><option data-i18n="אלכוהול">אלכוהול</option><option data-i18n="סמים">סמים</option><option data-i18n="עישון">עישון</option><option data-i18n="אוכל">אוכל</option><option data-i18n="אחר">אחר</option></select></label>
+          <div class="field"><span><span data-i18n="צבע">צבע</span></span><div class="swatches" id="aSwatches" role="radiogroup" aria-label="צבע" data-i18n-aria-label="צבע"></div></div>
         </div>
-        <button class="btn" id="lSend" type="submit">יצירת חשבון ושליחת קישור למייל</button>
+        <button class="btn" id="lSend" type="submit"><span data-i18n="יצירת חשבון ושליחת קישור למייל">יצירת חשבון ושליחת קישור למייל</span></button>
       </form>
     </div>
     <p class="msg" id="syncMsg" role="status"></p>
-    <button class="btn secondary" id="authCreate" hidden>יצירת חשבון חדש</button>
-    <button class="btn ghost" id="authBack">חזרה</button>
+    <button class="btn secondary" id="authCreate" hidden><span data-i18n="יצירת חשבון חדש">יצירת חשבון חדש</span></button>
+    <button class="btn ghost" id="authBack"><span data-i18n="חזרה">חזרה</span></button>
   </section>
   <section id="feedback" hidden>
-    <button class="btn ghost" id="feedbackBack">חזרה לאודות</button>
-    <h2>משוב</h2>
-    <p>מה עובד לך, ומה אפשר לשפר?</p>
-    <p class="note">אפשר לשלוח משוב במייל. עדיף לא לכלול פרטי החלמה אישיים או רגישים. אין צורך לצרף את הנתונים שלך.</p>
-    <a class="btn" id="feedbackMail" href="mailto:hello@clean-time.app?subject=%D7%9E%D7%A9%D7%95%D7%91%20%D7%A2%D7%9C%20%D7%96%D7%9E%D7%9F%20%D7%A0%D7%A7%D7%99">פתיחת מייל למשוב</a>
-    <p>לא נפתח מייל? אפשר לכתוב ישירות לכתובת:</p>
+    <button class="btn ghost" id="feedbackBack"><span data-i18n="חזרה לאודות">חזרה לאודות</span></button>
+    <h2><span data-i18n="משוב">משוב</span></h2>
+    <p><span data-i18n="מה עובד לך, ומה אפשר לשפר?">מה עובד לך, ומה אפשר לשפר?</span></p>
+    <p class="note"><span data-i18n="אפשר לשלוח משוב במייל. עדיף לא לכלול פרטי החלמה אישיים או רגישים. אין צורך לצרף את הנתונים שלך.">אפשר לשלוח משוב במייל. עדיף לא לכלול פרטי החלמה אישיים או רגישים. אין צורך לצרף את הנתונים שלך.</span></p>
+    <a class="btn" id="feedbackMail" href="mailto:hello@clean-time.app?subject=%D7%9E%D7%A9%D7%95%D7%91%20%D7%A2%D7%9C%20%D7%96%D7%9E%D7%9F%20%D7%A0%D7%A7%D7%99"><span data-i18n="פתיחת מייל למשוב">פתיחת מייל למשוב</span></a>
+    <p><span data-i18n="לא נפתח מייל? אפשר לכתוב ישירות לכתובת:">לא נפתח מייל? אפשר לכתוב ישירות לכתובת:</span></p>
     <p><a href="mailto:hello@clean-time.app" dir="ltr">hello@clean-time.app</a></p>
-    <button class="btn ghost" id="copyFeedbackEmail">העתקת הכתובת</button>
+    <button class="btn ghost" id="copyFeedbackEmail"><span data-i18n="העתקת הכתובת">העתקת הכתובת</span></button>
     <p id="feedbackStatus" class="msg" role="status"></p>
   </section>
   <section class="about" id="about" hidden>
-    <button class="btn ghost" id="aboutBack" hidden>חזרה</button>
+    <button class="btn ghost" id="aboutBack" hidden><span data-i18n="חזרה">חזרה</span></button>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M-12 134Q36 43 117 17M-4 152Q40 63 129 35M55 49l-5-13m31-2 2-14m21 16 10-10M33 69l-12-7"/></svg>
-      <div class="page-heading"><h2>אודות זמן נקי</h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M8 27h7l6-3c3-1 5 3 2 5l-5 2m-3-4 1-6c1-3 4-2 4 0v4m3 4 8-4c4-2 6 2 3 4l-11 7H8"/><path d="M28 9v5m-7 0 3 3m11-3-3 3"/></svg></div>
-      <p>זמן נקי היא מרחב פשוט למי שבהחלמה: לזכור את הדרך שעברת, ולהיעזר בכלים קטנים להיום.</p>
-      <p>האפליקציה חינמית, בלי פרסומות, בלי מעקב אחר פעולות החלמה ובלי לחץ מסחרי. מדידה אנונימית מצומצמת סופרת טעינות של דף הבית בלבד.</p>
-      <p>האפליקציה אינה קשורה לאנ-איי (מכורים אנונימיים) ואינה מטעמם. הקישורים לאנ-איי ישראל מופיעים לנוחות בלבד.</p>
-      <p>זו לא אפליקציה רפואית ולא שירות חירום.<br>צריכים עזרה עכשיו?</p>
+      <div class="page-heading"><h2><span data-i18n="אודות זמן נקי">אודות זמן נקי</span></h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M8 27h7l6-3c3-1 5 3 2 5l-5 2m-3-4 1-6c1-3 4-2 4 0v4m3 4 8-4c4-2 6 2 3 4l-11 7H8"/><path d="M28 9v5m-7 0 3 3m11-3-3 3"/></svg></div>
+      <p><span data-i18n="זמן נקי היא מרחב פשוט למי שבהחלמה: לזכור את הדרך שעברת, ולהיעזר בכלים קטנים להיום.">זמן נקי היא מרחב פשוט למי שבהחלמה: לזכור את הדרך שעברת, ולהיעזר בכלים קטנים להיום.</span></p>
+      <p><span data-i18n="האפליקציה חינמית, בלי פרסומות, בלי מעקב אחר פעולות החלמה ובלי לחץ מסחרי. מדידה אנונימית ללא עוגיות באמצעות Vercel Web Analytics כוללת ביקורים ציבוריים, מסכי אפליקציה קבועים ופעולות מוצר מצרפיות שאושרו מראש. תוכן החלמה ופרטי חשבון אינם נשלחים למדידה. פרטים במדיניות הפרטיות.">האפליקציה חינמית, בלי פרסומות, בלי מעקב אחר פעולות החלמה ובלי לחץ מסחרי. מדידה אנונימית ללא עוגיות באמצעות Vercel Web Analytics כוללת ביקורים ציבוריים, מסכי אפליקציה קבועים ופעולות מוצר מצרפיות שאושרו מראש. תוכן החלמה ופרטי חשבון אינם נשלחים למדידה. פרטים במדיניות הפרטיות.</span></p>
+      <p><span data-i18n="האפליקציה אינה קשורה לאנ-איי (מכורים אנונימיים) ואינה מטעמם. הקישורים לאנ-איי ישראל מופיעים לנוחות בלבד.">האפליקציה אינה קשורה לאנ-איי (מכורים אנונימיים) ואינה מטעמם. הקישורים לאנ-איי ישראל מופיעים לנוחות בלבד.</span></p>
+      <p><span data-i18n="זו לא אפליקציה רפואית ולא שירות חירום.">זו לא אפליקציה רפואית ולא שירות חירום.</span><br><span data-i18n="צריכים עזרה עכשיו?">צריכים עזרה עכשיו?</span></p>
       <ul class="help">
-        <li><a href="tel:033747474">קו המידע של אנ-איי <b>033-747474</b></a></li>
-        <li><a href="tel:1201">ער"ן, עזרה נפשית ראשונה <b>1201</b></a></li>
-        <li><a href="tel:101">מד"א <b>101</b></a></li>
+        <li><a href="tel:033747474"><span data-i18n="קו המידע של אנ-איי">קו המידע של אנ-איי </span><b>033-747474</b></a></li>
+        <li><a href="tel:1201"><span data-i18n="ער&quot;ן, עזרה נפשית ראשונה">ער"ן, עזרה נפשית ראשונה </span><b>1201</b></a></li>
+        <li><a href="tel:101"><span data-i18n="מד&quot;א">מד"א </span><b>101</b></a></li>
       </ul>
-      <h4>פרטיות</h4>
-      <p>בלי התחברות, כל הנתונים נשמרים רק במכשיר ובדפדפן הזה.</p>
-      <p>חשבון לבדו אינו מפעיל גיבוי. לאחר שמירת מפתח השחזור ואימות הגיבוי הראשון, נתוני ההחלמה מוצפנים במכשיר לפני שהם נשמרים בגיבוי בענן. כדי לפתוח את הגיבוי במכשיר חדש נדרש מפתח השחזור שלך. חשוב לשמור אותו במקום בטוח — אם המפתח יאבד, ייתכן שלא יהיה ניתן לשחזר את הנתונים מהענן.</p>
-      <p>המידע במכשיר עצמו נשאר זמין לאפליקציה בזמן השימוש. כתובת המייל ומידע טכני מינימלי נשמרים לצורך כניסה לחשבון וסנכרון.</p>
-      <p>אפשר למחוק את נתוני ההחלמה מהמכשיר ומהגיבוי בענן דרך ההגדרות.</p>
-      <h4>קוד פתוח</h4>
-      <p>הקוד של האפליקציה פתוח לכולם ב-<a href="https://github.com/onahum2023/clean-time" target="_blank" rel="noopener">GitHub</a>.</p>
-      <h4>משוב</h4>
-      <p>נשמח לשמוע מה עובד ומה חסר: <a href="mailto:hello@clean-time.app" dir="ltr">hello@clean-time.app</a></p>
-      <button class="btn ghost" data-go="feedback">משוב</button>
-      <p><a href="/about/">אודות באתר</a> · <a href="/privacy/">פרטיות באתר</a></p>
+      <h4><span data-i18n="פרטיות">פרטיות</span></h4>
+      <p><span data-i18n="בלי התחברות, כל הנתונים נשמרים רק במכשיר ובדפדפן הזה.">בלי התחברות, כל הנתונים נשמרים רק במכשיר ובדפדפן הזה.</span></p>
+      <p><span data-i18n="חשבון לבדו אינו מפעיל גיבוי. לאחר שמירת מפתח השחזור ואימות הגיבוי הראשון, נתוני ההחלמה מוצפנים במכשיר לפני שהם נשמרים בגיבוי בענן. כדי לפתוח את הגיבוי במכשיר חדש נדרש מפתח השחזור שלך. חשוב לשמור אותו במקום בטוח — אם המפתח יאבד, ייתכן שלא יהיה ניתן לשחזר את הנתונים מהענן.">חשבון לבדו אינו מפעיל גיבוי. לאחר שמירת מפתח השחזור ואימות הגיבוי הראשון, נתוני ההחלמה מוצפנים במכשיר לפני שהם נשמרים בגיבוי בענן. כדי לפתוח את הגיבוי במכשיר חדש נדרש מפתח השחזור שלך. חשוב לשמור אותו במקום בטוח — אם המפתח יאבד, ייתכן שלא יהיה ניתן לשחזר את הנתונים מהענן.</span></p>
+      <p><span data-i18n="המידע במכשיר עצמו נשאר זמין לאפליקציה בזמן השימוש. כתובת המייל ומידע טכני מינימלי נשמרים לצורך כניסה לחשבון וסנכרון.">המידע במכשיר עצמו נשאר זמין לאפליקציה בזמן השימוש. כתובת המייל ומידע טכני מינימלי נשמרים לצורך כניסה לחשבון וסנכרון.</span></p>
+      <p><span data-i18n="אפשר למחוק את נתוני ההחלמה מהמכשיר ומהגיבוי בענן דרך ההגדרות.">אפשר למחוק את נתוני ההחלמה מהמכשיר ומהגיבוי בענן דרך ההגדרות.</span></p>
+      <h4><span data-i18n="קוד פתוח">קוד פתוח</span></h4>
+      <p><span data-i18n="הקוד של האפליקציה פתוח לכולם ב-">הקוד של האפליקציה פתוח לכולם ב-</span><a href="https://github.com/onahum2023/clean-time" target="_blank" rel="noopener">GitHub</a>.</p>
+      <h4><span data-i18n="משוב">משוב</span></h4>
+      <p><span data-i18n="נשמח לשמוע מה עובד ומה חסר:">נשמח לשמוע מה עובד ומה חסר: </span><a href="mailto:hello@clean-time.app" dir="ltr">hello@clean-time.app</a></p>
+      <button class="btn ghost" data-go="feedback"><span data-i18n="משוב">משוב</span></button>
+      <p><a href="/about/"><span data-i18n="אודות באתר">אודות באתר</span></a> · <a href="/privacy/"><span data-i18n="פרטיות באתר">פרטיות באתר</span></a></p>
       <p class="ver" id="appVer"></p>
   </section>
 </div>
 
-<div class="editor" id="jEditor" hidden role="dialog" aria-label="רשומה ביומן">
+<div class="editor" id="jEditor" hidden role="dialog" aria-modal="true" aria-label="רשומה ביומן" data-i18n-aria-label="רשומה ביומן">
   <div class="bar">
-    <button class="btn ghost" id="jDone">סיום</button>
+    <button class="btn ghost" id="jDone"><span data-i18n="סיום">סיום</span></button>
     <time id="jWhen"></time>
-    <button class="btn danger" id="jDel">מחיקה</button>
+    <button class="btn danger" id="jDel"><span data-i18n="מחיקה">מחיקה</span></button>
   </div>
-  <textarea id="jText" placeholder="מה עובר עליי עכשיו..." aria-label="טקסט הרשומה"></textarea>
+  <textarea id="jText" placeholder="מה עובר עליי עכשיו..." aria-label="טקסט הרשומה" data-i18n-aria-label="טקסט הרשומה" data-i18n-placeholder="מה עובר עליי עכשיו..."></textarea>
   <div class="saved" id="jSaved"></div>
 </div>
 
@@ -666,22 +771,24 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
   <div class="box"><h3 id="askT"></h3><p id="askP"></p><div class="acts" id="askB"></div></div>
 </div>
 
-<nav class="tabs" id="tabs" aria-label="ניווט ראשי" hidden>
+<nav class="tabs" id="tabs" aria-label="ניווט ראשי" hidden data-i18n-aria-label="ניווט ראשי">
   <div class="inner">
-    <button data-tab="counter" aria-current="page">היום</button>
-    <button data-tab="tools">כלים להחלמה</button>
-    <button data-tab="about">אודות</button>
-    <button id="openSettings" hidden aria-label="הגדרות והחשבון שלי">הגדרות<br>וחשבון</button>
+    <button data-tab="counter" aria-current="page"><span data-i18n="היום">היום</span></button>
+    <button data-tab="tools"><span data-i18n="כלים להחלמה">כלים להחלמה</span></button>
+    <button data-tab="about"><span data-i18n="אודות">אודות</span></button>
+    <button id="openSettings" hidden aria-label="הגדרות" data-i18n-aria-label="הגדרות"><span data-i18n="הגדרות">הגדרות</span></button>
+    <button id="openAccount" data-tab="account"><span data-i18n="חשבון">חשבון</span></button>
   </div>
 </nav>
 
-<script src="assets/backend-config.js"></script>
 <script src="assets/sync-crypto.js"></script>
 <script src="assets/recovery-dates.js"></script>
+<script src="assets/recovery-timers.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.15.16';
+const APP_VERSION='2026.10.16.3';
 const KEY='cleantime-he-v1';
+const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
 const COLORS={teal:'#477E72',sky:'#2C78A8',indigo:'#4B57A3',plum:'#874778',olive:'#5F7230',rose:'#B04A5A'};
 const DEFAULT={name:'',date:'',time:'',from:'',color:'teal',mode:0,gratitude:[],plans:{},journal:[],inventory:{},bookmarks:[],
@@ -713,20 +820,22 @@ function normalize(saved){
       .map((l,i)=>l.id<=defs.length?Object.assign({},l,{id:Date.now()+i}):l);
     d.links=defs.concat(own); d.linksV=2;
   }
-  return d;
+  return CleanTimeTimers.normalize(d);
 }
 function load(){
   try{
     const r=localStorage.getItem(KEY);
     if(r){
       const raw=JSON.parse(r), d=normalize(raw);
+      // Timer migration is lazy: preserve untouched legacy bytes/timestamps until
+      // the next explicit saved change; deterministic IDs make repeated loads safe.
       if(!raw.linksV)writeLocal(d);
       return d;
     }
   }catch(e){storageError='לא הצלחנו לקרוא את הנתונים השמורים. הם לא הוחלפו. יש לגבות אותם לפני המשך שימוש.';}
   return JSON.parse(JSON.stringify(DEFAULT));
 }
-function storageNotice(text){
+function storageNotice(text){text=translateUI(text||'');
   const el=document.getElementById('storageMsg');if(el){el.textContent=text;el.hidden=!text;}
 }
 function writeLocal(d){
@@ -736,9 +845,45 @@ function writeLocal(d){
   catch(e){storageNotice('השינוי לא נשמר במכשיר. ייתכן שהאחסון מלא או חסום.');return false;}
 }
 /* every data change goes through save(): it stamps updatedAt and queues a cloud push */
-function save(){S.updatedAt=Date.now();const ok=writeLocal();if(ok)queuePush();return ok;}
+function save(){try{Object.assign(S,CleanTimeTimers.normalize(S));}catch(e){storageNotice('הנתונים לא תקינים ולא הוחלפו. יש לגבות אותם לפני המשך שימוש.');return false;}S.updatedAt=Date.now();const ok=writeLocal();if(ok)queuePush();return ok;}
 const $=id=>document.getElementById(id);
-$('appVer').textContent='גרסה '+APP_VERSION;
+$('appVer').textContent=translateUI('גרסה ')+APP_VERSION;
+// Optional setup fields share the same stable category identities in both entry paths.
+const setupSecondIds={},setupDrafts={o:false,a:false};
+for(const prefix of ['o','a']){
+ const block=document.createElement('div');
+ block.innerHTML=`<label class="second-toggle"><input type="checkbox" id="${prefix}AddSecond" aria-controls="${prefix}SecondFields" aria-expanded="false"><span data-i18n="הוספת טיימר נוסף">הוספת טיימר נוסף</span></label>
+ <fieldset class="second-fields" id="${prefix}SecondFields" hidden disabled><legend data-i18n="טיימר נוסף (לא חובה)">טיימר נוסף (לא חובה)</legend>
+ <label class="field"><span data-i18n="החלמה מ־">החלמה מ־</span><select id="${prefix}SecondCategory" required><option value="" disabled selected data-i18n="בחירה">בחירה</option>${Object.entries(CleanTimeTimers.names).map(([code,label])=>`<option value="${code}" data-i18n="${label}">${label}</option>`).join('')}</select></label>
+ <label class="field"><span data-i18n="שם אישי (לא חובה)">שם אישי (לא חובה)</span><input type="text" id="${prefix}SecondLabel" maxlength="40"></label>
+ <label class="field"><span data-i18n="תאריך תחילת הניקיון / ההחלמה">תאריך תחילת הניקיון / ההחלמה</span><input type="date" id="${prefix}SecondDate" required></label>
+ <label class="second-toggle"><input type="checkbox" id="${prefix}ShowSecond"><span data-i18n="הצגת הטיימר הנוסף במסך הבית">הצגת הטיימר הנוסף במסך הבית</span></label>
+ <p class="note" data-i18n="אפשר לשנות את התצוגה בהמשך. הטיימרים תמיד זמינים בהגדרות.">אפשר לשנות את התצוגה בהמשך. הטיימרים תמיד זמינים בהגדרות.</p><p class="msg err" id="${prefix}SecondError" role="alert" hidden></p></fieldset>`;
+ if(prefix==='o')$('guestForm').insertBefore(block,$('guestForm').querySelector('button[type="submit"]'));else $('authProfile').append(block);
+ $(prefix+'AddSecond').onchange=()=>{const on=$(prefix+'AddSecond').checked;$(prefix+'SecondFields').hidden=!on;$(prefix+'SecondFields').disabled=!on;$(prefix+'AddSecond').setAttribute('aria-expanded',String(on));};
+}
+for(const [id,prefix] of [['guestForm','o'],['loginForm','a']])for(const type of ['input','change'])$(id).addEventListener(type,()=>{if(prefix==='o'||authMode==='create')setupDrafts[prefix]=true;});
+function onboardingTimers(prefix,base){
+ const next=CleanTimeTimers.normalize(base),error=$(prefix+'SecondError');error.hidden=true;
+ if(!$(prefix+'AddSecond').checked){
+  const timers=next.timers.filter(t=>t.id!==setupSecondIds[prefix]);
+  return CleanTimeTimers.project({...next,timers,primaryTimerId:timers.some(t=>t.id===next.primaryTimerId)?next.primaryTimerId:timers[0]?.id||null});
+ }
+ if(!validateRecoveryDate(prefix+'SecondDate'))return null;
+ const timer={id:setupSecondIds[prefix]||(setupSecondIds[prefix]=crypto.randomUUID()),category:$(prefix+'SecondCategory').value,label:$(prefix+'SecondLabel').value.trim(),date:$(prefix+'SecondDate').value,time:''};
+ if(next.timers.some(t=>t.id!==timer.id&&t.category===timer.category&&timerIdentityLabel(t)===timerIdentityLabel(timer))){error.textContent=translateUI('למסלול נוסף מאותו סוג יש לבחור שם אישי שונה.');error.hidden=false;$(prefix+'SecondLabel').focus();return null;}
+ return CleanTimeTimers.project({...next,timers:[...next.timers.filter(t=>t.id!==timer.id),timer]});
+}
+function rememberOnboardingDisplay(prefix){setupDrafts[prefix]=false;saveHomeDisplay({show:$(prefix+'AddSecond').checked&&$(prefix+'ShowSecond').checked,mode:'compact'});}
+function resetSetupTimers(){
+ for(const prefix of ['o','a']){
+  setupDrafts[prefix]=false;
+  delete setupSecondIds[prefix];$(prefix+'AddSecond').checked=false;$(prefix+'AddSecond').setAttribute('aria-expanded','false');$(prefix+'SecondFields').hidden=true;$(prefix+'SecondFields').disabled=true;
+  for(const suffix of ['SecondCategory','SecondLabel','SecondDate'])$(prefix+suffix).value='';
+  $(prefix+'ShowSecond').checked=false;$(prefix+'SecondError').hidden=true;$(prefix+'SecondDateError').hidden=true;$(prefix+'SecondDateConfirmation').textContent='';$(prefix+'SecondDate').removeAttribute('aria-invalid');
+ }
+ displayedTimerId=null;saveHomeDisplay({show:false,mode:'single'});
+}
 
 /* ---------- Tabs ---------- */
 // Observational hooks only; the optional module cannot block any app flow.
@@ -771,7 +916,7 @@ function show(tab,record=true){
   $('aboutBack').hidden=tab!=='about'||!entering;
   const active=tab==='about'?'about':['counter','onboarding','settings','auth','account'].includes(tab)?'counter':'tools';
   document.querySelectorAll('nav.tabs button').forEach(b=>{
-    if(b.id==='openSettings'?['settings','account','auth'].includes(tab):b.dataset.tab===active&&!['settings','account','auth'].includes(tab))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+    if(b.id==='openSettings'?tab==='settings':b.id==='openAccount'?['account','auth'].includes(tab):b.dataset.tab===active&&!['settings','account','auth'].includes(tab))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   });
   if(tab==='settings')fillSettings();else applyColor();
   if(tab==='account')renderSync();
@@ -794,12 +939,13 @@ function openAuth(mode,record=true){
   if(record&&mode!=='login'&&(current!=='auth'||authMode!==mode))analytics('event','registration_started');
   authMode=mode;
   const create=mode==='create',convert=mode==='convert';
-  $('authTitle').textContent=create?'יצירת חשבון':convert?'יצירת חשבון והפעלת גיבוי':'כבר יש לי חשבון';
-  $('authSub').textContent='הכניסה תמיד דרך קישור למייל. המייל מזהה את החשבון והגיבוי.'+(convert?' הנתונים במכשיר יישמרו.':'')+' הגיבוי יופעל לאחר שמירת מפתח שחזור להצפנה במכשיר. המפתח אינו סיסמת הכניסה.';
+  $('authTitle').textContent=create?translateUI('יצירת חשבון'):convert?translateUI('יצירת חשבון והפעלת גיבוי'):translateUI('כבר יש לי חשבון');
+  $('authSub').textContent=translateUI('הכניסה תמיד דרך קישור למייל. המייל מזהה את החשבון והגיבוי.')+(convert?translateUI(' הנתונים במכשיר יישמרו.'):'')+translateUI(' הגיבוי יופעל לאחר שמירת מפתח שחזור להצפנה במכשיר. המפתח אינו סיסמת הכניסה.');
   $('authProfile').hidden=!create;$('aDate').required=create;$('aFrom').required=create;
+  $('aSecondFields').disabled=!create||!$('aAddSecond').checked;
   $('authNameField').hidden=!(create||(convert&&!S.name));
   $('aName').value=S.name;$('aDate').value=S.date;$('aTime').value=S.time;$('aFrom').value=S.from;pickColor=S.color;renderSwatches('aSwatches');
-  $('lEmail').value='';$('lSend').textContent=mode==='login'?'שליחת קישור כניסה למייל':'יצירת חשבון ושליחת קישור למייל';
+  $('lEmail').setCustomValidity('');$('lEmail').value='';$('lSend').textContent=mode==='login'?translateUI('שליחת קישור כניסה למייל'):translateUI('יצירת חשבון ושליחת קישור למייל');
   $('authCreate').hidden=mode!=='login';
   $('aDateError').hidden=true;$('aDateError').textContent='';$('aDate').removeAttribute('aria-invalid');
   confirmRecoveryDate('aDate');setMsg('');show('auth',record);
@@ -823,15 +969,16 @@ $('backToOnboarding').onclick=()=>show('welcome');
 $('guestForm').onsubmit=ev=>{
   ev.preventDefault();
   if(!validateRecoveryDate('oDate')||!$('guestForm').reportValidity())return;
-  S.date=$('oDate').value;S.from=$('oFrom').value;
-  if(save()){analytics('event','guest_started',{},true);show('counter');}
+  const next=onboardingTimers('o',{...S,date:$('oDate').value,from:$('oFrom').value});if(!next)return;
+  const previous=S;S=next;
+  if(save()){rememberOnboardingDisplay('o');analytics('event','guest_started',{},true);show('counter');}else S=previous;
 };
 
 function validateRecoveryDate(id,focus=true){
   const input=$(id),message=$(id+'Error');
   const future=input.value&&input.value>todayKey();
   const invalid=!input.value||!input.validity.valid;
-  const text=future?'תאריך תחילת ההחלמה לא יכול להיות בעתיד.':invalid?'יש לבחור תאריך תקין.':'';
+  const text=future?translateUI('תאריך תחילת ההחלמה לא יכול להיות בעתיד.'):invalid?translateUI('יש לבחור תאריך תקין.'):'';
   message.textContent=text;message.hidden=!text;input.setAttribute('aria-invalid',String(!!text));
   if(text&&focus)input.focus();
   return !text;
@@ -839,9 +986,9 @@ function validateRecoveryDate(id,focus=true){
 function confirmRecoveryDate(id){
   const value=$(id).value,parts=/^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   const date=parts?new Date(Number(parts[1]),Number(parts[2])-1,Number(parts[3]),12):null;
-  $(id+'Confirmation').textContent=date&&!isNaN(date)?'התאריך שנבחר: '+date.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'}):'';
+  $(id+'Confirmation').textContent=date&&!isNaN(date)?translateUI('התאריך שנבחר: ')+date.toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'}):'';
 }
-for(const id of ['oDate','aDate','sDate']){
+for(const id of ['oDate','aDate','sDate','tDate','oSecondDate','aSecondDate']){
   const input=$(id),message=document.createElement('span');
   message.id=id+'Error';message.className='msg err';message.setAttribute('role','alert');message.hidden=true;
   const confirmation=document.createElement('span');confirmation.id=id+'Confirmation';confirmation.className='date-confirmation';confirmation.setAttribute('aria-live','polite');
@@ -875,9 +1022,9 @@ function totalDays(s,n){
   if(nT<sT)days--;
   return Math.max(0,days);
 }
-const fmt=n=>n.toLocaleString('he-IL');
+const fmt=n=>n.toLocaleString(CleanTimeI18n.locale);
 const pad=n=>String(n).padStart(2,'0');
-const unit=(n,label)=>`<span class="unit"><span class="num">${n}</span><span class="lbl">${label}</span></span>`;
+const unit=(n,label)=>`<span class="unit"><span class="num">${n}</span><span class="lbl">${translateUI(label)}</span></span>`;
 
 function milestonesEnabled(){try{return localStorage.getItem('cleantime-he-milestones')!=='false';}catch(e){return false;}}
 const BADGE_COLORS={
@@ -891,45 +1038,47 @@ const BADGE_COLORS={
  black:{fill:'#262C30',light:'#3E484D',edge:'#14191C',ink:'#F4DA97'}
 };
 function renderMilestone(s,n){
- const el=$('milestone'),home=current==='counter';
- const last=home&&milestonesEnabled()?CleanTimeDates.milestones(s===undefined?startDate():s,n||new Date()).at(-1):null,visible=home&&!!last;
+ const el=$('milestone'),home=current==='counter'&&!(homeDisplay.show&&homeDisplay.mode==='cards'&&S.timers?.length>1);
+ const shown=homeTimer(),last=home&&milestonesEnabled()?CleanTimeDates.milestones(s===undefined?(shown?timerStart(shown):startDate()):s,n||new Date()).at(-1):null,visible=home&&!!last;
  el.hidden=!visible;$('greet').closest('header').classList.toggle('has-milestone',visible);
  if(!visible){el.removeAttribute('aria-label');el.removeAttribute('title');return;}
  const key=last.id+'|'+last.date.getTime();
  if(el.dataset.badgeKey!==key){
   const colors=BADGE_COLORS[last.tone];for(const [name,value] of Object.entries(colors))el.style.setProperty('--badge-'+name,value);
-  $('milestoneNumber').textContent=last.count;$('milestoneUnit').textContent=last.unit;
+  $('milestoneNumber').textContent=last.count;$('milestoneUnit').textContent=translateUI(last.unit);$('milestoneUnit').setAttribute('direction',document.documentElement.dir);
   el.dataset.badgeKey=key;el.dataset.milestone=last.id;
  }
- const label='ציון דרך בהחלמה: '+last.label+' · '+last.date.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'});
+ const label=translateUI('ציון דרך בהחלמה: ')+localizedMilestone(last)+' · '+last.date.toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'});
  if(el.getAttribute('aria-label')!==label){el.setAttribute('aria-label',label);el.title=label;}
 }
-$('showMilestones').onchange=()=>{try{localStorage.setItem('cleantime-he-milestones',String($('showMilestones').checked));$('milestoneStatus').textContent='הבחירה נשמרה במכשיר הזה.';}catch(e){$('milestoneStatus').textContent='הבחירה לא נשמרה במכשיר.';}render();};
+$('showMilestones').onchange=()=>{try{localStorage.setItem('cleantime-he-milestones',String($('showMilestones').checked));$('milestoneStatus').textContent=translateUI('הבחירה נשמרה במכשיר הזה.');}catch(e){$('milestoneStatus').textContent=translateUI('הבחירה לא נשמרה במכשיר.');}render();};
 
 /* ---------- Counter render ---------- */
 function render(){
-  $('greet').textContent=S.name?`שלום, ${S.name}`:'זמן נקי';
+  renderAdditionalTimers();
+  $('greet').textContent=S.name?translateUI('שלום')+', '+S.name:translateUI('זמן נקי');
   const chip=$('fromChip');
-  chip.hidden=!S.from; chip.textContent=S.from?`החלמה מ${S.from}`:'';
-  const s=startDate(), n=new Date(), c=$('count');
+  const shown=homeTimer();
+  chip.hidden=!S.from; chip.textContent=S.from?translateUI('החלמה מ־')+' '+(shown?timerLabel(shown):S.from):'';
+  const s=shown?timerStart(shown):startDate(), n=new Date(), c=$('count');
   renderMilestone(s,n);
   document.querySelectorAll('#dots span').forEach((el,i)=>el.classList.toggle('on',i===S.mode));
   if(!s){c.className='count';c.innerHTML='';$('since').textContent='';return;}
-  $('since').textContent='מאז '+s.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'});
-  if(n<s){c.className='count small';c.innerHTML='<span class="lbl" style="font-size:1.2rem">התאריך שנבחר עוד לא הגיע</span>';return;}
+  $('since').textContent=translateUI('מאז ')+s.toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'});
+  if(n<s){c.className='count small';c.replaceChildren(Object.assign(document.createElement('span'),{className:'lbl',textContent:translateUI('התאריך שנבחר עוד לא הגיע')}));return;}
   let html='',cls='count';
   if(S.mode===0){
     const t=ymd(s,n); const parts=[];
-    if(t.y)parts.push(unit(t.y,t.y===1?'שנה':'שנים'));
-    if(t.y||t.m)parts.push(unit(t.m,t.m===1?'חודש':'חודשים'));
-    parts.push(unit(t.d,t.d===1?'יום':'ימים'));
+    if(t.y)parts.push(unit(t.y,t.y===1?translateUI('שנה'):translateUI('שנים')));
+    if(t.y||t.m)parts.push(unit(t.m,t.m===1?translateUI('חודש'):translateUI('חודשים')));
+    parts.push(unit(t.d,t.d===1?translateUI('יום'):translateUI('ימים')));
     html=parts.join(''); if(parts.length===1)cls+=' single';
   }else if(S.mode===1){
     const d=totalDays(s,n);
-    html=unit(fmt(d),d===1?'יום נקי':'ימים נקיים'); cls+=' single';
+    html=unit(fmt(d),d===1?translateUI('יום נקי'):translateUI('ימים נקיים')); cls+=' single';
   }else{
     const sec=Math.floor((n-s)/1000);
-    html=unit(fmt(Math.floor(sec/3600)),'שעות')+unit(pad(Math.floor(sec%3600/60)),'דקות')+unit(pad(sec%60),'שניות');
+    html=unit(fmt(Math.floor(sec/3600)),translateUI('שעות'))+unit(pad(Math.floor(sec%3600/60)),translateUI('דקות'))+unit(pad(sec%60),translateUI('שניות'));
     cls+=' small';
   }
   c.className=cls; c.innerHTML=html;
@@ -940,23 +1089,23 @@ $('count').onclick=()=>{
 };
 setInterval(()=>{
   if(current==='counter')render();
-  if(planDay!==todayKey()){renderP();renderG();$('oDate').max=todayKey();$('sDate').max=todayKey();$('aDate').max=todayKey();}
+  if(planDay!==todayKey()){renderP();renderG();for(const id of ['oDate','sDate','aDate','oSecondDate','aSecondDate'])$(id).max=todayKey();}
 },1000);
 
 /* ---------- Gratitude ---------- */
 function actionButton(label,handler,cls='edit-btn'){
-  const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=label;b.onclick=handler;return b;
+  const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=translateUI(label);b.onclick=handler;return b;
 }
 function inlineEdit(li,item,refresh){
   const form=document.createElement('form');form.className='inline-edit';
-  const input=document.createElement('textarea');input.value=item.text;input.setAttribute('aria-label','עריכת טקסט');
-  const submit=actionButton('שמירה',()=>{} ,'btn');submit.type='submit';
-  form.append(input,submit,actionButton('ביטול',refresh));
+  const input=document.createElement('textarea');input.value=item.text;input.setAttribute('aria-label',translateUI('עריכת טקסט'));
+  const submit=actionButton(translateUI('שמירה'),()=>{} ,'btn');submit.type='submit';
+  form.append(input,submit,actionButton(translateUI('ביטול'),refresh));
   form.onsubmit=ev=>{ev.preventDefault();if(!input.value.trim()){input.focus();return;}item.text=input.value.trim();save();refresh();};
   li.replaceChildren(form);input.focus();
 }
 const dayKey=ts=>{const n=new Date(ts);return Number.isNaN(n.getTime())?'':n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());};
-const dateLabel=key=>key===todayKey()?'היום':new Date(key+'T12:00:00').toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const dateLabel=key=>key===todayKey()?translateUI('היום'):new Date(key+'T12:00:00').toLocaleDateString(CleanTimeI18n.locale,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 function renderG(){
   const ul=$('gList');ul.replaceChildren();
   const groups=new Map([[todayKey(),[]]]);
@@ -965,15 +1114,15 @@ function renderG(){
   });
   const keys=[todayKey(),...Array.from(groups.keys()).filter(k=>k!==todayKey()).sort().reverse()];
   keys.forEach(key=>{
-    const head=document.createElement('li');head.className='day-heading';const h=document.createElement('h3');h.textContent=key?dateLabel(key):'תודות ללא תאריך';head.append(h);ul.append(head);
-    if(!groups.get(key).length){const empty=document.createElement('li');empty.className='empty';empty.textContent='אפשר להתחיל מדבר אחד קטן.';ul.append(empty);}
+    const head=document.createElement('li');head.className='day-heading';const h=document.createElement('h3');h.textContent=key?dateLabel(key):translateUI('תודות ללא תאריך');head.append(h);ul.append(head);
+    if(!groups.get(key).length){const empty=document.createElement('li');empty.className='empty';empty.textContent=translateUI('אפשר להתחיל מדבר אחד קטן.');ul.append(empty);}
     groups.get(key).forEach(g=>{
       const li=document.createElement('li'),t=document.createElement('div');t.className='txt';t.textContent=g.text;
       if(dayKey(g.ts)){
-        const tm=document.createElement('time');tm.dateTime=new Date(g.ts).toISOString();tm.textContent=new Date(g.ts).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});t.append(tm);
+        const tm=document.createElement('time');tm.dateTime=new Date(g.ts).toISOString();tm.textContent=new Date(g.ts).toLocaleTimeString(CleanTimeI18n.locale,{hour:'2-digit',minute:'2-digit'});t.append(tm);
       }
-      li.append(t,actionButton('עריכה',()=>inlineEdit(li,g,renderG)),actionButton('מחיקה',()=>{
-        if(!confirm('למחוק את התודה?'))return;S.gratitude=S.gratitude.filter(x=>x!==g);save();renderG();
+      li.append(t,actionButton(translateUI('עריכה'),()=>inlineEdit(li,g,renderG)),actionButton(translateUI('מחיקה'),()=>{
+        if(!confirm(translateUI('למחוק את התודה?')))return;S.gratitude=S.gratitude.filter(x=>x!==g);save();renderG();
       }));ul.append(li);
     });
   });
@@ -1000,15 +1149,15 @@ function renderP(){
   $('pDate').textContent=dateLabel(selected);
   $('pForm').hidden=selected!==planDay;
   const items=S.plans[selected]||[],ul=$('pList');ul.replaceChildren();
-  if(!items.length){ul.innerHTML='<li class="empty" style="border:0;display:block">מה דבר אחד שאני רוצה לעשות היום? אפשר להתחיל ממשהו קטן.</li>';return;}
+  if(!items.length){ul.replaceChildren(Object.assign(document.createElement('li'),{className:'empty',textContent:translateUI("מה דבר אחד שאני רוצה לעשות היום? אפשר להתחיל ממשהו קטן.")}));return;}
   items.forEach(p=>{
     const li=document.createElement('li');li.className='plan-item'+(p.done?' done':'');
     const ck=document.createElement('button');ck.className='check';ck.setAttribute('role','checkbox');ck.setAttribute('aria-checked',!!p.done);ck.setAttribute('aria-label',p.text);
     ck.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
     ck.onclick=()=>{p.done=!p.done;save();renderP();};
     const t=document.createElement('div');t.className='txt';t.textContent=p.text;
-    li.append(ck,t,actionButton('עריכה',()=>inlineEdit(li,p,renderP)),actionButton('מחיקה',()=>{
-      if(!confirm('למחוק את הפריט מהתכנית?'))return;
+    li.append(ck,t,actionButton(translateUI('עריכה'),()=>inlineEdit(li,p,renderP)),actionButton(translateUI('מחיקה'),()=>{
+      if(!confirm(translateUI('למחוק את הפריט מהתכנית?')))return;
       S.plans[selected]=(S.plans[selected]||[]).filter(x=>x!==p);if(!S.plans[selected].length)delete S.plans[selected];save();renderP();
     }));ul.append(li);
   });
@@ -1030,13 +1179,13 @@ function inventoryHistory(){
 function openInventory(key){
   inventoryDay=key;$('iDay').value=key;$('iDay').max=todayKey();
   const entry=S.inventory[key]||{};
-  $('iSummary').value=entry.summary||'';$('iStatus').textContent=entry.updated?'נשמר במכשיר':'';inventoryHistory();
+  $('iSummary').value=entry.summary||'';$('iStatus').textContent=entry.updated?translateUI('נשמר במכשיר'):'';inventoryHistory();
 }
 function saveInventory(){
   const existing=S.inventory[inventoryDay]||{};
   // Retain unknown fields and future question answers when revisiting a day.
   S.inventory[inventoryDay]={...existing,questionnaireVersion:existing.questionnaireVersion||'placeholder-v1',answers:{...(existing.answers||{})},summary:$('iSummary').value,created:existing.created||Date.now(),updated:Date.now()};
-  const ok=save();$('iStatus').textContent=ok?'נשמר במכשיר':'לא נשמר במכשיר';inventoryHistory();
+  const ok=save();$('iStatus').textContent=ok?translateUI('נשמר במכשיר'):translateUI('לא נשמר במכשיר');inventoryHistory();
 }
 $('iSummary').oninput=saveInventory;
 $('iDay').onchange=()=>{if($('iDay').value&&$('iDay').checkValidity())openInventory($('iDay').value);else $('iDay').value=inventoryDay;};
@@ -1046,21 +1195,21 @@ $('iHistory').onchange=()=>openInventory($('iHistory').value);
 const gong=new Audio('assets/gong.wav');gong.preload='auto';
 let mEnd=0,mRemaining=5*60000,mState='idle';
 function playGong(){
-  gong.currentTime=0;gong.play().catch(()=>{$('mStatus').textContent='הצליל לא זמין בדפדפן הזה. הטיימר ממשיך כרגיל.';});
+  gong.currentTime=0;gong.play().catch(()=>{$('mStatus').textContent=translateUI('הצליל לא זמין בדפדפן הזה. הטיימר ממשיך כרגיל.');});
 }
 function renderTimer(){
   if(mState==='running'){
     mRemaining=Math.max(0,mEnd-Date.now());
-    if(!mRemaining){mState='finished';playGong();$('mStatus').textContent='הזמן הסתיים.';}
+    if(!mRemaining){mState='finished';playGong();$('mStatus').textContent=translateUI('הזמן הסתיים.');}
   }
   const secs=Math.ceil(mRemaining/1000);$('mCountdown').textContent=pad(Math.floor(secs/60))+':'+pad(secs%60);
-  $('mStart').textContent=mState==='running'?'השהיה':mState==='paused'?'המשך':'התחלה';
+  $('mStart').textContent=mState==='running'?translateUI('השהיה'):mState==='paused'?translateUI('המשך'):translateUI('התחלה');
   $('mDuration').disabled=mState==='running'||mState==='paused';
 }
 $('mStart').onclick=()=>{
   const wasRunning=mState==='running';renderTimer();
   if(wasRunning&&mState==='finished')return;
-  if(mState==='running'){mRemaining=Math.max(0,mEnd-Date.now());mState='paused';$('mStatus').textContent='מושהה';}
+  if(mState==='running'){mRemaining=Math.max(0,mEnd-Date.now());mState='paused';$('mStatus').textContent=translateUI('מושהה');}
   else{
     if(mState!=='paused'){mRemaining=Number($('mDuration').value)*60000;playGong();}
     mEnd=Date.now()+mRemaining;mState='running';$('mStatus').textContent='';
@@ -1073,11 +1222,11 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderTime
 window.addEventListener('focus',renderTimer);
 
 /* ---------- Journal ---------- */
-const fmtWhen=ts=>new Date(ts).toLocaleString('he-IL',{weekday:'short',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+const fmtWhen=ts=>new Date(ts).toLocaleString(CleanTimeI18n.locale,{weekday:'short',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
 let jCur=null, jTimer=null;
 function renderJ(){
   const ul=$('jList');
-  if(!S.journal.length){ul.innerHTML='<li class="empty" style="border:0;display:block">עוד אין רשומות. אפשר לכתוב כמה מילים על איך שזה עכשיו.</li>';return;}
+  if(!S.journal.length){ul.replaceChildren(Object.assign(document.createElement('li'),{className:'empty',textContent:translateUI("עוד אין רשומות. אפשר לכתוב כמה מילים על איך שזה עכשיו.")}));return;}
   ul.innerHTML='';
   S.journal.slice().sort((a,b)=>b.created-a.created).forEach(e=>{
     const li=document.createElement('li');li.className='j-item';
@@ -1089,12 +1238,14 @@ function renderJ(){
     li.appendChild(t);ul.appendChild(li);
   });
 }
+let journalReturnFocus=null;
 function openJ(entry){
+  journalReturnFocus=document.activeElement;
   jCur=entry||{id:uid(),text:'',created:Date.now(),updated:Date.now()};
   $('jText').value=jCur.text; $('jWhen').textContent=fmtWhen(jCur.created); $('jSaved').textContent='';
   $('jEditor').hidden=false;
   try{history.pushState({screen:'journal',j:1,entryId:jCur.id},'');}catch(e){}
-  if(!entry)$('jText').focus();
+  syncModalFocus();$('jText').focus();
 }
 /* saves the open entry; an empty entry is removed instead */
 function commitJ(){
@@ -1107,16 +1258,16 @@ function commitJ(){
   if(i<0||t!==e.text){
     e.text=t; e.updated=Date.now();
     if(i<0)S.journal.push(e);
-    jCur=e; $('jSaved').textContent=save()?'נשמר':'לא נשמר במכשיר';
+    jCur=e; $('jSaved').textContent=save()?translateUI('נשמר'):translateUI('לא נשמר במכשיר');
   }
 }
-function closeJ(){commitJ();jCur=null;$('jEditor').hidden=true;renderJ();}
+function closeJ(){commitJ();jCur=null;$('jEditor').hidden=true;syncModalFocus();renderJ();if(journalReturnFocus?.isConnected&&journalReturnFocus.getClientRects().length)journalReturnFocus.focus();else $('jNew').focus();}
 function leaveJ(){if(history.state&&history.state.j)history.back();else closeJ();}
 $('jNew').onclick=()=>openJ(null);
 $('jText').oninput=()=>{$('jSaved').textContent='';clearTimeout(jTimer);jTimer=setTimeout(commitJ,600);};
 $('jDone').onclick=leaveJ;
 $('jDel').onclick=()=>{
-  if(!confirm('למחוק את הרשומה?'))return;
+  if(!confirm(translateUI('למחוק את הרשומה?')))return;
   S.journal=S.journal.filter(e=>e.id!==jCur.id); save(); $('jText').value=''; leaveJ();
 };
 /* Android back button closes the editor instead of leaving the app */
@@ -1127,14 +1278,14 @@ window.addEventListener('popstate',ev=>{
   if(tab==='auth')openAuth(state.authMode||'login',false);else show(tab,false);
   if(tab==='journal'&&state&&state.j){
     const entry=S.journal.find(e=>e.id===state.entryId);
-    if(entry){jCur=entry;$('jText').value=entry.text;$('jWhen').textContent=fmtWhen(entry.created);$('jSaved').textContent='';$('jEditor').hidden=false;}
+    if(entry){jCur=entry;$('jText').value=entry.text;$('jWhen').textContent=fmtWhen(entry.created);$('jSaved').textContent='';$('jEditor').hidden=false;syncModalFocus();$('jText').focus();}
   }
 });
 window.addEventListener('pagehide',commitJ);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)commitJ();else if(planDay!==todayKey())renderP();});
 
 /* ---------- Safe links and private personal bookmarks ---------- */
-const LINK_ERROR='יש להזין כתובת https:// תקינה או מספר טלפון אחרי tel:.';
+const LINK_ERROR=translateUI('יש להזין כתובת https:// תקינה או מספר טלפון אחרי tel:.');
 function safeLinkUrl(value){
   if(typeof value!=='string')return null;
   const raw=value.trim();
@@ -1154,7 +1305,7 @@ function closeBookmarkForm(){
 }
 function openBookmarkForm(item){
   bookmarkEditId=item?item.id:null;$('bForm').reset();$('bTitle').setCustomValidity('');$('bUrl').setCustomValidity('');$('bError').hidden=true;
-  $('bFormTitle').textContent=item?'עריכת קישור':'הוספת קישור';
+  $('bFormTitle').textContent=item?translateUI('עריכת קישור'):translateUI('הוספת קישור');
   $('bTitle').value=item?item.title:'';$('bUrl').value=item?item.url:'';$('bNote').value=item?item.note||'':'';
   $('bForm').hidden=false;$('bNew').hidden=true;$('bTitle').focus();
 }
@@ -1165,7 +1316,7 @@ function persistBookmarks(next){
 }
 function renderBookmarks(){
   const ul=$('bList');ul.replaceChildren();
-  if(!S.bookmarks.length){const li=document.createElement('li');li.className='empty';li.textContent='עוד אין קישורים שמורים. אפשר להוסיף קישור שחשוב לך.';ul.append(li);return;}
+  if(!S.bookmarks.length){const li=document.createElement('li');li.className='empty';li.textContent=translateUI('עוד אין קישורים שמורים. אפשר להוסיף קישור שחשוב לך.');ul.append(li);return;}
   S.bookmarks.forEach(item=>{
     const li=document.createElement('li');li.className='bookmark-item';
     const content=document.createElement('div');content.className='bookmark-content';
@@ -1174,12 +1325,12 @@ function renderBookmarks(){
     title.textContent=item.title||item.url;
     const address=document.createElement('small');address.textContent=item.url;title.append(address);content.append(title);
     if(item.note){const note=document.createElement('p');note.className='bookmark-note';note.textContent=item.note;content.append(note);}
-    if(!url){const warning=document.createElement('p');warning.className='note';warning.textContent='הכתובת אינה בטוחה לפתיחה. אפשר לתקן אותה דרך עריכה.';content.append(warning);}
+    if(!url){const warning=document.createElement('p');warning.className='note';warning.textContent=translateUI('הכתובת אינה בטוחה לפתיחה. אפשר לתקן אותה דרך עריכה.');content.append(warning);}
     const actions=document.createElement('div');actions.className='bookmark-actions';
-    const edit=document.createElement('button');edit.className='btn ghost';edit.textContent='עריכה';edit.setAttribute('aria-label','עריכת '+(item.title||'קישור'));edit.onclick=()=>openBookmarkForm(item);
-    const del=document.createElement('button');del.className='btn ghost';del.textContent='מחיקה';del.setAttribute('aria-label','מחיקת '+(item.title||'קישור'));
+    const edit=document.createElement('button');edit.className='btn ghost';edit.textContent=translateUI('עריכה');edit.setAttribute('aria-label',translateUI('עריכת ')+(item.title||translateUI('קישור')));edit.onclick=()=>openBookmarkForm(item);
+    const del=document.createElement('button');del.className='btn ghost';del.textContent=translateUI('מחיקה');del.setAttribute('aria-label',translateUI('מחיקת ')+(item.title||translateUI('קישור')));
     del.onclick=()=>{
-      if(!confirm('למחוק את הקישור השמור?'))return;
+      if(!confirm(translateUI('למחוק את הקישור השמור?')))return;
       if(persistBookmarks(S.bookmarks.filter(b=>b.id!==item.id))){if(bookmarkEditId===item.id)closeBookmarkForm();renderBookmarks();$('bNew').focus();}
     };
     actions.append(edit,del);li.append(content,actions);ul.append(li);
@@ -1190,10 +1341,10 @@ $('bCancel').onclick=()=>{closeBookmarkForm();$('bNew').focus();};
 $('bUrl').oninput=()=>$('bUrl').setCustomValidity('');
 $('bForm').onsubmit=ev=>{
   ev.preventDefault();const title=$('bTitle').value.trim(),url=safeLinkUrl($('bUrl').value),note=$('bNote').value.trim();
-  $('bTitle').setCustomValidity(title?'':'יש להזין כותרת.');$('bUrl').setCustomValidity(url?'':LINK_ERROR);
+  $('bTitle').setCustomValidity(title?'':translateUI('יש להזין כותרת.'));$('bUrl').setCustomValidity(url?'':LINK_ERROR);
   if(!$('bForm').reportValidity())return;
   const existing=bookmarkEditId===null?null:S.bookmarks.find(b=>b.id===bookmarkEditId);
-  if(bookmarkEditId!==null&&!existing){$('bError').textContent='הקישור כבר אינו ברשימה. אפשר לבטל ולהוסיף קישור חדש.';$('bError').hidden=false;return;}
+  if(bookmarkEditId!==null&&!existing){$('bError').textContent=translateUI('הקישור כבר אינו ברשימה. אפשר לבטל ולהוסיף קישור חדש.');$('bError').hidden=false;return;}
   const item=Object.assign({},existing||{id:uid()},{title,url,note});
   const next=existing?S.bookmarks.map(b=>b.id===bookmarkEditId?item:b):S.bookmarks.concat(item);
   if(persistBookmarks(next)){closeBookmarkForm();renderBookmarks();$('bNew').focus();}
@@ -1202,33 +1353,34 @@ $('bTitle').oninput=()=>$('bTitle').setCustomValidity('');
 
 /* ---------- Readings ---------- */
 let editing=false;
+function resourceLabel(link){return DEFAULT.links.some(original=>original.id===link.id&&original.url===link.url&&original.title===link.title)?translateUI(link.title):link.title;}
 function renderToolResources(){
   const box=$('recoveryDestinations');box.querySelectorAll('a,.unavailable-resource').forEach(e=>e.remove());
   S.links.filter(l=>l.url!=='https://www.naisrael.org.il/just-for-today/').forEach(l=>{
     const url=safeLinkUrl(l.url),el=document.createElement(url?'a':'span');
     if(url)linkTarget(el,url);else el.className='unavailable-resource';
-    el.textContent=l.title||l.url;box.appendChild(el);
+    el.textContent=resourceLabel(l)||l.url;box.appendChild(el);
   });
 }
 function renderL(){
   const ul=$('lList'); ul.innerHTML='';
-  $('editLinks').textContent=editing?'סיום':'עריכה';
+  $('editLinks').textContent=editing?translateUI('סיום'):translateUI('עריכה');
   $('addLink').hidden=!editing;
-  if(!S.links.length&&!editing){ul.innerHTML='<li class="empty" style="border:0;display:block">אין קישורים. אפשר להוסיף דרך "עריכה".</li>';return;}
+  if(!S.links.length&&!editing){ul.replaceChildren(Object.assign(document.createElement('li'),{className:'empty',textContent:translateUI("אין קישורים. אפשר להוסיף דרך \"עריכה\".")}));return;}
   S.links.forEach(l=>{
     const li=document.createElement('li');li.className='link-item';
     if(editing){
       const w=document.createElement('div');w.className='link-edit';
-      const ti=document.createElement('input');ti.type='text';ti.value=l.title;ti.placeholder='כותרת';ti.setAttribute('aria-label','כותרת');
-      const ui=document.createElement('input');ui.type='text';ui.inputMode='url';ui.value=l.url;ui.placeholder='https://';ui.dir='ltr';ui.setAttribute('aria-label','כתובת');
+      const ti=document.createElement('input');ti.type='text';ti.value=l.title;ti.placeholder=translateUI('כותרת');ti.setAttribute('aria-label',translateUI('כותרת'));
+      const ui=document.createElement('input');ui.type='text';ui.inputMode='url';ui.value=l.url;ui.placeholder='https://';ui.dir='ltr';ui.setAttribute('aria-label',translateUI('כתובת'));
       ti.oninput=()=>{l.title=ti.value;save();}; ui.oninput=()=>{const raw=ui.value.trim(),url=safeLinkUrl(raw);ui.setCustomValidity(raw&&!url?LINK_ERROR:'');if(!raw||url){l.url=url||'';save();}};ui.onchange=()=>ui.reportValidity();
-      const del=document.createElement('button');del.className='del';del.innerHTML='&times;';del.setAttribute('aria-label','מחיקת קישור');
+      const del=document.createElement('button');del.className='del';del.innerHTML='&times;';del.setAttribute('aria-label',translateUI('מחיקת קישור'));
       del.onclick=()=>{S.links=S.links.filter(x=>x.id!==l.id);save();renderL();};
       w.append(ti,ui);li.append(w,del);
     }else{
       const url=safeLinkUrl(l.url),a=document.createElement(url?'a':'span');
       if(url)linkTarget(a,url);
-      a.textContent=l.title||l.url;
+      a.textContent=resourceLabel(l)||l.url;
       const sm=document.createElement('small');sm.textContent=l.url.replace(/^(https?:\/\/|tel:)/i,'').replace(/^www\./i,'').replace(/\/$/,'');a.appendChild(sm);
       li.appendChild(a);
     }
@@ -1239,9 +1391,86 @@ $('editLinks').onclick=()=>{editing=!editing;if(!editing)S.links=S.links.filter(
 $('addLink').onclick=()=>{S.links.push({id:Date.now(),title:'',url:''});save();renderL();};
 
 /* ---------- Settings ---------- */
+let timerEditId=null;
+const timerLabel=timer=>timer.label||translateUI(CleanTimeTimers.names[timer.category]);
+const timerIdentityLabel=timer=>(timer.label||'').trim();
+const timerStart=timer=>new Date(timer.date+'T'+(timer.time||'00:00')+':00');
+const localizedMilestone=milestone=>CleanTimeI18n.language==='he'?milestone.label:fmt(milestone.count)+' '+translateUI(milestone.unit);
+function timerDescription(timer){
+ const start=timerStart(timer),now=new Date(),milestone=CleanTimeDates.milestones(start,now).at(-1);
+ return fmt(totalDays(start,now))+translateUI(' ימים נקיים')+(milestone?' · '+localizedMilestone(milestone):'');
+}
+function renderAdditionalTimers(){
+ const timers=S.timers||[],multiple=timers.length>1,on=multiple&&homeDisplay.show;
+ $('homeDisplay').hidden=!multiple;$('showHomeTimers').checked=on;$('homeDisplayOptions').hidden=!on;
+ $('primaryTimerDisplay').hidden=on&&homeDisplay.mode==='cards';$('homeTimerPick').hidden=!on||homeDisplay.mode!=='single';
+ for(const button of $('timerDisplayModes').querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.display===homeDisplay.mode));
+ const picker=$('homeTimerPick');
+ if(picker.dataset.options!==JSON.stringify(timers.map(t=>[t.id,timerLabel(t)]))){picker.replaceChildren(...timers.map(timer=>Object.assign(document.createElement('option'),{value:timer.id,textContent:timerLabel(timer)})));picker.dataset.options=JSON.stringify(timers.map(t=>[t.id,timerLabel(t)]));}
+ picker.value=homeTimer()?.id||'';
+ const cards=$('homeTimerCards'),displayed=on&&homeDisplay.mode!=='single'?timers.filter(t=>homeDisplay.mode==='cards'||t.id!==S.primaryTimerId):[];
+ cards.hidden=!displayed.length;cards.classList.toggle('equal-cards',homeDisplay.mode==='cards');cards.replaceChildren();
+ for(const timer of displayed){const card=document.createElement('article'),title=document.createElement('h3'),days=document.createElement('span'),since=document.createElement('p'),milestone=document.createElement('p');card.className='home-timer-card';title.textContent=timerLabel(timer);days.className='timer-days';days.textContent=fmt(totalDays(timerStart(timer),new Date()))+' ';const unit=document.createElement('span');unit.className='timer-unit';unit.textContent=translateUI('ימים נקיים');days.append(unit);since.textContent=translateUI('מאז ')+timerStart(timer).toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'});const last=CleanTimeDates.milestones(timerStart(timer),new Date()).at(-1);milestone.textContent=last?localizedMilestone(last):'';card.append(title,days,since,milestone);cards.append(card);}
+}
+let homeDisplay={show:false,mode:'single'},displayedTimerId=null;
+try{const stored=JSON.parse(localStorage.getItem('cleantime-timer-display'));if(stored&&['single','compact','cards'].includes(stored.mode))homeDisplay={show:stored.show===true,mode:stored.mode};}catch(e){}
+function saveHomeDisplay(value){homeDisplay={...homeDisplay,...value};try{localStorage.setItem('cleantime-timer-display',JSON.stringify(homeDisplay));}catch(e){storageNotice(translateUI('הבחירה לא נשמרה במכשיר.'));}}
+function homeTimer(){return (S.timers||[]).find(t=>t.id===(homeDisplay.show&&homeDisplay.mode==='single'?displayedTimerId:S.primaryTimerId))||(S.timers||[]).find(t=>t.id===S.primaryTimerId);}
+$('showHomeTimers').onchange=()=>{saveHomeDisplay({show:$('showHomeTimers').checked});render();};
+$('timerDisplayModes').onclick=event=>{const button=event.target.closest('button[data-display]');if(button){saveHomeDisplay({mode:button.dataset.display});render();}};
+$('homeTimerPick').onchange=()=>{displayedTimerId=$('homeTimerPick').value;render();};
+function persistTimers(next){
+ const previous=S;S=CleanTimeTimers.project(next);
+ if(!save()){S=previous;return false;}
+ renderTimerSettings();render();fillSettings();return true;
+}
+function renderTimerSettings(){
+ $('timerSettings').hidden=!S.date;$('timerList').replaceChildren();
+ for(const timer of S.timers||[]){
+  const li=document.createElement('li'),content=document.createElement('div'),title=document.createElement('strong'),info=document.createElement('p'),actions=document.createElement('div');
+  li.style.flexWrap='wrap';content.style.width='100%';actions.className='row';actions.style.flexWrap='wrap';
+  title.textContent=timerLabel(timer)+(timer.id===S.primaryTimerId?translateUI(' · ראשי'):'');info.textContent=timerDescription(timer);content.append(title,info);
+  actions.append(actionButton(translateUI('עריכה'),()=>openTimer(timer)));
+  if(timer.id!==S.primaryTimerId)actions.append(actionButton(translateUI('הגדרה כראשי'),()=>persistTimers({...S,primaryTimerId:timer.id})));
+  const remove=actionButton(translateUI('הסרה'),async()=>{
+   const yes=await ask(translateUI('הסרת מסלול החלמה'),translateUI('יוסר רק המסלול הזה. היומן וכל ההיסטוריה המשותפת יישמרו.'),[{label:translateUI('הסרת המסלול'),value:true,cls:'danger'},{label:translateUI('ביטול'),value:false,cls:'ghost'}]);
+   if(!yes)return;
+   if(!S.timers?.some(t=>t.id===timer.id)||S.timers.length<2)return;
+   const timers=S.timers.filter(t=>t.id!==timer.id);
+   if(persistTimers({...S,timers,primaryTimerId:S.primaryTimerId===timer.id?timers[0].id:S.primaryTimerId}))closeTimer();
+  },'btn danger');remove.disabled=S.timers.length===1;
+  if(remove.disabled)remove.title=translateUI('יש להשאיר לפחות מסלול החלמה אחד');
+  actions.append(remove);li.append(content,actions);$('timerList').append(li);
+ }
+}
+function closeTimer(){timerEditId=null;$('timerForm').hidden=true;$('addTimer').hidden=false;$('timerError').hidden=true;}
+function openTimer(timer){
+ timerEditId=timer?.id||null;$('tCategory').value=timer?.category||'other';$('tLabel').value=timer?.label||'';$('tDate').value=timer?.date||'';$('tTime').value=timer?.time||'';
+ $('tDate').max=todayKey();$('tDateError').hidden=true;$('tDateConfirmation').textContent='';$('timerError').hidden=true;$('timerForm').hidden=false;$('addTimer').hidden=true;$('tCategory').focus();
+}
+$('addTimer').onclick=()=>openTimer(null);$('cancelTimer').onclick=closeTimer;
+$('timerForm').onsubmit=async ev=>{
+ ev.preventDefault();if(!validateRecoveryDate('tDate')||!$('timerForm').reportValidity())return;
+ const old=(S.timers||[]).find(t=>t.id===timerEditId);
+ if(timerEditId&&!old){$('timerError').textContent=translateUI('המסלול השתנה במכשיר אחר. יש לפתוח אותו מחדש.');$('timerError').hidden=false;return;}
+ const timer={...old,id:old?.id||crypto.randomUUID(),category:$('tCategory').value,label:$('tLabel').value.trim(),date:$('tDate').value,time:$('tTime').value};
+ if(old&&old.category!==timer.category)delete timer.legacyFrom;
+ if((S.timers||[]).some(t=>t.id!==timer.id&&t.category===timer.category&&timerIdentityLabel(t)===timerIdentityLabel(timer))){$('timerError').textContent=translateUI('למסלול נוסף מאותו סוג יש לבחור שם אישי שונה.');$('timerError').hidden=false;return;}
+ if(old&&(old.date!==timer.date||old.time!==timer.time)){
+  const yes=await ask(translateUI('עדכון תאריך המסלול'),translateUI('רק חישוב הזמן במסלול הזה ישתנה. שאר המסלולים וכל ההיסטוריה יישמרו.'),[{label:translateUI('עדכון התאריך'),value:true},{label:translateUI('ביטול'),value:false,cls:'ghost'}]);if(!yes)return;
+  if(JSON.stringify(S.timers.find(t=>t.id===old.id))!==JSON.stringify(old)){$('timerError').textContent=translateUI('המסלול השתנה במכשיר אחר. יש לפתוח אותו מחדש.');$('timerError').hidden=false;return;}
+ }
+ const timers=(S.timers||[]).filter(t=>t.id!==timer.id);timers.splice(old?S.timers.findIndex(t=>t.id===old.id):timers.length,0,timer);
+ if(persistTimers({...S,timers,primaryTimerId:S.primaryTimerId||timer.id}))closeTimer();
+};
+let settingsBinding=null;
+const bindSettings=()=>({primary:S.primaryTimerId,stamp:S.updatedAt,epoch:cryptoEpoch,account:user?.id||M.uid||null,timer:JSON.stringify(S.timers?.find(t=>t.id===S.primaryTimerId))});
+const settingsCurrent=binding=>binding&&JSON.stringify(binding)===JSON.stringify(bindSettings());
 let pickColor=S.color;
 function fillSettings(){
-  $('setTitle').textContent='הגדרות החלמה';
+  settingsBinding=bindSettings();
+  renderTimerSettings();
+  $('setTitle').textContent=translateUI('הגדרות החלמה');
   renderSync();
   $('settingsFoot').hidden=!S.date||signedIn();
   $('sName').closest('label').hidden=signedIn();
@@ -1250,40 +1479,50 @@ function fillSettings(){
   $('sName').value=S.name;$('sDate').value=S.date;$('sTime').value=S.time;$('sFrom').value=S.from;
   confirmRecoveryDate('sDate');pickColor=S.color; renderSwatches();
   $('showMilestones').checked=milestonesEnabled();
-  const appearance=CleanTimeAppearance.read();$('backgroundChoice').value=appearance.background;$('fontChoice').value=appearance.font;
+  const appearance=CleanTimeAppearance.read();$('backgroundChoice').value=appearance.background;$('fontChoice').value=appearance.font;$('accentChoice').value=appearance.accent;
 }
 function renderSwatches(boxId='swatches'){
   const box=$(boxId);box.innerHTML='';
   Object.entries(COLORS).forEach(([k,v])=>{
     const b=document.createElement('button');b.type='button';b.className='swatch';b.style.background=v;
-    b.setAttribute('role','radio');b.setAttribute('aria-checked',k===pickColor);b.setAttribute('aria-label',CNAMES[k]);
+    b.setAttribute('role','radio');b.setAttribute('aria-checked',k===pickColor);b.setAttribute('aria-label',translateUI(CNAMES[k]));
     b.onclick=()=>{pickColor=k;document.documentElement.style.setProperty('--accent',v);renderSwatches(boxId);};
     box.appendChild(b);
   });
 }
 $('saveSettings').onclick=async()=>{
+  const binding=settingsBinding;
+  if(!settingsCurrent(binding)){storageNotice('הגדרות ההחלמה השתנו. יש לפתוח אותן מחדש לפני שמירה.');return;}
   if(!validateRecoveryDate('sDate'))return;
   const date=$('sDate').value,time=$('sTime').value;
   if(S.date&&(date!==S.date||(time||'00:00')!==(S.time||'00:00'))){
-    const approved=await ask('עדכון תאריך תחילת ההחלמה','התאריך והשעה ישנו את חישוב הזמן הנקי. כל הרשומות ביומן, התכניות, התודות, חשבון הנפש והקישורים נשמרים.',[{label:'עדכון התאריך',value:true},{label:'ביטול',value:false,cls:'ghost'}]);
+    const approved=await ask(translateUI('עדכון תאריך תחילת ההחלמה'),translateUI('התאריך והשעה ישנו את חישוב הזמן הנקי. כל הרשומות ביומן, התכניות, התודות, חשבון הנפש והקישורים נשמרים.'),[{label:translateUI('עדכון התאריך'),value:true},{label:translateUI('ביטול'),value:false,cls:'ghost'}]);
     if(!approved)return;
   }
   const previous=JSON.parse(JSON.stringify(S));
+  if(!settingsCurrent(binding)){storageNotice('הגדרות ההחלמה השתנו. יש לפתוח אותן מחדש לפני שמירה.');return;}
   if(!signedIn())S.name=$('sName').value.trim();S.date=date;S.time=time;S.from=$('sFrom').value.trim();S.color=pickColor;
   if(save()){applyColor();show('counter');}else S=previous;
 };
-for(const id of ['backgroundChoice','fontChoice'])$(id).onchange=()=>{
-  const ok=CleanTimeAppearance.save({background:$('backgroundChoice').value,font:$('fontChoice').value});
-  $('appearanceStatus').textContent=ok?'המראה נשמר במכשיר הזה.':'המראה מוצג כרגע, אבל לא נשמר במכשיר.';
+for(const id of ['backgroundChoice','fontChoice','accentChoice'])$(id).onchange=()=>{
+  const ok=CleanTimeAppearance.save({background:$('backgroundChoice').value,font:$('fontChoice').value,accent:$('accentChoice').value});
+  $('appearanceStatus').textContent=ok?translateUI('המראה נשמר במכשיר הזה.'):translateUI('המראה מוצג כרגע, אבל לא נשמר במכשיר.');
 };
 $('resetAppearance').onclick=()=>{
-  const ok=CleanTimeAppearance.save({background:'default',font:'assistant'});$('backgroundChoice').value='default';$('fontChoice').value='assistant';
-  $('appearanceStatus').textContent=ok?'המראה המקורי נשמר.':'המראה הוחזר, אבל לא נשמר במכשיר.';
+  const ok=CleanTimeAppearance.save({background:'default',font:'assistant',accent:'profile'});$('backgroundChoice').value='default';$('fontChoice').value='assistant';$('accentChoice').value='profile';
+  $('appearanceStatus').textContent=ok?translateUI('המראה המקורי נשמר.'):translateUI('המראה הוחזר, אבל לא נשמר במכשיר.');
+};
+$('languageSelector').onclick=event=>{
+  const button=event.target.closest('button[data-language]');
+  if(!button||button.disabled||button.dataset.language===CleanTimeI18n.language)return;
+  if(Object.values(setupDrafts).some(Boolean)&&!confirm(translateUI('שינוי שפה ינקה פרטים שטרם נשמרו בטופס הזה. להמשיך?')))return;
+  if(CleanTimeI18n.setLanguage(button.dataset.language))location.reload();
+  else{$('languageStatus').textContent=translateUI('לא ניתן לשמור את בחירת השפה במכשיר.');$('languageStatus').hidden=false;}
 };
 $('feedbackBack').onclick=()=>history.back();
 $('copyFeedbackEmail').onclick=async()=>{
-  try{await navigator.clipboard.writeText('hello@clean-time.app');$('feedbackStatus').textContent='הכתובת הועתקה.';}
-  catch(e){$('feedbackStatus').textContent='אפשר לסמן ולהעתיק את הכתובת שמופיעה כאן.';}
+  try{await navigator.clipboard.writeText('hello@clean-time.app');$('feedbackStatus').textContent=translateUI('הכתובת הועתקה.');}
+  catch(e){$('feedbackStatus').textContent=translateUI('אפשר לסמן ולהעתיק את הכתובת שמופיעה כאן.');}
 };
 function portableRecovery(value){
   // Full normalized recovery state, including unknown/legacy content; never enumerate other stores.
@@ -1291,28 +1530,29 @@ function portableRecovery(value){
   return JSON.parse(JSON.stringify(normalize(value),(key,item)=>reserved.has(key)?undefined:item));
 }
 $('exportRecovery').onclick=()=>{
-  if(storageError){$('exportStatus').textContent='לא ניתן ליצור עותק מלא: יש לבדוק את הנתונים השמורים במכשיר.';return;}
+  if(storageError){$('exportStatus').textContent=translateUI('לא ניתן ליצור עותק מלא: יש לבדוק את הנתונים השמורים במכשיר.');return;}
   commitJ();
   try{
     const data={format:'clean-time-recovery',version:1,exportedAt:new Date().toISOString(),data:portableRecovery(S)};
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
     link.href=url;link.download='clean-time-'+todayKey()+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
     analytics('event','export_completed');
-    $('exportStatus').textContent='הקובץ הועבר להורדה. אם לא נשמר, כדאי לנסות דרך דפדפן המכשיר.';
-  }catch(e){$('exportStatus').textContent='לא הצלחנו ליצור את הקובץ. הנתונים במכשיר לא שונו.';}
+    $('exportStatus').textContent=translateUI('הקובץ הועבר להורדה. אם לא נשמר, כדאי לנסות דרך דפדפן המכשיר.');
+  }catch(e){$('exportStatus').textContent=translateUI('לא הצלחנו ליצור את הקובץ. הנתונים במכשיר לא שונו.');}
 };
 function resetLocal(){
   try{localStorage.removeItem(KEY);}catch(e){}
+  resetSetupTimers();
   storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();$('oDate').value='';$('oFrom').value='';confirmRecoveryDate('oDate');show('welcome');
 }
 $('accountDelete').onclick=()=>$('reset').onclick();
 $('reset').onclick=async()=>{
   if(!signedIn()){
-    if(!confirm('למחוק את כל הנתונים מהמכשיר?'))return;
+    if(!confirm(translateUI('למחוק את כל הנתונים מהמכשיר?')))return;
     resetLocal();return;
   }
   const where=await ask('מחיקת כל הנתונים','מהמכשיר בלבד: הנתונים יימחקו מהמכשיר הזה והחשבון יתנתק. אם כבר נוצר גיבוי בענן, הוא יישאר.\nגם מהענן: הנתונים יימחקו מהמכשיר ומהענן, ולא יהיה אפשר לשחזר אותם.',
-    [{label:'מהמכשיר הזה בלבד',value:'device',cls:'danger'},{label:'גם מהענן',value:'cloud',cls:'danger'},{label:'ביטול',value:null,cls:'ghost'}]);
+    [{label:translateUI('מהמכשיר הזה בלבד'),value:'device',cls:'danger'},{label:translateUI('גם מהענן'),value:'cloud',cls:'danger'},{label:translateUI('ביטול'),value:null,cls:'ghost'}]);
   if(where==='device'){await signOutNow();return;}
   if(where==='cloud')await wipeCloud();
 };
@@ -1374,7 +1614,7 @@ function errText(e){
   if(/rate_limit/.test(code)||(e&&e.status===429))return 'נשלחו יותר מדי קישורים. אפשר לנסות שוב בעוד כמה דקות.';
   return 'משהו השתבש. אפשר לנסות שוב.';
 }
-function setMsg(text,err){for(const id of ['syncMsg','accountMsg']){const m=$(id);m.textContent=text||'';m.classList.toggle('err',!!err);}}
+function setMsg(text,err){text=translateUI(text||'');for(const id of ['syncMsg','accountMsg']){const m=$(id);m.textContent=text||'';m.classList.toggle('err',!!err);}}
 
 /* Passwordless access: email is both account and sync identity. */
 async function sendLogin(email,mode){
@@ -1382,6 +1622,8 @@ async function sendLogin(email,mode){
   const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin,shouldCreateUser:mode!=='login'}});
   if(error)throw error;
 }
+$('lEmail').addEventListener('invalid',()=> $('lEmail').setCustomValidity(translateUI('כתובת המייל לא תקינה.')));
+$('lEmail').addEventListener('input',()=> $('lEmail').setCustomValidity(''));
 $('loginForm').onsubmit=async ev=>{
   ev.preventDefault();
   const inp=$('lEmail'),email=inp.value.trim();
@@ -1391,53 +1633,72 @@ $('loginForm').onsubmit=async ev=>{
   // Persist the complete local profile before sending; it survives a reload or link return.
   // Sync still requires an authenticated user and the first-sign-in conflict choice.
   if(authMode==='create'){
-    Object.assign(S,{name:$('aName').value.trim(),date:$('aDate').value,time:$('aTime').value,from:$('aFrom').value,color:pickColor});
-    if(!save())return;
+    const next=onboardingTimers('a',{...S,name:$('aName').value.trim(),date:$('aDate').value,time:$('aTime').value,from:$('aFrom').value,color:pickColor});if(!next)return;
+    const previous=S;S=next;if(!save()){S=previous;return;}rememberOnboardingDisplay('a');
   }else if(authMode==='convert'&&!S.name){S.name=$('aName').value.trim();if(!save())return;}
-  $('lSend').disabled=true;setMsg('שולח...');
+  $('lSend').disabled=true;setMsg(translateUI('שולח...'));
   const analyticsMode=authMode,analyticsStartedAt=Date.now();
-  try{await sendLogin(email,authMode);analytics('registrationRequested',analyticsMode,analyticsStartedAt);setMsg('שלחנו קישור למייל. פתיחת הקישור מאמתת את החשבון. כדי להפעיל גיבוי מוצפן, ממשיכים לשמירת מפתח שחזור ולאימות הגיבוי הראשון. לא הגיע? כדאי לבדוק גם בדואר זבל / Spam.');}
-  catch(e){setMsg(authMode==='login'&&/otp_disabled|signup_disabled|user_not_found/.test(e.code||'')?'לא מצאנו חשבון עם כתובת המייל הזו. אפשר ליצור חשבון חדש.':errText(e),true);}
+  try{await sendLogin(email,authMode);analytics('registrationRequested',analyticsMode,analyticsStartedAt);setMsg(translateUI('שלחנו קישור למייל. פתיחת הקישור מאמתת את החשבון. כדי להפעיל גיבוי מוצפן, ממשיכים לשמירת מפתח שחזור ולאימות הגיבוי הראשון. לא הגיע? כדאי לבדוק גם בדואר זבל / Spam.'));}
+  catch(e){setMsg(authMode==='login'&&/otp_disabled|signup_disabled|user_not_found/.test(e.code||'')?translateUI('לא מצאנו חשבון עם כתובת המייל הזו. אפשר ליצור חשבון חדש.'):errText(e),true);}
   $('lSend').disabled=false;
 };
 
 function backupStatus(){
-  if(!signedIn())return {state:'local',text:'הכול נשמר רק בדפדפן במכשיר הזה.'};
+  if(!signedIn())return {state:'local',text:translateUI('הכול נשמר רק בדפדפן במכשיר הזה.')};
   const verified=cryptoState==='active'&&keyMaterial?.confirmed;
-  if(verified)return {state:syncErr?'attention':'active',text:syncErr?'הגיבוי המוצפן האחרון אומת. שינויים חדשים ממתינים לסנכרון; יש לבדוק את החיבור ולנסות שוב.':M.dirty?'גיבוי מוצפן פעיל. שינויים חדשים ממתינים לסנכרון.':'גיבוי מוצפן פעיל · הגיבוי האחרון אומת.'};
-  if(cryptoState==='locked')return {state:'locked',text:'מפתח שחזור נדרש כדי לפתוח את הגיבוי במכשיר הזה. הנתונים המקומיים נשמרים.'};
-  if(syncErr)return {state:'error',text:'הגיבוי המוצפן לא אומת במכשיר הזה. הנתונים נשמרים מקומית. יש לבדוק את החיבור ולנסות שוב.'};
-  if(dataKey)return {state:'verifying',text:'מפתח השחזור נשמר. הגיבוי הראשון ממתין לאימות; הגיבוי עדיין לא פעיל.'};
-  if(cryptoState==='setup')return {state:'setup',text:'החשבון מאומת. הגיבוי המוצפן עדיין לא הופעל. צריך לשמור מפתח שחזור ולאמת את הגיבוי הראשון.'};
-  return {state:'checking',text:'בודקים את החשבון והגיבוי. הנתונים המקומיים נשמרים.'};
+  if(verified)return {state:syncErr?'attention':'active',text:syncErr?translateUI('הגיבוי המוצפן האחרון אומת. שינויים חדשים ממתינים לסנכרון; יש לבדוק את החיבור ולנסות שוב.'):M.dirty?translateUI('גיבוי מוצפן פעיל. שינויים חדשים ממתינים לסנכרון.'):translateUI('גיבוי מוצפן פעיל · הגיבוי האחרון אומת.')};
+  if(cryptoState==='locked')return {state:'locked',text:translateUI('מפתח שחזור נדרש כדי לפתוח את הגיבוי במכשיר הזה. הנתונים המקומיים נשמרים.')};
+  if(syncErr)return {state:'error',text:translateUI('הגיבוי המוצפן לא אומת במכשיר הזה. הנתונים נשמרים מקומית. יש לבדוק את החיבור ולנסות שוב.')};
+  if(dataKey)return {state:'verifying',text:translateUI('מפתח השחזור נשמר. הגיבוי הראשון ממתין לאימות; הגיבוי עדיין לא פעיל.')};
+  if(cryptoState==='setup')return {state:'setup',text:translateUI('החשבון מאומת. הגיבוי המוצפן עדיין לא הופעל. צריך לשמור מפתח שחזור ולאמת את הגיבוי הראשון.')};
+  return {state:'checking',text:translateUI('בודקים את החשבון והגיבוי. הנתונים המקומיים נשמרים.')};
 }
 function renderSync(){
   const on=signedIn(),status=backupStatus();
   $('syncOut').hidden=on; $('syncIn').hidden=!on;
   $('createAccount').hidden=on;$('settingsLogin').hidden=on;$('myAccount').hidden=false;$('accountGuest').hidden=on;
-  $('accountName').textContent=S.name||'לא צוין';
-  $('accountState').textContent=user?'חשבון רשום · כניסה דרך קישור למייל':'חשבון רשום · בודקים את החיבור';
+  $('accountName').textContent=S.name||translateUI('לא צוין');
+  $('accountState').textContent=user?translateUI('חשבון רשום · כניסה דרך קישור למייל'):translateUI('חשבון רשום · בודקים את החיבור');
   $('setSub').textContent=status.text;
-  $('syncStatus').textContent=status.text+(M.lastSync&&keyMaterial?.confirmed?' סנכרון אחרון: '+new Date(M.lastSync).toLocaleString('he-IL',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}):'');
+  $('syncStatus').textContent=status.text+(M.lastSync&&keyMaterial?.confirmed?translateUI(' סנכרון אחרון: ')+new Date(M.lastSync).toLocaleString(CleanTimeI18n.locale,{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}):'');
   $('backupReminder').hidden=!on||['active','attention','checking'].includes(status.state);
   $('backupReminderText').textContent=status.text;
-  $('resumeBackup').textContent=status.state==='locked'?'פתיחת הגיבוי במכשיר הזה':'השלמת הגיבוי המוצפן';
+  $('resumeBackup').textContent=status.state==='locked'?translateUI('פתיחת הגיבוי במכשיר הזה'):translateUI('השלמת הגיבוי המוצפן');
   $('finishBackupLater').hidden=!on||['active','attention'].includes(status.state);
   renderEncryption();
   if(on)$('sEmail').textContent=(user&&user.email)||M.email||'';
 }
 
 /* a modal with buttons; resolves with the chosen button's value */
+function activeModal(){return !$('ask').hidden?$('ask'):!$('jEditor').hidden?$('jEditor'):null;}
+function syncModalFocus(){
+  const modal=activeModal();document.querySelector('.app').inert=!!modal;$('tabs').inert=!!modal;
+  $('jEditor').inert=!!modal&&modal!==$('jEditor');
+}
+const modalFocusable=modal=>[...modal.querySelectorAll('button,input,textarea,select,a[href],[tabindex]')].filter(el=>!el.disabled&&el.tabIndex>=0&&el.getClientRects().length);
+document.addEventListener('focusin',ev=>{const modal=activeModal();if(modal&&!modal.contains(ev.target))modalFocusable(modal)[0]?.focus();});
+document.addEventListener('keydown',ev=>{
+  const modal=activeModal();if(!modal)return;
+  if(ev.key==='Escape'&&modal===$('jEditor')){ev.preventDefault();leaveJ();return;}
+  if(ev.key==='Tab'){
+    const items=modalFocusable(modal),first=items[0],last=items.at(-1);
+    if(!first){ev.preventDefault();return;}
+    if(ev.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){ev.preventDefault();last.focus();}
+    else if(!ev.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){ev.preventDefault();first.focus();}
+  }
+});
 function ask(title,text,buttons){
+  title=translateUI(title);text=translateUI(text);buttons=buttons.map(button=>({...button,label:translateUI(button.label)}));
+  const returnFocus=document.activeElement;
   return new Promise(res=>{
     $('askT').textContent=title; $('askP').textContent=text;
     const box=$('askB'); box.innerHTML='';
     buttons.forEach(b=>{
       const el=document.createElement('button');el.className='btn'+(b.cls?' '+b.cls:'');el.textContent=b.label;
-      el.onclick=()=>{$('ask').hidden=true;res(b.value);};
+      el.onclick=()=>{$('ask').hidden=true;syncModalFocus();if(returnFocus?.isConnected&&returnFocus.getClientRects().length)returnFocus.focus();res(b.value);};
       box.appendChild(el);
     });
-    $('ask').hidden=false; box.firstChild.focus();
+    $('ask').hidden=false;syncModalFocus();box.firstChild.focus();
   });
 }
 
@@ -1461,7 +1722,7 @@ function renderEncryption(){
   $('recoveryForm').hidden=cryptoState!=='locked';
   $('retryEncryption').hidden=!syncErr||cryptoState==='locked';
 }
-function encryptionMessage(text){$('encryptionMsg').textContent=text||'';}
+function encryptionMessage(text){text=translateUI(text||'');$('encryptionMsg').textContent=text||'';}
 function clearEncryption(){
   cryptoEpoch++;keyMaterial=null;dataKey=null;pendingKey=null;lockedRow=null;cryptoState='';
   $('recoveryOutput').value='';$('recoveryInput').value='';$('recoverySaved').checked=false;
@@ -1491,7 +1752,7 @@ $('makeRecoveryKey').onclick=async()=>{
     if(epoch!==cryptoEpoch||user?.id!==id)return;
     pendingKey=made;$('makeRecoveryKey').hidden=true;$('recoveryOutput').value=made.recovery;
     $('recoveryGenerated').hidden=false;encryptionMessage('');
-  }catch(e){encryptionMessage('לא הצלחנו ליצור מפתח. הנתונים לא השתנו. אפשר לנסות שוב בדפדפן עם תמיכה בהצפנה ובחיבור מאובטח.');}
+  }catch(e){encryptionMessage(translateUI('לא הצלחנו ליצור מפתח. הנתונים לא השתנו. אפשר לנסות שוב בדפדפן עם תמיכה בהצפנה ובחיבור מאובטח.'));}
   finally{$('makeRecoveryKey').disabled=false;}
 };
 $('recoverySaved').onchange=()=>{$('activateEncryption').disabled=!$('recoverySaved').checked;};
@@ -1501,7 +1762,7 @@ $('activateEncryption').onclick=async()=>{
     storeMaterial(pendingKey.material);keyMaterial=pendingKey.material;dataKey=pendingKey.key;
     pendingKey=null;$('recoveryOutput').value='';$('recoveryGenerated').hidden=true;
     encryptionMessage('');renderSync();await sync();
-  }catch(e){encryptionMessage('מפתח ההצפנה לא נשמר במכשיר. הגיבוי בענן לא השתנה. אפשר לנסות שוב.');}
+  }catch(e){encryptionMessage(translateUI('מפתח ההצפנה לא נשמר במכשיר. הגיבוי בענן לא השתנה. אפשר לנסות שוב.'));}
 };
 $('recoveryForm').onsubmit=async ev=>{
   ev.preventDefault();if(!user||!lockedRow||busy)return;
@@ -1512,7 +1773,7 @@ $('recoveryForm').onsubmit=async ev=>{
     if(epoch!==cryptoEpoch||user?.id!==id)return;
     storeMaterial(opened.material);keyMaterial=opened.material;dataKey=opened.key;
     encryptionMessage('');renderSync();await sync();
-  }catch(e){encryptionMessage('המפתח שגוי, הגיבוי פגום או שלא ניתן לשמור את המפתח במכשיר. הנתונים במכשיר ובענן לא השתנו. אפשר לנסות שוב.');}
+  }catch(e){encryptionMessage(translateUI('המפתח שגוי, הגיבוי פגום או שלא ניתן לשמור את המפתח במכשיר. הנתונים במכשיר ובענן לא השתנו. אפשר לנסות שוב.'));}
   finally{$('unlockRecovery').disabled=false;}
 };
 $('retryEncryption').onclick=()=>sync();
@@ -1556,7 +1817,7 @@ async function sync(){
   if(busy){again=true;return;}
   if(!sbReady){if(M.uid||sbLoading)return startSync();return;}
   if(!user)return;
-  if(storageError){encryptionMessage('יש בעיה בנתונים המקומיים. הסנכרון נעצר כדי לשמור עליהם.');renderSync();return;}
+  if(storageError){encryptionMessage(translateUI('יש בעיה בנתונים המקומיים. הסנכרון נעצר כדי לשמור עליהם.'));renderSync();return;}
   busy=true;const id=user.id,epoch=cryptoEpoch;
   try{
     // Retain the last verified backup status even when this reopen cannot reach the cloud.
@@ -1576,6 +1837,7 @@ async function sync(){
         }
         remote=await SyncCrypto.decrypt(remote,dataKey,id,row.updated_at);
         if(user?.id!==id||epoch!==cryptoEpoch)break;
+        remote=normalize(remote);
         const firstVerifiedBackup=!keyMaterial.confirmed&&!lockedRow;
         keyMaterial.confirmed=true;storeMaterial(keyMaterial);cryptoState='active';lockedRow=null;
         if(firstVerifiedBackup)analytics('event','backup_activated',{},true);
@@ -1585,10 +1847,13 @@ async function sync(){
       }
       if(user?.id!==id||epoch!==cryptoEpoch)break;
       const rT=remote?(encrypted?Date.parse(row.updated_at):(remote.updatedAt||Date.parse(row.updated_at)||0)):0;
+      // Validate before timestamp/conflict selection: an unsupported remote
+      // schema must never be replaced by an older client's valid local copy.
+      if(remote)remote=normalize(remote);
       if(M.uid!==id){
         if(hasData(remote)&&hasData(S)){
           const pick=await ask('נמצאו נתונים בשני המקומות','יש נתונים גם במכשיר הזה וגם בענן. אילו נתונים לשמור? הנתונים האחרים יוחלפו.',
-            [{label:'לשמור את הנתונים מהמכשיר הזה',value:'local'},{label:'לטעון את הנתונים מהענן',value:'cloud',cls:'ghost'}]);
+            [{label:translateUI('לשמור את הנתונים מהמכשיר הזה'),value:'local'},{label:translateUI('לטעון את הנתונים מהענן'),value:'cloud',cls:'ghost'}]);
           if(user?.id!==id||epoch!==cryptoEpoch)break;
           if(pick==='cloud')applyRemote(remote,rT);else{S.updatedAt=Math.max(Date.now(),rT+1);writeLocal();}
         }else if(hasData(remote))applyRemote(remote,rT);
@@ -1615,7 +1880,7 @@ async function sync(){
   }catch(e){
     if(user?.id===id&&epoch===cryptoEpoch){
       syncErr=isNetErr(e)?'offline':'error';
-      encryptionMessage('הסנכרון המוצפן לא הושלם. הנתונים המקומיים נשמרו. אפשר לנסות שוב.');
+      encryptionMessage(translateUI('הסנכרון המוצפן לא הושלם. הנתונים המקומיים נשמרו. אפשר לנסות שוב.'));
       // Never log SDK errors, payloads or cryptographic material.
     }
   }
@@ -1653,18 +1918,18 @@ async function signOutNow(){
   resetLocal(); setMsg('');
 }
 $('signOut').onclick=async()=>{
-  if(!confirm('התנתקות תמחק את כל הנתונים מהמכשיר הזה.\nאם כבר נוצר גיבוי בענן, הוא יישאר. כדי לפתוח גיבוי מוצפן לאחר כניסה מחדש צריך את מפתח השחזור. יש לשמור אותו לפני ההתנתקות.\n\nלהתנתק?'))return;
+  if(!confirm(translateUI('התנתקות תמחק את כל הנתונים מהמכשיר הזה.\nאם כבר נוצר גיבוי בענן, הוא יישאר. כדי לפתוח גיבוי מוצפן לאחר כניסה מחדש צריך את מפתח השחזור. יש לשמור אותו לפני ההתנתקות.\n\nלהתנתק?')))return;
   if(M.dirty){
     clearTimeout(pushTimer); await sync();
-    if(M.dirty&&!confirm('יש שינויים שעוד לא גובו לענן, והם יימחקו. להתנתק בכל זאת?'))return;
+    if(M.dirty&&!confirm(translateUI('יש שינויים שעוד לא גובו לענן, והם יימחקו. להתנתק בכל זאת?')))return;
   }
   await signOutNow();
 };
 /* overwrites the cloud row with empty data, so other signed-in devices also clear on their next pull */
 async function wipeCloud(){
-  if(busy){setMsg('הסנכרון עדיין פועל. אפשר לנסות שוב בעוד רגע.',true);return;}
+  if(busy){setMsg(translateUI('הסנכרון עדיין פועל. אפשר לנסות שוב בעוד רגע.'),true);return;}
   if(!sbReady)await startSync();
-  if(!user||!dataKey||cryptoState!=='active'){setMsg('כדי למחוק את הגיבוי המוצפן צריך תחילה לפתוח אותו עם מפתח השחזור. שום דבר לא נמחק.',true);return;}
+  if(!user||!dataKey||cryptoState!=='active'){setMsg(translateUI('כדי למחוק את הגיבוי המוצפן צריך תחילה לפתוח אותו עם מפתח השחזור. שום דבר לא נמחק.'),true);return;}
   busy=true;
   try{
     clearTimeout(pushTimer);
@@ -1676,8 +1941,8 @@ async function wipeCloud(){
     await upload(row,empty); // Only clear local data after verified encrypted tombstone.
     resetLocal();S.updatedAt=empty.updatedAt;writeLocal();
     M.dirty=false;M.lastSync=Date.now();syncErr='';saveMeta();
-    setMsg('הנתונים נמחקו מהמכשיר ומהענן.');
-  }catch(e){setMsg('המחיקה מהענן לא הושלמה. הנתונים במכשיר נשמרו. אפשר לנסות שוב.',true);}
+    setMsg(translateUI('הנתונים נמחקו מהמכשיר ומהענן.'));
+  }catch(e){setMsg(translateUI('המחיקה מהענן לא הושלמה. הנתונים במכשיר נשמרו. אפשר לנסות שוב.'),true);}
   busy=false;show('account');renderSync();
 }
 
@@ -1709,7 +1974,7 @@ function unpackData(s){
   const bin=atob(s.replace(/-/g,'+').replace(/_/g,'/'));
   return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0))));
 }
-const REINSTALL='אם האפליקציה מותקנת אצלך, כדאי להתקין אותה מחדש מהכתובת החדשה (בתפריט של Chrome: התקנת אפליקציה) ולמחוק את הסמל הישן.';
+const REINSTALL=translateUI('אם האפליקציה מותקנת אצלך, כדאי להתקין אותה מחדש מהכתובת החדשה (בתפריט של Chrome: התקנת אפליקציה) ולמחוק את הסמל הישן.');
 async function moveOut(){
   if(!hasData(S)){
     /* keep a magic-link hash so a sign-in that landed here completes on the new host */
@@ -1717,23 +1982,23 @@ async function moveOut(){
     return;
   }
   if(M.uid&&!M.dirty){
-    await ask('האפליקציה עברה לכתובת חדשה',
-      'מעכשיו זמן נקי נמצאת בכתובת:\n'+NEW_HOST+'\n\nכדי לבדוק את הגיבוי ולפתוח אותו בכתובת החדשה, צריך להתחבר עם אותו מייל ומפתח השחזור. הנתונים המקומיים נשארים בדפדפן הזה.\n\n'+REINSTALL,
-      [{label:'מעבר לכתובת החדשה',value:1}]);
+    await ask(translateUI('האפליקציה עברה לכתובת חדשה'),
+      translateUI('מעכשיו זמן נקי נמצאת בכתובת:\n')+NEW_HOST+translateUI('\n\nכדי לבדוק את הגיבוי ולפתוח אותו בכתובת החדשה, צריך להתחבר עם אותו מייל ומפתח השחזור. הנתונים המקומיים נשארים בדפדפן הזה.\n\n')+REINSTALL,
+      [{label:translateUI('מעבר לכתובת החדשה'),value:1}]);
     location.href=NEW_ORIGIN+'/';
     return;
   }
-  await ask('האפליקציה עברה לכתובת חדשה',
-    'מעכשיו זמן נקי נמצאת בכתובת:\n'+NEW_HOST+'\n\nהנתונים שלך שמורים בטלפון הזה, ואפשר להעביר אותם לכתובת החדשה בלחיצה אחת.\n\n'+REINSTALL,
-    [{label:'להעביר את הנתונים שלי',value:1}]);
+  await ask(translateUI('האפליקציה עברה לכתובת חדשה'),
+    translateUI('מעכשיו זמן נקי נמצאת בכתובת:\n')+NEW_HOST+translateUI('\n\nהנתונים שלך שמורים בטלפון הזה, ואפשר להעביר אותם לכתובת החדשה בלחיצה אחת.\n\n')+REINSTALL,
+    [{label:translateUI('להעביר את הנתונים שלי'),value:1}]);
   location.href=NEW_ORIGIN+'/#import='+packData(S);
 }
 /* new host: take over data handed from the old host, before the first render */
 if(!onOldHost&&urlP.has('import')){
   let d=null; try{d=unpackData(urlP.get('import'));}catch(e){}
   cleanUrl();
-  if(!d||typeof d!=='object'||Array.isArray(d))alert('לא הצלחנו להעביר את הנתונים. אפשר לחזור לכתובת הישנה ולנסות שוב.');
-  else if(!hasData(S)||confirm('כבר יש נתונים במכשיר הזה בכתובת החדשה. להחליף אותם בנתונים שהועברו מהכתובת הישנה?')){
+  if(!d||typeof d!=='object'||Array.isArray(d))alert(translateUI('לא הצלחנו להעביר את הנתונים. אפשר לחזור לכתובת הישנה ולנסות שוב.'));
+  else if(!hasData(S)||confirm(translateUI('כבר יש נתונים במכשיר הזה בכתובת החדשה. להחליף אותם בנתונים שהועברו מהכתובת הישנה?'))){
     S=normalize(d); save();
   }
 }
@@ -1742,6 +2007,7 @@ if(!onOldHost&&urlP.has('import')){
 /* ---------- Init ---------- */
 applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();storageNotice(storageError);
 $('oDate').max=todayKey();$('sDate').max=todayKey();$('aDate').max=todayKey();
+$('oSecondDate').max=todayKey();$('aSecondDate').max=todayKey();
 let hasSession=false; try{hasSession=!!localStorage.getItem(AUTH_KEY);}catch(e){}
 const initial=fromLink||(!S.date&&(M.uid||hasSession))?'startup':S.date?'counter':'welcome';
 history.replaceState({screen:initial},'');
@@ -1764,7 +2030,7 @@ if(fromLink||M.uid||hasSession)startSync().finally(analyticsStarted);else analyt
 // Updates wait for existing windows to close; never force reload an active editor.
 let shellRegistration=null;
 function showConnectivity(){
-  $('offlineStatus').hidden=navigator.onLine;$('offlineStatus').textContent='אפשר להשתמש בכלים המקומיים בלי חיבור. סנכרון, אם הופעל, ינסה שוב כשהחיבור יחזור.';
+  $('offlineStatus').hidden=navigator.onLine;$('offlineStatus').textContent=translateUI('אפשר להשתמש בכלים המקומיים בלי חיבור. סנכרון, אם הופעל, ינסה שוב כשהחיבור יחזור.');
 }
 showConnectivity();window.addEventListener('offline',showConnectivity);
 window.addEventListener('online',()=>{showConnectivity();shellRegistration?.update().catch(()=>{});});
@@ -1774,7 +2040,7 @@ if('serviceWorker' in navigator&&!onOldHost){
     const notice=()=>{$('updateNotice').hidden=!reg.waiting;};notice();
     reg.addEventListener('updatefound',()=>{const worker=reg.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)$('updateNotice').hidden=false;else notice();});});
     reg.update().catch(()=>{});
-  }).catch(()=>{if(navigator.onLine){$('offlineStatus').hidden=false;$('offlineStatus').textContent='השימוש בלי חיבור לא הוכן במכשיר הזה. אפשר להמשיך כשהחיבור זמין.';}});
+  }).catch(()=>{if(navigator.onLine){$('offlineStatus').hidden=false;$('offlineStatus').textContent=translateUI('השימוש בלי חיבור לא הוכן במכשיר הזה. אפשר להמשיך כשהחיבור זמין.');}});
 }
 if(onOldHost)moveOut(); /* temporary, see Domain move */
 })();
