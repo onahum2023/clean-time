@@ -1,3 +1,2 @@
-// Local source review uses the existing production defaults. Vercel replaces this
-// public-only file at build time; Preview requires an isolated staging configuration.
+// Vercel generates this public-only asset. Preview builds disable live backup.
 window.CleanTimeBackend = {environment:'local'};

@@ -10,13 +10,13 @@ async(page)=>{
  check(run.status===0&&config('production').environment==='production'&&config('production').url===production,'Production build retains existing backend despite Preview variables');
  check(config('production').key==='sb_publishable_0R5rSCEhM5INCy-5zLwGsA_j51Ty39v','Production publishable key unchanged');
  for(const [url,key,label] of [[null,null,'missing pair'],[production,publicKey,'production URL'],['https://wrong.supabase.co',publicKey,'wrong staging project'],[stage,'sb_secret_SYNTHETIC','secret key'],[stage,'synthetic.jwt.key','legacy/invalid key']]){
-  run=build('preview',url,key);check(run.status!==0,'Preview fails closed: '+label);
+  run=build('preview',url,key);check(run.status===0&&config('preview').backupDisabled===true&&config('preview').url===null&&config('preview').key===null,'Preview disables backup: '+label);
  }
- run=build('preview',stage,publicKey);check(run.status===0&&config('preview').environment==='preview'&&config('preview').url===stage&&config('preview').key===publicKey,'Preview build emits isolated public-only configuration');
+ run=build('preview',stage,publicKey);check(run.status===0&&config('preview').environment==='preview'&&config('preview').backupDisabled===true&&config('preview').url===null&&config('preview').key===null,'Preview build emits isolated public-only configuration');
  check(!run.stdout.includes(publicKey)&&!run.stderr.includes(publicKey),'Build does not log configuration values');
  check(fs.existsSync(path.join(tmp,'preview','assets/fonts/Assistant-Variable.ttf'))&&fs.existsSync(path.join(tmp,'preview','assets/sync-crypto.js')),'Static build includes existing local assets');
  const html=fs.readFileSync('index.html','utf8'),browser=page.context().browser();
- for(const [value,valid,label] of [[null,false,'missing asset'],[{environment:'local'},false,'source/local asset'],[{environment:'preview',url:production,key:publicKey},false,'production fallback'],[{environment:'preview',url:stage,key:'sb_secret_SYNTHETIC'},false,'secret-like key'],[{environment:'preview',url:stage,key:publicKey},true,'valid staging']]){
+ for(const [value,valid,label] of [[null,false,'missing asset'],[{environment:'local'},false,'source/local asset'],[{environment:'preview',url:production,key:publicKey},false,'production fallback'],[{environment:'preview',url:stage,key:'sb_secret_SYNTHETIC'},false,'secret-like key'],[{environment:'preview',url:stage,key:publicKey},false,'retired staging']]){
   const c=await browser.newContext();
   await c.addInitScript(()=>{window.qaCalls=[];window.supabase={createClient:(url,key)=>{window.qaCalls.push({url,key});return {auth:{onAuthStateChange(){},getSession:async()=>({data:{session:null}}),signInWithOtp:async()=>({})}};}};const append=Element.prototype.appendChild;Element.prototype.appendChild=function(e){if(e.tagName==='SCRIPT'&&e.src.includes('supabase-js')){setTimeout(()=>e.onload(),0);return e;}return append.call(this,e);};});
   await c.route('**/*',route=>{

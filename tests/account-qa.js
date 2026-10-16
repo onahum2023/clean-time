@@ -36,7 +36,7 @@ async(page)=>{
  check(await p.evaluate(()=>window.qaEntryFlash.length===0),'Magic-link callback takes precedence without Welcome/setup flash');
  check(await p.locator('#account').isVisible(),'Authenticated new account shows encrypted backup status');
  await p.locator('#openSettings').click();check(await p.locator('#myAccount').isVisible()&&!await p.locator('#signOut').isVisible()&&!await p.locator('#sName').isVisible(),'Registered settings separates identity and account controls');
- await p.locator('#myAccount').click();await fit(p);await p.screenshot({path:'/private/tmp/clean-time-account-360.png',fullPage:true});
+ await p.locator('#myAccount').click();await fit(p);await p.screenshot({path:'/tmp/clean-time-account-360.png',fullPage:true});
  check(await p.locator('#accountName').innerText()==='בדיקה'&&await p.locator('#sEmail').innerText()==='qa@example.invalid'&&(await p.locator('#syncStatus').innerText()).includes('סנכרון אחרון'),'My Account displays name, email, state and last sync');
  await p.locator('#signOut').click();check(await p.locator('#welcome').isVisible()&&await p.evaluate(k=>!localStorage.getItem(k)&&!localStorage.getItem('cleantime-he-sync')&&!localStorage.getItem('cleantime-he-crypto')&&window.qaRemote.v===1,key),'Sign out clears device and retains cloud');await c.close();
  ({c,p}=await scenario(null,{date:'2024-01-01',from:'אחר',updatedAt:20}));await p.locator('#onboardingLogin').click();await fit(p);
