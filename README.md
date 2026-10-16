@@ -56,7 +56,7 @@ No build or new dependencies are required. From the repository:
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-Open `http://127.0.0.1:8765`. See [the Welcome/backup/date Preview UAT report](docs/WELCOME-BACKUP-UAT.md) and [the UX update and UAT report](docs/UX-1.0-UAT.md) for storage changes, automated QA, and remaining manual checks.
+Open `http://127.0.0.1:8765`. See [current Track B isolation](docs/TRACK-B.md), [remaining release QA](docs/TRACK-B-RELEASE-QA.md), and [repository hygiene](docs/REPOSITORY-HYGIENE.md). The [Welcome/backup/date report](docs/WELCOME-BACKUP-UAT.md) preserves historical PR #33 evidence; its staging backend is retired.
 
 ## Local preferences and portability
 

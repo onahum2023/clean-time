@@ -1,4 +1,10 @@
-# Welcome, backup activation and recovery dates — Preview UAT
+# Archived PR #33 — Welcome, backup activation and recovery dates — Preview UAT
+
+> **Historical QA record; staging retired on 2026-10-12.** The old staging
+> backend and Preview setup below are unavailable and superseded. Use
+> [Track B isolation](TRACK-B.md#preview-isolation-41) and
+> [current release QA](TRACK-B-RELEASE-QA.md). Preview is now guest-only;
+> live Auth/backup checks remain blocked pending a reviewed isolated environment.
 
 2026-10-07. One package for #30, #32 and #31, based on `main` `d93dd9b`. Branch: `codex/welcome-backup-date`. PR: [#33](https://github.com/onahum2023/clean-time/pull/33). Exact Preview evidence is recorded below. Leave unmerged for Nora/Oded acceptance; no production promotion.
 
@@ -10,30 +16,21 @@
 - Native date inputs remain in guest setup, explicit account creation and recovery settings. Each shows an immediate Hebrew month-name confirmation. Canonical `YYYY-MM-DD` parsing/storage and counter math are unchanged; formatting uses local calendar components, not UTC parsing. Browser-native placeholder order cannot be guaranteed.
 - Recovery data shape, unknown/legacy fields, malformed-storage protection, guest conversion, conflict choices, encryption envelope/KDF and migrations remain intact. App version: `2026.10.07.2`.
 
-## Current staging status
+## Archived backend and live QA boundary
 
-An isolated **Pro-plan staging project** has now been provisioned in `nucielo` at the user’s request (additional compute quote **$10/month**). PR #33’s branch-scoped Preview config targets `uffvbfmfsesdhjzzjiyu`, and the deployed config plus real Auth request target were verified before creating a synthetic test identity. See [staging setup and live QA evidence](staging/README.md). **604 local and deployed synthetic checks pass**. Live unused-email rejection, guest setup/reload and registration continuity pass; real email verification and subsequent crypto/restore checks are pending controlled-mailbox access. Production remains untouched. The earlier inspection/cost section below records the pre-provisioning state.
+The former staging project `uffvbfmfsesdhjzzjiyu` was deleted on 2026-10-12.
+See the [archived architecture, SQL and historical live results](staging/README.md).
+PR #33 reported **604 local and deployed synthetic checks** plus live unused-email
+rejection, guest setup/reload and registration continuity. At that point real
+email verification and subsequent crypto/restore checks were incomplete. Later
+reported evidence and remaining lifecycle gaps are recorded chronologically in
+[#34](https://github.com/onahum2023/clean-time/issues/34); broader live coverage
+remains #19 and physical Android/PWA coverage remains #21.
 
-## Earlier Preview backend inspection and live QA boundary
-
-Vercel project: `nu-cielo/clean-time`, `prj_6MhMelClmBk0S83h1kXE90rslkjr`. Preview environment has no environment variables. This is a static deployment with public Supabase URL/key in `index.html`; Preview therefore uses the production project `aefhjgmiwgajdhgyhelm`, not an isolated database. `signInWithOtp` requests `emailRedirectTo: location.origin`; Supabase must allow that exact origin or links may fall back to its configured site URL. Actual allowlist/fallback behavior has not been verified with live mail.
-
-Read-only project/branch discovery found only the production project/default branch. Oded confirmed there is no dedicated staging/test backend and requested confirmation before any Supabase change. No Supabase settings, SMTP, schema, policies, SQL/migrations or live recovery rows were changed or accessed. No real account was used.
-
-**Live auth/backup QA is pending.** It needs an approved dedicated test Supabase project with compatible `user_data` schema/RLS/encrypted guard, a reviewed Preview-only public configuration path (the app currently hard-codes production configuration), the exact Preview origin in Auth Redirect URLs, and designated existing/new test identities with controlled email inboxes and synthetic recovery content. Do not treat mocked Preview auth as proof of SMTP, redirects, RLS or database guard execution. Broader email/RLS verification stays in #19; physical Android/PWA work stays in #21.
-
-## Smallest staging setup and cost
-
-No suitable existing staging backend was found in connected metadata. Smallest recommended option: one **empty Free-plan project in a Free organization**, if an active-project slot is available. Cost: **$0/month** within Free quotas (500 MB DB, 5 GB egress; two active Free projects maximum; pauses after one week of inactivity). No production project transfer or billing/config change is needed. Quota availability outside the connected project list was not established. [Current Supabase pricing](https://supabase.com/pricing), [billing scope](https://supabase.com/docs/guides/platform/billing-on-supabase).
-
-Required setup, after authorization:
-
-1. Create the empty staging project; install compatible table/RLS/guard definitions from reviewed source, with no production recovery data or Auth users copied.
-2. Configure only staging Auth site/redirect URLs for the exact Preview and designated controlled test mailboxes. Default SMTP can test team addresses at two emails/hour; use staging custom SMTP if other addresses or faster testing are required. [SMTP restrictions](https://supabase.com/docs/guides/auth/auth-smtp). Any provider charge depends on the chosen sender; no paid service is currently required for slow team-mailbox testing.
-3. Add a small reviewed Preview-only public-config generation step in this same PR, supply the staging public URL/publishable key only to this PR's Preview branch, redeploy, and verify deployed configuration/network target differs from production **before** creating synthetic accounts or writing fixtures. No service-role credential belongs in frontend config.
-4. Run the pending live flows below using synthetic recovery content, then leave PR #33 unmerged for acceptance.
-
-Alternative if the organization already has a paid plan: a data-less Supabase Preview branch starts at **$0.01344/hour** (about **$0.32/day**, **$2.26/week**) plus usage; branching is unavailable on Free. If a paid plan is not already present, Pro starts at **$25/month**. Branch usage is not covered by spend caps or compute credits. No paid branch or plan was created. [Branch costs](https://supabase.com/docs/guides/platform/manage-your-usage/branching), [pricing](https://supabase.com/pricing).
+Before isolated config was introduced, early immutable Previews used production
+public configuration. Do not use those URLs for account QA. Current source builds
+explicitly disable Preview/development backup and ignore retired staging variables.
+Mocked browser results do not establish SMTP, redirects, RLS or SQL guard behavior.
 
 ## Automated checks
 
@@ -71,7 +68,7 @@ Visually inspected 24 screenshots of deployed Welcome/setup/Today/guest My Accou
 
 ## Nora/Oded Preview acceptance checklist
 
-Use a fresh browser profile and synthetic content for UAT. The current staging-configured Preview permits designated test accounts only; earlier immutable Previews may still point to production. Confirm the staging-configured URL in PR #33 before submitting account forms.
+For current UAT use a fresh disposable profile and synthetic guest content under the [Track B release QA controls](TRACK-B-RELEASE-QA.md). The PR #33 staging Preview is retired; do not submit account forms to historical deployments. The checklist below preserves the original acceptance criteria.
 
 1. Send only the revised Preview link to a fresh visitor. Check centered logo/name → purpose/origin → four feature explanations → start/sign-in → reassurance → About/privacy. Can they understand the app and scroll naturally to **מתחילים** without instructions? Feature items must not open tools before setup. The former above-the-fold action check is superseded. Can they reach About/privacy and return?
 2. Start, choose recovery type and October 1, and confirm **1 באוקטובר 2026**. Check required/future-date messages. Go Back and confirm the draft remains.
@@ -84,4 +81,4 @@ Use a fresh browser profile and synthetic content for UAT. The current staging-c
 
 The issue was reread after Oded changed the landing acceptance criteria. The prior sparse entry screen is replaced within the same branch/PR. Reuses existing `icon-512.png` (512 px source, displayed at 88 px); no original vector logo is present in the repository. The ordinary top-right header is hidden only on Welcome to avoid duplicating the wordmark. The four features use the exact existing counter/planner/journal/gratitude SVGs and names; their list items are explanatory and non-interactive. No family names/details or new recovery tools were added. Version: `2026.10.07.2`.
 
-`tests/welcome-qa.js` replaces the above-the-fold assertion with actual visual/content order, centered accessible branding, high-resolution local logo, exact icon/name reuse, non-interactive features, readable light/dark contrast, keyboard access, normal scrolling, phone/desktop fit and enlarged-text checks. Existing guest/date/Back/reload/continuity checks remain. Full local regression: **579 checks, zero failed suites**. Revised landing: **180 checks** in Chromium and **180 in local WebKit**; 15 syntax checks and `git diff --check` pass. Revised deployed Chromium regression: **579 checks, zero failed suites**, including **180 revised landing checks**, against [the revised Preview](https://clean-time-mlp6127rf-nu-cielo.vercel.app), commit `f79d4dbd7a7b871ce9848577e433cc9a7092cf0e`, deployment `dpl_JBAR9x1aeHL6Z8ESo8YyoQfwdwBV` (Git source, Ready, Preview). **16 fresh deployed screenshots** cover Welcome/setup at 320/360/390/1280px in light/dark; all eight landing captures were visually reviewed. They show the revised hierarchy, readable shared icons/names and ordinary scrolling, without clipped content or horizontal overflow. Captures/manifest are retained as ignored local QA artifacts under `.playwright-mcp/pr33-landing-f79d4db/`, with phone comparison sheets and desktop views. The screenshots were taken from this deployed URL, not localhost. PR #33 records the latest documentation-only Preview/source-match checks. Fresh-visitor product acceptance remains pending; earlier screenshots do not count as acceptance of this revision. Live auth/backup remains paused pending isolated staging, with no Supabase or production changes.
+`tests/welcome-qa.js` replaces the above-the-fold assertion with actual visual/content order, centered accessible branding, high-resolution local logo, exact icon/name reuse, non-interactive features, readable light/dark contrast, keyboard access, normal scrolling, phone/desktop fit and enlarged-text checks. Existing guest/date/Back/reload/continuity checks remain. Full local regression: **579 checks, zero failed suites**. Revised landing: **180 checks** in Chromium and **180 in local WebKit**; 15 syntax checks and `git diff --check` pass. Revised deployed Chromium regression: **579 checks, zero failed suites**, including **180 revised landing checks**, against [the revised Preview](https://clean-time-mlp6127rf-nu-cielo.vercel.app), commit `f79d4dbd7a7b871ce9848577e433cc9a7092cf0e`, deployment `dpl_JBAR9x1aeHL6Z8ESo8YyoQfwdwBV` (Git source, Ready, Preview). **16 fresh deployed screenshots** cover Welcome/setup at 320/360/390/1280px in light/dark; all eight landing captures were visually reviewed. They show the revised hierarchy, readable shared icons/names and ordinary scrolling, without clipped content or horizontal overflow. Captures/manifest are retained as ignored local QA artifacts under `.playwright-mcp/pr33-landing-f79d4db/`, with phone comparison sheets and desktop views. The screenshots were taken from this deployed URL, not localhost. PR #33 records the latest documentation-only Preview/source-match checks. Fresh-visitor product acceptance remains pending; earlier screenshots do not count as acceptance of this revision. At that revision live auth/backup remained paused; current remaining coverage is tracked in #34 and #19.
