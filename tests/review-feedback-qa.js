@@ -79,8 +79,11 @@ async(page)=>{
   await p.locator('#oDate').fill('2024-02-01');await p.locator('#oFrom').selectOption('סמים');await p.locator('#oAddSecond').check();await p.locator('#oSecondCategory').selectOption('alcohol');await p.locator('#oSecondDate').fill('2025-02-01');await p.locator('#oSecondLabel').fill('Unfinished synthetic');
   p.once('dialog',dialog=>dialog.dismiss());await p.locator('[data-language=en]').click();
   check(await p.locator('html').getAttribute('lang')==='he'&&await p.locator('#oSecondLabel').inputValue()==='Unfinished synthetic'&&await p.locator('#oDate').inputValue()==='2024-02-01','Canceling guest-setup language change preserves all timer fields');
-  p.once('dialog',dialog=>dialog.accept());await p.locator('[data-language=en]').click();await p.waitForFunction(()=>document.documentElement.lang==='en');
-  check(await p.locator('#welcome').isVisible()&&await p.evaluate(key=>!localStorage.getItem(key),key),'Only explicit confirmation discards unsaved setup and changes language');
+  await p.locator('#onboarding [data-go=about]').click();p.once('dialog',dialog=>dialog.dismiss());await p.locator('[data-language=en]').click();
+  check(await p.locator('#about').isVisible()&&await p.locator('html').getAttribute('lang')==='he'&&await p.locator('#oSecondLabel').inputValue()==='Unfinished synthetic','About detour retains unfinished setup language guard');
+  await p.goBack();check(await p.locator('#onboarding').isVisible()&&await p.locator('#oDate').inputValue()==='2024-02-01','Back restores retained setup draft');
+  await p.locator('#onboarding [data-go=about]').click();let confirmed=false;p.once('dialog',dialog=>{confirmed=true;return dialog.accept();});await p.locator('[data-language=en]').click();await p.waitForFunction(()=>document.documentElement.lang==='en');
+  check(confirmed&&await p.locator('#welcome').isVisible()&&await p.evaluate(key=>!localStorage.getItem(key),key),'Only explicit confirmation discards retained setup after a detour');
   await p.locator('#welcomeStart').click();await p.locator('#oDate').fill('2024-03-01');await p.locator('#oFrom').selectOption('סמים');await p.locator('#guestForm button[type=submit]').click();
   check(await p.evaluate(key=>{const s=JSON.parse(localStorage.getItem(key));return s.timers.length===1&&s.timers[0].date==='2024-03-01'&&!JSON.stringify(s).includes('Synthetic second');},key),'Fresh setup after deletion never resurrects previous second timer');
  }finally{await context.close();}
