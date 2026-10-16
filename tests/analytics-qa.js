@@ -101,7 +101,10 @@ async(page)=>{
  check(s.calls.filter(x=>!x.en&&x.o===origin+'/app/journal').length===1&&s.calls.filter(x=>x.en==='tool_opened'&&x.ed.tool==='journal').length===1,'Tool navigation: one pageview and one tool event');
  await s.p.locator('#jNew').click();await s.p.locator('#jText').fill('PRIVATE_JOURNAL');await s.p.locator('#jDone').click();await s.settle();
  check(s.calls.filter(x=>!x.en&&x.o===origin+'/app/journal').length===1,'Editor history/rerender does not duplicate tool pageview');
- await s.p.evaluate(()=>history.back());await s.settle();await s.p.evaluate(()=>history.forward());await s.settle();
+ await s.p.evaluate(()=>history.back());await s.p.waitForFunction(()=>!document.getElementById('counter').hidden);await s.settle();
+ await s.p.evaluate(()=>history.forward());await s.p.waitForFunction(()=>!document.getElementById('journal').hidden);await s.settle();
+ const historyDeadline=Date.now()+5000;
+ while(s.calls.filter(x=>!x.en&&x.o===origin+'/app/journal').length<2&&Date.now()<historyDeadline)await new Promise(resolve=>setTimeout(resolve,25));
  check(s.calls.filter(x=>!x.en&&x.o===origin+'/app/journal').length===2,'Back/Forward tracks real screen return once');
  await s.p.locator('#openSettings').click();
  const download=s.p.waitForEvent('download');await s.p.locator('#exportRecovery').click();await download;await s.settle();
