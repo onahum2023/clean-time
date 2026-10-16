@@ -26,6 +26,11 @@ choices; they do not stamp recovery data or trigger an upload. Export excludes
 device language preference. Dates use the selected locale; calendar storage keys
 and recovery dates remain ISO/language-independent.
 
+Switching language while guest/account setup contains entered fields requires an
+explicit discard confirmation before saving the language or reloading. Canceling
+keeps every primary/secondary field and the current language intact. No recovery
+drafts are copied into additional browser stores.
+
 Existing Hebrew built-in recovery types remain compatibility scalars, while the
 timer model uses stable category codes. User-defined labels and resource titles
 remain verbatim even if they happen to equal a UI string. Known built-in resource

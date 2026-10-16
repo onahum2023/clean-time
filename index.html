@@ -786,7 +786,7 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 <script src="assets/recovery-timers.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.16.1';
+const APP_VERSION='2026.10.16.2';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -864,13 +864,24 @@ for(const prefix of ['o','a']){
 }
 function onboardingTimers(prefix,base){
  const next=CleanTimeTimers.normalize(base),error=$(prefix+'SecondError');error.hidden=true;
- if(!$(prefix+'AddSecond').checked)return next;
+ if(!$(prefix+'AddSecond').checked){
+  const timers=next.timers.filter(t=>t.id!==setupSecondIds[prefix]);
+  return CleanTimeTimers.project({...next,timers,primaryTimerId:timers.some(t=>t.id===next.primaryTimerId)?next.primaryTimerId:timers[0]?.id||null});
+ }
  if(!validateRecoveryDate(prefix+'SecondDate'))return null;
  const timer={id:setupSecondIds[prefix]||(setupSecondIds[prefix]=crypto.randomUUID()),category:$(prefix+'SecondCategory').value,label:$(prefix+'SecondLabel').value.trim(),date:$(prefix+'SecondDate').value,time:''};
  if(next.timers.some(t=>t.id!==timer.id&&t.category===timer.category&&timerIdentityLabel(t)===timerIdentityLabel(timer))){error.textContent=translateUI('למסלול נוסף מאותו סוג יש לבחור שם אישי שונה.');error.hidden=false;$(prefix+'SecondLabel').focus();return null;}
  return CleanTimeTimers.project({...next,timers:[...next.timers.filter(t=>t.id!==timer.id),timer]});
 }
-function rememberOnboardingDisplay(prefix){if($(prefix+'AddSecond').checked)saveHomeDisplay({show:$(prefix+'ShowSecond').checked,mode:'compact'});}
+function rememberOnboardingDisplay(prefix){saveHomeDisplay({show:$(prefix+'AddSecond').checked&&$(prefix+'ShowSecond').checked,mode:'compact'});}
+function resetSetupTimers(){
+ for(const prefix of ['o','a']){
+  delete setupSecondIds[prefix];$(prefix+'AddSecond').checked=false;$(prefix+'AddSecond').setAttribute('aria-expanded','false');$(prefix+'SecondFields').hidden=true;$(prefix+'SecondFields').disabled=true;
+  for(const suffix of ['SecondCategory','SecondLabel','SecondDate'])$(prefix+suffix).value='';
+  $(prefix+'ShowSecond').checked=false;$(prefix+'SecondError').hidden=true;$(prefix+'SecondDateError').hidden=true;$(prefix+'SecondDateConfirmation').textContent='';$(prefix+'SecondDate').removeAttribute('aria-invalid');
+ }
+ displayedTimerId=null;saveHomeDisplay({show:false,mode:'single'});
+}
 
 /* ---------- Tabs ---------- */
 // Observational hooks only; the optional module cannot block any app flow.
@@ -1502,6 +1513,9 @@ $('resetAppearance').onclick=()=>{
 $('languageSelector').onclick=event=>{
   const button=event.target.closest('button[data-language]');
   if(!button||button.disabled||button.dataset.language===CleanTimeI18n.language)return;
+  const prefix=current==='onboarding'?'o':current==='auth'&&authMode==='create'?'a':null;
+  const unfinished=prefix&&([prefix+'Date',prefix+'From',prefix+'SecondDate',prefix+'SecondLabel'].some(id=>$(id).value)||$(prefix+'AddSecond').checked||(prefix==='a'&&($('aName').value||$('lEmail').value)));
+  if(unfinished&&!confirm(translateUI('שינוי שפה ינקה פרטים שטרם נשמרו בטופס הזה. להמשיך?')))return;
   if(CleanTimeI18n.setLanguage(button.dataset.language))location.reload();
   else{$('languageStatus').textContent=translateUI('לא ניתן לשמור את בחירת השפה במכשיר.');$('languageStatus').hidden=false;}
 };
@@ -1528,6 +1542,7 @@ $('exportRecovery').onclick=()=>{
 };
 function resetLocal(){
   try{localStorage.removeItem(KEY);}catch(e){}
+  resetSetupTimers();
   storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();$('oDate').value='';$('oFrom').value='';confirmRecoveryDate('oDate');show('welcome');
 }
 $('accountDelete').onclick=()=>$('reset').onclick();

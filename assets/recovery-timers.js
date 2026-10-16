@@ -19,6 +19,7 @@
  }
  function normalize(state){
   let next={...state};
+  if(Object.hasOwn(state,'timersVersion')&&(!Object.hasOwn(state,'timers')||state.timersVersion!==1))throw Error('Unsupported timer schema');
   if(!Object.hasOwn(state,'timers')){
    // Legacy dates/types remain accepted exactly as before; malformed timer data
    // is never substituted with defaults or allowed to overwrite the raw record.

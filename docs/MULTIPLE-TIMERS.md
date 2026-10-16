@@ -4,6 +4,10 @@ First-use guest and account-creation forms optionally add a second timer with it
 own category, custom label and start date. The additional fields stay disabled
 until selected. A separate unchecked checkbox opts into showing it on Home.
 Duplicate category/label identities and future dates reject before persistence.
+Account-link retries reconcile only the setup-created secondary ID: opting out
+removes that timer, preserves unrelated records and revalidates any new choice.
+Local deletion/sign-out clears both setup drafts, generated IDs and Home opt-in
+so a later setup cannot resurrect deleted timer values.
 
 Home offers one-at-a-time switching, a primary timer with compact secondary cards,
 and equal cards. The visibility/layout preference is device-local under
@@ -16,6 +20,9 @@ can opt in without editing their timer records.
 local recovery object/encrypted row. Each timer has a stable ID, category code,
 optional custom label, date and time. Unknown fields and shared histories remain
 intact. IDs/categories are language-independent. No database schema is changed.
+
+Only genuinely unversioned records enter legacy migration. A version marker
+without its timer array, or an unsupported version, rejects before migration.
 
 The array is authoritative. Primary date/time/display label are projected into
 legacy `date/time/from`, so existing startup, Home, Settings and hasData work.
