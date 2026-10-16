@@ -10,13 +10,12 @@ partial draft catalog and falls back to draft English for missing messages. Its
 completion is a separate follow-up; do not describe this PR as completed Russian
 translation. New languages/catalog entries must receive linguistic review.
 
-Unreviewed languages are **disabled on recognized production origins**, including
-when a non-Hebrew preference was saved elsewhere. A compact top selector
-(`En | עב | рус`) is present from the first welcome screen through setup and
-every main app screen. Its order stays left-to-right in every language; the
-current choice is bold and announced as pressed. Local/Preview permits the
-drafts; production keeps those choices disabled. Enabling them requires a later
-reviewed change after fluent/native-speaker UAT, especially NA terminology. No
+All three language choices are enabled on production and Preview. The compact top
+selector (`En | עב | рус`) is present from welcome through setup and every main
+screen. Its order stays left-to-right; the current choice is bold and announced
+as pressed. Language preference is independent of backend availability. Russian
+still has English fallback for missing messages; linguistic review/completion
+remain tracked in #45 rather than disabling the visible controls. No native
 translation-quality approval is claimed here.
 
 Only explicit UI nodes/expressions are translated. Journal, gratitude, plan,
@@ -44,7 +43,7 @@ dependency is introduced.
 
 `i18n-qa.js` checks default Hebrew, every extracted English message, three-language
 switch/persistence/direction, unchanged recovery bytes, verbatim user text, dates,
-360px Home/Settings, production language gating and synthetic registered encrypted
+360px Home/Settings, production language switching/persistence and synthetic registered encrypted
 activation/trusted reload in English and Russian. The Hebrew regression suite
 remains required. Synthetic screenshots are in ignored `.playwright-mcp/track-b/`.
 
@@ -57,8 +56,6 @@ Final review corrections: legacy guest/account option values are pinned before
 translating their display text. Duplicate-timer checks compare persisted category
 and trimmed custom-label identity; translated category names are presentation
 only. Fresh onboarding and the same default/custom `Drugs` timer fixture are
-covered in all three languages. Backend config loads before localization so all
-production builds (including immutable Vercel URLs), recognized production hosts
-and unknown non-Preview origins keep unreviewed languages disabled. Explicit
-Preview and loopback environments can use the drafts. Reading-editor labels and
-the last-timer tooltip also pass through the catalog.
+covered in all three languages. Backend config loads before localization. Backend origin restrictions stay
+separate from language selection on all hosts. Reading-editor labels and the
+last-timer tooltip also pass through the catalog.
