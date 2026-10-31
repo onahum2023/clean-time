@@ -299,9 +299,9 @@ select{min-height:46px}
 .welcome-features{margin:0 0 24px}
 .welcome-features h2{font-size:1.2rem;margin:0 0 12px}
 .welcome-feature-list{list-style:none;padding:0;margin:0;display:grid;gap:12px}
-.welcome-feature-list li{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;min-width:0}
-.welcome-feature-list .page-art{color:var(--accent-ink);width:40px;height:40px}
-.welcome-feature-list h3{font-size:1.05rem;line-height:1.4;margin:0 0 4px;font-weight:600}
+.welcome-feature-list li,.daily-card{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;min-width:0}
+.welcome-feature-list .page-art,.daily-card .page-art{color:var(--accent-ink);width:40px;height:40px}
+.welcome-feature-list h3,.daily-card-title{font-size:1.05rem;line-height:1.4;margin:0 0 4px;font-weight:600}
 .welcome-feature-list p{font-size:1rem;color:var(--muted);margin:0;line-height:1.5}
 .welcome-entry{max-width:440px;margin:0 auto;text-align:center}
 #welcome .welcome-entry .btn{width:100%;white-space:normal;margin-bottom:8px}
@@ -377,6 +377,46 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 :root[dir="ltr"] .tool-links :is(a,button)::after{content:"›"}
 :root[lang="he"] #readingLanguage{display:none}
 #readingLanguage{font-size:.8rem;color:var(--muted)}
+
+/* Guided Home: status is quiet; the daily routine is the main content. */
+#counter{display:block;text-align:start;padding:8px 0 12px}
+#counter .today-actions{margin-top:22px;text-align:start}
+#counter .today-actions h2{text-align:start;font-size:1.35rem;margin-bottom:12px}
+.recovery-summary{border-block:1px solid var(--line);padding:12px 0 0;width:100%;text-align:start}
+.summary-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.summary-primary{min-width:0;overflow-wrap:anywhere}
+.summary-label{font-size:.9rem;color:var(--muted);margin:0 0 8px}
+.summary-count{display:flex;gap:20px;flex-wrap:wrap;align-items:baseline;font-variant-numeric:tabular-nums}
+.summary-count .unit{display:flex;flex-direction:row;align-items:baseline;gap:5px;min-width:0}
+#counter .summary-count .num{font-size:2.25rem;line-height:1.1;font-weight:600;letter-spacing:normal}
+.summary-count .lbl{font-size:.9rem;margin:0}
+.summary-since{font-size:.85rem;color:var(--muted);margin:6px 0 0}
+.recovery-summary .milestone-badge{position:static;flex:0 0 52px;width:52px;height:73px;filter:none}
+.secondary-summary{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:.9rem;overflow-wrap:anywhere}
+.secondary-summary>span{color:var(--muted)}
+.counter-detail-link{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:8px 0;color:var(--accent-ink);font-size:.9rem;border:0;background:none;text-align:start;cursor:pointer}
+.chevron::after{content:'‹'}
+:root[dir="ltr"] .chevron::after{content:'›'}
+.daily-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.daily-card{flex-direction:column;gap:8px;min-height:128px;width:100%;text-align:start;text-decoration:none;cursor:pointer;overflow-wrap:anywhere;color:var(--ink);border-color:color-mix(in srgb,var(--line) 75%,var(--surface));box-shadow:0 2px 6px rgb(0 0 0 / .06)}
+.daily-card-title{display:block}
+.daily-card small{display:block;font-size:.85rem;font-weight:400;color:var(--muted);line-height:1.5}
+.daily-card.primary .daily-card-title{color:var(--accent-ink)}
+.daily-card:last-child{grid-column:1/-1;flex-direction:row;align-items:center;min-height:80px}
+.daily-card:last-child .daily-card-title{margin:0}
+.daily-card:active{background:var(--accent-soft)}
+@media(hover:hover){.daily-card:hover{border-color:var(--accent-ink);background:var(--accent-soft)}}
+@media(max-width:380px){.summary-count{gap:12px}}
+@media(max-width:340px){.daily-card{padding:10px}.daily-card-title{font-size:.95rem}.daily-cards{gap:12px}}
+.external-link-icon{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.2;vertical-align:middle}
+#counterDetails{text-align:start;padding-bottom:20px}
+#counterDetails .count{margin:auto;max-width:100%}
+#counterDetails .dots{justify-content:center}
+#counterDetails .since{margin-top:16px}
+#counterDetails .home-display{margin-top:16px}
+#counterDetails .home-timer-card{margin-top:12px}
+#counterDetails>.btn:last-child{margin-top:20px}
+@media(min-width:800px){body:has(#counter:not([hidden])) .app{padding-top:16px}#counter .today-actions{margin-top:28px}}
 </style>
 </head>
 <body>
@@ -398,21 +438,6 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
   </section>
   <header hidden>
     <h1 id="greet"><span data-i18n="זמן נקי">זמן נקי</span></h1>
-    <div id="milestone" class="milestone-badge" role="img" hidden>
-      <svg viewBox="0 0 80 112" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="badgeMetal" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#D5D9D7"/><stop offset=".5" stop-color="#66726F"/><stop offset="1" stop-color="#EBEEEB"/></linearGradient>
-          <linearGradient id="badgeFace" x1="0" x2="0" y1="0" y2="1"><stop stop-color="var(--badge-light)"/><stop offset="1" stop-color="var(--badge-fill)"/></linearGradient>
-        </defs>
-        <circle cx="40" cy="14" r="11.5" fill="none" stroke="url(#badgeMetal)" stroke-width="3"/>
-        <path d="M32 36C26 43 15 62 13 78C10 97 20 108 40 108C60 108 70 97 67 78C65 62 54 43 48 36Z" fill="url(#badgeFace)" stroke="var(--badge-edge)" stroke-width="2"/>
-        <path d="M29 43C23 53 18 67 17 80C15 95 24 103 40 103C56 103 65 95 63 80" fill="none" stroke="var(--badge-light)" stroke-width="1.5" opacity=".75"/>
-        <rect x="34" y="23" width="12" height="20" rx="3" fill="var(--badge-fill)" stroke="var(--badge-edge)"/>
-        <circle cx="40" cy="34" r="3" fill="#D5D9D7" stroke="var(--badge-edge)"/>
-        <text id="milestoneNumber" class="badge-number" x="40" y="72"></text>
-        <text id="milestoneUnit" class="badge-unit" x="40" y="89" direction="rtl"></text>
-      </svg>
-    </div>
   </header>
 
   <p id="storageMsg" role="alert" hidden></p>
@@ -465,8 +490,46 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
   <!-- Counter -->
   <section id="counter" hidden>
     <div id="backupReminder" hidden><p id="backupReminderText" role="status"></p><button class="btn secondary" id="resumeBackup"><span data-i18n="השלמת הגיבוי המוצפן">השלמת הגיבוי המוצפן</span></button></div>
-    <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M15 101h450M130 101a110 110 0 0 1 220 0M160 101a80 80 0 0 1 160 0M190 101a50 50 0 0 1 100 0M44 120h392M84 139h312"/></svg>
-    <svg class="page-art daybreak" viewBox="0 0 68 34" aria-hidden="true" focusable="false"><path d="M4 26h60M23 26a11 11 0 0 1 22 0M34 3v5M13 12l4 4m38-4-4 4M12 31h44"/></svg>
+    <div class="recovery-summary">
+      <div class="summary-top">
+        <div class="summary-primary">
+          <p class="summary-label" id="homePrimaryLabel"></p>
+          <div class="summary-count" id="homePrimaryCount"></div>
+          <p class="summary-since" id="homePrimarySince"></p>
+        </div>
+        <div id="milestone" class="milestone-badge" role="img" hidden>
+          <svg viewBox="0 0 80 112" aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="badgeMetal" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#D5D9D7"/><stop offset=".5" stop-color="#66726F"/><stop offset="1" stop-color="#EBEEEB"/></linearGradient>
+              <linearGradient id="badgeFace" x1="0" x2="0" y1="0" y2="1"><stop stop-color="var(--badge-light)"/><stop offset="1" stop-color="var(--badge-fill)"/></linearGradient>
+            </defs>
+            <circle cx="40" cy="14" r="11.5" fill="none" stroke="url(#badgeMetal)" stroke-width="3"/>
+            <path d="M32 36C26 43 15 62 13 78C10 97 20 108 40 108C60 108 70 97 67 78C65 62 54 43 48 36Z" fill="url(#badgeFace)" stroke="var(--badge-edge)" stroke-width="2"/>
+            <path d="M29 43C23 53 18 67 17 80C15 95 24 103 40 103C56 103 65 95 63 80" fill="none" stroke="var(--badge-light)" stroke-width="1.5" opacity=".75"/>
+            <rect x="34" y="23" width="12" height="20" rx="3" fill="var(--badge-fill)" stroke="var(--badge-edge)"/>
+            <circle cx="40" cy="34" r="3" fill="#D5D9D7" stroke="var(--badge-edge)"/>
+            <text id="milestoneNumber" class="badge-number" x="40" y="72"></text>
+            <text id="milestoneUnit" class="badge-unit" x="40" y="89" direction="rtl"></text>
+          </svg>
+        </div>
+      </div>
+      <p class="secondary-summary" id="homeSecondary" hidden><span id="homeSecondaryLabel"></span><strong id="homeSecondaryDays"></strong></p>
+    </div>
+    <div class="today-actions">
+      <h2><span data-i18n="היום שלי">היום שלי</span></h2>
+      <div class="daily-cards" aria-label="פעולות יומיות" data-i18n-aria-label="פעולות יומיות">
+        <a class="daily-card primary" id="dailyReading" href="https://www.naisrael.org.il/just-for-today/" target="_blank" rel="noopener noreferrer" aria-label="רק להיום — נפתח בחלון חדש" data-i18n-aria-label="רק להיום — נפתח בחלון חדש"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M22 13c-5-4-11-4-16-3v23c6-1 11 0 16 3 5-3 10-4 16-3V10c-5-1-11-1-16 3Zm0 0v23M11 17c3 0 5 0 7 1m8 0c2-1 4-1 7-1"/></svg><span><span class="daily-card-title" data-i18n="רק להיום">רק להיום</span><small><span data-i18n="קריאה יומית באתר NA">קריאה יומית באתר NA</span> <span id="readingLanguage"></span> <svg class="external-link-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3H3v10h10v-3M8 2h6v6M14 2 7 9"/></svg></small></span></a>
+        <button class="daily-card" data-go="planner"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg><span class="daily-card-title" data-i18n="תכנון יומי">תכנון יומי</span></button>
+        <button class="daily-card" data-go="gratitude"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg><span class="daily-card-title" data-i18n="הכרת תודה">הכרת תודה</span></button>
+        <button class="daily-card" data-go="journal"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg><span class="daily-card-title" data-i18n="ככה זה עכשיו">ככה זה עכשיו</span></button>
+        <button class="daily-card" data-go="inventory"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg><span class="daily-card-title" data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="counterDetails" hidden>
+    <h2><span data-i18n="מונים ותצוגות">מונים ותצוגות</span></h2>
+    <button class="btn ghost" data-go="settings"><span data-i18n="חזרה להגדרות">חזרה להגדרות</span></button>
     <div class="home-display" id="homeDisplay" hidden>
       <label class="second-toggle"><input type="checkbox" id="showHomeTimers"><span data-i18n="הצגת מסלולים נוספים בבית">הצגת מסלולים נוספים בבית</span></label>
       <div id="homeDisplayOptions" hidden>
@@ -486,16 +549,7 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
     <div class="hint"><span data-i18n="הקשה על המספר משנה תצוגה">הקשה על המספר משנה תצוגה</span></div>
     </div>
     <div id="homeTimerCards" hidden></div>
-    <div class="today-actions">
-      <h2><span data-i18n="התחברות">התחברות</span></h2>
-      <div class="tool-links" aria-label="פעולות יומיות" data-i18n-aria-label="פעולות יומיות">
-        <a class="primary" id="dailyReading" href="https://www.naisrael.org.il/just-for-today/" target="_blank" rel="noopener noreferrer" aria-label="רק להיום — נפתח בחלון חדש" data-i18n-aria-label="רק להיום — נפתח בחלון חדש"><span data-i18n="רק להיום">רק להיום</span><small id="readingLanguage"></small></a>
-        <button data-go="journal"><span data-i18n="ככה זה עכשיו (יומן)">ככה זה עכשיו (יומן)</span></button>
-        <button data-go="gratitude"><span data-i18n="הכרת תודה">הכרת תודה</span></button>
-        <button data-go="planner"><span data-i18n="תכנית רק להיום">תכנית רק להיום</span></button>
-        <button data-go="inventory"><span data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span></button>
-      </div>
-    </div>
+    <button class="btn secondary" data-go="settings"><span data-i18n="הגדרות החלמה">הגדרות החלמה</span></button>
   </section>
 
   <!-- Planner -->
@@ -610,6 +664,10 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
     </label>
     <div class="field"><span><span data-i18n="צבע">צבע</span></span><div class="swatches" id="swatches" role="radiogroup" aria-label="צבע" data-i18n-aria-label="צבע"></div></div>
     <button class="btn" id="saveSettings" style="width:100%;margin-top:8px"><span data-i18n="שמירת הגדרות החלמה">שמירת הגדרות החלמה</span></button>
+    <div class="settings-foot" id="counterViewSettings">
+      <h3><span data-i18n="מונים ותצוגות">מונים ותצוגות</span></h3>
+      <button class="counter-detail-link" data-go="counterDetails"><span data-i18n="כל המונים והתצוגות">כל המונים והתצוגות</span><span class="chevron" aria-hidden="true"></span></button>
+    </div>
     <div class="settings-foot" id="timerSettings">
       <h3><span data-i18n="מסלולי ההחלמה שלי">מסלולי ההחלמה שלי</span></h3>
       <p class="note"><span data-i18n="התאריך למעלה שייך למסלול הראשי. היומן וכל הכלים היומיים משותפים לכל המסלולים.">התאריך למעלה שייך למסלול הראשי. היומן וכל הכלים היומיים משותפים לכל המסלולים.</span></p>
@@ -786,7 +844,7 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 <script src="assets/recovery-timers.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.16.4';
+const APP_VERSION='2026.10.31.3';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -857,7 +915,7 @@ for(const prefix of ['o','a']){
  <label class="field"><span data-i18n="החלמה מ־">החלמה מ־</span><select id="${prefix}SecondCategory" required><option value="" disabled selected data-i18n="בחירה">בחירה</option>${Object.entries(CleanTimeTimers.names).map(([code,label])=>`<option value="${code}" data-i18n="${label}">${label}</option>`).join('')}</select></label>
  <label class="field"><span data-i18n="שם אישי (לא חובה)">שם אישי (לא חובה)</span><input type="text" id="${prefix}SecondLabel" maxlength="40"></label>
  <label class="field"><span data-i18n="תאריך תחילת הניקיון / ההחלמה">תאריך תחילת הניקיון / ההחלמה</span><input type="date" id="${prefix}SecondDate" required></label>
- <label class="second-toggle"><input type="checkbox" id="${prefix}ShowSecond"><span data-i18n="הצגת הטיימר הנוסף במסך הבית">הצגת הטיימר הנוסף במסך הבית</span></label>
+ <label class="second-toggle"><input type="checkbox" id="${prefix}ShowSecond" checked><span data-i18n="הצגת הטיימר הנוסף במסך הבית">הצגת הטיימר הנוסף במסך הבית</span></label>
  <p class="note" data-i18n="אפשר לשנות את התצוגה בהמשך. הטיימרים תמיד זמינים בהגדרות.">אפשר לשנות את התצוגה בהמשך. הטיימרים תמיד זמינים בהגדרות.</p><p class="msg err" id="${prefix}SecondError" role="alert" hidden></p></fieldset>`;
  if(prefix==='o')$('guestForm').insertBefore(block,$('guestForm').querySelector('button[type="submit"]'));else $('authProfile').append(block);
  $(prefix+'AddSecond').onchange=()=>{const on=$(prefix+'AddSecond').checked;$(prefix+'SecondFields').hidden=!on;$(prefix+'SecondFields').disabled=!on;$(prefix+'AddSecond').setAttribute('aria-expanded',String(on));};
@@ -874,13 +932,13 @@ function onboardingTimers(prefix,base){
  if(next.timers.some(t=>t.id!==timer.id&&t.category===timer.category&&timerIdentityLabel(t)===timerIdentityLabel(timer))){error.textContent=translateUI('למסלול נוסף מאותו סוג יש לבחור שם אישי שונה.');error.hidden=false;$(prefix+'SecondLabel').focus();return null;}
  return CleanTimeTimers.project({...next,timers:[...next.timers.filter(t=>t.id!==timer.id),timer]});
 }
-function rememberOnboardingDisplay(prefix){setupDrafts[prefix]=false;saveHomeDisplay({show:$(prefix+'AddSecond').checked&&$(prefix+'ShowSecond').checked,mode:'compact'});}
+function rememberOnboardingDisplay(prefix){setupDrafts[prefix]=false;saveHomeDisplay({show:!$(prefix+'AddSecond').checked||$(prefix+'ShowSecond').checked,mode:'compact'});}
 function resetSetupTimers(){
  for(const prefix of ['o','a']){
   setupDrafts[prefix]=false;
   delete setupSecondIds[prefix];$(prefix+'AddSecond').checked=false;$(prefix+'AddSecond').setAttribute('aria-expanded','false');$(prefix+'SecondFields').hidden=true;$(prefix+'SecondFields').disabled=true;
   for(const suffix of ['SecondCategory','SecondLabel','SecondDate'])$(prefix+suffix).value='';
-  $(prefix+'ShowSecond').checked=false;$(prefix+'SecondError').hidden=true;$(prefix+'SecondDateError').hidden=true;$(prefix+'SecondDateConfirmation').textContent='';$(prefix+'SecondDate').removeAttribute('aria-invalid');
+  $(prefix+'ShowSecond').checked=true;$(prefix+'SecondError').hidden=true;$(prefix+'SecondDateError').hidden=true;$(prefix+'SecondDateConfirmation').textContent='';$(prefix+'SecondDate').removeAttribute('aria-invalid');
  }
  displayedTimerId=null;saveHomeDisplay({show:false,mode:'single'});
 }
@@ -895,10 +953,10 @@ const analytics=(method,...args)=>{try{
 }catch{}};
 let analyticsNavigationReady=false;
 let current='counter';
-const SCREENS=['counter','planner','journal','gratitude','readings','bookmarks','settings','tools','about','welcome','startup','onboarding','meditation','inventory','auth','account','feedback'];
+const SCREENS=['counter','counterDetails','planner','journal','gratitude','readings','bookmarks','settings','tools','about','welcome','startup','onboarding','meditation','inventory','auth','account','feedback'];
 function show(tab,record=true){
   if(!SCREENS.includes(tab))return;
-  if(tab==='counter'&&!S.date)tab=signedIn()?'settings':'welcome';
+  if(['counter','counterDetails'].includes(tab)&&!S.date)tab=signedIn()?'settings':'welcome';
   if(tab==='onboarding'&&signedIn())tab='settings';
   if(tab==='welcome'&&signedIn())tab=S.date?'counter':'settings';
   if(record&&(tab!==current||(tab==='auth'&&history.state?.authMode!==authMode))){
@@ -914,13 +972,14 @@ function show(tab,record=true){
   const entering=(!S.date&&!signedIn())||['welcome','onboarding','startup'].includes(tab);
   $('tabs').hidden=entering;$('openSettings').hidden=entering;
   $('aboutBack').hidden=tab!=='about'||!entering;
-  const active=tab==='about'?'about':['counter','onboarding','settings','auth','account'].includes(tab)?'counter':'tools';
+  const active=tab==='about'?'about':['counter','counterDetails','onboarding','settings','auth','account'].includes(tab)?'counter':'tools';
   document.querySelectorAll('nav.tabs button').forEach(b=>{
-    if(b.id==='openSettings'?tab==='settings':b.id==='openAccount'?['account','auth'].includes(tab):b.dataset.tab===active&&!['settings','account','auth'].includes(tab))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+    if(b.id==='openSettings'?['settings','counterDetails'].includes(tab):b.id==='openAccount'?['account','auth'].includes(tab):b.dataset.tab===active&&!['settings','counterDetails','account','auth'].includes(tab))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   });
   if(tab==='settings')fillSettings();else applyColor();
   if(tab==='account')renderSync();
   if(tab==='counter'){render();renderSync();}
+  if(tab==='counterDetails')render();
   if(tab==='planner'){planSelected=todayKey();renderP();}
   if(tab==='gratitude')renderG();
   if(tab==='tools')renderToolResources();
@@ -1038,9 +1097,9 @@ const BADGE_COLORS={
  black:{fill:'#262C30',light:'#3E484D',edge:'#14191C',ink:'#F4DA97'}
 };
 function renderMilestone(s,n){
- const el=$('milestone'),home=current==='counter'&&!(homeDisplay.show&&homeDisplay.mode==='cards'&&S.timers?.length>1);
- const shown=homeTimer(),last=home&&milestonesEnabled()?CleanTimeDates.milestones(s===undefined?(shown?timerStart(shown):startDate()):s,n||new Date()).at(-1):null,visible=home&&!!last;
- el.hidden=!visible;$('greet').closest('header').classList.toggle('has-milestone',visible);
+ const el=$('milestone'),primary=(S.timers||[]).find(t=>t.id===S.primaryTimerId);
+ const last=current==='counter'&&milestonesEnabled()?CleanTimeDates.milestones(primary?timerStart(primary):startDate(),n||new Date()).at(-1):null,visible=!!last;
+ el.hidden=!visible;
  if(!visible){el.removeAttribute('aria-label');el.removeAttribute('title');return;}
  const key=last.id+'|'+last.date.getTime();
  if(el.dataset.badgeKey!==key){
@@ -1055,6 +1114,7 @@ $('showMilestones').onchange=()=>{try{localStorage.setItem('cleantime-he-milesto
 
 /* ---------- Counter render ---------- */
 function render(){
+  renderHomeSummary();
   renderAdditionalTimers();
   $('greet').textContent=S.name?translateUI('שלום')+', '+S.name:translateUI('זמן נקי');
   const chip=$('fromChip');
@@ -1088,7 +1148,7 @@ $('count').onclick=()=>{
   const c=$('count'); c.classList.remove('anim'); void c.offsetWidth; c.classList.add('anim');
 };
 setInterval(()=>{
-  if(current==='counter')render();
+  if(current==='counter'||current==='counterDetails')render();
   if(planDay!==todayKey()){renderP();renderG();for(const id of ['oDate','sDate','aDate','oSecondDate','aSecondDate'])$(id).max=todayKey();}
 },1000);
 
@@ -1400,9 +1460,30 @@ function timerDescription(timer){
  const start=timerStart(timer),now=new Date(),milestone=CleanTimeDates.milestones(start,now).at(-1);
  return fmt(totalDays(start,now))+translateUI(' ימים נקיים')+(milestone?' · '+localizedMilestone(milestone):'');
 }
+function renderHomeSummary(){
+ const timers=S.timers||[],primary=timers.find(t=>t.id===S.primaryTimerId),now=new Date();
+ if(!primary){$('homePrimaryCount').replaceChildren();$('homeSecondary').hidden=true;return;}
+ $('homePrimaryLabel').textContent=translateUI('זמן נקי')+' · '+timerLabel(primary);
+ const start=timerStart(primary),parts=[],elapsed=ymd(start,now);
+ if(now<start)parts.push(`<span class="lbl">${translateUI('התאריך שנבחר עוד לא הגיע')}</span>`);
+ else{
+  if(elapsed.y)parts.push(unit(fmt(elapsed.y),elapsed.y===1?'שנה':'שנים'));
+  if(elapsed.y||elapsed.m)parts.push(unit(fmt(elapsed.m),elapsed.m===1?'חודש':'חודשים'));
+  parts.push(unit(fmt(elapsed.d),elapsed.d===1?'יום':'ימים'));
+ }
+ const count=$('homePrimaryCount'),html=parts.join('');
+ if(count.innerHTML!==html)count.innerHTML=html;
+ $('homePrimarySince').textContent=translateUI('מאז ')+start.toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'});
+ const secondary=timers.find(t=>t.id!==primary.id);
+ $('homeSecondary').hidden=!secondary||!homeDisplay.show;
+ if(secondary){
+  $('homeSecondaryLabel').textContent=timerLabel(secondary);
+  $('homeSecondaryDays').textContent=now<timerStart(secondary)?translateUI('התאריך שנבחר עוד לא הגיע'):fmt(totalDays(timerStart(secondary),now))+' '+translateUI('ימים נקיים');
+ }
+}
 function renderAdditionalTimers(){
- const timers=S.timers||[],multiple=timers.length>1,on=multiple&&homeDisplay.show;
- $('homeDisplay').hidden=!multiple;$('showHomeTimers').checked=on;$('homeDisplayOptions').hidden=!on;
+ const timers=S.timers||[],multiple=timers.length>1,on=multiple;
+ $('homeDisplay').hidden=!multiple;$('showHomeTimers').checked=homeDisplay.show;$('homeDisplayOptions').hidden=!multiple;
  $('primaryTimerDisplay').hidden=on&&homeDisplay.mode==='cards';$('homeTimerPick').hidden=!on||homeDisplay.mode!=='single';
  for(const button of $('timerDisplayModes').querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.display===homeDisplay.mode));
  const picker=$('homeTimerPick');
@@ -1412,10 +1493,10 @@ function renderAdditionalTimers(){
  cards.hidden=!displayed.length;cards.classList.toggle('equal-cards',homeDisplay.mode==='cards');cards.replaceChildren();
  for(const timer of displayed){const card=document.createElement('article'),title=document.createElement('h3'),days=document.createElement('span'),since=document.createElement('p'),milestone=document.createElement('p');card.className='home-timer-card';title.textContent=timerLabel(timer);days.className='timer-days';days.textContent=fmt(totalDays(timerStart(timer),new Date()))+' ';const unit=document.createElement('span');unit.className='timer-unit';unit.textContent=translateUI('ימים נקיים');days.append(unit);since.textContent=translateUI('מאז ')+timerStart(timer).toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'});const last=CleanTimeDates.milestones(timerStart(timer),new Date()).at(-1);milestone.textContent=last?localizedMilestone(last):'';card.append(title,days,since,milestone);cards.append(card);}
 }
-let homeDisplay={show:false,mode:'single'},displayedTimerId=null;
+let homeDisplay={show:true,mode:'compact'},displayedTimerId=null;
 try{const stored=JSON.parse(localStorage.getItem('cleantime-timer-display'));if(stored&&['single','compact','cards'].includes(stored.mode))homeDisplay={show:stored.show===true,mode:stored.mode};}catch(e){}
 function saveHomeDisplay(value){homeDisplay={...homeDisplay,...value};try{localStorage.setItem('cleantime-timer-display',JSON.stringify(homeDisplay));}catch(e){storageNotice(translateUI('הבחירה לא נשמרה במכשיר.'));}}
-function homeTimer(){return (S.timers||[]).find(t=>t.id===(homeDisplay.show&&homeDisplay.mode==='single'?displayedTimerId:S.primaryTimerId))||(S.timers||[]).find(t=>t.id===S.primaryTimerId);}
+function homeTimer(){return (S.timers||[]).find(t=>t.id===(homeDisplay.mode==='single'?displayedTimerId:S.primaryTimerId))||(S.timers||[]).find(t=>t.id===S.primaryTimerId);}
 $('showHomeTimers').onchange=()=>{saveHomeDisplay({show:$('showHomeTimers').checked});render();};
 $('timerDisplayModes').onclick=event=>{const button=event.target.closest('button[data-display]');if(button){saveHomeDisplay({mode:button.dataset.display});render();}};
 $('homeTimerPick').onchange=()=>{displayedTimerId=$('homeTimerPick').value;render();};
@@ -1425,6 +1506,7 @@ function persistTimers(next){
  renderTimerSettings();render();fillSettings();return true;
 }
 function renderTimerSettings(){
+ $('counterViewSettings').hidden=!S.date;
  $('timerSettings').hidden=!S.date;$('timerList').replaceChildren();
  for(const timer of S.timers||[]){
   const li=document.createElement('li'),content=document.createElement('div'),title=document.createElement('strong'),info=document.createElement('p'),actions=document.createElement('div');
