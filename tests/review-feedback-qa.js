@@ -24,7 +24,7 @@ async(page)=>{
  const saved=await page.evaluate(key=>localStorage.getItem(key),key),state=JSON.parse(saved);
  check(state.timers.length===2&&state.timers[0].date==='2024-01-01'&&state.timers[1].date==='2025-01-01','Onboarding saves two independent dates');
  check(await page.locator('#showHomeTimers').isChecked()&&await page.locator('#homeTimerCards article').count()===1,'Opt-in starts with primary and compact secondary');
- await page.locator('#counter [data-go=counterDetails]').click();
+ await page.locator('#openSettings').click();await page.locator('#settings [data-go=counterDetails]').click();
  for(const mode of ['single','cards','compact']){
   await page.locator('[data-display='+mode+']').click();
   check(await page.locator('[data-display='+mode+']').getAttribute('aria-pressed')==='true','Display choice announced '+mode);

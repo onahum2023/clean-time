@@ -391,14 +391,14 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 #counter .summary-count .num{font-size:2.25rem;line-height:1.1;font-weight:600;letter-spacing:normal}
 .summary-count .lbl{font-size:.9rem;margin:0}
 .summary-since{font-size:.85rem;color:var(--muted);margin:6px 0 0}
-.recovery-summary .milestone-badge{position:static;flex:0 0 29px;width:29px;height:43px;filter:none}
+.recovery-summary .milestone-badge{position:static;flex:0 0 52px;width:52px;height:73px;filter:none}
 .secondary-summary{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:.9rem;overflow-wrap:anywhere}
 .secondary-summary>span{color:var(--muted)}
 .counter-detail-link{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:8px 0;color:var(--accent-ink);font-size:.9rem;border:0;background:none;text-align:start;cursor:pointer}
 .chevron::after{content:'‹'}
 :root[dir="ltr"] .chevron::after{content:'›'}
-.daily-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.daily-card{flex-direction:column;gap:8px;min-height:128px;width:100%;text-align:start;text-decoration:none;cursor:pointer;overflow-wrap:anywhere;color:var(--ink)}
+.daily-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.daily-card{flex-direction:column;gap:8px;min-height:128px;width:100%;text-align:start;text-decoration:none;cursor:pointer;overflow-wrap:anywhere;color:var(--ink);border-color:color-mix(in srgb,var(--line) 75%,var(--surface));box-shadow:0 2px 6px rgb(0 0 0 / .06)}
 .daily-card-title{display:block}
 .daily-card small{display:block;font-size:.85rem;font-weight:400;color:var(--muted);line-height:1.5}
 .daily-card.primary .daily-card-title{color:var(--accent-ink)}
@@ -406,7 +406,8 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 .daily-card:last-child .daily-card-title{margin:0}
 .daily-card:active{background:var(--accent-soft)}
 @media(hover:hover){.daily-card:hover{border-color:var(--accent-ink);background:var(--accent-soft)}}
-@media(max-width:340px){.daily-card{padding:10px}.daily-card-title{font-size:.95rem}.daily-cards{gap:10px}}
+@media(max-width:380px){.summary-count{gap:12px}}
+@media(max-width:340px){.daily-card{padding:10px}.daily-card-title{font-size:.95rem}.daily-cards{gap:12px}}
 .external-link-icon{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.2;vertical-align:middle}
 #counterDetails{text-align:start;padding-bottom:20px}
 #counterDetails .count{margin:auto;max-width:100%}
@@ -513,7 +514,6 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
         </div>
       </div>
       <p class="secondary-summary" id="homeSecondary" hidden><span id="homeSecondaryLabel"></span><strong id="homeSecondaryDays"></strong></p>
-      <button class="counter-detail-link" data-go="counterDetails"><span data-i18n="כל המונים והתצוגות">כל המונים והתצוגות</span><span class="chevron" aria-hidden="true"></span></button>
     </div>
     <div class="today-actions">
       <h2><span data-i18n="היום שלי">היום שלי</span></h2>
@@ -529,7 +529,7 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 
   <section id="counterDetails" hidden>
     <h2><span data-i18n="מונים ותצוגות">מונים ותצוגות</span></h2>
-    <button class="btn ghost" data-go="counter"><span data-i18n="חזרה להיום">חזרה להיום</span></button>
+    <button class="btn ghost" data-go="settings"><span data-i18n="חזרה להגדרות">חזרה להגדרות</span></button>
     <div class="home-display" id="homeDisplay" hidden>
       <label class="second-toggle"><input type="checkbox" id="showHomeTimers"><span data-i18n="הצגת מסלולים נוספים בבית">הצגת מסלולים נוספים בבית</span></label>
       <div id="homeDisplayOptions" hidden>
@@ -664,6 +664,10 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
     </label>
     <div class="field"><span><span data-i18n="צבע">צבע</span></span><div class="swatches" id="swatches" role="radiogroup" aria-label="צבע" data-i18n-aria-label="צבע"></div></div>
     <button class="btn" id="saveSettings" style="width:100%;margin-top:8px"><span data-i18n="שמירת הגדרות החלמה">שמירת הגדרות החלמה</span></button>
+    <div class="settings-foot" id="counterViewSettings">
+      <h3><span data-i18n="מונים ותצוגות">מונים ותצוגות</span></h3>
+      <button class="counter-detail-link" data-go="counterDetails"><span data-i18n="כל המונים והתצוגות">כל המונים והתצוגות</span><span class="chevron" aria-hidden="true"></span></button>
+    </div>
     <div class="settings-foot" id="timerSettings">
       <h3><span data-i18n="מסלולי ההחלמה שלי">מסלולי ההחלמה שלי</span></h3>
       <p class="note"><span data-i18n="התאריך למעלה שייך למסלול הראשי. היומן וכל הכלים היומיים משותפים לכל המסלולים.">התאריך למעלה שייך למסלול הראשי. היומן וכל הכלים היומיים משותפים לכל המסלולים.</span></p>
@@ -840,7 +844,7 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 <script src="assets/recovery-timers.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.31.2';
+const APP_VERSION='2026.10.31.3';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -970,7 +974,7 @@ function show(tab,record=true){
   $('aboutBack').hidden=tab!=='about'||!entering;
   const active=tab==='about'?'about':['counter','counterDetails','onboarding','settings','auth','account'].includes(tab)?'counter':'tools';
   document.querySelectorAll('nav.tabs button').forEach(b=>{
-    if(b.id==='openSettings'?tab==='settings':b.id==='openAccount'?['account','auth'].includes(tab):b.dataset.tab===active&&!['settings','account','auth'].includes(tab))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+    if(b.id==='openSettings'?['settings','counterDetails'].includes(tab):b.id==='openAccount'?['account','auth'].includes(tab):b.dataset.tab===active&&!['settings','counterDetails','account','auth'].includes(tab))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   });
   if(tab==='settings')fillSettings();else applyColor();
   if(tab==='account')renderSync();
@@ -1502,6 +1506,7 @@ function persistTimers(next){
  renderTimerSettings();render();fillSettings();return true;
 }
 function renderTimerSettings(){
+ $('counterViewSettings').hidden=!S.date;
  $('timerSettings').hidden=!S.date;$('timerList').replaceChildren();
  for(const timer of S.timers||[]){
   const li=document.createElement('li'),content=document.createElement('div'),title=document.createElement('strong'),info=document.createElement('p'),actions=document.createElement('div');

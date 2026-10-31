@@ -2,6 +2,7 @@
 window.CleanTimeMessages={
   "he": {},
   "en": {
+    "חזרה להגדרות": "Back to Settings",
     "כל המונים והתצוגות": "All counters and views",
     "מונים ותצוגות": "Counters and views",
     "חזרה להיום": "Back to Today",
@@ -373,6 +374,7 @@ window.CleanTimeMessages={
     "שינוי שפה ינקה פרטים שטרם נשמרו בטופס הזה. להמשיך?": "Changing language will clear unsaved entries in this form. Continue?"
   },
   "ru": {
+    "חזרה להגדרות": "Назад к настройкам",
     "כל המונים והתצוגות": "Все счётчики и виды",
     "מונים ותצוגות": "Счётчики и виды",
     "חזרה להיום": "Назад к сегодняшнему дню",
