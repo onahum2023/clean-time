@@ -30,7 +30,7 @@ async (page) => {
     await page.locator('#guestForm button').click();
     const state=await read();check(state.date==='2025-01-01'&&state.from===from&&state.name===''&&await page.locator('#counter').isVisible(),`Guest onboarding: ${from}`);
   }
-  check((await page.locator('#count').innerText()).trim().length>0,'Clean-time counter visible');
+  check((await page.locator('#homePrimaryCount').innerText()).trim().length>0,'Clean-time counter visible');
   for(const id of ['planner','gratitude','journal','inventory']){
     await page.locator(`#counter [data-go="${id}"]`).click();check(await page.locator(`#${id}`).isVisible(),`Today opens ${id}`);await page.locator('[data-tab="counter"]').click();
   }

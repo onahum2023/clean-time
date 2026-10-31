@@ -13,11 +13,11 @@ The canonical production origin is `https://clean-time.app/`; the www domain red
 
 ## What's inside
 
-**Clean time (זמן נקי).** Your clean time since the date you choose. Tap the counter to switch between years, months and days, total days, or hours, minutes and seconds.
+**Clean time (זמן נקי).** Your clean time since the date you choose. Home shows a compact primary status and an optional secondary summary. Open “All counters and views” to switch between years, months and days, total days, or hours, minutes and seconds, and to choose the counter presentation.
 
 **First visit.** Welcome introduces the app with its existing logo and Hebrew wordmark, a short purpose/origin paragraph and four non-interactive feature explanations before the entry actions; **מתחילים** opens a separate setup asking only for a recovery date and type. No name, email or phone is required. Existing configured users open Today. Native date pickers show a Hebrew confirmation with the month written out. About/privacy is available before setup.
 
-**Today (היום).** The clean-time counter and five daily actions in order: daily reading, journal, gratitude, plan and Step 10. Recovery Tools, About and shared Settings/Account stay in the footer. Feedback is reached from About.
+**Today (היום).** A compact recovery summary and five directly accessible daily actions in order: daily reading, Daily Plan, Gratitude, Journal and Step 10. Counter presentation controls live in the optional counter detail view. Recovery Tools, About and shared Settings/Account stay in the footer. Feedback is reached from About.
 
 **Daily plan (התכנית שלי להיום).** One checklist per calendar day. Add, edit, delete and check items. Each new day starts empty; previous plans remain accessible.
 

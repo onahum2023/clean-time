@@ -29,10 +29,10 @@ async(page)=>{
  for(const colorScheme of ['light','dark'])for(const width of [320,360,390,1280]){
   await page.emulateMedia({colorScheme});await page.setViewportSize({width,height:800});
   check(await page.evaluate(()=>{
-   const badge=document.getElementById('milestone').getBoundingClientRect(),app=document.querySelector('.app').getBoundingClientRect(),header=document.querySelector('header').getBoundingClientRect(),language=document.getElementById('languageSelector').getBoundingClientRect(),counter=document.getElementById('count').getBoundingClientRect(),range=document.createRange();range.selectNodeContents(document.getElementById('greet'));
+   const badge=document.getElementById('milestone').getBoundingClientRect(),app=document.querySelector('.app').getBoundingClientRect(),header=document.querySelector('header').getBoundingClientRect(),language=document.getElementById('languageSelector').getBoundingClientRect(),counter=document.getElementById('homePrimaryCount').getBoundingClientRect(),range=document.createRange();range.selectNodeContents(document.getElementById('greet'));
    const overlaps=r=>badge.left<r.right&&badge.right>r.left&&badge.top<r.bottom&&badge.bottom>r.top;
-   return badge.width<=68&&badge.height<=92&&Math.abs(badge.left-(app.left+parseFloat(getComputedStyle(document.querySelector('.app')).paddingLeft)))<1&&badge.top-header.top<40&&!overlaps(language)&&!overlaps(counter)&&![...range.getClientRects()].some(overlaps)&&document.documentElement.scrollWidth<=innerWidth;
-  }),'Small top-left badge without overlap/overflow '+width+' '+colorScheme);
+   return badge.width<=30&&badge.height<=44&&badge.left>=app.left&&badge.right<=app.right&&badge.top>=header.bottom&&!overlaps(language)&&!overlaps(counter)&&![...range.getClientRects()].some(overlaps)&&document.documentElement.scrollWidth<=innerWidth;
+  }),'Small summary badge without overlap/overflow '+width+' '+colorScheme);
  }
  await page.evaluate(key=>{const s=JSON.parse(localStorage.getItem(key));s.name='שםבדיקהארוךמאודלבדיקתפריסהבטלפוןללאחשיפתפרטים';localStorage.setItem(key,JSON.stringify(s));},key);await page.setViewportSize({width:320,height:800});await page.reload();check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Long synthetic greeting fits beside badge');
  const beforeReset=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),key);await page.locator('#openSettings').click();await page.locator('#sDate').fill('2026-10-12');await page.locator('#saveSettings').click();await page.locator('#askB button').filter({hasText:'עדכון התאריך'}).click();

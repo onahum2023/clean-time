@@ -16,7 +16,7 @@ async(page)=>{
  check(await page.locator('#languageSelector').isVisible(),'Language selector stays in setup');
  check(!await page.locator('#oAddSecond').isChecked()&&await page.locator('#oSecondFields').isHidden(),'Second timer is optional by default');
  await page.locator('#oDate').fill('2024-01-01');await page.locator('#oFrom').selectOption('סמים');await page.locator('#oAddSecond').check();
- check(await page.locator('#oSecondFields').isVisible()&&!await page.locator('#oShowSecond').isChecked(),'Expanded second timer defaults to off on Home');
+ check(await page.locator('#oSecondFields').isVisible()&&await page.locator('#oShowSecond').isChecked(),'Expanded second timer defaults to compact visibility on Home');
  await page.locator('#oSecondCategory').selectOption('drugs');await page.locator('#oSecondDate').fill('2025-01-01');await page.locator('#guestForm button[type=submit]').click();
  check(await page.locator('#oSecondError').isVisible()&&await page.evaluate(key=>!localStorage.getItem(key),key),'Duplicate blank recovery type rejected before persistence');
  await page.locator('#oSecondCategory').selectOption('alcohol');await page.locator('#oShowSecond').check();await page.locator('#guestForm button[type=submit]').click();
@@ -24,6 +24,7 @@ async(page)=>{
  const saved=await page.evaluate(key=>localStorage.getItem(key),key),state=JSON.parse(saved);
  check(state.timers.length===2&&state.timers[0].date==='2024-01-01'&&state.timers[1].date==='2025-01-01','Onboarding saves two independent dates');
  check(await page.locator('#showHomeTimers').isChecked()&&await page.locator('#homeTimerCards article').count()===1,'Opt-in starts with primary and compact secondary');
+ await page.locator('#counter [data-go=counterDetails]').click();
  for(const mode of ['single','cards','compact']){
   await page.locator('[data-display='+mode+']').click();
   check(await page.locator('[data-display='+mode+']').getAttribute('aria-pressed')==='true','Display choice announced '+mode);
@@ -34,7 +35,7 @@ async(page)=>{
   check(await page.evaluate(key=>localStorage.getItem(key),key)===saved,'Display does not mutate recovery data '+mode);
  }
  await page.locator('#showHomeTimers').uncheck();await page.reload();
- check(!await page.locator('#showHomeTimers').isChecked()&&await page.locator('#homeTimerCards').isHidden(),'Home checkbox persists while retaining secondary timer');
+ check(!await page.locator('#showHomeTimers').isChecked()&&await page.locator('#homeSecondary').isHidden(),'Home checkbox persists while retaining secondary timer');
  check(await page.evaluate(({key,saved})=>{const a=JSON.parse(localStorage.getItem(key)),b=JSON.parse(saved);return JSON.stringify(a.timers)===JSON.stringify(b.timers)&&a.updatedAt===b.updatedAt;},{key,saved}),'Hiding timers leaves timer records and timestamp intact');
  for(const width of [360,1280]){
   await page.setViewportSize({width,height:800});
@@ -74,7 +75,7 @@ async(page)=>{
   await p.locator('#authBack').click();await p.locator('#settingsLogin').click();await p.locator('#lEmail').fill('synthetic@example.invalid');await p.locator('#lSend').click();await p.waitForFunction(()=>qaRequests.length===5);
   check(await p.locator('#aSecondFields').evaluate(el=>el.disabled)&&await p.evaluate(()=>qaRequests[4].options.shouldCreateUser===false),'Returning login excludes optional create fields');
   await p.locator('#authBack').click();await p.locator('#openSettings').click();p.once('dialog',dialog=>dialog.accept());await p.locator('#reset').click();await p.locator('#welcomeStart').click();
-  check(!await p.locator('#oAddSecond').isChecked()&&await p.locator('#aSecondFields').evaluate(el=>el.disabled)&&!await p.locator('#aShowSecond').isChecked(),'Reset clears both onboarding timer drafts and visibility choices');
+  check(!await p.locator('#oAddSecond').isChecked()&&await p.locator('#aSecondFields').evaluate(el=>el.disabled)&&await p.locator('#aShowSecond').isChecked(),'Reset clears both onboarding timer drafts and restores compact visibility default');
   check(await p.locator('#aSecondLabel').inputValue()===''&&await p.locator('#aSecondDate').inputValue()===''&&await p.locator('#aSecondCategory').inputValue()==='','Deleted second-timer values are not exposed in another setup');
   await p.locator('#oDate').fill('2024-02-01');await p.locator('#oFrom').selectOption('סמים');await p.locator('#oAddSecond').check();await p.locator('#oSecondCategory').selectOption('alcohol');await p.locator('#oSecondDate').fill('2025-02-01');await p.locator('#oSecondLabel').fill('Unfinished synthetic');
   p.once('dialog',dialog=>dialog.dismiss());await p.locator('[data-language=en]').click();

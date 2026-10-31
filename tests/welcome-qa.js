@@ -46,7 +46,7 @@ async(page)=>{
      const welcome=document.getElementById('welcome'),brand=welcome.querySelector('.welcome-brand'),logo=welcome.querySelector('img'),name=document.getElementById('welcomeTitle'),features=welcome.querySelector('.welcome-features'),entry=welcome.querySelector('.welcome-entry');
      const rect=e=>e.getBoundingClientRect(),center=e=>rect(e).left+rect(e).width/2;
      const icon=selector=>document.querySelector(selector).outerHTML;
-     const counterparts={counter:'#counter .daybreak',planner:'#planner .page-heading .page-art',journal:'#journal .page-heading .page-art',gratitude:'#gratitude .page-heading .page-art'};
+     const counterparts={planner:'#planner .page-heading .page-art',journal:'#journal .page-heading .page-art',gratitude:'#gratitude .page-heading .page-art'};
      const items=[...welcome.querySelectorAll('[data-feature]')];
      const expectedNames=['זמן נקי',...['planner','journal','gratitude'].map(id=>document.querySelector('#'+id+' .page-heading h2').textContent)];
      const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
@@ -57,7 +57,7 @@ async(page)=>{
       brand:Math.abs(center(logo)-center(welcome))<1&&Math.abs(center(name)-center(welcome))<1&&getComputedStyle(name).textAlign==='center'&&getComputedStyle(name).userSelect!=='none'&&getComputedStyle(name).fontSize!==getComputedStyle(welcome.querySelector('.welcome-origin')).fontSize,
       logo:logo.naturalWidth===512&&rect(logo).width>=80&&logo.getAttribute('src')==='/icon-512.png',
       noDuplicateTitle:document.querySelector('header').hidden&&[...document.querySelectorAll('h1')].filter(e=>e.getBoundingClientRect().height>0).length===1,
-      items:items.length===4&&items.every((e,i)=>e.querySelector('h3').textContent===expectedNames[i]&&e.querySelector('p').textContent&&icon('[data-feature='+e.dataset.feature+'] svg')===icon(counterparts[e.dataset.feature])),
+      items:items.length===4&&items.every((e,i)=>e.querySelector('h3').textContent===expectedNames[i]&&e.querySelector('p').textContent&&(e.dataset.feature==='counter'?e.querySelector('svg.daybreak')!==null:icon('[data-feature='+e.dataset.feature+'] svg')===icon(counterparts[e.dataset.feature]))),
       static:!features.querySelector('a,button,input,[data-go],[data-tab],[tabindex],[role=button],[role=link]'),
       readable:items.every(e=>['h3','p','svg'].every(tag=>contrast(getComputedStyle(e.querySelector(tag)).color,getComputedStyle(e).backgroundColor)>=4.5)),
       oneAction:welcome.querySelectorAll('#welcomeStart').length===1&&welcome.querySelectorAll('#onboardingLogin').length===1&&[...entry.querySelectorAll('button')].every(e=>getComputedStyle(e).position!=='fixed'&&getComputedStyle(e).position!=='sticky')

@@ -2,6 +2,12 @@
 window.CleanTimeMessages={
   "he": {},
   "en": {
+    "כל המונים והתצוגות": "All counters and views",
+    "מונים ותצוגות": "Counters and views",
+    "חזרה להיום": "Back to Today",
+    "היום שלי": "My day",
+    "תכנון יומי": "Daily Plan",
+    "קריאה יומית באתר NA": "Daily reading on NA Israel",
     "+ הוספת קישור": "+ Add link",
     "+ רשומה חדשה": "+ New entry",
     "Arial — פשוט וברור": "Arial — simple and clear",
@@ -367,6 +373,12 @@ window.CleanTimeMessages={
     "שינוי שפה ינקה פרטים שטרם נשמרו בטופס הזה. להמשיך?": "Changing language will clear unsaved entries in this form. Continue?"
   },
   "ru": {
+    "כל המונים והתצוגות": "Все счётчики и виды",
+    "מונים ותצוגות": "Счётчики и виды",
+    "חזרה להיום": "Назад к сегодняшнему дню",
+    "היום שלי": "Мой день",
+    "תכנון יומי": "План на день",
+    "קריאה יומית באתר NA": "Чтение на сайте NA Israel",
     "+ הוספת קישור": "+ Добавить ссылку",
     "+ רשומה חדשה": "+ Новая запись",
     "· ראשי": "· Основное",
