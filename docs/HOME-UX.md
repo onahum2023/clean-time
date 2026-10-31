@@ -2,6 +2,8 @@
 
 Home shows a compact recovery summary followed by four daily cards in a 2×2 grid and one full-width Step 10 card. This revision addresses the [owner's PR #68 feedback](https://github.com/onahum2023/clean-time/pull/68#pullrequestreview-5723184892).
 
+The subsequent [issue #69 signed-in summary refinement](HOME-SIGNED-IN-SUMMARY.md) removes repeated labels from authenticated Home; the evidence below records PR #68.
+
 ## Daily card layout
 
 The DOM, keyboard and reading order is fixed: רק להיום, תכנון יומי, הכרת תודה, ככה זה עכשיו, חשבון נפש יומי / צעד 10. In Hebrew RTL, reading/plan occupy the top right/left, and gratitude/journal the bottom right/left. English and Russian follow the same sequence in LTR. Step 10 spans both columns immediately beneath the four cards, using the same surface, border and corner treatment.
