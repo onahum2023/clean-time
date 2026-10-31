@@ -13,7 +13,7 @@ The canonical production origin is `https://clean-time.app/`; the www domain red
 
 ## What's inside
 
-**Clean time (זמן נקי).** Your clean time since the date you choose. Home shows a compact primary status and an optional secondary summary. In Settings → Counters and views, open “All counters and views” to switch between years, months and days, total days, or hours, minutes and seconds, and to choose the counter presentation.
+**Clean time (זמן נקי).** Your clean time since the date you choose. Signed-in Home shows the personalized greeting once, with the compact primary duration and date. Guest Home retains its optional secondary summary. In Settings → Counters and views, open “All counters and views” to switch between years, months and days, total days, or hours, minutes and seconds, and to choose the counter presentation.
 
 **First visit.** Welcome introduces the app with its existing logo and Hebrew wordmark, a short purpose/origin paragraph and four non-interactive feature explanations before the entry actions; **מתחילים** opens a separate setup asking only for a recovery date and type. No name, email or phone is required. Existing configured users open Today. Native date pickers show a Hebrew confirmation with the month written out. About/privacy is available before setup.
 
