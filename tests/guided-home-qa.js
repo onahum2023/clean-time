@@ -10,7 +10,13 @@ async(page)=>{
  await page.goto(origin);const saved=await page.evaluate(key=>localStorage.getItem(key),key);
  check(await page.locator('#homeSecondary').isVisible(),'A secondary counter is compact and visible by default');
  check(await page.locator('#counter input,#counter select,#counter [data-display]').count()===0,'Home presents no display decisions or setup controls');
- check(await page.locator('#counter .tool-links > *').count()===5,'All five daily actions remain available without completion gates');
+ check(await page.locator('#counter .daily-cards > *').count()===5,'All five daily actions remain available without completion gates');
+ check(await page.locator('.daily-card-title').last().textContent()==='חשבון נפש יומי / צעד 10','Fifth card retains the full Step 10 label');
+ await page.locator('#dailyReading').focus();
+ for(const destination of ['planner','gratitude','journal','inventory']){
+  await page.keyboard.press('Tab');
+  check(await page.locator('#counter [data-go='+destination+']').evaluate(e=>e===document.activeElement&&getComputedStyle(e).outlineStyle!=='none'),'Keyboard order and visible focus: '+destination);
+ }
  const homeLabel=await page.locator('#homePrimaryLabel').textContent();
  await page.locator('#counter [data-go=counterDetails]').focus();await page.keyboard.press('Enter');
  check(await page.locator('#counterDetails').isVisible()&&await page.locator('#counterDetails h2').evaluate(e=>e===document.activeElement),'Keyboard opens details and focuses its heading');
@@ -41,12 +47,20 @@ async(page)=>{
  },{key,saved}),'Counter preferences retain histories, timer records, unknown fields and recovery timestamp');
  for(const language of ['he','en','ru']){
   await page.locator('[data-language='+language+']').click();await page.waitForFunction(l=>document.documentElement.lang===l,language);
-  for(const colorScheme of ['light','dark'])for(const width of [360,390,1440]){
+  for(const colorScheme of ['light','dark'])for(const width of [320,360,390,1440]){
    await page.emulateMedia({colorScheme});await page.setViewportSize({width,height:width===1440?900:800});
    check(await page.evaluate(()=>{
-    const first=document.getElementById('dailyReading').getBoundingClientRect(),last=document.querySelector('#counter .tool-links button:last-child').getBoundingClientRect(),footer=document.getElementById('tabs').getBoundingClientRect(),num=document.querySelector('#homePrimaryCount .num');
-    return document.documentElement.scrollWidth<=innerWidth&&first.bottom<footer.top&&last.bottom<footer.top&&parseFloat(getComputedStyle(num).fontSize)<=36;
-   }),'Compact status and five actions above footer '+language+' '+width+' '+colorScheme);
+    const first=document.getElementById('dailyReading').getBoundingClientRect(),footer=document.getElementById('tabs').getBoundingClientRect(),num=document.querySelector('#homePrimaryCount .num');
+    return document.documentElement.scrollWidth<=innerWidth&&first.bottom<footer.top&&parseFloat(getComputedStyle(num).fontSize)<=36;
+   }),'Compact status and first daily actions above footer '+language+' '+width+' '+colorScheme);
+   check(await page.evaluate(()=>{
+    const cards=[...document.querySelectorAll('.daily-cards > *')],r=cards.map(e=>e.getBoundingClientRect()),grid=document.querySelector('.daily-cards').getBoundingClientRect(),rtl=document.documentElement.dir==='rtl',near=(a,b)=>Math.abs(a-b)<1;
+    return r.length===5&&near(r[0].top,r[1].top)&&near(r[2].top,r[3].top)&&r[2].top>r[0].bottom&&near(r[0].left,r[2].left)&&near(r[1].left,r[3].left)&&(rtl?r[0].left>r[1].left:r[0].left<r[1].left)&&near(r[4].width,grid.width)&&near(r[4].top-Math.max(r[2].bottom,r[3].bottom),parseFloat(getComputedStyle(document.querySelector('.daily-cards')).rowGap))&&cards.every(e=>e.scrollWidth<=e.clientWidth&&e.getBoundingClientRect().height>=44);
+   }),'Two by two cards in reading order followed immediately by full-width Step 10 '+language+' '+width+' '+colorScheme);
+   check(await page.evaluate(()=>{
+    const card=document.querySelector('.daily-card'),welcome=document.querySelector('.welcome-feature-list li'),a=getComputedStyle(card),b=getComputedStyle(welcome);
+    return ['backgroundColor','borderColor','borderWidth','borderRadius'].every(k=>a[k]===b[k])&&getComputedStyle(card.querySelector('.page-art')).color===getComputedStyle(welcome.querySelector('.page-art')).color;
+   }),'Home cards share Welcome surface, border, radius and icon treatment '+language+' '+width+' '+colorScheme);
    await page.locator('#counter [data-go=counterDetails]').click();
    for(const mode of ['cards','compact','single']){
     await page.locator('[data-display='+mode+']').click();

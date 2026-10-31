@@ -299,9 +299,9 @@ select{min-height:46px}
 .welcome-features{margin:0 0 24px}
 .welcome-features h2{font-size:1.2rem;margin:0 0 12px}
 .welcome-feature-list{list-style:none;padding:0;margin:0;display:grid;gap:12px}
-.welcome-feature-list li{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;min-width:0}
-.welcome-feature-list .page-art{color:var(--accent-ink);width:40px;height:40px}
-.welcome-feature-list h3{font-size:1.05rem;line-height:1.4;margin:0 0 4px;font-weight:600}
+.welcome-feature-list li,.daily-card{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;min-width:0}
+.welcome-feature-list .page-art,.daily-card .page-art{color:var(--accent-ink);width:40px;height:40px}
+.welcome-feature-list h3,.daily-card-title{font-size:1.05rem;line-height:1.4;margin:0 0 4px;font-weight:600}
 .welcome-feature-list p{font-size:1rem;color:var(--muted);margin:0;line-height:1.5}
 .welcome-entry{max-width:440px;margin:0 auto;text-align:center}
 #welcome .welcome-entry .btn{width:100%;white-space:normal;margin-bottom:8px}
@@ -397,11 +397,16 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 .counter-detail-link{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:8px 0;color:var(--accent-ink);font-size:.9rem;border:0;background:none;text-align:start;cursor:pointer}
 .chevron::after{content:'‹'}
 :root[dir="ltr"] .chevron::after{content:'›'}
-#counter .tool-links{padding:0;overflow:hidden}
-#counter .tool-links :is(a,button){min-height:56px;padding:12px 16px;gap:10px;text-align:start}
-#counter .tool-links .primary{background:var(--accent-soft);min-height:76px}
-.action-copy{display:flex;flex-direction:column;min-width:0}
-.action-copy small{font-size:.85rem;font-weight:400;color:var(--muted)}
+.daily-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.daily-card{flex-direction:column;gap:8px;min-height:128px;width:100%;text-align:start;text-decoration:none;cursor:pointer;overflow-wrap:anywhere;color:var(--ink)}
+.daily-card-title{display:block}
+.daily-card small{display:block;font-size:.85rem;font-weight:400;color:var(--muted);line-height:1.5}
+.daily-card.primary .daily-card-title{color:var(--accent-ink)}
+.daily-card:last-child{grid-column:1/-1;flex-direction:row;align-items:center;min-height:80px}
+.daily-card:last-child .daily-card-title{margin:0}
+.daily-card:active{background:var(--accent-soft)}
+@media(hover:hover){.daily-card:hover{border-color:var(--accent-ink);background:var(--accent-soft)}}
+@media(max-width:340px){.daily-card{padding:10px}.daily-card-title{font-size:.95rem}.daily-cards{gap:10px}}
 .external-link-icon{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.2;vertical-align:middle}
 #counterDetails{text-align:start;padding-bottom:20px}
 #counterDetails .count{margin:auto;max-width:100%}
@@ -512,12 +517,12 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
     </div>
     <div class="today-actions">
       <h2><span data-i18n="היום שלי">היום שלי</span></h2>
-      <div class="tool-links" aria-label="פעולות יומיות" data-i18n-aria-label="פעולות יומיות">
-        <a class="primary" id="dailyReading" href="https://www.naisrael.org.il/just-for-today/" target="_blank" rel="noopener noreferrer" aria-label="רק להיום — נפתח בחלון חדש" data-i18n-aria-label="רק להיום — נפתח בחלון חדש"><span class="action-copy"><span data-i18n="רק להיום">רק להיום</span><small><span data-i18n="קריאה יומית באתר NA">קריאה יומית באתר NA</span> <span id="readingLanguage"></span> <svg class="external-link-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3H3v10h10v-3M8 2h6v6M14 2 7 9"/></svg></small></span></a>
-        <button data-go="planner"><span data-i18n="תכנון יומי">תכנון יומי</span></button>
-        <button data-go="gratitude"><span data-i18n="הכרת תודה">הכרת תודה</span></button>
-        <button data-go="journal"><span data-i18n="ככה זה עכשיו">ככה זה עכשיו</span></button>
-        <button data-go="inventory"><span data-i18n="חשבון נפש יומי">חשבון נפש יומי</span></button>
+      <div class="daily-cards" aria-label="פעולות יומיות" data-i18n-aria-label="פעולות יומיות">
+        <a class="daily-card primary" id="dailyReading" href="https://www.naisrael.org.il/just-for-today/" target="_blank" rel="noopener noreferrer" aria-label="רק להיום — נפתח בחלון חדש" data-i18n-aria-label="רק להיום — נפתח בחלון חדש"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M22 13c-5-4-11-4-16-3v23c6-1 11 0 16 3 5-3 10-4 16-3V10c-5-1-11-1-16 3Zm0 0v23M11 17c3 0 5 0 7 1m8 0c2-1 4-1 7-1"/></svg><span><span class="daily-card-title" data-i18n="רק להיום">רק להיום</span><small><span data-i18n="קריאה יומית באתר NA">קריאה יומית באתר NA</span> <span id="readingLanguage"></span> <svg class="external-link-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3H3v10h10v-3M8 2h6v6M14 2 7 9"/></svg></small></span></a>
+        <button class="daily-card" data-go="planner"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg><span class="daily-card-title" data-i18n="תכנון יומי">תכנון יומי</span></button>
+        <button class="daily-card" data-go="gratitude"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg><span class="daily-card-title" data-i18n="הכרת תודה">הכרת תודה</span></button>
+        <button class="daily-card" data-go="journal"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg><span class="daily-card-title" data-i18n="ככה זה עכשיו">ככה זה עכשיו</span></button>
+        <button class="daily-card" data-go="inventory"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg><span class="daily-card-title" data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span></button>
       </div>
     </div>
   </section>
@@ -835,7 +840,7 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 <script src="assets/recovery-timers.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.31.1';
+const APP_VERSION='2026.10.31.2';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};

@@ -1,40 +1,49 @@
-# Guided daily Home — owner review
+# Guided daily Home — revised owner review
 
-Home now puts a compact recovery summary above the five directly accessible daily activities: רק להיום, תכנון יומי, הכרת תודה, ככה זה עכשיו, חשבון נפש יומי. The reading uses the existing external NA Israel URL. Its secondary line identifies the external reading and, in English/Russian, its Hebrew language. Nothing tracks completion or requires an activity to be finished before another can open.
+Home shows a compact recovery summary followed by four daily cards in a 2×2 grid and one full-width Step 10 card. This revision addresses the [owner's PR #68 feedback](https://github.com/onahum2023/clean-time/pull/68#pullrequestreview-5723184892).
 
-## Deliberate discoverability changes
+## Daily card layout
 
-- The primary summary always describes the primary recovery path, regardless of the counter selected in details. Its start date and calendar duration stay visible.
-- A secondary recovery path is a small row. Additional paths remain available in details. Existing device visibility preferences are respected. New defaults show a compact secondary path; the existing optional second-path setup checkbox defaults on and can still be unchecked.
-- “כל המונים והתצוגות” opens one optional counter detail view, keeping Today active in the existing footer. It contains the existing single/compact/equal-card presentations, path selector, and tappable numerical counter with all three formats. Browser Back/Forward and an explicit “חזרה להיום” button return to Home.
-- The “show additional paths on Home” checkbox moves to details. Hiding the secondary summary does not hide saved paths or presentation options in details.
-- Recovery-date/path editing stays in Settings, reached directly from details. The shared footer retains Today, Tools, About, Settings and Account. No new intermediate page is required to start a daily activity.
-- The existing key-tag milestone is smaller and refers to the primary Home path. Its existing Settings visibility preference is retained. Large decorative Home artwork is removed; the existing font, palette, RTL/LTR behavior, appearance settings and component conventions remain.
+The DOM, keyboard and reading order is fixed: רק להיום, תכנון יומי, הכרת תודה, ככה זה עכשיו, חשבון נפש יומי / צעד 10. In Hebrew RTL, reading/plan occupy the top right/left, and gratitude/journal the bottom right/left. English and Russian follow the same sequence in LTR. Step 10 spans both columns immediately beneath the four cards, using the same surface, border and corner treatment.
 
-No dependency, recovery-data format, schema, sync/auth or analytics changes are introduced. Counter display preferences remain device-local. Existing unknown/legacy recovery fields remain intact. Step 10 content and implementation remain separate in [issue #16](https://github.com/onahum2023/clean-time/issues/16); no new questions ship here.
+Home and Welcome share the card surface, subtle border, 16px corners, title typography, accent icon styling and 12px spacing rules. Home reuses the established reading, plan, gratitude, journal and inventory illustrations. The first action has an accent title and a short external-reading description; its safe external URL and separate-window behavior are preserved. Native buttons and links retain the shared visible focus outline; Home adds restrained hover/pressed states. Welcome's existing content and responsive composition are unchanged.
 
-## Before and after
+The grid stays two columns at 320/360/390px and desktop widths. At 320px, 10px padding and 0.95rem titles keep long Russian labels legible without clipping. Card height can grow with text. At enlarged font sizes or with status notices, the page scrolls normally; the footer does not prevent reaching the fifth card. No completion tracking, forced sequence, wizard or score is introduced.
 
-These are public review images with synthetic dates and no account data, captured at 390×844 and 1440×900. The actual implementation images include the existing local/Preview backup-unavailable notice. This can push the fifth action below the first viewport at smaller heights; normal scrolling still reaches every action and the primary status and first action remain visible. No status notices were hidden for the screenshots. The source fixtures use 31 October 2026 in Europe/Amsterdam.
+## Preserved discoverability and functionality
 
-| View | Before | After |
-| --- | --- | --- |
-| Mobile | ![Before mobile](home-ux-reference/before-mobile.png) | ![After mobile](home-ux-reference/after-mobile.png) |
-| Desktop | ![Before desktop](home-ux-reference/before-desktop.png) | ![After desktop](home-ux-reference/after-desktop.png) |
+- The compact primary summary always describes the primary path, independent of the counter selected in details. Its start date and calendar duration stay visible.
+- A secondary path is a small row; every saved path remains in details. Stored device visibility preferences are respected. New defaults show a compact secondary path; the existing optional second-path setup choice can still be unchecked.
+- “כל המונים והתצוגות” opens the optional counter view, keeping Today active in the footer. All three numerical formats, the single/compact/equal-card presentations, path selector and Home visibility checkbox remain accessible. Browser Back/Forward and “חזרה להיום” work.
+- Recovery-date/path editing stays in Settings. The existing footer retains Today, Tools, About, Settings and Account. Every daily card opens its destination directly.
+- The small primary-path key-tag milestone and its Settings visibility preference remain. The existing palette, Assistant font, appearance settings, Hebrew RTL and English/Russian LTR remain.
 
-[English at 360px](home-ux-reference/after-en-360.png) · [Russian at 360px](home-ux-reference/after-ru-360.png)
+No dependency, recovery-data format, schema, authentication, sync or analytics change is introduced by the card revision. Existing guest/offline tools, encrypted backup and unknown/legacy data fields are preserved. Step 10 content stays separate under [issue #16](https://github.com/onahum2023/clean-time/issues/16); no new questions ship here.
 
-These documentation images are excluded from the existing deployment allowlist.
+## Matched Welcome / signed-in Home evidence
+
+Each comparison uses the same viewport: mobile 390×844 or desktop 1440×900. Welcome is the unchanged reference. “Previous Home” is commit `7cdb9a4`, the list layout rejected in owner review. “Revised Home” is the 2×2 + 1 card implementation. The same synthetic recovery dates and registered account are used for both Home versions, with an actually generated encrypted test envelope and a mocked backend. No real account, recovery content or production service is used.
+
+Real local service-worker registration is enabled. Fresh browser contexts and version-matched workers prevent a cached previous Home from appearing in the revised screenshot. These are local browser captures, not hosted registered-account UAT. Dates are fixed to 31 October 2026 in Europe/Amsterdam.
+
+| View | Unchanged Welcome | Previous signed-in Home | Revised signed-in Home |
+| --- | --- | --- | --- |
+| Mobile 390×844 | ![Welcome mobile](home-ux-reference/welcome-mobile.png) | ![Previous signed-in Home mobile](home-ux-reference/previous-home-mobile.png) | ![Revised signed-in Home mobile](home-ux-reference/after-mobile.png) |
+| Desktop 1440×900 | ![Welcome desktop](home-ux-reference/welcome-desktop.png) | ![Previous signed-in Home desktop](home-ux-reference/previous-home-desktop.png) | ![Revised signed-in Home desktop](home-ux-reference/after-desktop.png) |
+
+[English signed-in Home at 320px](home-ux-reference/after-en-320.png) · [Russian signed-in Home at 320px](home-ux-reference/after-ru-320.png)
+
+The original large-counter Home references remain available: [mobile](home-ux-reference/before-mobile.png), [desktop](home-ux-reference/before-desktop.png). All documentation images are excluded from the deployment allowlist.
 
 ## Validation
 
-- Home acceptance suite: 90 assertions covering default secondary visibility, disclosure, every numerical/presentation mode, keyboard activation and heading focus, Back/Forward, primary identity, preference persistence, recovery-history/timestamp preservation and 200% text. Layout matrix: Hebrew/English/Russian, light/dark, 360/390/1440px. In the synthetic local configuration without a backup warning, all five actions fit above the footer at 360×800.
-- Existing navigation (47), timer (25), milestone (52), welcome (180), language/encrypted journeys (64), setup/display (48), local feature journeys (82), active-user upgrade (57), real offline/service-worker (20), security-header (10), account (27), recovery-flow (29) and analytics (149) checks passed.
-- Total: 880 browser assertions across 14 suites, plus 7 repository-hygiene/publication tests. Inline JS and message syntax, CSP regeneration, Preview build and diff whitespace checks passed.
-- Independent agent QA: 19 navigation/history/keyboard/byte-preservation assertions, plus Home and all detail modes at 320/360/390/1280px in three languages. Found and verified the CSS specificity fix for 36px summary numerals; no remaining blocking findings.
+- **957 browser assertions across 14 suites passed.** Home acceptance (167), navigation (47), Welcome (180), i18n/encrypted journeys (64), timers (25), milestones (52), setup/display (48), local tools (82), registered upgrade (57), offline/service-worker (20), security headers (10), account (27), recovery flow (29), analytics (149).
+- Home acceptance measures actual 2×2 + 1 geometry, full-width Step 10 adjacency, RTL/LTR placement, unclipped text, shared Welcome styles, touch targets, visible focus and keyboard order. Matrix: Hebrew/English/Russian × light/dark × 320/360/390/1440px. It also checks direct navigation, counter modes, stored preferences, history/unknown-field/timestamp preservation and enlarged text.
+- Independent agent QA checked the same 24 language/width/color-scheme combinations, direct internal routes, Back, keyboard order and unchanged recovery bytes. Welcome screenshots matched the previous commit exactly in eight width/color-scheme comparisons. No actionable findings.
+- JavaScript syntax, whitespace, regenerated CSP hashes, Preview build, repository hygiene and seven publication/hygiene tests passed before publishing the revision.
 
-All account/sync checks use synthetic identities and mocked backend traffic. No production user data or backend configuration was used. The hosted Preview remains guest-only under the repository's existing build isolation. A live registered-account UAT and owner UX review remain release checks before merge.
+Registered flows use synthetic identities and mocked encrypted traffic. The hosted Preview stays guest-only under the existing build isolation. A live registered-account UAT and owner UX approval remain release checks before merge.
 
 ## Review and release
 
-Deliver as a Draft PR and Vercel Preview. Independent QA was requested and completed locally. Keep the PR draft pending owner UX review and release checks. Do not merge or deploy to production automatically.
+Update the same Draft PR #68 and its Vercel Preview. Request owner UX review again on the revised Preview. Keep the PR draft; do not merge or deploy Production automatically.
