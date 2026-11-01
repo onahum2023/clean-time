@@ -371,7 +371,20 @@ window.CleanTimeMessages={
     "ראשי ומשני קטן": "Primary + compact",
     "כרטיסים שווים": "Equal cards",
     "הטיימר המוצג": "Displayed timer",
-    "שינוי שפה ינקה פרטים שטרם נשמרו בטופס הזה. להמשיך?": "Changing language will clear unsaved entries in this form. Continue?"
+    "שינוי שפה ינקה פרטים שטרם נשמרו בטופס הזה. להמשיך?": "Changing language will clear unsaved entries in this form. Continue?",
+    "רגע להתבוננות בסוף היום. אפשר לדלג על כל שאלה ולסיים בכל שלב.": "A moment to reflect at the end of the day. Skip any question and finish whenever you wish.",
+    "תצוגת השאלות": "Question view",
+    "שאלה בכל פעם": "One question at a time",
+    "כל השאלות להיום": "All of today’s questions",
+    "הקודמת": "Previous",
+    "הבאה": "Next",
+    "אפשר לדלג": "Skip for now",
+    "סיימתי להיום": "Finish for today",
+    "חזרה לעריכה": "Return to editing",
+    "תשובות שמורות משאלון קודם": "Saved answers from an earlier questionnaire",
+    "נוסח השאלות הקודמות אינו זמין.": "The original wording of the earlier questions is unavailable.",
+    "שאלה {current} מתוך {total}": "Question {current} of {total}",
+    "סיימת להיום. אפשר לחזור ולערוך בכל עת.": "Finished for today. You can return and edit at any time."
   },
   "ru": {
     "חזרה להגדרות": "Назад к настройкам",

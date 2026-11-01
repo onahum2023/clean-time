@@ -329,6 +329,10 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 #planner .page-heading{--page-tone:#78826A}
 #meditation .page-heading{--page-tone:#62877F}
 #meditation .page-art{width:64px;height:56px}
+#iQuestions textarea{min-height:150px}
+#inventory .row{flex-wrap:wrap}
+#inventory .row .btn{flex:1 1 auto;white-space:normal}
+#inventory [aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--accent)}
 #inventory .page-heading{--page-tone:#547571}
 #about .page-heading{--page-tone:#A08A6C}
 #readings .page-heading{--page-tone:#758174}
@@ -641,11 +645,31 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
   <section id="inventory" hidden>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M91 8C46 24 38 66 77 90 29 101 1 64 17 34M18 112h107M30 127h83M44 142h55"/></svg>
     <div class="page-heading"><h2><span data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span></h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg></div>
-    <p class="sub"><span data-i18n="רגע להתבוננות בסוף היום. אפשר לכתוב כאן סיכום חופשי של היום ומחשבות לסוף היום.">רגע להתבוננות בסוף היום. אפשר לכתוב כאן סיכום חופשי של היום ומחשבות לסוף היום.</span></p>
+    <p class="sub"><span data-i18n="רגע להתבוננות בסוף היום. אפשר לדלג על כל שאלה ולסיים בכל שלב.">רגע להתבוננות בסוף היום. אפשר לדלג על כל שאלה ולסיים בכל שלב.</span></p>
     <label class="field"><span><span data-i18n="יום ההתבוננות">יום ההתבוננות</span></span><input type="date" id="iDay" required></label>
     <label class="field"><span><span data-i18n="ימים שמורים">ימים שמורים</span></span><select id="iHistory" aria-label="ימי חשבון נפש שמורים" data-i18n-aria-label="ימי חשבון נפש שמורים"></select></label>
+    <div class="row" role="group" aria-label="תצוגת השאלות" data-i18n-aria-label="תצוגת השאלות">
+      <button class="btn ghost" id="iFocused" aria-pressed="true"><span data-i18n="שאלה בכל פעם">שאלה בכל פעם</span></button>
+      <button class="btn ghost" id="iAll" aria-pressed="false"><span data-i18n="כל השאלות להיום">כל השאלות להיום</span></button>
+    </div>
+    <p class="note" id="iPosition" aria-live="polite"></p>
+    <div id="iQuestions" lang="he" dir="rtl"></div>
+    <div class="row" id="iNavigation">
+      <button class="btn ghost" id="iPrevious"><span data-i18n="הקודמת">הקודמת</span></button>
+      <button class="btn ghost" id="iNext"><span data-i18n="הבאה">הבאה</span></button>
+      <button class="btn ghost" id="iSkip"><span data-i18n="אפשר לדלג">אפשר לדלג</span></button>
+    </div>
     <label class="field"><span><span data-i18n="סיכום היום / מחשבות לסוף היום">סיכום היום / מחשבות לסוף היום</span></span><textarea id="iSummary" placeholder="אפשר לכתוב כאן כמה מילים..." data-i18n-placeholder="אפשר לכתוב כאן כמה מילים..."></textarea></label>
+    <details id="iLegacy" hidden><summary><span data-i18n="תשובות שמורות משאלון קודם">תשובות שמורות משאלון קודם</span></summary><p class="note"><span data-i18n="נוסח השאלות הקודמות אינו זמין.">נוסח השאלות הקודמות אינו זמין.</span></p><div id="iLegacyAnswers" dir="auto"></div></details>
+    <button class="btn" id="iFinish"><span data-i18n="סיימתי להיום">סיימתי להיום</span></button>
+    <button class="btn ghost" id="iReopen" hidden><span data-i18n="חזרה לעריכה">חזרה לעריכה</span></button>
     <p class="msg" id="iStatus" role="status"></p>
+    <p class="note" id="iCompletion" role="status"></p>
+    <p class="note" lang="he" dir="rtl">השאלות מתוך ״לחיות את התכנית״, עלון מס׳ 9, מכורים אנונימיים.
+      <a href="https://na.org/wp-content/uploads/2024/05/he3109-IP-9-Hebrew.pdf" target="_blank" rel="noopener noreferrer">לעלון המקורי</a>.
+      Copyright © 2005 by Narcotics Anonymous World Services, Inc. כל הזכויות שמורות.
+      בחירת שש השאלות היא של זמן נקי. האפליקציה אינה קשורה למכורים אנונימיים ואינה מאושרת על ידם.
+    </p>
   </section>
 
   <!-- Settings -->
@@ -844,7 +868,7 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 <script src="assets/recovery-timers.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.31.4';
+const APP_VERSION='2026.11.01.1';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1229,27 +1253,102 @@ $('pForm').onsubmit=ev=>{
   planSelected=k;save();$('pInput').value='';renderP();$('pInput').focus();
 };
 
-/* ---------- Step 10: free reflection; retain legacy answer fields ---------- */
-let inventoryDay='';
+/* ---------- Step 10: approved Hebrew IP #9, HE-3109 (Hebrew 8/05) ---------- */
+// Stable IDs identify this exact wording; never reuse them for revised prompts.
+const INVENTORY_VERSION='na-ip9-he-2005-daily-v1';
+const INVENTORY_QUESTIONS=[
+  ['na_ip9_he_2005_q06','האם הייתי טוב אל עצמי היום? איך?'],
+  ['na_ip9_he_2005_q10','האם שיתפתי היום מנסיוני, כוחי ותקוותי?'],
+  ['na_ip9_he_2005_q17','מה למדתי על עצמי היום?'],
+  ['na_ip9_he_2005_q25','האם עשיתי היום משהו שיגרום נזק לי או לאחר? אם כן, מה?'],
+  ['na_ip9_he_2005_q31','האם היום היה פחד בחיי?'],
+  ['na_ip9_he_2005_q36','האם זכרתי באופן מודע שיש לי בחירה היום?']
+];
+const INVENTORY_VIEW_KEY='cleantime-inventory-view';
+let inventoryDay='',inventoryView={mode:'focused',positions:{}};
+try{
+  const stored=JSON.parse(localStorage.getItem(INVENTORY_VIEW_KEY));
+  if(stored&&['focused','all'].includes(stored.mode)&&stored.positions&&typeof stored.positions==='object'&&!Array.isArray(stored.positions))inventoryView=stored;
+}catch(e){}
+function inventoryPosition(){
+  const pos=inventoryView.positions[inventoryDay];
+  return Number.isInteger(pos)&&pos>=0&&pos<INVENTORY_QUESTIONS.length?pos:0;
+}
+function rememberInventoryView(){
+  // Presentation only: no recovery updatedAt, sync, analytics, or answer content.
+  try{localStorage.setItem(INVENTORY_VIEW_KEY,JSON.stringify(inventoryView));}catch(e){}
+}
 function inventoryHistory(){
   const select=$('iHistory');select.replaceChildren();
   const keys=Array.from(new Set([todayKey(),inventoryDay,...Object.keys(S.inventory)])).sort().reverse();
   keys.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=dateLabel(k);select.append(o);});select.value=inventoryDay;select.parentElement.hidden=keys.length<2;
 }
+function inventoryCompletion(){
+  const finished=!!S.inventory[inventoryDay]?.finishedAt;
+  $('iFinish').hidden=finished;$('iReopen').hidden=!finished;
+  $('iCompletion').textContent=finished?translateUI('סיימת להיום. אפשר לחזור ולערוך בכל עת.'):'';
+}
+function renderInventoryQuestions(focus=false){
+  const entry=S.inventory[inventoryDay]||{},pos=inventoryPosition(),all=inventoryView.mode==='all';
+  $('iFocused').setAttribute('aria-pressed',String(!all));$('iAll').setAttribute('aria-pressed',String(all));
+  $('iPosition').hidden=all;$('iPosition').textContent=translateUI('שאלה {current} מתוך {total}').replace('{current}',pos+1).replace('{total}',INVENTORY_QUESTIONS.length);
+  $('iNavigation').hidden=all;
+  $('iPrevious').disabled=pos===0;$('iNext').disabled=pos===INVENTORY_QUESTIONS.length-1;
+  $('iSkip').hidden=pos===INVENTORY_QUESTIONS.length-1;
+  $('iQuestions').replaceChildren();
+  INVENTORY_QUESTIONS.forEach(([id,prompt],i)=>{
+    if(!all&&i!==pos)return;
+    const label=document.createElement('label');label.className='field';
+    const text=document.createElement('span');text.textContent=prompt;
+    const input=document.createElement('textarea');input.id='iAnswer_'+id;input.dir='auto';
+    input.value=typeof entry.answers?.[id]==='string'?entry.answers[id]:'';
+    input.onfocus=()=>{inventoryView.positions[inventoryDay]=i;rememberInventoryView();};
+    input.oninput=()=>saveInventory({answer:[id,input.value]});
+    label.append(text,input);$('iQuestions').append(label);
+  });
+  inventoryCompletion();
+  if(focus)$('iQuestions').querySelector('textarea')?.focus();
+}
 function openInventory(key){
   inventoryDay=key;$('iDay').value=key;$('iDay').max=todayKey();
   const entry=S.inventory[key]||{};
-  $('iSummary').value=entry.summary||'';$('iStatus').textContent=entry.updated?translateUI('נשמר במכשיר'):'';inventoryHistory();
+  $('iSummary').value=entry.summary||'';$('iStatus').textContent=entry.updated?translateUI('נשמר במכשיר'):'';
+  const known=new Set(INVENTORY_QUESTIONS.map(([id])=>id));
+  const legacy=Object.entries(entry.answers||{}).filter(([id,value])=>!known.has(id)&&typeof value==='string'&&value);
+  $('iLegacy').hidden=!legacy.length;$('iLegacyAnswers').replaceChildren();
+  legacy.forEach(([,value])=>{const p=document.createElement('p');p.style.whiteSpace='pre-wrap';p.textContent=value;$('iLegacyAnswers').append(p);});
+  renderInventoryQuestions();inventoryHistory();
 }
-function saveInventory(){
-  const existing=S.inventory[inventoryDay]||{};
-  // Retain unknown fields and future question answers when revisiting a day.
-  S.inventory[inventoryDay]={...existing,questionnaireVersion:existing.questionnaireVersion||'placeholder-v1',answers:{...(existing.answers||{})},summary:$('iSummary').value,created:existing.created||Date.now(),updated:Date.now()};
-  const ok=save();$('iStatus').textContent=ok?translateUI('נשמר במכשיר'):translateUI('לא נשמר במכשיר');inventoryHistory();
+function saveInventory(change={}){
+  const existing=S.inventory[inventoryDay]||{},answers={...(existing.answers||{})};
+  if(change.answer)answers[change.answer[0]]=change.answer[1];
+  // Preserve the original version/unknown fields on legacy records. The separate
+  // answer version describes only these additive, namespaced official prompts.
+  const entry={...existing,questionnaireVersion:existing.questionnaireVersion||INVENTORY_VERSION,
+    answers,summary:$('iSummary').value,created:existing.created||Date.now(),updated:Date.now()};
+  if(change.answer)entry.dailyQuestionnaireVersion=INVENTORY_VERSION;
+  if(change.finish)entry.finishedAt=Date.now();
+  else delete entry.finishedAt;
+  S.inventory[inventoryDay]=entry;
+  const ok=save();$('iStatus').textContent=ok?translateUI('נשמר במכשיר'):translateUI('לא נשמר במכשיר');
+  if(!ok&&change.finish){if(existing.finishedAt)entry.finishedAt=existing.finishedAt;else delete entry.finishedAt;}
+  inventoryHistory();inventoryCompletion();return ok;
 }
-$('iSummary').oninput=saveInventory;
+$('iSummary').oninput=()=>saveInventory();
 $('iDay').onchange=()=>{if($('iDay').value&&$('iDay').checkValidity())openInventory($('iDay').value);else $('iDay').value=inventoryDay;};
 $('iHistory').onchange=()=>openInventory($('iHistory').value);
+for(const [id,mode] of [['iFocused','focused'],['iAll','all']])$(id).onclick=()=>{
+  inventoryView.mode=mode;rememberInventoryView();renderInventoryQuestions();
+};
+function moveInventory(delta){
+  inventoryView.positions[inventoryDay]=Math.max(0,Math.min(INVENTORY_QUESTIONS.length-1,inventoryPosition()+delta));
+  rememberInventoryView();renderInventoryQuestions(true);
+}
+$('iPrevious').onclick=()=>moveInventory(-1);
+$('iNext').onclick=()=>moveInventory(1);
+$('iSkip').onclick=()=>moveInventory(1);
+$('iFinish').onclick=()=>{if(saveInventory({finish:true}))$('iReopen').focus();};
+$('iReopen').onclick=()=>{if(saveInventory())$('iQuestions').querySelector('textarea')?.focus();};
 
 /* ---------- Meditation: wall-clock deadline; ephemeral, no history ---------- */
 const gong=new Audio('assets/gong.wav');gong.preload='auto';
@@ -1624,7 +1723,8 @@ $('exportRecovery').onclick=()=>{
   }catch(e){$('exportStatus').textContent=translateUI('לא הצלחנו ליצור את הקובץ. הנתונים במכשיר לא שונו.');}
 };
 function resetLocal(){
-  try{localStorage.removeItem(KEY);}catch(e){}
+  try{localStorage.removeItem(KEY);localStorage.removeItem(INVENTORY_VIEW_KEY);}catch(e){}
+  inventoryView={mode:'focused',positions:{}};
   resetSetupTimers();
   storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();$('oDate').value='';$('oFrom').value='';confirmRecoveryDate('oDate');show('welcome');
 }
