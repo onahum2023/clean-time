@@ -1,5 +1,7 @@
 # Guided daily Home — revised owner review
 
+**Desktop update (issue #75):** At widths of 1024px and above, Today places the recovery summary and milestone beside a vertical list of the five daily actions. Mobile retains the 2×2 grid and full-width Step 10. The fixed bottom navigation remains at all widths. Earlier evidence below describes the preceding layout.
+
 Home shows a compact recovery summary followed by four daily cards in a 2×2 grid and one full-width Step 10 card. This revision addresses the [owner's PR #68 feedback](https://github.com/onahum2023/clean-time/pull/68#pullrequestreview-5723184892).
 
 The subsequent [issue #69 signed-in summary refinement](HOME-SIGNED-IN-SUMMARY.md) removes repeated labels from authenticated Home; the evidence below records PR #68.

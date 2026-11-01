@@ -457,6 +457,17 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 .duration-preview[hidden]{display:none}
 .settings-foot h3{letter-spacing:-.01em}
 
+/* Desktop Today: keep the recovery summary and daily actions side by side. */
+@media (min-width:1024px){
+  #counter{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:24px;align-items:start}
+  #counter #backupReminder{grid-column:1/-1;margin-bottom:0}
+  #counter .recovery-summary{padding:24px}
+  #counter .today-actions{margin-top:0;padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+  #counter .daily-cards{grid-template-columns:minmax(0,1fr);gap:12px}
+  #counter .daily-card,#counter .daily-card:last-child{grid-column:auto;flex-direction:row;align-items:center;min-height:72px}
+  #counter .daily-card-title{margin:0}
+}
+
 /* Shared responsive shell. Reading and writing retain a comfortable measure. */
 :root{--shell-width:1120px;--content-width:760px;--writing-width:800px;--page-gutter:20px}
 .app{padding-inline:var(--page-gutter);padding-bottom:calc(4rem + 24px + env(safe-area-inset-bottom,0px))}
@@ -975,7 +986,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.6';
+const APP_VERSION='2026.11.01.7';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};

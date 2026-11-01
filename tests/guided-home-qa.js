@@ -59,15 +59,16 @@ async(page)=>{
    }),'Compact status and first daily actions above footer '+language+' '+width+' '+colorScheme);
    check(await page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.daily-cards > *')],r=cards.map(e=>e.getBoundingClientRect()),grid=document.querySelector('.daily-cards').getBoundingClientRect(),rtl=document.documentElement.dir==='rtl',near=(a,b)=>Math.abs(a-b)<1;
+    if(innerWidth>=1024){const summary=document.querySelector('.recovery-summary').getBoundingClientRect(),actions=document.querySelector('.today-actions').getBoundingClientRect();return r.length===5&&near(summary.top,actions.top)&&(rtl?summary.left>actions.left:summary.left<actions.left)&&r.every((v,i)=>near(v.width,grid.width)&&(i===0||v.top>=r[i-1].bottom))&&cards.every(e=>e.scrollWidth<=e.clientWidth&&e.getBoundingClientRect().height>=44)}
     return r.length===5&&near(r[0].top,r[1].top)&&near(r[2].top,r[3].top)&&r[2].top>r[0].bottom&&near(r[0].left,r[2].left)&&near(r[1].left,r[3].left)&&(rtl?r[0].left>r[1].left:r[0].left<r[1].left)&&near(r[4].width,grid.width)&&near(r[4].top-Math.max(r[2].bottom,r[3].bottom),parseFloat(getComputedStyle(document.querySelector('.daily-cards')).rowGap))&&cards.every(e=>e.scrollWidth<=e.clientWidth&&e.getBoundingClientRect().height>=44);
-   }),'Two by two cards in reading order followed immediately by full-width Step 10 '+language+' '+width+' '+colorScheme);
+   }),'Responsive actions retain reading order and desktop columns / mobile grid '+language+' '+width+' '+colorScheme);
    check(await page.evaluate(()=>{
     const card=document.querySelector('.daily-card'),welcome=document.querySelector('.welcome-feature-list li'),a=getComputedStyle(card),b=getComputedStyle(welcome);
     return ['backgroundColor','borderWidth','borderRadius'].every(k=>a[k]===b[k])&&getComputedStyle(card.querySelector('.page-art')).color===getComputedStyle(welcome.querySelector('.page-art')).color;
    }),'Home cards retain Welcome surface, corner and icon treatment '+language+' '+width+' '+colorScheme);
    check(await page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.daily-card')].map(e=>getComputedStyle(e)),gap=parseFloat(getComputedStyle(document.querySelector('.daily-cards')).rowGap),badge=document.getElementById('milestone').getBoundingClientRect();
-    return gap===(innerWidth<=340?12:16)&&cards.every(c=>c.borderColor===cards[0].borderColor&&c.boxShadow===cards[0].boxShadow&&c.boxShadow!=='none')&&badge.width>=50&&badge.height>=70;
+    return gap===(innerWidth<=340||innerWidth>=1024?12:16)&&cards.every(c=>c.borderColor===cards[0].borderColor&&c.boxShadow===cards[0].boxShadow&&c.boxShadow!=='none')&&badge.width>=50&&badge.height>=70;
    }),'Consistent soft outlines and elevation, roomier gaps and readable badge '+language+' '+width+' '+colorScheme);
    await page.locator('#openSettings').click();await page.locator('#settings [data-go=counterDetails]').click();
    for(const mode of ['cards','compact','single']){
