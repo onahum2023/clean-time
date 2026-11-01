@@ -288,25 +288,9 @@ select{min-height:46px}
 .timer-actions{display:flex;gap:12px;justify-content:center}
 .timer-actions .btn{min-width:100px}
 #onboarding,#startup{padding-top:24px}
-/* First-visit landing: brand, explanation, tools, then entry. */
-.app.landing{max-width:880px;padding-bottom:32px}
-#welcome{padding-top:28px}
-.welcome-brand{text-align:center;margin-bottom:24px}
-.welcome-logo{display:block;width:88px;height:88px;margin:0 auto 12px;border-radius:24px}
-#welcomeTitle{font-size:clamp(2.6rem,8vw,3.4rem);font-weight:700;line-height:1.15;letter-spacing:-.015em;margin:0}
-.welcome-lead{font-size:1.15rem;font-weight:600;margin:12px 0 8px}
-.welcome-origin{max-width:38em;margin:0 auto;color:var(--muted);line-height:1.7}
-.welcome-features{margin:0 0 24px}
-.welcome-features h2{font-size:1.2rem;margin:0 0 12px}
-.welcome-feature-list{list-style:none;padding:0;margin:0;display:grid;gap:12px}
-.welcome-feature-list li,.daily-card{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;min-width:0}
-.welcome-feature-list .page-art,.daily-card .page-art{color:var(--accent-ink);width:40px;height:40px}
-.welcome-feature-list h3,.daily-card-title{font-size:1.05rem;line-height:1.4;margin:0 0 4px;font-weight:600}
-.welcome-feature-list p{font-size:1rem;color:var(--muted);margin:0;line-height:1.5}
-.welcome-entry{max-width:440px;margin:0 auto;text-align:center}
-#welcome .welcome-entry .btn{width:100%;white-space:normal;margin-bottom:8px}
-.welcome-entry .note{margin:12px 0 16px;font-size:1rem;line-height:1.6}
-@media(min-width:600px){.welcome-feature-list{grid-template-columns:repeat(2,minmax(0,1fr))}#welcome{padding-top:40px}}
+.daily-card{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;min-width:0}
+.daily-card .page-art{color:var(--accent-ink);width:40px;height:40px}
+.daily-card-title{font-size:1.05rem;line-height:1.4;margin:0 0 4px;font-weight:600}
 
 .date-confirmation{display:block;color:var(--ink);font-weight:600;margin-top:8px}
 #backupReminder{padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:16px}
@@ -529,6 +513,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
  .settings-columns>div>.settings-foot:first-child{margin-top:0}
 }
 </style>
+<link rel="stylesheet" href="/assets/welcome.css">
 </head>
 <body>
 <div class="app">
@@ -560,26 +545,64 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
     <button class="btn ghost" id="startupLocal" hidden><span data-i18n="להמשיך במכשיר הזה">להמשיך במכשיר הזה</span></button>
   </section>
   <section id="welcome" hidden aria-labelledby="welcomeTitle">
-    <div class="welcome-brand">
-      <img class="welcome-logo" src="/icon-512.png" width="88" height="88" alt="" aria-hidden="true">
-      <h1 id="welcomeTitle"><span data-i18n="זמן נקי">זמן נקי</span></h1>
-      <p class="welcome-lead"><span data-i18n="מרחב פשוט ליום שלך בהחלמה">מרחב פשוט ליום שלך בהחלמה</span></p>
-      <p class="welcome-origin"><span data-i18n="האפליקציה נולדה מצורך אישי במלווה פשוט בעברית למי שבהחלמה. כלים קטנים לתמיכה ביום שלך, בחינם ובלי לחץ.">האפליקציה נולדה מצורך אישי במלווה פשוט בעברית למי שבהחלמה. כלים קטנים לתמיכה ביום שלך, בחינם ובלי לחץ.</span></p>
+    <div class="welcome-hero welcome-card">
+      <div class="welcome-copy">
+        <div class="welcome-brand">
+          <img class="welcome-logo" src="/icon-512.png" width="64" height="64" alt="" aria-hidden="true">
+          <h1 id="welcomeTitle"><span data-i18n="זמן נקי">זמן נקי</span></h1>
+        </div>
+        <p class="welcome-lead"><span data-i18n="מרחב פשוט ליום שלך בהחלמה">מרחב פשוט ליום שלך בהחלמה</span></p>
+        <p class="welcome-origin"><span data-i18n="האפליקציה נולדה מצורך אישי במלווה פשוט בעברית למי שבהחלמה. כלים קטנים לתמיכה ביום שלך, בחינם ובלי לחץ.">האפליקציה נולדה מצורך אישי במלווה פשוט בעברית למי שבהחלמה. כלים קטנים לתמיכה ביום שלך, בחינם ובלי לחץ.</span></p>
+        <div class="welcome-entry">
+          <button class="btn welcome-start" id="welcomeStart"><span data-i18n="מתחילים">מתחילים</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14 6-6 6 6 6M8 12h13"/></svg></button>
+          <p class="welcome-guest-note"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span data-i18n="בלי הרשמה. בקצב שלך.">בלי הרשמה. בקצב שלך.</span></p>
+          <button class="btn ghost" id="onboardingLogin"><span data-i18n="כבר יש לי חשבון">כבר יש לי חשבון</span></button>
+        </div>
+      </div>
+      <figure class="welcome-preview welcome-card" aria-labelledby="welcomeExampleTitle">
+        <figcaption class="welcome-example-note" id="welcomeExampleTitle"><span data-i18n="דוגמה בלבד · ללא נתונים אישיים">דוגמה בלבד · ללא נתונים אישיים</span></figcaption>
+        <div class="welcome-example-summary">
+          <div>
+            <p class="welcome-example-label"><span data-i18n="זמן נקי">זמן נקי</span></p>
+            <p class="welcome-example-count"><span data-i18n="3 חודשים">3 חודשים</span></p>
+          </div>
+          <!-- Static adaptation of Lovable's Keytag; never read from or saved to user state. -->
+          <svg class="welcome-keytag" viewBox="0 0 64 92" width="56" height="80" aria-hidden="true" focusable="false">
+            <circle cx="32" cy="10" r="7" fill="none" stroke="var(--welcome-keytag)" stroke-width="3"/>
+            <path d="M32 18c14 14 26 30 26 46a26 26 0 0 1-52 0c0-16 12-32 26-46Z" fill="var(--welcome-keytag)"/>
+            <circle cx="32" cy="26" r="2.5" fill="var(--surface)"/>
+            <text x="32" y="64" text-anchor="middle" fill="var(--welcome-keytag-ink)" font-size="20" font-weight="700" font-family="Assistant, sans-serif">3</text>
+            <text x="32" y="78" text-anchor="middle" fill="var(--welcome-keytag-ink)" font-size="9" font-weight="600" font-family="Assistant, sans-serif" data-i18n="חודשים">חודשים</text>
+          </svg>
+        </div>
+        <ul class="welcome-preview-tools" aria-hidden="true">
+          <li><span class="welcome-icon reading" aria-hidden="true"><svg viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M22 13c-5-4-11-4-16-3v23c6-1 11 0 16 3 5-3 10-4 16-3V10c-5-1-11-1-16 3Zm0 0v23M11 17c3 0 5 0 7 1m8 0c2-1 4-1 7-1"/></svg></span><span data-i18n="רק להיום">רק להיום</span></li>
+          <li><span class="welcome-icon planning" aria-hidden="true"><svg viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg></span><span data-i18n="התכנית שלי להיום">התכנית שלי להיום</span></li>
+          <li><span class="welcome-icon gratitude" aria-hidden="true"><svg viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg></span><span data-i18n="הכרת תודה">הכרת תודה</span></li>
+        </ul>
+      </figure>
     </div>
     <div class="welcome-features" aria-labelledby="welcomeFeaturesTitle">
-      <h2 id="welcomeFeaturesTitle"><span data-i18n="מה יש כאן">מה יש כאן</span></h2>
+      <h2 id="welcomeFeaturesTitle"><span data-i18n="מה מחכה לך בפנים">מה מחכה לך בפנים</span></h2>
+      <p class="welcome-features-intro"><span data-i18n="אותו סדר יום מוכר, כל יום. בלי החלטות מיותרות.">אותו סדר יום מוכר, כל יום. בלי החלטות מיותרות.</span></p>
       <ul class="welcome-feature-list">
-        <li data-feature="counter"><svg class="page-art daybreak" viewBox="0 0 68 34" aria-hidden="true" focusable="false"><path d="M4 26h60M23 26a11 11 0 0 1 22 0M34 3v5M13 12l4 4m38-4-4 4M12 31h44"/></svg><div><h3><span data-i18n="זמן נקי">זמן נקי</span></h3><p><span data-i18n="לראות את הזמן שעבר מאז תחילת ההחלמה.">לראות את הזמן שעבר מאז תחילת ההחלמה.</span></p></div></li>
-        <li data-feature="planner"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg><div><h3><span data-i18n="התכנית שלי להיום">התכנית שלי להיום</span></h3><p><span data-i18n="לבחור צעדים קטנים להיום ולעקוב אחריהם.">לבחור צעדים קטנים להיום ולעקוב אחריהם.</span></p></div></li>
-        <li data-feature="journal"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg><div><h3><span data-i18n="ככה זה עכשיו">ככה זה עכשיו</span></h3><p><span data-i18n="יומן אישי למחשבות ולמה שעובר עליך עכשיו.">יומן אישי למחשבות ולמה שעובר עליך עכשיו.</span></p></div></li>
-        <li data-feature="gratitude"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg><div><h3><span data-i18n="הכרת תודה">הכרת תודה</span></h3><p><span data-i18n="לשים לב לדברים הטובים ולחזור אליהם בהמשך.">לשים לב לדברים הטובים ולחזור אליהם בהמשך.</span></p></div></li>
+        <li class="welcome-card welcome-counter-card" data-feature="counter"><span class="welcome-icon " aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18M12 18l-3-3a2 2 0 0 1 3-2 2 2 0 0 1 3 2Z"/></svg></span><div><h3><span data-i18n="זמן נקי">זמן נקי</span></h3><p><span data-i18n="לראות את הזמן שעבר מאז תחילת ההחלמה.">לראות את הזמן שעבר מאז תחילת ההחלמה.</span></p></div></li>
+        <li class="welcome-card" data-feature="reading"><span class="welcome-icon reading" aria-hidden="true"><svg viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M22 13c-5-4-11-4-16-3v23c6-1 11 0 16 3 5-3 10-4 16-3V10c-5-1-11-1-16 3Zm0 0v23M11 17c3 0 5 0 7 1m8 0c2-1 4-1 7-1"/></svg></span><div><h3><span data-i18n="רק להיום">רק להיום</span></h3><p><span data-i18n="קריאה יומית באתר NA">קריאה יומית באתר NA</span></p></div></li>
+        <li class="welcome-card" data-feature="planner"><span class="welcome-icon planning" aria-hidden="true"><svg viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg></span><div><h3><span data-i18n="התכנית שלי להיום">התכנית שלי להיום</span></h3><p><span data-i18n="לבחור צעדים קטנים להיום ולעקוב אחריהם.">לבחור צעדים קטנים להיום ולעקוב אחריהם.</span></p></div></li>
+        <li class="welcome-card" data-feature="gratitude"><span class="welcome-icon gratitude" aria-hidden="true"><svg viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg></span><div><h3><span data-i18n="הכרת תודה">הכרת תודה</span></h3><p><span data-i18n="לשים לב לדברים הטובים ולחזור אליהם בהמשך.">לשים לב לדברים הטובים ולחזור אליהם בהמשך.</span></p></div></li>
+        <li class="welcome-card" data-feature="journal"><span class="welcome-icon journal" aria-hidden="true"><svg viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg></span><div><h3><span data-i18n="ככה זה עכשיו">ככה זה עכשיו</span></h3><p><span data-i18n="יומן אישי למחשבות ולמה שעובר עליך עכשיו.">יומן אישי למחשבות ולמה שעובר עליך עכשיו.</span></p></div></li>
+        <li class="welcome-card" data-feature="inventory"><span class="welcome-icon evening" aria-hidden="true"><svg viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg></span><div><h3><span data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span></h3><p><span data-i18n="זמן להתבוננות בסוף היום, עם שאלות וכתיבה אישית.">זמן להתבוננות בסוף היום, עם שאלות וכתיבה אישית.</span></p></div></li>
+        <li class="welcome-card" data-feature="tools"><span class="welcome-icon " aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 22v-8M12 14C6 14 3 10 3 5c6 0 9 4 9 9ZM12 17c0-6 3-10 9-10 0 6-3 10-9 10Z"/></svg></span><div><h3><span data-i18n="כלים להחלמה">כלים להחלמה</span></h3><p><span data-i18n="מדיטציה, קריאה וקישורים ששמרת — במקום אחד.">מדיטציה, קריאה וקישורים ששמרת — במקום אחד.</span></p></div></li>
       </ul>
     </div>
-    <div class="welcome-entry">
-      <button class="btn" id="welcomeStart"><span data-i18n="מתחילים">מתחילים</span></button>
-      <button class="btn ghost" id="onboardingLogin"><span data-i18n="כבר יש לי חשבון">כבר יש לי חשבון</span></button>
-      <p class="note"><span data-i18n="אין צורך בהרשמה. הנתונים נשמרים בדפדפן במכשיר הזה. גיבוי מוצפן וסנכרון הם אפשרות שאפשר להפעיל בהמשך.">אין צורך בהרשמה. הנתונים נשמרים בדפדפן במכשיר הזה. גיבוי מוצפן וסנכרון הם אפשרות שאפשר להפעיל בהמשך.</span></p>
-      <button class="btn ghost" data-go="about"><span data-i18n="אודות זמן נקי ופרטיות">אודות זמן נקי ופרטיות</span></button>
+    <div class="welcome-privacy welcome-card" aria-labelledby="welcomeReflection">
+      <p class="welcome-reflection" id="welcomeReflection"><span data-i18n="ההחלמה היא לא קו ישר. היא סדרה של בחירות כנות, להופיע שוב ושוב.">ההחלמה היא לא קו ישר. היא סדרה של בחירות כנות, להופיע שוב ושוב.</span></p>
+      <button class="btn welcome-start" id="welcomeFooterStart"><span data-i18n="מתחילים">מתחילים</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14 6-6 6 6 6M8 12h13"/></svg></button>
+      <p class="welcome-privacy-note"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span data-i18n="במצב אורח הנתונים נשמרים בדפדפן במכשיר הזה. אפשר להפעיל בהמשך גיבוי מוצפן וסנכרון בחשבון. בלי פרסומות ובלי לחץ מסחרי.">במצב אורח הנתונים נשמרים בדפדפן במכשיר הזה. אפשר להפעיל בהמשך גיבוי מוצפן וסנכרון בחשבון. בלי פרסומות ובלי לחץ מסחרי.</span></p>
+      <div class="welcome-footer-links">
+        <a href="/privacy/"><span data-i18n="פרטיות">פרטיות</span></a>
+        <button class="btn ghost" data-go="about"><span data-i18n="אודות זמן נקי">אודות זמן נקי</span></button>
+      </div>
     </div>
   </section>
   <section id="onboarding" hidden>
@@ -1163,6 +1186,7 @@ function openAuth(mode,record=true){
 }
 $('authCreate').onclick=()=>openAuth(S.date?'convert':'create');
 $('welcomeStart').onclick=()=>show('onboarding');
+$('welcomeFooterStart').onclick=$('welcomeStart').onclick;
 $('setupBack').onclick=()=>show('welcome');
 $('aboutBack').onclick=()=>history.back();
 $('startupLocal').onclick=()=>show(S.date?'counter':'welcome');
