@@ -248,7 +248,7 @@ h3{font-family:var(--sans);font-weight:600;font-size:1.25rem;margin:0 0 4px}
 
 /* Tabs */
 nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
-nav.tabs .inner{max-width:var(--shell-width);margin:0 auto;display:flex}
+nav.tabs .inner{max-width:520px;margin:0 auto;display:flex}
 nav.tabs button{flex:1;min-width:0;background:none;border:0;padding:12px 2px 14px;cursor:pointer;color:var(--muted);font-size:.85rem;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:3px}
 nav.tabs button{position:relative;font-weight:600}
 nav.tabs button[aria-current=page]{color:var(--accent-ink);font-weight:600}
@@ -442,7 +442,7 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 @media(min-width:800px){#counter .today-actions{margin-top:28px}}
 
 /* Shared responsive shell. Reading and writing retain a comfortable measure. */
-:root{--shell-width:1120px;--content-width:760px;--writing-width:800px;--page-gutter:20px;--navigation-height:calc(3.5rem + 16px)}
+:root{--shell-width:1120px;--content-width:760px;--writing-width:800px;--page-gutter:20px}
 .app{padding-inline:var(--page-gutter);padding-bottom:calc(4rem + 24px + env(safe-area-inset-bottom,0px))}
 html{scroll-padding-bottom:calc(4rem + 24px + env(safe-area-inset-bottom,0px))}
 .app>section,.app>header{width:100%;max-width:var(--content-width);margin-inline:auto;min-width:0}
@@ -483,15 +483,6 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
  .editor textarea{padding:24px;line-height:1.8}
 }
 @media(min-width:768px){
- body:has(#tabs:not([hidden])) .app{padding-top:var(--navigation-height);padding-bottom:40px}
- body:has(#tabs:not([hidden])) .language-bar{top:var(--navigation-height)}
- html{scroll-padding-top:calc(var(--navigation-height) + 56px)}
- nav.tabs{top:0;bottom:auto;border-top:0;border-bottom:1px solid var(--line);padding:0 env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px)}
- nav.tabs .inner{height:var(--navigation-height);padding-inline:var(--page-gutter);gap:8px}
- nav.tabs button{font-size:1rem;padding:8px 12px;border-radius:12px;align-self:center;min-height:48px}
- nav.tabs button[aria-current=page]{background:var(--accent-soft)}
- nav.tabs button[aria-current=page]::before{top:auto;bottom:0;border-radius:3px 3px 0 0}
- #iPosition{scroll-margin-top:calc(var(--navigation-height) + 56px)}
  .tool-links{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px}
  .tool-links>:nth-last-child(2):nth-child(odd){border-bottom:0}
 }
@@ -967,7 +958,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.4';
+const APP_VERSION='2026.11.01.5';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};

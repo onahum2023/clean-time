@@ -22,10 +22,12 @@ Production deployment and merge require owner approval.
 | Confirmations | Centered dialog could exceed short/enlarged viewport | Bounded by dynamic viewport height; dialog contents scroll without losing keyboard focus trapping |
 
 Shared shell: 1120px ceiling, 16/20px mobile gutters and 32px from 600px.
-Bottom navigation remains on phones. From 768px the same five controls move to
-one full-width top bar, with the language switcher immediately below. The top
-bar reserves space in rem units for enlarged text. Reading order, accessible
-labels, active-page semantics, history and focus behavior are unchanged.
+Fixed bottom navigation remains at every viewport width, with the original five
+options, order and active-page highlighting. Its items sit in a centered 520px
+container, independently of the wider content shell. Bottom content and scroll
+padding grow in rem units for enlarged text and include the device safe area.
+The language switcher retains its original sticky position. Reading order,
+accessible labels, history and focus behavior are unchanged.
 
 Writing width grows modestly rather than stretching to the whole desktop.
 No sidebars, extra choices or decorative features were added. Settings groups
@@ -40,8 +42,8 @@ recovery wording, model, auth, encryption, backup or sync logic changes.
 `tests/responsive-qa.js` exercises every SPA destination in Hebrew RTL and
 English/Russian LTR, light/dark, at 320×568, 390×844, 768×1024, 1024×768,
 1440×900, 844×390 and 568×320. It checks controls and document overflow,
-adaptive navigation, bounded writing widths, long Journal editing across
-resizes, 200% text, scrollable confirmations, focus trapping and focus return.
+centered bottom navigation and content clearance, bounded writing widths, long
+Journal editing across resizes, 200% text, scrollable confirmations, focus trapping and focus return.
 Welcome/Onboarding and static public-page suites also cover all five requested
 widths. Existing appearance suites cover all saved backgrounds/fonts/accent options.
 Existing suites cover registered Account states with synthetic SDK mocks;
