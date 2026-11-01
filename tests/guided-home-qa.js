@@ -65,7 +65,8 @@ async(page)=>{
    check(await page.evaluate(()=>{
     const card=document.querySelector('.daily-card'),style=getComputedStyle(card);
     // Welcome now has its own visual foundation; Home retains the merged-main treatment.
-    return style.backgroundColor===getComputedStyle(document.querySelector('.recovery-summary')).backgroundColor&&style.borderWidth==='1px'&&style.borderRadius==='16px'&&getComputedStyle(card.querySelector('.page-art')).width==='40px';
+    const surface=document.querySelector(innerWidth>=1024?'.today-actions':'.recovery-summary');
+    return style.backgroundColor===getComputedStyle(surface).backgroundColor&&style.borderWidth==='1px'&&style.borderRadius==='16px'&&getComputedStyle(card.querySelector('.page-art')).width==='40px';
    }),'Home retains its existing surface, corners and icon sizing '+language+' '+width+' '+colorScheme);
    check(await page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.daily-card')].map(e=>getComputedStyle(e)),gap=parseFloat(getComputedStyle(document.querySelector('.daily-cards')).rowGap),badge=document.getElementById('milestone').getBoundingClientRect();

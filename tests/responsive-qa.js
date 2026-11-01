@@ -30,7 +30,7 @@ async(page)=>{
    for(const [width,height] of viewports){
     await page.setViewportSize({width,height});
     for(const id of screens){await open(id);check(await fit(),`${id} fits ${language} ${colorScheme} ${width}x${height}`);}
-    check(await page.evaluate(()=>{const tabs=document.getElementById('tabs'),r=tabs.getBoundingClientRect(),items=tabs.querySelector('.inner').getBoundingClientRect(),padding=parseFloat(getComputedStyle(document.querySelector('.app')).paddingBottom);return r.bottom===innerHeight&&getComputedStyle(tabs).position==='fixed'&&items.width<=520&&Math.abs(items.left+items.width/2-innerWidth/2)<1&&padding>=r.height;}),'Bottom navigation stays centered with content clearance '+language+' '+width+'x'+height);
+    check(await page.evaluate(()=>{const tabs=document.getElementById('tabs'),r=tabs.getBoundingClientRect(),items=tabs.querySelector('.inner').getBoundingClientRect(),padding=parseFloat(getComputedStyle(document.querySelector('.app')).paddingBottom);return r.bottom===innerHeight&&getComputedStyle(tabs).position==='fixed'&&items.width<=(innerWidth<600?520:1080)&&Math.abs(items.left+items.width/2-innerWidth/2)<1&&padding>=r.height;}),'Bottom navigation stays centered with content clearance '+language+' '+width+'x'+height);
    }
   }
   console.log('Responsive viewport matrix passed: '+language);

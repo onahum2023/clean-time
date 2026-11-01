@@ -462,13 +462,13 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 }
 
 /* Shared responsive shell. Reading and writing retain a comfortable measure. */
-:root{--shell-width:1120px;--content-width:760px;--writing-width:800px;--page-gutter:20px}
-.app{padding-inline:var(--page-gutter);padding-bottom:calc(4rem + 24px + env(safe-area-inset-bottom,0px))}
-html{scroll-padding-bottom:calc(4rem + 24px + env(safe-area-inset-bottom,0px))}
+:root{--shell-width:1120px;--home-width:1080px;--content-width:760px;--writing-width:800px;--page-gutter:20px}
+.app{padding-inline:var(--page-gutter);padding-bottom:max(calc(4rem + 24px + env(safe-area-inset-bottom,0px)),calc(var(--tabs-height,0px) + 24px))}
+html{scroll-padding-bottom:max(calc(4rem + 24px + env(safe-area-inset-bottom,0px)),calc(var(--tabs-height,0px) + 24px))}
 .app>section,.app>header{width:100%;max-width:var(--content-width);margin-inline:auto;min-width:0}
 .app>.language-bar{width:100%}
 .app>section:is(#counter,#settings,#tools){max-width:960px}
-@media (min-width:1024px){.app>section#counter{max-width:1080px}}
+@media (min-width:1024px){.app>section#counter{max-width:var(--home-width)}}
 .app>section:is(#welcome,#publicIntroduction){max-width:none}
 .app>section:is(#onboarding,#auth,#startup,#meditation){max-width:560px}
 .app>section#inventory{max-width:var(--writing-width)}
@@ -498,6 +498,8 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 @media(max-width:380px){:root{--page-gutter:16px}}
 @media(min-width:600px){
  :root{--page-gutter:32px}
+ /* Grow with the shell from tablet upward; match Home at desktop widths. */
+ nav.tabs .inner{width:calc(100% - 2 * var(--page-gutter));max-width:min(var(--home-width),calc(var(--shell-width) - 2 * var(--page-gutter)))}
  .app>header{padding-block:24px 12px}
  #inventory>.inventory-dates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
  .editor .bar{padding-inline:24px}
@@ -508,6 +510,9 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
  .tool-links>:nth-last-child(2):nth-child(odd){border-bottom:0}
 }
 @media(min-width:1024px){
+ nav.tabs button{min-height:64px;padding:16px 12px;font-size:1rem}
+ nav.tabs button[aria-current=page]{background:var(--accent-soft)}
+ nav.tabs button[aria-current=page]::before{width:48px}
  .settings-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:48px;align-items:start}
  .settings-columns>div{min-width:0}
  .settings-columns>div>.settings-foot:first-child{margin-top:0}
@@ -1019,7 +1024,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.8';
+const APP_VERSION='2026.11.01.9';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1128,6 +1133,11 @@ const analytics=(method,...args)=>{try{
 }catch{}};
 let analyticsNavigationReady=false;
 let current='counter';
+// Wrapped translations, enlarged text and device safe areas can grow the footer.
+// Keep the last page action scrollable above its actual height; no data writes.
+if(window.ResizeObserver)new ResizeObserver(()=>{
+ document.documentElement.style.setProperty('--tabs-height',$('tabs').getBoundingClientRect().height+'px');
+}).observe($('tabs'));
 const SCREENS=['counter','counterDetails','planner','journal','gratitude','readings','bookmarks','settings','tools','about','welcome','startup','onboarding','meditation','inventory','auth','account','feedback'];
 function show(tab,record=true){
   if(!SCREENS.includes(tab))return;
