@@ -41,6 +41,26 @@ Targeted Welcome checks cover the unchanged guest setup/persistence/back paths, 
 
 Local Chromium regression coverage: **2,816 passing assertions**, counting the broad run plus the two resolved-suite reruns. The initial Home/Welcome shared-style expectation was adapted to assert the unchanged Home treatment, then its 193 checks passed. The 28 PDF-output checks passed using the already bundled `pdf-lib` package through `NODE_PATH`, with no installation or repository dependency changes. Seven Node repository-hygiene tests, JavaScript syntax checks, CSP hash verification, clean isolated Preview build and `git diff --check` pass.
 
-One pre-existing suite remains red: `home-account-summary-qa.js` fails its compact-summary height expectation on unchanged main at Hebrew 320px as well as this branch. That suite is not counted as passing. No inner-screen change was made to resolve it. Physical-device and live-account acceptance are outside these synthetic checks.
+One pre-existing suite remains red: `home-account-summary-qa.js` fails its compact-summary height expectation on unchanged main at Hebrew 320px as well as this branch: the assertion requires less than 110px, while merged main measures about 154px. The same baseline probe confirms the name appears once, both repeated-label rows are hidden, the first action clears the footer and there is no horizontal overflow. That suite is not counted as passing. No inner-screen change was made to resolve it. Physical-device and live-account acceptance are outside these synthetic checks.
 
-Preview URL, deployed SHA and deployed smoke results will be added after the branch deployment.
+## Protected Preview
+
+- URL: https://clean-time-oyreicfz4-nu-cielo.vercel.app/
+- Target/status: **Preview / READY**, Vercel project `clean-time`, NuCielo team.
+- Deployed application commit: **`21bda85d70c1206b66b04d8b9e497b235a4eb844`**.
+- Build duration: approximately 3 seconds. GitHub repository-hygiene checks pass.
+- Vercel Authentication remains enabled. The normal URL is for the owner's signed-in Vercel session; no public share token was created.
+
+Authenticated HTTP confirmed the actual deployed HTML and CSP. Deployed Chromium captures use read-only, same-origin static GET requests through authenticated `vercel curl`, replayed into fresh browser contexts by `tests/preview-cli-access.js`. This transport keeps credentials inside the CLI and does not download environment variables. The app runs under its real Preview origin and CSP, with guest-only Preview backend configuration, synthetic local state and real offline-shell initialization. It does not exercise live account services or a human Vercel sign-in.
+
+All eight deployed Welcome captures (viewport/full page × mobile/desktop × light/dark) are byte-identical to the corresponding local after captures. [Deployed desktop light](issue-77-visuals/preview-1440-light.png), [desktop dark](issue-77-visuals/preview-1440-dark.png), [mobile light](issue-77-visuals/preview-390-light.png), [mobile dark](issue-77-visuals/preview-390-dark.png). The final evidence commit changes documentation, screenshots and test tooling only; application files remain identical to the deployed application commit above.
+
+Reproduce protected browser verification after linking the intended project and confirming `vercel project inspect --non-interactive`:
+
+```sh
+QA_BASE_URL=https://clean-time-oyreicfz4-nu-cielo.vercel.app \
+NODE_OPTIONS=--require=./tests/preview-cli-access.js \
+node tests/run-qa.js welcome-qa.js welcome-foundation-qa.js guided-home-qa.js visual-polish-qa.js
+```
+
+The deployed Welcome, Welcome foundation, guided Home and visual-polish suites pass **678 assertions**. Keep this work on hold for owner visual approval.

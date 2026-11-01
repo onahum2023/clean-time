@@ -15,7 +15,7 @@ const output=path.resolve('docs/issue-77-visuals');fs.mkdirSync(output,{recursiv
    const c=await browser.newContext({viewport:{width,height:width===390?844:900},colorScheme,timezoneId:'Europe/Amsterdam'});
    await c.route('**/*',r=>new URL(r.request().url()).origin===origin?r.fallback():r.abort());
    const p=await c.newPage();await p.clock.install({time:new Date('2026-11-01T12:00:00Z')});
-   await p.goto(origin);await p.locator('#welcome').waitFor();await p.evaluate(()=>navigator.serviceWorker.ready);await p.evaluate(()=>document.fonts.ready);
+   await p.goto(origin);await p.locator('#welcome').waitFor();await p.waitForFunction(async()=>!!(await navigator.serviceWorker.getRegistration())?.active,{},{timeout:20000});await p.evaluate(()=>document.fonts.ready);
    await p.screenshot({path:path.join(output,`${stage}-${width}-${colorScheme}.png`)});
    await p.screenshot({path:path.join(output,`${stage}-${width}-${colorScheme}-full.png`),fullPage:true});
    // Private local evidence: compare the untouched setup and Today byte for byte.
