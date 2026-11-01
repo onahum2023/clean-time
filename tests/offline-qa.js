@@ -18,7 +18,7 @@ async(page)=>{
  check(saved.journal.some(x=>x.text==='יומן בלי חיבור')&&saved.gratitude.some(x=>x.text==='תודה בלי חיבור')&&Object.values(saved.plans).flat().some(x=>x.text==='תכנית ללא חיבור')&&Object.values(saved.inventory).some(x=>x.notes==='חשבון נפש בלי חיבור')&&saved.bookmarks.length===1,'Core guest tools save and reopen offline');
  check(Object.values(saved.inventory).some(e=>e.answers?.na_ip9_q06==='synthetic offline daily answer'&&e.finishedAt),'Structured daily answer and finish survive offline reload');
  check(saved.journal.some(x=>x.text==='ישן')&&saved.inventory['2024-01-01'].answers.old==='נשמר'&&saved.unknown==='נשמר','Old/unknown recovery data retained offline');
- const assets=await page.evaluate(async()=>Promise.all(['/assets/fonts/Assistant-Variable.ttf','/assets/gong.wav','/icon-192.png'].map(async u=>(await fetch(u)).ok)));check(assets.every(Boolean),'Local font/audio/icon fetch offline');
+ const assets=await page.evaluate(async()=>Promise.all(['/assets/fonts/Assistant-Variable.ttf','/assets/gong.wav','/icon-192.png','/assets/welcome.css'].map(async u=>(await fetch(u)).ok)));check(assets.every(Boolean),'Local font/audio/icon fetch offline');
  check(await page.evaluate(async()=>{try{await fetch('/auth/v1/synthetic?code=SYNTHETIC');return false;}catch(e){return true;}}),'Auth/query requests do not fall back to cached shell');
  await context.setOffline(false);await page.waitForFunction(()=>document.getElementById('offlineStatus').hidden);check(true,'Online status resumes without clearing local data');
  const activeWorker=context.serviceWorkers()[0];
@@ -27,13 +27,14 @@ async(page)=>{
  await activeWorker.evaluate(()=>{caches.open=self.qaOpen;delete self.qaOpen;delete self.qaCacheFailures;});
  // Update lifecycle with a bounded synthetic HTTP origin; no deployed/production server mutation.
  const oldVersion='2026.10.12.12',newVersion=fs.readFileSync('index.html','utf8').match(/const APP_VERSION='([^']+)'/)[1];let version=oldVersion;const oldHtml=require('child_process').execFileSync('git',['show','fb2d244835ea8adf652dfcffe393943371666347:index.html'],{encoding:'utf8'}),oldWorker=require('child_process').execFileSync('git',['show','fb2d244835ea8adf652dfcffe393943371666347:service-worker.js'],{encoding:'utf8'});const root=process.cwd(),worker=fs.readFileSync('service-worker.js','utf8'),html=fs.readFileSync('index.html','utf8');
- const files=new Set(['service-worker.js','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','assets/backend-config.js','assets/sync-crypto.js','assets/messages.js','assets/i18n.js','assets/appearance.js','assets/analytics.js','assets/recovery-dates.js','assets/recovery-timers.js','assets/inventory-content.js','assets/inventory-output.js','assets/fonts/Assistant-Variable.ttf','assets/gong.wav']);
+ const files=new Set(['service-worker.js','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','assets/backend-config.js','assets/sync-crypto.js','assets/messages.js','assets/i18n.js','assets/appearance.js','assets/welcome.css','assets/analytics.js','assets/recovery-dates.js','assets/recovery-timers.js','assets/inventory-content.js','assets/inventory-output.js','assets/fonts/Assistant-Variable.ttf','assets/gong.wav']);
  const server=http.createServer((req,res)=>{
   const file=new URL(req.url,'http://localhost').pathname.slice(1);res.setHeader('Cache-Control','no-store');
   if(version===newVersion)for(const {key,value} of JSON.parse(fs.readFileSync('vercel.json')).headers[0].headers)res.setHeader(key,value);
   if(!file||file==='index.html'){res.setHeader('Content-Type','text/html');res.end((version===oldVersion?oldHtml:html).replace(/const APP_VERSION='[^']+'/,"const APP_VERSION='"+version+"'"));return;}
   if(!files.has(file)){res.writeHead(404);res.end();return;}
   if(file.endsWith('.js'))res.setHeader('Content-Type','application/javascript');
+  if(file.endsWith('.css'))res.setHeader('Content-Type','text/css');
   if(file==='assets/backend-config.js'){res.end('window.CleanTimeBackend='+JSON.stringify(version===oldVersion?{environment:'preview',url:'https://uffvbfmfsesdhjzzjiyu.supabase.co',key:'sb_publishable_SYNTHETIC_QA_ONLY'}:{environment:'preview',url:null,key:null,backupDisabled:true}));return;}
   res.end(file==='service-worker.js'?(version===oldVersion?oldWorker:worker).replace(/const VERSION='[^']+'/,"const VERSION='"+version+"'"):fs.readFileSync(path.join(root,file)));
  });await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));

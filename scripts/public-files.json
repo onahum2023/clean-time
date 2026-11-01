@@ -17,6 +17,7 @@
   "assets/i18n.js",
   "assets/messages.js",
   "assets/public.css",
+  "assets/welcome.css",
   "assets/recovery-dates.js",
   "assets/recovery-timers.js",
   "assets/sync-crypto.js",
