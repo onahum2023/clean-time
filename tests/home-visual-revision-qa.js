@@ -15,7 +15,8 @@ async(page)=>{
  check(await page.locator('.home-notes article').count()===3&&await page.locator('.home-reflection').count()===1,'Exactly three static cards and one reflection strip');
  check(await page.locator('.home-notes :is(a,button,input,select,textarea),.home-reflection :is(a,button,input,select,textarea)').count()===0,'Static placeholders have no CTA, preference or simulated interaction');
  for(const language of ['he','en','ru']){
-  await page.locator('[data-language='+language+']').click();await page.waitForFunction(l=>document.documentElement.lang===l,language);
+  if(await page.locator('html').getAttribute('lang')!==language)await Promise.all([page.waitForEvent('domcontentloaded'),page.locator('[data-language='+language+']').click()]);
+  await page.waitForFunction(l=>document.documentElement?.lang===l&&window.CleanTimeI18n?.language===l,language);await page.locator('#counter').waitFor();
   check(await page.locator('.summary-duration').textContent()===await page.evaluate(()=>['month','day'].map((unit,i)=>new Intl.NumberFormat(CleanTimeI18n.locale,{style:'unit',unit,unitDisplay:'long'}).format(i?25:2)).join(' ')),'Natural calendar wording: two months and 25 days '+language);
   for(const mode of ['light','dark']){
    await page.emulateMedia({colorScheme:mode});

@@ -1,9 +1,10 @@
 # Clean Time #80 — integrated visual UAT
 
 [Draft PR #81](https://github.com/onahum2023/clean-time/pull/81) ·
-[Protected application Preview](https://clean-time-5rsmh20av-nu-cielo.vercel.app/)
+[Protected application Preview](https://clean-time-rdlptlvvg-nu-cielo.vercel.app/)
 
-**Implementation and automated validation complete; integrated owner UAT pending.**
+**Integrated owner UAT: HOLD. Desktop Home revised following owner feedback.**
+See the [Home revision and current screenshot evidence](PR-81-HOME-UAT-REVISION.md).
 No separate theme/screen approval gates. No Nora review, merge or Production
 deployment. Backend integration remains deferred until after visual UAT.
 
@@ -27,10 +28,11 @@ native recovery-type radios preserving all five original saved identities,
 calendar years/months/days preview, optional second counter and returning-user
 entry. No new mandatory fields, backend, architecture or recovery workflow.
 
-The approved Original-palette Welcome and Home/navigation are pixel-identical
-to main in matched synthetic captures: 12 viewport/full-page comparisons at
-1440px/390px in light/dark. Welcome copy/layout and all official Step 10 content
-are unchanged. Public About/Privacy documents retain their existing design.
+At the initial handoff, Original-palette Welcome and Home/navigation were pixel-identical
+to main in 12 matched synthetic captures. Owner feedback now explicitly supersedes
+the desktop Home composition; the linked revision documents its new hierarchy.
+The approved mobile Home and Welcome remain unchanged. All official Step 10
+content is unchanged. Public About/Privacy documents retain their existing design.
 
 ## Start the integrated review
 
@@ -53,7 +55,7 @@ All items below await owner review; automated passes are recorded separately.
 - [ ] Welcome: approved hierarchy/copy, primary/closing Start, returning-user path and Privacy/About links.
 - [ ] Guest setup: recovery choices understandable; date confirmation and live duration clear; primary action reachable; no extra required step.
 - [ ] Optional second counter: fields/show-on-Home choice remain understandable and optional; both counters appear after saving.
-- [ ] Home/navigation: approved balance retained; five destinations clear; desktop RTL rail/LTR mirror and mobile footer remain consistent.
+- [ ] Home/navigation: review revised desktop counter/actions/static cards/reflection; approved mobile layout retained; five destinations clear; desktop RTL rail/LTR mirror and mobile footer remain consistent.
 - [ ] Appearance: compare all four palettes in both brightness modes; chooser selection/keyboard behavior clear; image-free defaults appropriate.
 - [ ] Existing customization: try saved background, font and accent overrides; palette changes keep them; reset restores Original/system + default/Assistant/profile.
 - [ ] Daily Plan: add/edit/toggle/delete, saved-day selection and long items remain usable.
@@ -73,7 +75,11 @@ All items below await owner review; automated passes are recorded separately.
 - [ ] Native 200% browser zoom, physical keyboard/screen reader, mobile keyboard, installed PWA and actual safe-area cutouts on target devices.
 - [ ] Offline reload: after initial loading, local tools and appearance choices stay usable; closing/reopening activates an update without loss.
 
-## Deployed screen gallery
+## Initial deployed screen gallery
+
+**Historical initial-handoff evidence. Desktop Home images below are superseded by
+the [current Home revision gallery](PR-81-HOME-UAT-REVISION.md).** Other screens
+retain the design shown here.
 
 The links below are **actual full-viewport screenshots from the protected
 application Preview at `03aaa5f91e132a467d9228c93bf9a7bccde20cd6`**, version
@@ -168,7 +174,7 @@ login and signup images; they do not establish live auth/backup acceptance.
 | Palette contrast | **3,960 rendered combinations pass** for foreground/secondary text/action/focus against canvas/cards, including every background/font/accent and all six profile colors |
 | Legacy values | **1,080 browser preservation cases** plus **3,240 fresh startup contract cases**, with unknown legacy override bytes retained |
 | Registered preferences/data | Existing upgrade/account/encryption/sync suites pass with synthetic mocks; palette/mode changes cause no recovery rewrite or upload |
-| Approved baseline | **12 deployed Welcome/Home captures byte-identical** to matched latest-main captures |
+| Initial approved baseline | **12 initial deployed Welcome/Home captures byte-identical** to matched latest-main; desktop Home now intentionally revised by owner request |
 | Build/security | Inline/external JS syntax, exact CSP hashes, static Preview build, source/publication hygiene and diff whitespace pass |
 
 The final local run uses Playwright 1.62.1 and a temporary pinned `pdf-lib@1.17.1`
