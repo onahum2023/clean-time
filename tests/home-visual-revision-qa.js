@@ -40,7 +40,7 @@ async(page)=>{
    check(await page.evaluate(()=>{const card=document.querySelector('.recovery-summary');return getComputedStyle(card).backgroundColor!=='rgba(0, 0, 0, 0)'&&document.documentElement.scrollWidth<=innerWidth;}),'Counter surface and bounds follow palette/mode '+palette+' '+mode);
   }
  }
- const contrast=await page.evaluate(()=>{
+ const measureContrast=()=>page.evaluate(()=>{
   const root=document.documentElement,before={palette:root.dataset.palette,theme:root.dataset.theme,background:root.dataset.background,accent:root.dataset.accent},ctx=document.createElement('canvas').getContext('2d'),failures=[];let count=0;
   const lum=value=>{ctx.clearRect(0,0,1,1);ctx.fillStyle=value;ctx.fillRect(0,0,1,1);return [...ctx.getImageData(0,0,1,1).data].slice(0,3).map(n=>{n/=255;return n<=.04045?n/12.92:((n+.055)/1.055)**2.4;}).reduce((n,v,i)=>n+v*[.2126,.7152,.0722][i],0);};
   const selectors=['.home-summary-title','.summary-duration','.summary-since','.home-identity','.secondary-summary strong','.secondary-summary>span','.home-notes h3','.home-notes p','.home-reflection','.daily-card-title','.home-action-description','.home-action-cue'];
@@ -51,7 +51,12 @@ async(page)=>{
   for(const [key,value] of Object.entries(before))if(value===undefined)delete root.dataset[key];else root.dataset[key]=value;
   return {count,failures};
  });
- check(contrast.count===5184&&!contrast.failures.length,'5184 actual Home text/surface combinations meet 4.5:1 contrast: '+JSON.stringify(contrast.failures.slice(0,5)));
+ for(const interaction of ['rest','hover']){
+  if(interaction==='hover')await page.locator('#counter [data-go=planner]').hover();else await page.mouse.move(0,0);
+  const contrast=await measureContrast();
+  check(contrast.count===5184&&!contrast.failures.length,'5184 actual Home text/surface combinations meet 4.5:1 contrast '+interaction+': '+JSON.stringify(contrast.failures.slice(0,5)));
+ }
+ await page.mouse.move(0,0);
  await page.locator('#dailyReading').focus();
  for(const destination of ['planner','gratitude','journal','inventory']){
   await page.keyboard.press('Tab');check(await page.locator('#counter [data-go='+destination+']').evaluate(e=>e===document.activeElement&&getComputedStyle(e).outlineStyle!=='none'),'Desktop action sequence and visible focus '+destination);

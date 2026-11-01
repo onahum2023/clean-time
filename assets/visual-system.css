@@ -215,9 +215,9 @@
  #counter .daily-card .page-art{width:44px;height:44px;padding:9px;border-radius:50%;color:var(--accent-ink)}
  #counter .daily-card .daily-card-copy,#counter .daily-card>span:not(.home-action-cue){min-width:0;flex:1}
  #counter .daily-card-title{font-size:1.0625rem;line-height:1.5;font-weight:600}
- #counter .daily-card small{font-size:.875rem;line-height:1.6;margin-top:4px}
+ #counter .daily-card small{color:color-mix(in srgb,var(--muted) 85%,var(--ink));font-size:.875rem;line-height:1.6;margin-top:4px}
  #counter .home-action-description,#counter .daily-card-copy{display:block}
- #counter .home-action-cue{display:block;color:var(--muted);font-size:1.5rem;flex:none;direction:ltr}
+ #counter .home-action-cue{display:block;color:color-mix(in srgb,var(--muted) 85%,var(--ink));font-size:1.5rem;flex:none;direction:ltr}
  #counter .daily-card:hover{background:var(--accent-soft);border-color:var(--accent-ink)}
  #counter .daily-card:focus-visible{outline:3px solid var(--accent-ink);outline-offset:3px;background:var(--accent-soft)}
  #counter .daily-card:active{background:var(--accent-soft);transform:translateY(1px)}
