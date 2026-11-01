@@ -26,10 +26,10 @@ async(page)=>{
  check(await p.evaluate(k=>JSON.parse(localStorage.getItem(k)).gratitude.length===0&&typeof JSON.parse(localStorage.getItem(k)).plans==='object',key),'Sparse old cloud row normalizes missing collections');
  await activate(p);await p.evaluate(()=>window.qaUploads=[]);
  await p.locator('#openSettings').click();await p.locator('#sDate').fill('2025-01-01');await p.locator('#saveSettings').click();if(await p.locator('#ask').isVisible())await p.locator('#askB button').filter({hasText:'עדכון התאריך'}).click();
- await p.evaluate(()=>window.qaOnline=false);await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="inventory"]').click();await p.locator('#iSummary').fill('נכתב ללא חיבור');await p.waitForTimeout(2200);
+ await p.evaluate(()=>window.qaOnline=false);await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="inventory"]').click();for(let i=0;i<5;i++)await p.locator('#iNext').click();await p.locator('#iNotes').fill('נכתב ללא חיבור');await p.waitForTimeout(2200);
  check(await p.evaluate(()=>window.qaUploads.length===0&&JSON.parse(localStorage.getItem('cleantime-he-sync')).dirty),'Offline registered edit is local and pending; no upload');
  await p.evaluate(()=>{window.qaOnline=true;window.dispatchEvent(new Event('online'));});await p.waitForTimeout(300);
- check(await p.evaluate(async()=>window.qaUploads.length===1&&Object.values((await qaPlain()).inventory).some(e=>e.summary==='נכתב ללא חיבור')&&!JSON.parse(localStorage.getItem('cleantime-he-sync')).dirty),'Reconnect uploads pending inventory and clears dirty flag');
+ check(await p.evaluate(async()=>window.qaUploads.length===1&&Object.values((await qaPlain()).inventory).some(e=>e.notes==='נכתב ללא חיבור')&&!JSON.parse(localStorage.getItem('cleantime-he-sync')).dirty),'Reconnect uploads pending inventory and clears dirty flag');
  await p.locator('#openSettings').click();await p.locator('#myAccount').click();await p.locator('#signOut').click();
  check(await p.locator('#welcome').isVisible()&&await p.evaluate(k=>!localStorage.getItem(k)&&!localStorage.getItem('cleantime-he-sync'),key),'Existing sign-out returns to onboarding and clears local account state');
  check(await p.evaluate(()=>SyncCrypto.isEnvelope(window.qaRemote)),'Sign-out retains mock cloud copy');

@@ -21,5 +21,7 @@
   "assets/recovery-timers.js",
   "assets/sync-crypto.js",
   "assets/fonts/Assistant-Variable.ttf",
-  "assets/fonts/OFL.txt"
+  "assets/fonts/OFL.txt",
+  "assets/inventory-content.js",
+  "assets/inventory-output.js"
 ]

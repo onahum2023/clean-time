@@ -61,7 +61,7 @@ Bottom navigation: Today / Recovery Tools / About / shared Settings and Account.
 
 Core tools: clean-time counter, Daily Plan checklist, Gratitude log, Journal, Meditation timer, Daily Inventory / Step 10, recovery readings/resources and personal bookmarks. My Account contains identity, sync/encryption status, sign-out and deletion controls.
 
-Step 10 offers the approved six IP #9 questions in official Hebrew, English and Russian (review order 6, 10, 17, 25, 31, 36), focused/all-daily views, free-text summary and history. Preserve stable prompt IDs, official wording in each language and legacy placeholder answers. See `docs/STEP-10-QA.md`; full-bank/customization and production acceptance remain outside the draft scope.
+Step 10 uses the complete official Hebrew/English/Russian IP #9 in five original sections plus a closing prayer/notes screen, with 36 stable question groups, autosave/history and private print/local PDF output. Preserve exact official wording, all prior answer IDs/aliases, versions and summaries. See `docs/STEP-10-QA.md`; question customization and production acceptance remain outside the draft scope.
 
 ## Safe links and external requests
 

@@ -27,7 +27,7 @@ The canonical production origin is `https://clean-time.app/`; the www domain red
 
 **Meditation (מדיטציה).** A simple countdown with pause, resume, reset and a local gong at the start and end. No content library or history.
 
-**Daily inventory / Step 10 (חשבון נפש יומי / צעד 10).** An autosaved daily reflection with previous-day access. The daily practice offers six approved questions from the official Hebrew, English and Russian editions of NA IP #9, one at a time or all six together, with optional free-text reflection. Answers save as you type; skip or finish at any point and return to edit. See [content and draft QA](docs/STEP-10-QA.md).
+**Daily inventory / Step 10 (חשבון נפש יומי / צעד 10).** The complete official NA IP #9 inventory in Hebrew, English and Russian, guided through five original sections plus a closing prayer/notes screen. All 36 answer fields are optional and save as you type. Finish, review/edit, print or privately download a local PDF of the dated inventory. Earlier reflections remain accessible. See [content, compatibility and QA](docs/STEP-10-QA.md), including the PDF text-accessibility limitation.
 
 **About (אודות).** Purpose, guest mode, optional backup, and privacy, accessible from the main navigation.
 
@@ -62,7 +62,7 @@ Open `http://127.0.0.1:8765`. See [current Track B isolation](docs/TRACK-B.md), 
 
 Settings offers a small device-local background/font palette, reset to the existing appearance, small milestone key-tag badges on Home (hideable in Settings), and confirmed recovery-date/time updates that retain all history. Preferences require no account and appearance/milestone choices do not sync. A full portable JSON download includes legacy/unknown recovery fields but excludes login/key stores. The export is unencrypted; keep the file private.
 
-Track A delivery/reconciliation and acceptance boundaries: [docs/TRACK-A.md](docs/TRACK-A.md), [offline checks](docs/OFFLINE-QA.md). PIN is deferred; the approved six-question Step 10 implementation remains subject to draft Preview QA and owner merge review.
+Track A delivery/reconciliation and acceptance boundaries: [docs/TRACK-A.md](docs/TRACK-A.md), [offline checks](docs/OFFLINE-QA.md). PIN is deferred; the complete Step 10 implementation remains subject to draft Preview QA and owner merge review.
 
 ## Feedback
 

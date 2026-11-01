@@ -6,7 +6,7 @@ async(page)=>{
  const uid='00000000-0000-4000-8000-000000000009',email='crypto-qa@example.invalid';
  const full={name:'שם סינתטי סודי',date:'2024-02-03',time:'11:23',from:'סוג סינתטי',mode:2,color:'plum',linksV:2,
   journal:[{id:'j',text:'יומן סינתטי סודי',created:1,updated:2}],gratitude:[{id:'g',text:'תודה סינתטית סודית',ts:3}],
-  inventory:{'2025-01-01':{summary:'סיכום סינתטי סודי',answers:{q:'תשובה סודית',placeholder_1:'old synthetic answer',future_prompt:'keep',na_ip9_he_2005_q06:'synthetic selected answer'},dailyQuestionnaireVersion:'na-ip9-he-2005-daily-v1',finishedAt:123,questionnaireVersion:'placeholder-v1',extra:{keep:true}}},plans:{'2025-01-01':[{id:'p',text:'תכנית סודית',done:false}]},
+  inventory:{'2025-01-01':{summary:'סיכום סינתטי סודי',notes:'synthetic encrypted notes',answers:{q:'תשובה סודית',placeholder_1:'old synthetic answer',future_prompt:'keep',na_ip9_he_2005_q06:'synthetic selected answer'},dailyQuestionnaireVersion:'na-ip9-he-2005-daily-v1',finishedAt:123,questionnaireVersion:'placeholder-v1',extra:{keep:true}}},plans:{'2025-01-01':[{id:'p',text:'תכנית סודית',done:false}]},
   bookmarks:[{id:'b',title:'כותרת סודית',url:'https://example.invalid/private',note:'הערה סודית'}],links:[{id:'l',title:'משאב סודי',url:'https://example.invalid/secret'}],extra:{text:'תוכן עתידי סודי'},updatedAt:1750000000000};
  const cloudState=s=>{const d=require(process.cwd()+'/assets/recovery-timers.js').normalize(structuredClone(s));delete d.mode;return d;};
  const canonical=v=>JSON.stringify(v,(_,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(k=>[k,x[k]])):x);
@@ -138,13 +138,17 @@ async(page)=>{
  check(await s.p.locator('#iPlaceholders,[data-slot]').count()===0,'Encrypted Step 10 keeps placeholder controls hidden');
  await s.p.locator('#iHistory').selectOption('2025-01-01');
  check(await s.p.locator('#iAnswer_na_ip9_q06').inputValue()==='synthetic selected answer'&&await s.p.locator('#iReopen').isVisible(),'Encrypted restore renders selected question and completion');
- await s.p.locator('#iSummary').fill('encrypted reflection synthetic');
+ await s.p.locator('#iReopen').click();
  await s.p.locator('#iAnswer_na_ip9_q06').fill('synthetic encrypted revised answer');
- for(const width of [320,360,508,1280]){await s.p.setViewportSize({width,height:800});check(await s.p.evaluate(()=>{const w=document.documentElement.clientWidth;return document.documentElement.scrollWidth<=w&&[...document.querySelectorAll('#inventory textarea,#inventory select')].every(e=>{const b=e.getBoundingClientRect();return b.left>=0&&b.right<=w&&e.scrollWidth<=e.clientWidth;});}),'Encrypted Step 10 fits '+width+'px');}
+ for(let i=0;i<5;i++)await s.p.locator('#iNext').click();
+ await s.p.locator('#iSummary').fill('encrypted reflection synthetic');
+ await s.p.locator('#iNotes').fill('synthetic encrypted revised notes');
+ for(const width of [320,360,508,1280]){await s.p.setViewportSize({width,height:800});check(await s.p.evaluate(()=>{const w=document.documentElement.clientWidth;return document.documentElement.scrollWidth<=w&&[...document.querySelectorAll('#inventory textarea,#inventory select')].filter(e=>e.getClientRects().length).every(e=>{const b=e.getBoundingClientRect();return b.left>=0&&b.right<=w&&e.scrollWidth<=e.clientWidth;});}),'Encrypted Step 10 fits '+width+'px');}
  await s.p.evaluate(()=>window.dispatchEvent(new Event('online')));await s.p.waitForFunction(()=>!JSON.parse(localStorage.getItem('cleantime-he-sync')).dirty);
  check(same((await s.plain()).inventory['2025-01-01'].answers,{...full.inventory['2025-01-01'].answers,na_ip9_q06:'synthetic encrypted revised answer'}),'Legacy and future Step 10 answers survive encrypted edit round trip');
- check((await s.plain()).inventory['2025-01-01'].dailyQuestionnaireVersion==='na-ip9-daily-v1'&&!(await s.plain()).inventory['2025-01-01'].finishedAt,'Encrypted edit preserves prompt version and reopens completion');
- check(!JSON.stringify(s.cloud()).includes('synthetic encrypted revised answer')&&!JSON.stringify(s.cloud()).includes('placeholder_1')&&!JSON.stringify(s.cloud()).includes('old synthetic answer'),'Cloud envelope contains no plaintext legacy answers');await s.c.close();
+ check((await s.plain()).inventory['2025-01-01'].dailyQuestionnaireVersion==='na-ip9-full-v1'&&!(await s.plain()).inventory['2025-01-01'].finishedAt,'Encrypted edit preserves prompt version and reopens completion');
+ check((await s.plain()).inventory['2025-01-01'].notes==='synthetic encrypted revised notes','Separate closing notes survive encrypted round trip');
+ check(!JSON.stringify(s.cloud()).includes('synthetic encrypted revised notes')&&!JSON.stringify(s.cloud()).includes('synthetic encrypted revised answer')&&!JSON.stringify(s.cloud()).includes('placeholder_1')&&!JSON.stringify(s.cloud()).includes('old synthetic answer'),'Cloud envelope contains no plaintext legacy answers');await s.c.close();
  // Explicit account creation/conversion, validation and returning login into encryption.
  const signIn=async p=>{await p.evaluate(({uid,email})=>{localStorage.setItem('cleantime-he-auth','synthetic-session');window.qaAuthCallback('SIGNED_IN',{user:{id:uid,email}});},{uid,email});await p.locator('#encryptionSetup').waitFor({state:'visible'});};
  for(const mode of ['create','convert']){
