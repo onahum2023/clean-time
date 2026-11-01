@@ -647,12 +647,16 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
   <!-- Counter -->
   <section id="counter" hidden>
     <div id="backupReminder" hidden><p id="backupReminderText" role="status"></p><button class="btn secondary" id="resumeBackup"><span data-i18n="השלמת הגיבוי המוצפן">השלמת הגיבוי המוצפן</span></button></div>
+    <div class="home-heading"><h2 data-i18n="היום">היום</h2><time id="homeDate"></time></div>
+    <div class="home-recovery-column">
     <div class="recovery-summary" role="group" aria-label="זמן נקי" data-i18n-aria-label="זמן נקי">
       <div class="summary-top">
         <div class="summary-primary">
+          <p class="home-summary-title" data-i18n="הזמן הנקי שלך">הזמן הנקי שלך</p>
           <p class="summary-label" id="homePrimaryLabel"></p>
           <div class="summary-count" id="homePrimaryCount"></div>
           <p class="summary-since" id="homePrimarySince"></p>
+          <p class="home-identity" id="homeDesktopIdentity"></p>
         </div>
         <div id="milestone" class="milestone-badge" role="img" hidden>
           <svg viewBox="0 0 80 112" aria-hidden="true" focusable="false">
@@ -672,16 +676,23 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
       </div>
       <p class="secondary-summary" id="homeSecondary" hidden><span id="homeSecondaryLabel"></span><strong id="homeSecondaryDays"></strong></p>
     </div>
+    <div class="home-notes">
+      <article><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21V10M12 15C6 15 4 11 4 7c5 0 8 2 8 7M12 11c0-5 3-8 8-8 0 5-3 8-8 8"/></svg><h3 data-i18n="רק להיום">רק להיום</h3><p data-i18n="אפשר לתת מקום לרגע הזה.">אפשר לתת מקום לרגע הזה.</p></article>
+      <article><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="7" r="3"/><path d="M4 21v-3a6 6 0 0 1 12 0v3M17 4a3 3 0 0 1 0 6m2 3a6 6 0 0 1 3 5v3"/></svg><h3 data-i18n="את/ה לא לבד">את/ה לא לבד</h3><p data-i18n="יש עוד אנשים שהולכים בדרך הזאת.">יש עוד אנשים שהולכים בדרך הזאת.</p></article>
+      <article><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 21-8-8A5 5 0 0 1 12 6a5 5 0 0 1 8 7Z"/></svg><h3 data-i18n="את/ה חשוב/ה">את/ה חשוב/ה</h3><p data-i18n="יש מקום גם למה שעובר עליך היום.">יש מקום גם למה שעובר עליך היום.</p></article>
+    </div>
+    </div>
     <div class="today-actions">
       <h2><span data-i18n="היום שלי">היום שלי</span></h2>
       <div class="daily-cards" aria-label="פעולות יומיות" data-i18n-aria-label="פעולות יומיות">
         <a class="daily-card primary" id="dailyReading" href="https://www.naisrael.org.il/just-for-today/" target="_blank" rel="noopener noreferrer" aria-label="רק להיום — נפתח בחלון חדש" data-i18n-aria-label="רק להיום — נפתח בחלון חדש"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M22 13c-5-4-11-4-16-3v23c6-1 11 0 16 3 5-3 10-4 16-3V10c-5-1-11-1-16 3Zm0 0v23M11 17c3 0 5 0 7 1m8 0c2-1 4-1 7-1"/></svg><span><span class="daily-card-title" data-i18n="רק להיום">רק להיום</span><small><span data-i18n="קריאה יומית באתר NA">קריאה יומית באתר NA</span> <span id="readingLanguage"></span> <svg class="external-link-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3H3v10h10v-3M8 2h6v6M14 2 7 9"/></svg></small></span></a>
-        <button class="daily-card" data-go="planner"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg><span class="daily-card-title" data-i18n="תכנון יומי">תכנון יומי</span></button>
-        <button class="daily-card" data-go="gratitude"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg><span class="daily-card-title" data-i18n="הכרת תודה">הכרת תודה</span></button>
-        <button class="daily-card" data-go="journal"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg><span class="daily-card-title" data-i18n="ככה זה עכשיו">ככה זה עכשיו</span></button>
-        <button class="daily-card" data-go="inventory"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg><span class="daily-card-title" data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span></button>
+        <button class="daily-card" data-go="planner"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg><span class="daily-card-copy"><span class="daily-card-title" data-i18n="תכנון יומי">תכנון יומי</span><small class="home-action-description" data-i18n="מקום לתכנן את היום שלך.">מקום לתכנן את היום שלך.</small></span><span class="home-action-cue chevron" aria-hidden="true"></span></button>
+        <button class="daily-card" data-go="gratitude"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg><span class="daily-card-copy"><span class="daily-card-title" data-i18n="הכרת תודה">הכרת תודה</span><small class="home-action-description" data-i18n="לכתוב את הדברים שמעריכים היום.">לכתוב את הדברים שמעריכים היום.</small></span><span class="home-action-cue chevron" aria-hidden="true"></span></button>
+        <button class="daily-card" data-go="journal"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg><span class="daily-card-copy"><span class="daily-card-title" data-i18n="ככה זה עכשיו">ככה זה עכשיו</span><small class="home-action-description" data-i18n="יומן פרטי למחשבות ולמה שעובר עליך.">יומן פרטי למחשבות ולמה שעובר עליך.</small></span><span class="home-action-cue chevron" aria-hidden="true"></span></button>
+        <button class="daily-card" data-go="inventory"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg><span class="daily-card-copy"><span class="daily-card-title" data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span><small class="home-action-description" data-i18n="שאלות וכתיבה להתבוננות ביום שעבר.">שאלות וכתיבה להתבוננות ביום שעבר.</small></span><span class="home-action-cue chevron" aria-hidden="true"></span></button>
       </div>
     </div>
+    <p class="home-reflection" data-i18n="לא צריך לפתור הכול היום. אפשר לפנות מקום לדבר אחד בכל פעם.">לא צריך לפתור הכול היום. אפשר לפנות מקום לדבר אחד בכל פעם.</p>
   </section>
 
   <section id="counterDetails" hidden>
@@ -1054,7 +1065,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.11';
+const APP_VERSION='2026.11.01.12';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1205,7 +1216,7 @@ function show(tab,record=true){
   if(tab==='inventory')openInventory(todayKey());
   if(tab==='meditation')renderTimer();
   renderMilestone();
-  if(record){const heading=$(tab).querySelector('h1,h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}}
+  if(record){const heading=[...$(tab).querySelectorAll('h1,h2')].find(el=>el.getClientRects().length);if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}}
   analytics('navigate',tab,analyticsNavigationReady);
   window.scrollTo(0,0);
 }
@@ -1817,6 +1828,7 @@ function timerDescription(timer){
 }
 function renderHomeSummary(){
  const timers=S.timers||[],primary=timers.find(t=>t.id===S.primaryTimerId),now=new Date();
+ $('homeDate').dateTime=todayKey();$('homeDate').textContent=now.toLocaleDateString(CleanTimeI18n.locale,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
  $('homePrimaryLabel').hidden=signedIn();
  if(!primary){$('homePrimaryCount').replaceChildren();$('homeSecondary').hidden=true;return;}
  $('homePrimaryLabel').textContent=translateUI('זמן נקי')+' · '+timerLabel(primary);
@@ -1827,8 +1839,17 @@ function renderHomeSummary(){
   if(elapsed.y||elapsed.m)parts.push(unit(fmt(elapsed.m),elapsed.m===1?'חודש':'חודשים'));
   parts.push(unit(fmt(elapsed.d),elapsed.d===1?'יום':'ימים'));
  }
- const count=$('homePrimaryCount'),html=parts.join('');
- if(count.innerHTML!==html)count.innerHTML=html;
+ const count=$('homePrimaryCount'),html='<span class="summary-mobile">'+parts.join('')+'</span>';
+ const desktop=document.createElement('span');desktop.className='summary-duration';
+ if(now<start)desktop.textContent=translateUI('התאריך שנבחר עוד לא הגיע');
+ else{
+  let months=(now.getFullYear()-start.getFullYear())*12+now.getMonth()-start.getMonth();
+  if(CleanTimeDates.addMonths(start,months)>now)months--;
+  const values=[[Math.floor(months/12),'year'],[months%12,'month'],[totalDays(CleanTimeDates.addMonths(start,months),now),'day']];
+  desktop.textContent=values.filter(([value,unit])=>value||(unit==='day'&&!months)).map(([value,unit])=>new Intl.NumberFormat(CleanTimeI18n.locale,{style:'unit',unit,unitDisplay:'long'}).format(value)).join(' ');
+ }
+ $('homeDesktopIdentity').textContent=timerLabel(primary);
+ if(count.innerHTML!==html+desktop.outerHTML)count.innerHTML=html+desktop.outerHTML;
  $('homePrimarySince').textContent=translateUI('מאז ')+start.toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'});
  const secondary=timers.find(t=>t.id!==primary.id);
  $('homeSecondary').hidden=signedIn()||!secondary||!homeDisplay.show;
