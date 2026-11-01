@@ -21,7 +21,7 @@ async(page)=>{
    await page.setViewportSize({width,height:width===1440?900:844});
    check(await page.evaluate(()=>{
     const label=document.getElementById('homePrimaryLabel'),secondary=document.getElementById('homeSecondary'),text=document.querySelector('header').innerText+' '+document.getElementById('counter').innerText,summary=document.querySelector('.recovery-summary').getBoundingClientRect(),first=document.getElementById('dailyReading').getBoundingClientRect(),footer=document.getElementById('tabs').getBoundingClientRect();
-    return text.split('Home UAT').length===2&&label.hidden&&label.getBoundingClientRect().height===0&&secondary.hidden&&secondary.getBoundingClientRect().height===0&&summary.height<110&&first.bottom<footer.top&&document.documentElement.scrollWidth<=innerWidth;
+    return text.split('Home UAT').length===2&&label.hidden&&label.getBoundingClientRect().height===0&&secondary.hidden&&secondary.getBoundingClientRect().height===0&&summary.height<110&&(innerWidth>=768?first.top>=footer.bottom:first.bottom<footer.top)&&document.documentElement.scrollWidth<=innerWidth;
    }),'Name appears once; entire label/secondary rows reclaim space '+language+' '+width);
    check(await page.locator('#homePrimaryCount .num').count()>0&&await page.locator('#homePrimarySince').isVisible()&&await page.locator('#milestone').isVisible()&&await page.locator('.daily-card').count()===5,'Counter, date, badge and five cards preserved '+language+' '+width);
   }

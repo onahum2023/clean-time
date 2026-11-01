@@ -42,7 +42,8 @@ English/Russian LTR, light/dark, at 320×568, 390×844, 768×1024, 1024×768,
 1440×900, 844×390 and 568×320. It checks controls and document overflow,
 adaptive navigation, bounded writing widths, long Journal editing across
 resizes, 200% text, scrollable confirmations, focus trapping and focus return.
-Existing appearance suites cover all saved backgrounds/fonts/accent options.
+Welcome/Onboarding and static public-page suites also cover all five requested
+widths. Existing appearance suites cover all saved backgrounds/fonts/accent options.
 Existing suites cover registered Account states with synthetic SDK mocks;
 Preview remains guest-only and is never pointed at Production services.
 
@@ -60,7 +61,17 @@ Account at all five requested widths. Synthetic images and logs remain in
 ignored `qa-artifacts/responsive/`; an owner-facing comparison is supplied with
 the delivery rather than included in the deployed application.
 
-Status: browser matrix/full regression in progress. Independent Nora QA will be
-requested on the draft PR and exact Preview commit. Owner visual acceptance and
-physical-device keyboard/PWA acceptance remain release gates; browser viewport
-emulation does not establish physical-device acceptance.
+Validation: the final local Chromium run passes all 2,654 browser checks,
+including 791 new responsive checks and the expanded Welcome/public-page matrix.
+All 7 repository-hygiene/build guard tests pass. Inline JavaScript syntax,
+CSP/security headers, `git diff --check`, hygiene scan and Preview build pass.
+The deployed Preview HTML/config return HTTP 200; the responsive shell/version
+are present and backend configuration remains `url:null`, `key:null`,
+`backupDisabled:true`. Browser interaction checks run against the loopback app;
+these HTTP checks establish the separate deployed-static-file boundary.
+
+Independent [Nora QA was requested](https://neotixhqworkspace.slack.com/archives/C0CAEEX3C4Q/p1793521200857239)
+on draft PR #72. Review is pending. Owner visual acceptance and physical-device
+keyboard/PWA acceptance remain release gates; browser viewport emulation does
+not establish physical-device acceptance. No merge or Production deployment was
+performed.

@@ -24,7 +24,7 @@ async(page)=>{
  for(const url of ['/','/about/','/privacy/','/assets/public.css','/icon-512.png','/sitemap.xml'])check(allowed(url),'Robots permits public/resource '+url);
  for(const url of ['/?code=synthetic','/?error=synthetic','/account','/journal','/history','/backup','/export','/settings','/auth','/about/?code=synthetic'])check(!allowed(url),'Robots excludes private/callback '+url);
  const browser=page.context().browser();
- for(const width of [320,390,1280])for(const colorScheme of ['light','dark']){
+ for(const width of [320,390,768,1024,1280,1440])for(const colorScheme of ['light','dark']){
   const c=await browser.newContext({javaScriptEnabled:false,viewport:{width,height:800},colorScheme});
   await c.route('**/*',r=>new URL(r.request().url()).origin===origin?r.fallback():r.abort());
   const p=await c.newPage();await p.goto(origin);
