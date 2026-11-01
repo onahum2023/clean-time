@@ -329,6 +329,29 @@ nav.tabs button{min-height:58px;font-size:1rem;justify-content:center}
 #planner .page-heading{--page-tone:#78826A}
 #meditation .page-heading{--page-tone:#62877F}
 #meditation .page-art{width:64px;height:56px}
+#iQuestions textarea{min-height:64px;resize:vertical;overflow-y:hidden}
+#iStatement,#iPrayer{white-space:pre-wrap;font-size:1.15rem;line-height:1.65;padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 3px 12px #17362e06}
+#iPosition{scroll-margin-top:64px}
+#iQuestions .field{margin-block:22px}
+#iQuestions .field>span{font-size:1.05rem;line-height:1.5}
+#iNotes{min-height:150px}
+#iGuidance{padding:12px;border-inline-start:3px solid var(--accent);margin-block:16px}
+#inventoryPrint{display:none}
+@media print{
+ @page{size:A4;margin:18mm}
+ html,body{background:#fff!important;color:#111!important;overflow:visible!important;height:auto!important}
+ body>*:not(#inventoryPrint){display:none!important}
+ #inventoryPrint{display:block!important;font:12pt Assistant,Arial,sans-serif;line-height:1.55;color:#111;max-width:none}
+ #inventoryPrint p{white-space:pre-wrap;overflow-wrap:anywhere}
+ #inventoryPrint h1{font-size:22pt}
+ #inventoryPrint h2{font-size:14pt;break-after:avoid;page-break-after:avoid}
+ .inventory-print-question,.inventory-print-label{font-weight:600;break-after:avoid;page-break-after:avoid}
+ .inventory-print-answer{margin-block:3mm 7mm;orphans:3;widows:3}
+ .inventory-print-source{font-size:9pt}
+}
+#inventory .row{flex-wrap:wrap}
+#inventory .row .btn{flex:1 1 auto;white-space:normal}
+#inventory [aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--accent)}
 #inventory .page-heading{--page-tone:#547571}
 #about .page-heading{--page-tone:#A08A6C}
 #readings .page-heading{--page-tone:#758174}
@@ -641,11 +664,44 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
   <section id="inventory" hidden>
     <svg class="page-atmosphere" viewBox="0 0 480 170" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false"><path d="M91 8C46 24 38 66 77 90 29 101 1 64 17 34M18 112h107M30 127h83M44 142h55"/></svg>
     <div class="page-heading"><h2><span data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span></h2><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg></div>
-    <p class="sub"><span data-i18n="רגע להתבוננות בסוף היום. אפשר לכתוב כאן סיכום חופשי של היום ומחשבות לסוף היום.">רגע להתבוננות בסוף היום. אפשר לכתוב כאן סיכום חופשי של היום ומחשבות לסוף היום.</span></p>
-    <label class="field"><span><span data-i18n="יום ההתבוננות">יום ההתבוננות</span></span><input type="date" id="iDay" required></label>
-    <label class="field"><span><span data-i18n="ימים שמורים">ימים שמורים</span></span><select id="iHistory" aria-label="ימי חשבון נפש שמורים" data-i18n-aria-label="ימי חשבון נפש שמורים"></select></label>
-    <label class="field"><span><span data-i18n="סיכום היום / מחשבות לסוף היום">סיכום היום / מחשבות לסוף היום</span></span><textarea id="iSummary" placeholder="אפשר לכתוב כאן כמה מילים..." data-i18n-placeholder="אפשר לכתוב כאן כמה מילים..."></textarea></label>
+    <div id="iGuidance">
+      <p class="note" data-i18n="כדאי לנסות לענות על כל השאלות, בפשטות ובכנות, על 24 השעות האחרונות. מומלץ בסוף היום. זה לא מבחן: אפשר להשאיר שאלות ללא תשובה.">כדאי לנסות לענות על כל השאלות, בפשטות ובכנות, על 24 השעות האחרונות. מומלץ בסוף היום. זה לא מבחן: אפשר להשאיר שאלות ללא תשובה.</p>
+      <button class="btn ghost" id="iDismissGuidance" data-i18n="הבנתי">הבנתי</button>
+    </div>
+    <label class="field"><span data-i18n="יום ההתבוננות">יום ההתבוננות</span><input type="date" id="iDay" required></label>
+    <label class="field"><span data-i18n="ימים שמורים">ימים שמורים</span><select id="iHistory" aria-label="ימי חשבון נפש שמורים" data-i18n-aria-label="ימי חשבון נפש שמורים"></select></label>
+    <div id="iFlow">
+      <p class="note" id="iPosition" role="status"></p>
+      <p id="iStatement" tabindex="-1"></p>
+      <div id="iQuestions"></div>
+      <div id="iClosing" hidden>
+        <p id="iPrayer" tabindex="-1"></p>
+        <label class="field"><span data-i18n="הערות">הערות</span><textarea id="iNotes" dir="auto" rows="5"></textarea></label>
+        <label class="field" id="iOldSummary" hidden><span data-i18n="סיכום שמור קודם">סיכום שמור קודם</span><textarea id="iSummary" dir="auto"></textarea></label>
+        <div id="iLegacy" hidden><p class="note" data-i18n="תשובות שמורות משאלון קודם">תשובות שמורות משאלון קודם</p><p class="note" data-i18n="נוסח השאלות הקודמות אינו זמין.">נוסח השאלות הקודמות אינו זמין.</p><div id="iLegacyAnswers" dir="auto"></div></div>
+      </div>
+      <div class="row" id="iNavigation">
+        <button class="btn ghost" id="iPrevious" data-i18n="הקודם">הקודם</button>
+        <button class="btn" id="iNext" data-i18n="הבא">הבא</button>
+        <button class="btn" id="iFinish" data-i18n="סיימתי להיום">סיימתי להיום</button>
+      </div>
+    </div>
     <p class="msg" id="iStatus" role="status"></p>
+    <p class="msg" id="iCompletion" role="status"></p>
+    <button class="btn ghost" id="iReopen" hidden data-i18n="עיון ועריכה">עיון ועריכה</button>
+    <div id="iOutput" hidden>
+      <div class="row">
+        <button class="btn ghost" id="iPrint" data-i18n="הדפסה">הדפסה</button>
+        <button class="btn ghost" id="iPdf" data-i18n="הורדת PDF">הורדת PDF</button>
+      </div>
+      <p class="note" data-i18n="הקובץ עשוי להכיל מידע אישי קריא. הוא נשמר אצלך ואינו מוגן בהצפנת הגיבוי של האפליקציה.">הקובץ עשוי להכיל מידע אישי קריא. הוא נשמר אצלך ואינו מוגן בהצפנת הגיבוי של האפליקציה.</p>
+      <p class="msg" id="iExportStatus" role="status"></p>
+    </div>
+    <p class="note" id="iSource"><span id="iSourceTitle"></span>
+      <a id="iSourceLink" target="_blank" rel="noopener noreferrer"></a>.
+      <span id="iCopyright"></span>
+      <span data-i18n="האפליקציה אינה קשורה למכורים אנונימיים ואינה מאושרת על ידם.">האפליקציה אינה קשורה למכורים אנונימיים ואינה מאושרת על ידם.</span>
+    </p>
   </section>
 
   <!-- Settings -->
@@ -842,9 +898,11 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 <script src="assets/sync-crypto.js"></script>
 <script src="assets/recovery-dates.js"></script>
 <script src="assets/recovery-timers.js"></script>
+<script src="assets/inventory-content.js"></script>
+<script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.10.31.4';
+const APP_VERSION='2026.11.01.3';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1229,27 +1287,134 @@ $('pForm').onsubmit=ev=>{
   planSelected=k;save();$('pInput').value='';renderP();$('pInput').focus();
 };
 
-/* ---------- Step 10: free reflection; retain legacy answer fields ---------- */
-let inventoryDay='';
+/* ---------- Step 10: five original IP #9 sections + closing ---------- */
+const {version:INVENTORY_VERSION,questions:INVENTORY_QUESTIONS,editions:INVENTORY_EDITIONS,sections:INVENTORY_SECTIONS}=CleanTimeInventoryContent;
+const INVENTORY_VIEW_KEY='cleantime-inventory-view';
+let inventoryDay='',inventoryReview=false,inventoryView={schema:2,sections:{},guidanceHidden:false};
+try{
+  const stored=JSON.parse(localStorage.getItem(INVENTORY_VIEW_KEY));
+  if(stored?.schema===2&&stored.sections&&typeof stored.sections==='object'&&!Array.isArray(stored.sections))inventoryView=stored;
+  // Earlier single-question cursors are presentation state, never answer data.
+  else if(stored?.positions){
+    const oldOrder=[6,10,17,25,31,36];
+    for(const [day,pos] of Object.entries(stored.positions)){
+      if(Number.isInteger(pos)&&pos>=0&&pos<oldOrder.length)inventoryView.sections[day]=INVENTORY_SECTIONS.findIndex(([a,b])=>oldOrder[pos]>=a&&oldOrder[pos]<=b);
+    }
+  }
+}catch(e){}
+function inventoryAnswer(entry,question){
+  return Object.hasOwn(entry.answers||{},question.id)?entry.answers[question.id]:entry.answers?.[question.legacyId];
+}
+function inventoryPosition(){
+  const pos=inventoryView.sections[inventoryDay];return Number.isInteger(pos)&&pos>=0&&pos<=5?pos:0;
+}
+function rememberInventoryView(){
+  try{localStorage.setItem(INVENTORY_VIEW_KEY,JSON.stringify(inventoryView));}catch(e){}
+}
 function inventoryHistory(){
   const select=$('iHistory');select.replaceChildren();
   const keys=Array.from(new Set([todayKey(),inventoryDay,...Object.keys(S.inventory)])).sort().reverse();
   keys.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=dateLabel(k);select.append(o);});select.value=inventoryDay;select.parentElement.hidden=keys.length<2;
 }
+function inventoryCompletion(){
+  const entry=S.inventory[inventoryDay]||{},finished=!!entry.finishedAt&&!inventoryReview,pos=inventoryPosition();
+  $('iFlow').hidden=finished;$('iReopen').hidden=!finished;
+  $('iCompletion').textContent=entry.finishedAt?translateUI('סיימת להיום. אפשר לחזור ולערוך בכל עת.'):'';
+  $('iOutput').hidden=!(finished||pos===5||(entry.updated&&inventoryDay!==todayKey()));
+}
+function growInventoryInput(input){
+  input.style.height='auto';input.style.height=Math.max(input.id==='iNotes'?150:64,input.scrollHeight)+'px';
+}
+function renderInventoryQuestions(focus=false){
+  const entry=S.inventory[inventoryDay]||{},pos=inventoryPosition(),language=CleanTimeI18n.language,edition=INVENTORY_EDITIONS[language];
+  for(const id of ['iQuestions','iStatement','iPrayer']){$(id).lang=language;$(id).dir=language==='he'?'rtl':'ltr';}
+  $('iGuidance').hidden=!!inventoryView.guidanceHidden;
+  $('iSourceTitle').textContent=translateUI('השאלות מתוך:')+' '+edition.title+' (IP #9). ';
+  $('iSourceLink').href=edition.url;$('iSourceLink').textContent=translateUI('לעלון המקורי');
+  $('iCopyright').textContent=`Copyright © ${edition.year} by Narcotics Anonymous World Services, Inc. `+translateUI('כל הזכויות שמורות.');
+  $('iPosition').textContent=translateUI('חלק {current} מתוך 6').replace('{current}',pos+1);
+  $('iStatement').hidden=pos===5;$('iStatement').textContent=edition.statements[pos]||'';
+  $('iClosing').hidden=pos!==5;$('iPrayer').textContent=edition.prayer;
+  $('iPrevious').hidden=pos===0;$('iNext').hidden=pos===5;$('iFinish').hidden=pos!==5;
+  $('iQuestions').replaceChildren();
+  if(pos<5){
+    const [start,end]=INVENTORY_SECTIONS[pos];
+    for(let i=start-1;i<end;i++){
+      const question=INVENTORY_QUESTIONS[i],label=document.createElement('label'),text=document.createElement('span'),input=document.createElement('textarea');
+      label.className='field';text.textContent=edition.questions[i];input.id='iAnswer_'+question.id;input.dir='auto';input.rows=2;
+      const answer=inventoryAnswer(entry,question);input.value=typeof answer==='string'?answer:'';
+      input.oninput=()=>{growInventoryInput(input);saveInventory({answer:[question.id,input.value]});};
+      label.append(text,input);$('iQuestions').append(label);
+    }
+  }
+  inventoryCompletion();
+  requestAnimationFrame(()=>document.querySelectorAll('#inventory textarea').forEach(input=>{if(input.getClientRects().length)growInventoryInput(input);}));
+  if(focus){const el=pos===5?$('iPrayer'):$('iStatement');el.focus({preventScroll:true});$('iPosition').scrollIntoView({block:'start',behavior:'instant'});}
+}
 function openInventory(key){
-  inventoryDay=key;$('iDay').value=key;$('iDay').max=todayKey();
+  inventoryDay=key;inventoryReview=false;$('iDay').value=key;$('iDay').max=todayKey();
   const entry=S.inventory[key]||{};
-  $('iSummary').value=entry.summary||'';$('iStatus').textContent=entry.updated?translateUI('נשמר במכשיר'):'';inventoryHistory();
+  $('iNotes').value=entry.notes||'';$('iSummary').value=entry.summary||'';$('iOldSummary').hidden=!entry.summary;
+  $('iStatus').textContent=entry.updated?translateUI('נשמר במכשיר'):'';$('iExportStatus').textContent='';
+  const known=new Set(INVENTORY_QUESTIONS.flatMap(q=>[q.id,q.legacyId]));
+  const legacy=Object.entries(entry.answers||{}).filter(([id,value])=>!known.has(id)&&typeof value==='string'&&value);
+  $('iLegacy').hidden=!legacy.length;$('iLegacyAnswers').replaceChildren();
+  legacy.forEach(([,value])=>{const p=document.createElement('p');p.style.whiteSpace='pre-wrap';p.textContent=value;$('iLegacyAnswers').append(p);});
+  renderInventoryQuestions();inventoryHistory();
 }
-function saveInventory(){
-  const existing=S.inventory[inventoryDay]||{};
-  // Retain unknown fields and future question answers when revisiting a day.
-  S.inventory[inventoryDay]={...existing,questionnaireVersion:existing.questionnaireVersion||'placeholder-v1',answers:{...(existing.answers||{})},summary:$('iSummary').value,created:existing.created||Date.now(),updated:Date.now()};
-  const ok=save();$('iStatus').textContent=ok?translateUI('נשמר במכשיר'):translateUI('לא נשמר במכשיר');inventoryHistory();
+function saveInventory(change={}){
+  const existing=S.inventory[inventoryDay]||{},answers={...(existing.answers||{})};
+  if(change.answer)answers[change.answer[0]]=change.answer[1];
+  const entry={...existing,questionnaireVersion:existing.questionnaireVersion||INVENTORY_VERSION,
+    answers,created:existing.created||Date.now(),updated:Date.now()};
+  if(change.notes!==undefined)entry.notes=change.notes;
+  if(change.summary!==undefined)entry.summary=change.summary;
+  if(change.answer||change.notes!==undefined)entry.dailyQuestionnaireVersion=INVENTORY_VERSION;
+  if(change.finish)entry.finishedAt=Date.now();else delete entry.finishedAt;
+  S.inventory[inventoryDay]=entry;
+  const ok=save();$('iStatus').textContent=ok?translateUI('נשמר במכשיר'):translateUI('לא נשמר במכשיר');
+  if(!ok&&change.finish){if(existing.finishedAt)entry.finishedAt=existing.finishedAt;else delete entry.finishedAt;}
+  if(ok&&change.finish)inventoryReview=false;
+  inventoryHistory();inventoryCompletion();return ok;
 }
-$('iSummary').oninput=saveInventory;
+$('iNotes').oninput=()=>{growInventoryInput($('iNotes'));saveInventory({notes:$('iNotes').value});};
+$('iSummary').oninput=()=>{growInventoryInput($('iSummary'));saveInventory({summary:$('iSummary').value});};
 $('iDay').onchange=()=>{if($('iDay').value&&$('iDay').checkValidity())openInventory($('iDay').value);else $('iDay').value=inventoryDay;};
 $('iHistory').onchange=()=>openInventory($('iHistory').value);
+function moveInventory(delta){
+  inventoryView.sections[inventoryDay]=Math.max(0,Math.min(5,inventoryPosition()+delta));rememberInventoryView();renderInventoryQuestions(true);
+}
+$('iPrevious').onclick=()=>moveInventory(-1);$('iNext').onclick=()=>moveInventory(1);
+$('iDismissGuidance').onclick=()=>{inventoryView.guidanceHidden=true;rememberInventoryView();$('iGuidance').hidden=true;};
+$('iFinish').onclick=()=>{if(saveInventory({finish:true}))$('iReopen').focus();};
+$('iReopen').onclick=()=>{inventoryReview=true;inventoryView.sections[inventoryDay]=0;rememberInventoryView();renderInventoryQuestions(true);};
+function inventoryOutputModel(){
+  const language=CleanTimeI18n.language,edition=INVENTORY_EDITIONS[language],entry=S.inventory[inventoryDay]||{},blocks=[];
+  const add=(kind,text,dir)=>blocks.push({kind,text,dir});
+  add('title',translateUI('זמן נקי')+' — '+translateUI('חשבון נפש יומי / צעד 10'));
+  add('date',dateLabel(inventoryDay)+' · '+inventoryDay);
+  for(let section=0;section<5;section++){
+    add('statement',edition.statements[section]);const [start,end]=INVENTORY_SECTIONS[section];
+    for(let i=start-1;i<end;i++){
+      add('question',edition.questions[i]);const answer=inventoryAnswer(entry,INVENTORY_QUESTIONS[i]);
+      add('answer',typeof answer==='string'&&answer.trim()?answer:translateUI('ללא תשובה'),'auto');
+    }
+  }
+  add('prayer',edition.prayer);add('label',translateUI('הערות'));add('note',entry.notes||translateUI('ללא הערות'),'auto');
+  if(entry.summary){add('label',translateUI('סיכום שמור קודם'));add('note',entry.summary,'auto');}
+  const known=new Set(INVENTORY_QUESTIONS.flatMap(q=>[q.id,q.legacyId]));
+  for(const [id,text] of Object.entries(entry.answers||{}))if(!known.has(id)&&typeof text==='string'&&text){add('label',translateUI('תשובות שמורות משאלון קודם'));add('note',text,'auto');}
+  add('source',edition.title+' — IP #9. Copyright © '+edition.year+' Narcotics Anonymous World Services, Inc. '+translateUI('כל הזכויות שמורות.'));
+  add('source',edition.url,'ltr');
+  return {language,direction:language==='he'?'rtl':'ltr',day:inventoryDay,blocks};
+}
+$('iPrint').onclick=()=>{try{CleanTimeInventoryOutput.print(inventoryOutputModel());}catch(e){$('iExportStatus').textContent=translateUI('לא הצלחנו להכין את הקובץ. הנתונים במכשיר לא שונו.');}};
+$('iPdf').onclick=async()=>{
+  $('iPdf').disabled=true;$('iExportStatus').textContent=translateUI('מכינים את הקובץ במכשיר…');
+  try{await CleanTimeInventoryOutput.download(inventoryOutputModel());$('iExportStatus').textContent=translateUI('הקובץ הועבר להורדה.');}
+  catch(e){$('iExportStatus').textContent=translateUI('לא הצלחנו להכין את הקובץ. הנתונים במכשיר לא שונו.');}
+  finally{$('iPdf').disabled=false;}
+};
 
 /* ---------- Meditation: wall-clock deadline; ephemeral, no history ---------- */
 const gong=new Audio('assets/gong.wav');gong.preload='auto';
@@ -1599,7 +1764,10 @@ $('languageSelector').onclick=event=>{
   const button=event.target.closest('button[data-language]');
   if(!button||button.disabled||button.dataset.language===CleanTimeI18n.language)return;
   if(Object.values(setupDrafts).some(Boolean)&&!confirm(translateUI('שינוי שפה ינקה פרטים שטרם נשמרו בטופס הזה. להמשיך?')))return;
-  if(CleanTimeI18n.setLanguage(button.dataset.language))location.reload();
+  if(CleanTimeI18n.setLanguage(button.dataset.language)){
+    if(current==='inventory')history.replaceState({...history.state,inventoryResume:{day:inventoryDay,reviewing:inventoryReview}},'');
+    location.reload();
+  }
   else{$('languageStatus').textContent=translateUI('לא ניתן לשמור את בחירת השפה במכשיר.');$('languageStatus').hidden=false;}
 };
 $('feedbackBack').onclick=()=>history.back();
@@ -1624,7 +1792,8 @@ $('exportRecovery').onclick=()=>{
   }catch(e){$('exportStatus').textContent=translateUI('לא הצלחנו ליצור את הקובץ. הנתונים במכשיר לא שונו.');}
 };
 function resetLocal(){
-  try{localStorage.removeItem(KEY);}catch(e){}
+  try{localStorage.removeItem(KEY);localStorage.removeItem(INVENTORY_VIEW_KEY);}catch(e){}
+  inventoryView={schema:2,sections:{},guidanceHidden:false};
   resetSetupTimers();
   storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();$('oDate').value='';$('oFrom').value='';confirmRecoveryDate('oDate');show('welcome');
 }
@@ -2093,9 +2262,13 @@ applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();storageNo
 $('oDate').max=todayKey();$('sDate').max=todayKey();$('aDate').max=todayKey();
 $('oSecondDate').max=todayKey();$('aSecondDate').max=todayKey();
 let hasSession=false; try{hasSession=!!localStorage.getItem(AUTH_KEY);}catch(e){}
-const initial=fromLink||(!S.date&&(M.uid||hasSession))?'startup':S.date?'counter':'welcome';
+const inventoryResume=history.state?.inventoryResume;
+const initial=fromLink||(!S.date&&(M.uid||hasSession))?'startup':S.date?(inventoryResume?'inventory':'counter'):'welcome';
 history.replaceState({screen:initial},'');
 show(initial,false);
+if(initial==='inventory'&&typeof inventoryResume?.day==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(inventoryResume.day)&&inventoryResume.day<=todayKey()){
+  openInventory(inventoryResume.day);inventoryReview=!!inventoryResume.reviewing;renderInventoryQuestions();
+}
 analyticsNavigationReady=true;
 window.CleanTimeAnalyticsInitial={...window.CleanTimeAnalyticsInitial,screen:current};
 $('publicIntroduction').hidden=true;

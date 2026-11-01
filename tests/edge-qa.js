@@ -12,7 +12,7 @@ async (page)=>{
  const serialized=JSON.stringify(data);await p.reload();check(await p.evaluate(k=>localStorage.getItem(k),key)===serialized,'Existing links migration is idempotent');
  await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="inventory"]').click();
  await p.evaluate(k=>{window.originalSetItem=Storage.prototype.setItem;Storage.prototype.setItem=function(name,value){if(name===k)throw new DOMException('Quota','QuotaExceededError');return window.originalSetItem.call(this,name,value);};},key);
- await p.locator('#iSummary').fill('לא נשמר');
+ await p.locator('#iAnswer_na_ip9_q01').fill('לא נשמר');
  check(await p.locator('#storageMsg').isVisible()&&await p.locator('#iStatus').innerText()==='לא נשמר במכשיר','Storage failure is visible; inventory does not claim success');
  check(!(await p.evaluate(k=>JSON.parse(localStorage.getItem(k)),key)).inventory[await p.locator('#iDay').inputValue()],'Failed storage write retains original persisted state');
  await p.evaluate(()=>Storage.prototype.setItem=window.originalSetItem);await p.reload();

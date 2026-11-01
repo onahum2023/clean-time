@@ -63,11 +63,11 @@ async(page)=>{
  const length=await p.evaluate(()=>history.length);await p.locator('#sFrom').fill('synthetic');await p.waitForTimeout(1100);check(await p.evaluate(()=>history.length)===length,'Passive rerenders do not push history');
  await p.locator('[data-tab="counter"]').click();await p.locator('#counter [data-go="inventory"]').click();
  check(await p.locator('#iPlaceholders,[data-slot]').count()===0&&!(await p.locator('#inventory').innerText()).includes('בהכנה'),'Step 10 exposes summary with no unfinished questions or preparation copy');
- await p.locator('#iHistory').selectOption('2025-01-10');await p.locator('#iSummary').fill('updated synthetic summary');await p.reload();await p.locator('#counter [data-go="inventory"]').click();await p.locator('#iHistory').selectOption('2025-01-10');
+ await p.locator('#iHistory').selectOption('2025-01-10');while(!await p.locator('#iClosing').isVisible())await p.locator('#iNext').click();await p.locator('#iSummary').fill('updated synthetic summary');await p.reload();await p.locator('#counter [data-go="inventory"]').click();await p.locator('#iHistory').selectOption('2025-01-10');
  check(await p.evaluate(({key,old})=>{const e=JSON.parse(localStorage.getItem(key)).inventory['2025-01-10'];return JSON.stringify(e.answers)===JSON.stringify(old.answers)&&e.questionnaireVersion===old.questionnaireVersion&&e.created===old.created&&e.extra.keep&&e.summary==='updated synthetic summary';},{key,old}),'Legacy placeholder/future answers and metadata survive summary save and reload');
  for(const width of [320,360,508,1280]){
   await p.setViewportSize({width,height:800});await p.locator('#iSummary').fill('א'.repeat(600));
-  check(await p.evaluate(()=>{const w=document.documentElement.clientWidth;return document.documentElement.scrollWidth<=w&&[...document.querySelectorAll('#inventory input,#inventory textarea,#inventory select')].every(e=>{const b=e.getBoundingClientRect();return b.left>=0&&b.right<=w&&e.scrollWidth<=e.clientWidth;});}),'Step 10 fields and page fit '+width+'px');
+  check(await p.evaluate(()=>{const w=document.documentElement.clientWidth;return document.documentElement.scrollWidth<=w&&[...document.querySelectorAll('#inventory input,#inventory textarea,#inventory select')].filter(e=>e.getClientRects().length).every(e=>{const b=e.getBoundingClientRect();return b.left>=0&&b.right<=w&&e.scrollWidth<=e.clientWidth;});}),'Step 10 fields and page fit '+width+'px');
  }
  await p.setViewportSize({width:360,height:800});await p.screenshot({path:'/tmp/clean-time-uat-step10-360.png',fullPage:true});
  check(await p.evaluate(()=>window.qaErrors.length===0),'UAT journeys have no browser errors');await c.close();

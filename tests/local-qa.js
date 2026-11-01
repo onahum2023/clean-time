@@ -52,13 +52,13 @@ async (page) => {
   await page.reload();await go('planner');
   check((await read()).plans[localDay].length===2&&(await read()).plans[localDay][0].done,'Plan edit/delete/check persists after refresh');
   await page.locator('#pList [role="checkbox"]').first().click();check(!(await read()).plans[localDay][0].done,'Plan uncheck persists');
-  await go('inventory');
-  await page.locator('#iSummary').fill('מחשבות לסוף היום');
-  await page.locator('#iDay').fill(oldDay);await page.locator('#iDay').dispatchEvent('change');await page.locator('#iSummary').fill('יום קודם');
+  await go('inventory');while(await page.locator('#iNext').isVisible())await page.locator('#iNext').click();
+  await page.locator('#iNotes').fill('מחשבות לסוף היום');
+  await page.locator('#iDay').fill(oldDay);await page.locator('#iDay').dispatchEvent('change');while(await page.locator('#iNext').isVisible())await page.locator('#iNext').click();await page.locator('#iNotes').fill('יום קודם');
   await page.locator('#iHistory').selectOption(localDay);
-  check(await page.locator('#iSummary').inputValue()==='מחשבות לסוף היום','Inventory revisits today');
-  await page.reload();await go('inventory');check(await page.locator('#iSummary').inputValue()==='מחשבות לסוף היום','Inventory summary persists');
-  await page.locator('#iHistory').selectOption(oldDay);check(await page.locator('#iSummary').inputValue()==='יום קודם','Inventory revisits prior day');
+  check(await page.locator('#iNotes').inputValue()==='מחשבות לסוף היום','Inventory revisits today');
+  await page.reload();await go('inventory');check(await page.locator('#iNotes').inputValue()==='מחשבות לסוף היום','Inventory summary persists');
+  await page.locator('#iHistory').selectOption(oldDay);check(await page.locator('#iNotes').inputValue()==='יום קודם','Inventory revisits prior day');
   await go('journal');await page.locator('#jNew').click();await page.locator('#jText').fill('יומן בדיקה');await page.locator('#jDone').click();
   check((await read()).journal[0].text==='יומן בדיקה','Existing journal remains usable');
   await page.locator('[data-tab="about"]').click();check((await page.locator('#about').innerText()).includes('מוצפנים במכשיר לפני שהם נשמרים בגיבוי בענן'),'About discloses device encryption and recovery-key privacy model');
@@ -124,7 +124,7 @@ async (page) => {
   await activate(cloud);await cloud.evaluate(()=>window.qaUploads=[]);
   await cloud.locator('[data-tab="counter"]').click();await cloud.locator('#counter [data-go="inventory"]').click();await cloud.locator('#iHistory').selectOption(oldDay);
   check(await cloud.locator('#iSummary').inputValue()==='סיכום מהענן','Mock signed-in cloud pull loads inventory');
-  await cloud.locator('#iSummary').fill('סיכום מעודכן');await cloud.waitForTimeout(2400);
+  while(await cloud.locator('#iNext').isVisible())await cloud.locator('#iNext').click();await cloud.locator('#iSummary').fill('סיכום מעודכן');await cloud.waitForTimeout(2400);
   const uploads=await cloud.evaluate(()=>window.qaUploads),decrypted=await cloud.evaluate(()=>qaPlain());
   check(uploads.length>0&&decrypted.inventory[oldDay].summary==='סיכום מעודכן','Mock signed-in save encrypts whole-state inventory in existing row');
   check(!('mode' in decrypted)&&uploads.at(-1).data.v===1&&uploads.at(-1).user_id==='qa-user','Cloud upload preserves account scope and local-only mode exclusion');
