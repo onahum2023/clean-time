@@ -35,6 +35,18 @@ async(page)=>{
  check(await p.evaluate(()=>!location.hash),'Magic-link return cleans URL and restores persisted creation profile');
  check(await p.evaluate(()=>window.qaEntryFlash.length===0),'Magic-link callback takes precedence without Welcome/setup flash');
  check(await p.locator('#account').isVisible(),'Authenticated new account shows encrypted backup status');
+ const {navigationFits}=require(process.cwd()+'/tests/navigation-layout.js');
+ const priorNavigation=await p.evaluate(()=>({recovery:localStorage.getItem('cleantime-he-v1'),uploads:qaUploads.length}));
+ for(const width of [1024,1440,390]){
+  await p.setViewportSize({width,height:900});
+  for(const target of ['counter','tools','about','settings','account']){
+   await p.locator(target==='settings'?'#openSettings':'[data-tab='+target+']').click();
+   check(await p.locator('#'+target).isVisible()&&await navigationFits(p),'Registered shared navigation '+target+' '+width);
+  }
+ }
+ check(await p.evaluate(before=>localStorage.getItem('cleantime-he-v1')===before.recovery&&qaUploads.length===before.uploads,priorNavigation),'Registered navigation neither rewrites recovery nor uploads');
+ await p.setViewportSize({width:360,height:800});
+
  await p.locator('#openSettings').click();check(await p.locator('#myAccount').isVisible()&&!await p.locator('#signOut').isVisible()&&!await p.locator('#sName').isVisible(),'Registered settings separates identity and account controls');
  await p.locator('#myAccount').click();await fit(p);await p.screenshot({path:'/tmp/clean-time-account-360.png',fullPage:true});
  check(await p.locator('#accountName').innerText()==='בדיקה'&&await p.locator('#sEmail').innerText()==='qa@example.invalid'&&(await p.locator('#syncStatus').innerText()).includes('סנכרון אחרון'),'My Account displays name, email, state and last sync');

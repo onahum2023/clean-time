@@ -10,8 +10,8 @@ fixture.timers.push({id:'second',category:'alcohol',label:'',date:'2026-05-01',t
  fs.mkdirSync(output,{recursive:true});const browser=await chromium.launch({headless:true});
  require('./preview-access.js').attachPreviewAccess(browser);
  try{
-  for(const width of [1440,390])for(const colorScheme of ['light','dark'])for(const screen of ['home','welcome']){
-   const c=await browser.newContext({viewport:{width,height:width===1440?900:844},colorScheme,timezoneId:'Europe/Amsterdam',serviceWorkers:'block'});
+  for(const width of [1440,1024,390])for(const colorScheme of ['light','dark'])for(const screen of ['home','welcome']){
+   const c=await browser.newContext({viewport:{width,height:width===1440?900:width===1024?768:844},colorScheme,timezoneId:'Europe/Amsterdam',serviceWorkers:'block'});
    await c.route('**/*',r=>new URL(r.request().url()).origin===origin?r.fallback():r.abort());
    if(screen==='home')await c.addInitScript(f=>localStorage.setItem('cleantime-he-v1',JSON.stringify(f)),fixture);
    const p=await c.newPage();await p.clock.install({time:new Date('2026-11-01T12:00:00Z')});

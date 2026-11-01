@@ -14,7 +14,7 @@ async(page)=>{
    await page.setViewportSize({width,height:width>=1024?900:800});
    check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No horizontal overflow with long secondary label: '+lang+' '+width);
    await page.locator('#counter [data-go=inventory]').scrollIntoViewIfNeeded();
-   check(await page.evaluate(()=>{const r=document.querySelector('#counter [data-go=inventory]').getBoundingClientRect(),nav=document.getElementById('tabs').getBoundingClientRect();return r.bottom<=nav.top+1}),'Last action clears fixed navigation: '+lang+' '+width);
+   check(await page.evaluate(()=>{const r=document.querySelector('#counter [data-go=inventory]').getBoundingClientRect(),nav=document.getElementById('tabs').getBoundingClientRect();return innerWidth>=1024?(document.dir==='rtl'?r.right<=nav.left:r.left>=nav.right):r.bottom<=nav.top+1}),'Last action clears fixed navigation: '+lang+' '+width);
   }
  }
  await page.setViewportSize({width:1440,height:900});

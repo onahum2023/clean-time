@@ -55,7 +55,7 @@ async(page)=>{
    await page.emulateMedia({colorScheme});await page.setViewportSize({width,height:width===1440?900:800});await page.mouse.move(0,0);
    check(await page.evaluate(()=>{
     const first=document.getElementById('dailyReading').getBoundingClientRect(),footer=document.getElementById('tabs').getBoundingClientRect(),num=document.querySelector('#homePrimaryCount .num');
-    return document.documentElement.scrollWidth<=innerWidth&&first.bottom<footer.top&&(innerWidth>=1024?parseFloat(getComputedStyle(num).fontSize)>=56:parseFloat(getComputedStyle(num).fontSize)<=36);
+    return document.documentElement.scrollWidth<=innerWidth&&first.bottom<(innerWidth>=1024?innerHeight:footer.top)&&(innerWidth>=1024?parseFloat(getComputedStyle(num).fontSize)>=56:parseFloat(getComputedStyle(num).fontSize)<=36);
    }),'Compact status and first daily actions above footer '+language+' '+width+' '+colorScheme);
    check(await page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.daily-cards > *')],r=cards.map(e=>e.getBoundingClientRect()),grid=document.querySelector('.daily-cards').getBoundingClientRect(),rtl=document.documentElement.dir==='rtl',near=(a,b)=>Math.abs(a-b)<1;
