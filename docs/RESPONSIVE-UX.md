@@ -23,9 +23,14 @@ Production deployment and merge require owner approval.
 
 Shared shell: 1120px ceiling, 16/20px mobile gutters and 32px from 600px.
 Fixed bottom navigation remains at every viewport width, with the original five
-options, order and active-page highlighting. Its items sit in a centered 520px
-container, independently of the wider content shell. Bottom content and scroll
-padding grow in rem units for enlarged text and include the device safe area.
+options, order and active-page highlighting. Below 600px its items retain the
+compact centered 520px maximum. From 600px the navigation grows with the shell;
+from 1024px its edges match the Home region, bounded by the shared 1080px Home
+ceiling and the shell's inner width (1056px with the current 1120px shell and
+32px gutters). Desktop labels use 1rem, 64px minimum targets and a tinted current
+destination. Bottom content and scroll padding grow in rem units, include the
+device safe area and follow the actual footer height through ResizeObserver so
+wrapped translations at enlarged text sizes cannot cover the final page action.
 The language switcher retains its original sticky position. Reading order,
 accessible labels, history and focus behavior are unchanged.
 
