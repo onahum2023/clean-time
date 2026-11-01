@@ -137,13 +137,13 @@ async(page)=>{
  await s.p.locator('[data-tab="counter"]').click();await s.p.locator('#counter [data-go="inventory"]').click();
  check(await s.p.locator('#iPlaceholders,[data-slot]').count()===0,'Encrypted Step 10 keeps placeholder controls hidden');
  await s.p.locator('#iHistory').selectOption('2025-01-01');
- check(await s.p.locator('#iAnswer_na_ip9_he_2005_q06').inputValue()==='synthetic selected answer'&&await s.p.locator('#iReopen').isVisible(),'Encrypted restore renders selected question and completion');
+ check(await s.p.locator('#iAnswer_na_ip9_q06').inputValue()==='synthetic selected answer'&&await s.p.locator('#iReopen').isVisible(),'Encrypted restore renders selected question and completion');
  await s.p.locator('#iSummary').fill('encrypted reflection synthetic');
- await s.p.locator('#iAnswer_na_ip9_he_2005_q06').fill('synthetic encrypted revised answer');
+ await s.p.locator('#iAnswer_na_ip9_q06').fill('synthetic encrypted revised answer');
  for(const width of [320,360,508,1280]){await s.p.setViewportSize({width,height:800});check(await s.p.evaluate(()=>{const w=document.documentElement.clientWidth;return document.documentElement.scrollWidth<=w&&[...document.querySelectorAll('#inventory textarea,#inventory select')].every(e=>{const b=e.getBoundingClientRect();return b.left>=0&&b.right<=w&&e.scrollWidth<=e.clientWidth;});}),'Encrypted Step 10 fits '+width+'px');}
  await s.p.evaluate(()=>window.dispatchEvent(new Event('online')));await s.p.waitForFunction(()=>!JSON.parse(localStorage.getItem('cleantime-he-sync')).dirty);
- check(same((await s.plain()).inventory['2025-01-01'].answers,{...full.inventory['2025-01-01'].answers,na_ip9_he_2005_q06:'synthetic encrypted revised answer'}),'Legacy and future Step 10 answers survive encrypted edit round trip');
- check((await s.plain()).inventory['2025-01-01'].dailyQuestionnaireVersion==='na-ip9-he-2005-daily-v1'&&!(await s.plain()).inventory['2025-01-01'].finishedAt,'Encrypted edit preserves prompt version and reopens completion');
+ check(same((await s.plain()).inventory['2025-01-01'].answers,{...full.inventory['2025-01-01'].answers,na_ip9_q06:'synthetic encrypted revised answer'}),'Legacy and future Step 10 answers survive encrypted edit round trip');
+ check((await s.plain()).inventory['2025-01-01'].dailyQuestionnaireVersion==='na-ip9-daily-v1'&&!(await s.plain()).inventory['2025-01-01'].finishedAt,'Encrypted edit preserves prompt version and reopens completion');
  check(!JSON.stringify(s.cloud()).includes('synthetic encrypted revised answer')&&!JSON.stringify(s.cloud()).includes('placeholder_1')&&!JSON.stringify(s.cloud()).includes('old synthetic answer'),'Cloud envelope contains no plaintext legacy answers');await s.c.close();
  // Explicit account creation/conversion, validation and returning login into encryption.
  const signIn=async p=>{await p.evaluate(({uid,email})=>{localStorage.setItem('cleantime-he-auth','synthetic-session');window.qaAuthCallback('SIGNED_IN',{user:{id:uid,email}});},{uid,email});await p.locator('#encryptionSetup').waitFor({state:'visible'});};

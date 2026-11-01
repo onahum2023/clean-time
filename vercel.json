@@ -9,7 +9,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'sha256-2RBJfUPza+scGmDmBJQ7zsfjmlj/4u11TisE2P+9Zn4=' 'sha256-ma6NSSURnQRi8cLYkLp851Zon9tJNeeg4LUfkVuwhlA=' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; worker-src 'self'; connect-src 'self' https://aefhjgmiwgajdhgyhelm.supabase.co wss://aefhjgmiwgajdhgyhelm.supabase.co"
+          "value": "default-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'sha256-LVDSnLlMG5Af2DhBVy//uG545MYoTZb0tcFEit7PO/k=' 'sha256-ma6NSSURnQRi8cLYkLp851Zon9tJNeeg4LUfkVuwhlA=' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; worker-src 'self'; connect-src 'self' https://aefhjgmiwgajdhgyhelm.supabase.co wss://aefhjgmiwgajdhgyhelm.supabase.co"
         },
         {
           "key": "Referrer-Policy",

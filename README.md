@@ -27,7 +27,7 @@ The canonical production origin is `https://clean-time.app/`; the www domain red
 
 **Meditation (מדיטציה).** A simple countdown with pause, resume, reset and a local gong at the start and end. No content library or history.
 
-**Daily inventory / Step 10 (חשבון נפש יומי / צעד 10).** An autosaved daily reflection with previous-day access. The daily practice offers six approved questions from the official Hebrew NA IP #9, one at a time or all six together, with optional free-text reflection. Answers save as you type; skip or finish at any point and return to edit. See [content and draft QA](docs/STEP-10-QA.md).
+**Daily inventory / Step 10 (חשבון נפש יומי / צעד 10).** An autosaved daily reflection with previous-day access. The daily practice offers six approved questions from the official Hebrew, English and Russian editions of NA IP #9, one at a time or all six together, with optional free-text reflection. Answers save as you type; skip or finish at any point and return to edit. See [content and draft QA](docs/STEP-10-QA.md).
 
 **About (אודות).** Purpose, guest mode, optional backup, and privacy, accessible from the main navigation.
 

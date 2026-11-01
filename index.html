@@ -665,10 +665,10 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
     <button class="btn ghost" id="iReopen" hidden><span data-i18n="חזרה לעריכה">חזרה לעריכה</span></button>
     <p class="msg" id="iStatus" role="status"></p>
     <p class="note" id="iCompletion" role="status"></p>
-    <p class="note" lang="he" dir="rtl">השאלות מתוך ״לחיות את התכנית״, עלון מס׳ 9, מכורים אנונימיים.
-      <a href="https://na.org/wp-content/uploads/2024/05/he3109-IP-9-Hebrew.pdf" target="_blank" rel="noopener noreferrer">לעלון המקורי</a>.
-      Copyright © 2005 by Narcotics Anonymous World Services, Inc. כל הזכויות שמורות.
-      בחירת שש השאלות היא של זמן נקי. האפליקציה אינה קשורה למכורים אנונימיים ואינה מאושרת על ידם.
+    <p class="note" id="iSource"><span id="iSourceTitle"></span>
+      <a id="iSourceLink" target="_blank" rel="noopener noreferrer"></a>.
+      <span id="iCopyright"></span>
+      <span data-i18n="בחירת שש השאלות היא של זמן נקי. האפליקציה אינה קשורה למכורים אנונימיים ואינה מאושרת על ידם.">בחירת שש השאלות היא של זמן נקי. האפליקציה אינה קשורה למכורים אנונימיים ואינה מאושרת על ידם.</span>
     </p>
   </section>
 
@@ -868,7 +868,7 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 <script src="assets/recovery-timers.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.1';
+const APP_VERSION='2026.11.01.2';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1253,17 +1253,43 @@ $('pForm').onsubmit=ev=>{
   planSelected=k;save();$('pInput').value='';renderP();$('pInput').focus();
 };
 
-/* ---------- Step 10: approved Hebrew IP #9, HE-3109 (Hebrew 8/05) ---------- */
-// Stable IDs identify this exact wording; never reuse them for revised prompts.
-const INVENTORY_VERSION='na-ip9-he-2005-daily-v1';
-const INVENTORY_QUESTIONS=[
-  ['na_ip9_he_2005_q06','האם הייתי טוב אל עצמי היום? איך?'],
-  ['na_ip9_he_2005_q10','האם שיתפתי היום מנסיוני, כוחי ותקוותי?'],
-  ['na_ip9_he_2005_q17','מה למדתי על עצמי היום?'],
-  ['na_ip9_he_2005_q25','האם עשיתי היום משהו שיגרום נזק לי או לאחר? אם כן, מה?'],
-  ['na_ip9_he_2005_q31','האם היום היה פחד בחיי?'],
-  ['na_ip9_he_2005_q36','האם זכרתי באופן מודע שיש לי בחירה היום?']
-];
+/* ---------- Step 10: official NAWS IP #9 editions; review order 6/10/17/25/31/36 ---------- */
+// Semantic IDs are shared across official editions. Preserve old Hebrew IDs as
+// read-through aliases; language changes never migrate or rewrite recovery data.
+const INVENTORY_VERSION='na-ip9-daily-v1';
+const INVENTORY_QUESTIONS=[6,10,17,25,31,36].map(n=>{
+  const suffix=String(n).padStart(2,'0');
+  return {id:'na_ip9_q'+suffix,legacyId:'na_ip9_he_2005_q'+suffix};
+});
+const INVENTORY_EDITIONS={
+  he:{year:2005,url:'https://na.org/wp-content/uploads/2024/05/he3109-IP-9-Hebrew.pdf',title:'לחיות את התכנית',questions:[
+    'האם הייתי טוב אל עצמי היום? איך?',
+    'האם שיתפתי היום מנסיוני, כוחי ותקוותי?',
+    'מה למדתי על עצמי היום?',
+    'האם עשיתי היום משהו שיגרום נזק לי או לאחר? אם כן, מה?',
+    'האם היום היה פחד בחיי?',
+    'האם זכרתי באופן מודע שיש לי בחירה היום?'
+  ]},
+  en:{year:1983,url:'https://na.org/e-lit/ip-9-living-the-program/',title:'Living the Program',questions:[
+    'Was I good to myself today? How?',
+    'Did I share my experiences, strengths, and hopes?',
+    'What did I learn about myself today?',
+    'Have I done anything to cause harm to myself or to another today? If so, what?',
+    'Was there fear in my life today?',
+    'Did I consciously remember that I have a choice today?'
+  ]},
+  ru:{year:2012,url:'https://na.org/e-lit/ip-9-%D0%B6%D0%B8%D1%82%D1%8C-%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%BE%D0%B9/',title:'Жить программой',questions:[
+    'Был ли я сегодня добр к себе? Как именно?',
+    'Делился ли я своим опытом, силами и надеждой?',
+    'Что нового я узнал о себе сегодня?',
+    'Сделал ли я сегодня что-нибудь, чтобы нанести вред себе или кому-либо еще? Если да, что именно?',
+    'Был ли сегодня в моей жизни страх?',
+    'Помнил ли я осознанно о том, что у меня сегодня есть выбор?'
+  ]}
+};
+function inventoryAnswer(entry,question){
+  return Object.hasOwn(entry.answers||{},question.id)?entry.answers[question.id]:entry.answers?.[question.legacyId];
+}
 const INVENTORY_VIEW_KEY='cleantime-inventory-view';
 let inventoryDay='',inventoryView={mode:'focused',positions:{}};
 try{
@@ -1290,18 +1316,24 @@ function inventoryCompletion(){
 }
 function renderInventoryQuestions(focus=false){
   const entry=S.inventory[inventoryDay]||{},pos=inventoryPosition(),all=inventoryView.mode==='all';
+  const language=CleanTimeI18n.language,edition=INVENTORY_EDITIONS[language];
+  $('iQuestions').lang=language;$('iQuestions').dir=language==='he'?'rtl':'ltr';
+  $('iSourceTitle').textContent=translateUI('השאלות מתוך:')+' '+edition.title+' (IP #9). ';
+  $('iSourceLink').href=edition.url;$('iSourceLink').textContent=translateUI('לעלון המקורי');
+  $('iCopyright').textContent=`Copyright © ${edition.year} by Narcotics Anonymous World Services, Inc. `+translateUI('כל הזכויות שמורות.');
   $('iFocused').setAttribute('aria-pressed',String(!all));$('iAll').setAttribute('aria-pressed',String(all));
   $('iPosition').hidden=all;$('iPosition').textContent=translateUI('שאלה {current} מתוך {total}').replace('{current}',pos+1).replace('{total}',INVENTORY_QUESTIONS.length);
   $('iNavigation').hidden=all;
   $('iPrevious').disabled=pos===0;$('iNext').disabled=pos===INVENTORY_QUESTIONS.length-1;
   $('iSkip').hidden=pos===INVENTORY_QUESTIONS.length-1;
   $('iQuestions').replaceChildren();
-  INVENTORY_QUESTIONS.forEach(([id,prompt],i)=>{
+  INVENTORY_QUESTIONS.forEach((question,i)=>{
+    const {id}=question,prompt=edition.questions[i];
     if(!all&&i!==pos)return;
     const label=document.createElement('label');label.className='field';
     const text=document.createElement('span');text.textContent=prompt;
     const input=document.createElement('textarea');input.id='iAnswer_'+id;input.dir='auto';
-    input.value=typeof entry.answers?.[id]==='string'?entry.answers[id]:'';
+    const answer=inventoryAnswer(entry,question);input.value=typeof answer==='string'?answer:'';
     input.onfocus=()=>{inventoryView.positions[inventoryDay]=i;rememberInventoryView();};
     input.oninput=()=>saveInventory({answer:[id,input.value]});
     label.append(text,input);$('iQuestions').append(label);
@@ -1313,7 +1345,7 @@ function openInventory(key){
   inventoryDay=key;$('iDay').value=key;$('iDay').max=todayKey();
   const entry=S.inventory[key]||{};
   $('iSummary').value=entry.summary||'';$('iStatus').textContent=entry.updated?translateUI('נשמר במכשיר'):'';
-  const known=new Set(INVENTORY_QUESTIONS.map(([id])=>id));
+  const known=new Set(INVENTORY_QUESTIONS.flatMap(q=>[q.id,q.legacyId]));
   const legacy=Object.entries(entry.answers||{}).filter(([id,value])=>!known.has(id)&&typeof value==='string'&&value);
   $('iLegacy').hidden=!legacy.length;$('iLegacyAnswers').replaceChildren();
   legacy.forEach(([,value])=>{const p=document.createElement('p');p.style.whiteSpace='pre-wrap';p.textContent=value;$('iLegacyAnswers').append(p);});
