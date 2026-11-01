@@ -1,9 +1,9 @@
 // Reproducible synthetic Welcome and unchanged-flow captures. No live user state.
-// node tests/welcome-capture.js before|after|preview
+// node tests/welcome-capture.js before|after|preview|revised|revised-preview
 const fs=require('node:fs'),path=require('node:path');
 const {chromium}=require('playwright');
 const stage=process.argv[2]||'after',origin=process.env.QA_BASE_URL||'http://127.0.0.1:8765';
-if(!['before','after','preview'].includes(stage))throw Error('Unknown capture stage');
+if(!['before','after','preview','revised','revised-preview'].includes(stage))throw Error('Unknown capture stage');
 const url=new URL(origin);
 if(url.origin!==origin||!(url.protocol==='http:'&&url.hostname==='127.0.0.1'||url.protocol==='https:'&&url.hostname.endsWith('.vercel.app')))throw Error('Use loopback or exact Preview origin');
 const output=path.resolve('docs/issue-77-visuals');fs.mkdirSync(output,{recursive:true});
@@ -18,6 +18,7 @@ const output=path.resolve('docs/issue-77-visuals');fs.mkdirSync(output,{recursiv
    await p.goto(origin);await p.locator('#welcome').waitFor();await p.waitForFunction(async()=>!!(await navigator.serviceWorker.getRegistration())?.active,{},{timeout:20000});await p.evaluate(()=>document.fonts.ready);
    await p.screenshot({path:path.join(output,`${stage}-${width}-${colorScheme}.png`)});
    await p.screenshot({path:path.join(output,`${stage}-${width}-${colorScheme}-full.png`),fullPage:true});
+   if(stage.startsWith('revised')){await p.locator('.welcome-privacy').scrollIntoViewIfNeeded();await p.screenshot({path:path.join(output,`${stage}-${width}-${colorScheme}-footer.png`)});}
    // Private local evidence: compare the untouched setup and Today byte for byte.
    const regression=path.resolve('qa-artifacts/issue-77');fs.mkdirSync(regression,{recursive:true});
    await p.locator('#welcomeStart').click();await p.locator('#oDate').fill('2025-01-01');await p.locator('#oFrom').selectOption('אחר');

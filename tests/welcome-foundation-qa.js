@@ -17,9 +17,27 @@ async(page)=>{
   check(await p.locator('#welcome .welcome-preview').getAttribute('aria-labelledby')==='welcomeExampleTitle'&&await p.locator('#welcome input,#welcome .welcome-preview button,#welcome .welcome-preview a').count()===0,'Labeled static illustration '+label);
   const focus=[];
   await p.locator('#languageSelector button').last().focus();
-  for(let i=0;i<3;i++){await p.keyboard.press('Tab');focus.push(await p.evaluate(()=>document.activeElement.id||document.activeElement.dataset.go));}
-  check(JSON.stringify(focus)===JSON.stringify(['welcomeStart','onboardingLogin','about']),'Keyboard order start, login, About '+label);
+  for(let i=0;i<5;i++){await p.keyboard.press('Tab');focus.push(await p.evaluate(()=>document.activeElement.id||document.activeElement.getAttribute('href')||document.activeElement.dataset.go));}
+  check(JSON.stringify(focus)===JSON.stringify(['welcomeStart','onboardingLogin','welcomeFooterStart','/privacy/','about']),'Keyboard order hero, login, closing CTA, Privacy, About '+label);
   check(await p.evaluate(()=>!localStorage.getItem('cleantime-he-v1')),'Viewing Welcome leaves recovery state empty '+label);
+  if(lang==='he'){
+   check(await p.locator('#welcomeFeaturesTitle').textContent()==='מה מחכה לך בפנים','Exact Hebrew heading '+label);
+   check(await p.locator('.welcome-features-intro').textContent()==='אותו סדר יום מוכר, כל יום. בלי החלטות מיותרות.','Exact Hebrew subtitle '+label);
+   check(await p.locator('#welcomeReflection').textContent()==='ההחלמה היא לא קו ישר. היא סדרה של בחירות כנות, להופיע שוב ושוב.','Exact Hebrew reflection '+label);
+  }
+  check(await p.evaluate(()=>{const ids=[...document.querySelectorAll('[id]')].map(e=>e.id);return ids.length===new Set(ids).size;}),'No duplicate IDs '+label);
+  check(await p.evaluate(()=>document.getElementById('welcomeFooterStart').onclick===document.getElementById('welcomeStart').onclick),'Both CTAs reuse the same handler '+label);
+  for(const id of ['welcomeStart','welcomeFooterStart']){
+   await p.keyboard.press('Tab');await p.locator('#'+id).focus();
+   check(await p.locator('#'+id).evaluate(e=>e===document.activeElement&&getComputedStyle(e).outlineStyle!=='none'),'Start focus visible '+id+' '+label);
+   await p.keyboard.press('Enter');await p.locator('#onboarding').waitFor();
+   check(await p.locator('#guestForm').isVisible()&&await p.locator('#oDate').isVisible()&&await p.locator('#oFrom').isVisible()&&!await p.evaluate(()=>localStorage.getItem('cleantime-he-v1')),'Same unsaved guest setup '+id+' '+label);
+   await p.locator('#setupBack').click();await p.locator('#welcome').waitFor();
+  }
+  await p.locator('#welcome a[href="/privacy/"]').click();
+  check(new URL(p.url()).pathname==='/privacy/'&&await p.locator('main h1').isVisible(),'Real public Privacy page '+label);
+  await p.goBack();await p.locator('#welcome').waitFor();
+
   await p.locator('#onboardingLogin').click();await p.locator('#auth').waitFor();
   check(await p.locator('#authCreate').isVisible()&&await p.locator('#authProfile').isHidden()&&await p.locator('#lSend').textContent()===await p.evaluate(()=>CleanTimeI18n.t('שליחת קישור כניסה למייל')),'Returning login remains separate from signup '+label);
   await p.locator('#authBack').click();await p.locator('#welcome').waitFor();

@@ -3,7 +3,7 @@ const fs=require('node:fs'),cp=require('node:child_process');
 const {chromium}=require('playwright'),origin=process.env.QA_BASE_URL;
 if(!origin||new URL(origin).origin!==origin||!origin.endsWith('.vercel.app'))throw Error('Exact Preview origin required');
 const team=process.env.QA_VERCEL_TEAM||JSON.parse(fs.readFileSync('.vercel/project.json')).orgId;
-const allowed=new Set(['/',...JSON.parse(fs.readFileSync('scripts/public-files.json')).map(p=>'/'+p)]),cache=new Map();
+const allowed=new Set(['/',...JSON.parse(fs.readFileSync('scripts/public-files.json')).flatMap(p=>['/'+p,...(p.endsWith('/index.html')?['/'+p.slice(0,-10)]:[])])]),cache=new Map();
 const fetchAsset=path=>{
  if(!allowed.has(path))throw Error('Unlisted Preview asset');
  if(!cache.has(path))cache.set(path,new Promise((resolve,reject)=>{

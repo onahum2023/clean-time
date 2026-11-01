@@ -533,7 +533,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
         <p class="welcome-lead"><span data-i18n="מרחב פשוט ליום שלך בהחלמה">מרחב פשוט ליום שלך בהחלמה</span></p>
         <p class="welcome-origin"><span data-i18n="האפליקציה נולדה מצורך אישי במלווה פשוט בעברית למי שבהחלמה. כלים קטנים לתמיכה ביום שלך, בחינם ובלי לחץ.">האפליקציה נולדה מצורך אישי במלווה פשוט בעברית למי שבהחלמה. כלים קטנים לתמיכה ביום שלך, בחינם ובלי לחץ.</span></p>
         <div class="welcome-entry">
-          <button class="btn" id="welcomeStart"><span data-i18n="מתחילים">מתחילים</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14 6-6 6 6 6M8 12h13"/></svg></button>
+          <button class="btn welcome-start" id="welcomeStart"><span data-i18n="מתחילים">מתחילים</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14 6-6 6 6 6M8 12h13"/></svg></button>
           <p class="welcome-guest-note"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span data-i18n="בלי הרשמה. בקצב שלך.">בלי הרשמה. בקצב שלך.</span></p>
           <button class="btn ghost" id="onboardingLogin"><span data-i18n="כבר יש לי חשבון">כבר יש לי חשבון</span></button>
         </div>
@@ -562,8 +562,8 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
       </figure>
     </div>
     <div class="welcome-features" aria-labelledby="welcomeFeaturesTitle">
-      <h2 id="welcomeFeaturesTitle"><span data-i18n="מה יש כאן">מה יש כאן</span></h2>
-      <p class="welcome-features-intro"><span data-i18n="כלים קטנים ליום שלך. אפשר להתחיל מדבר אחד.">כלים קטנים ליום שלך. אפשר להתחיל מדבר אחד.</span></p>
+      <h2 id="welcomeFeaturesTitle"><span data-i18n="מה מחכה לך בפנים">מה מחכה לך בפנים</span></h2>
+      <p class="welcome-features-intro"><span data-i18n="אותו סדר יום מוכר, כל יום. בלי החלטות מיותרות.">אותו סדר יום מוכר, כל יום. בלי החלטות מיותרות.</span></p>
       <ul class="welcome-feature-list">
         <li class="welcome-card welcome-counter-card" data-feature="counter"><span class="welcome-icon " aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18M12 18l-3-3a2 2 0 0 1 3-2 2 2 0 0 1 3 2Z"/></svg></span><div><h3><span data-i18n="זמן נקי">זמן נקי</span></h3><p><span data-i18n="לראות את הזמן שעבר מאז תחילת ההחלמה.">לראות את הזמן שעבר מאז תחילת ההחלמה.</span></p></div></li>
         <li class="welcome-card" data-feature="reading"><span class="welcome-icon reading" aria-hidden="true"><svg viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M22 13c-5-4-11-4-16-3v23c6-1 11 0 16 3 5-3 10-4 16-3V10c-5-1-11-1-16 3Zm0 0v23M11 17c3 0 5 0 7 1m8 0c2-1 4-1 7-1"/></svg></span><div><h3><span data-i18n="רק להיום">רק להיום</span></h3><p><span data-i18n="קריאה יומית באתר NA">קריאה יומית באתר NA</span></p></div></li>
@@ -574,12 +574,13 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
         <li class="welcome-card" data-feature="tools"><span class="welcome-icon " aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 22v-8M12 14C6 14 3 10 3 5c6 0 9 4 9 9ZM12 17c0-6 3-10 9-10 0 6-3 10-9 10Z"/></svg></span><div><h3><span data-i18n="כלים להחלמה">כלים להחלמה</span></h3><p><span data-i18n="מדיטציה, קריאה וקישורים ששמרת — במקום אחד.">מדיטציה, קריאה וקישורים ששמרת — במקום אחד.</span></p></div></li>
       </ul>
     </div>
-    <div class="welcome-privacy" aria-labelledby="welcomePrivacyTitle">
-      <span class="welcome-icon " aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
-      <div>
-        <h2 id="welcomePrivacyTitle"><span data-i18n="בחינם, עם מקום לפרטיות שלך">בחינם, עם מקום לפרטיות שלך</span></h2>
-        <p><span data-i18n="במצב אורח הנתונים נשמרים בדפדפן במכשיר הזה. אפשר להפעיל בהמשך גיבוי מוצפן וסנכרון בחשבון. בלי פרסומות ובלי לחץ מסחרי.">במצב אורח הנתונים נשמרים בדפדפן במכשיר הזה. אפשר להפעיל בהמשך גיבוי מוצפן וסנכרון בחשבון. בלי פרסומות ובלי לחץ מסחרי.</span></p>
-        <button class="btn ghost" data-go="about"><span data-i18n="אודות זמן נקי ופרטיות">אודות זמן נקי ופרטיות</span></button>
+    <div class="welcome-privacy welcome-card" aria-labelledby="welcomeReflection">
+      <p class="welcome-reflection" id="welcomeReflection"><span data-i18n="ההחלמה היא לא קו ישר. היא סדרה של בחירות כנות, להופיע שוב ושוב.">ההחלמה היא לא קו ישר. היא סדרה של בחירות כנות, להופיע שוב ושוב.</span></p>
+      <button class="btn welcome-start" id="welcomeFooterStart"><span data-i18n="מתחילים">מתחילים</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14 6-6 6 6 6M8 12h13"/></svg></button>
+      <p class="welcome-privacy-note"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span data-i18n="במצב אורח הנתונים נשמרים בדפדפן במכשיר הזה. אפשר להפעיל בהמשך גיבוי מוצפן וסנכרון בחשבון. בלי פרסומות ובלי לחץ מסחרי.">במצב אורח הנתונים נשמרים בדפדפן במכשיר הזה. אפשר להפעיל בהמשך גיבוי מוצפן וסנכרון בחשבון. בלי פרסומות ובלי לחץ מסחרי.</span></p>
+      <div class="welcome-footer-links">
+        <a href="/privacy/"><span data-i18n="פרטיות">פרטיות</span></a>
+        <button class="btn ghost" data-go="about"><span data-i18n="אודות זמן נקי">אודות זמן נקי</span></button>
       </div>
     </div>
   </section>
@@ -997,7 +998,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.7';
+const APP_VERSION='2026.11.01.8';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1164,6 +1165,7 @@ function openAuth(mode,record=true){
 }
 $('authCreate').onclick=()=>openAuth(S.date?'convert':'create');
 $('welcomeStart').onclick=()=>show('onboarding');
+$('welcomeFooterStart').onclick=$('welcomeStart').onclick;
 $('setupBack').onclick=()=>show('welcome');
 $('aboutBack').onclick=()=>history.back();
 $('startupLocal').onclick=()=>show(S.date?'counter':'welcome');
