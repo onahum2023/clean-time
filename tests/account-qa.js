@@ -22,7 +22,7 @@ async(page)=>{
  let {c,p}=await scenario(null,null);
  await p.locator('#welcomeStart').click();
  check(await p.locator('#guestForm input[type=email]').count()===0,'Guest onboarding has no email');await fit(p);
- await p.locator('#oDate').fill('2025-01-01');await p.locator('#oFrom').selectOption('אחר');await p.locator('#guestForm button').click();
+ await p.locator('#oDate').fill('2025-01-01');await p.locator('#oRecoveryChoices input[value="אחר"]').check();await p.locator('#guestForm button').click();
  check(await p.locator('#counter').isVisible(),'Guest onboarding enters fully usable app');await c.close();
  ({c,p}=await scenario({color:'olive'},null));await p.locator('#onboardingLogin').click();await p.locator('#authCreate').click();await fit(p);
  check(await p.locator('#aSwatches').isVisible()&&await p.locator('#aSwatches').getAttribute('role')==='radiogroup'&&await p.locator('#aSwatches').getAttribute('aria-label')==='צבע','Registered onboarding displays accessible color swatches');
@@ -49,6 +49,15 @@ async(page)=>{
 
  await p.locator('#openSettings').click();check(await p.locator('#myAccount').isVisible()&&!await p.locator('#signOut').isVisible()&&!await p.locator('#sName').isVisible(),'Registered settings separates identity and account controls');
  await p.locator('#myAccount').click();await fit(p);await p.screenshot({path:'/tmp/clean-time-account-360.png',fullPage:true});
+ if(process.env.QA_ACCOUNT_CAPTURE_OUTPUT){
+  const fs=require('node:fs'),path=require('node:path'),output=path.resolve(process.env.QA_ACCOUNT_CAPTURE_OUTPUT);fs.mkdirSync(output,{recursive:true});
+  check(await p.locator('#recoveryGenerated').isHidden(),'Never capture recovery key material');
+  for(const width of [1440,390])for(const colorScheme of ['light','dark']){
+   await p.setViewportSize({width,height:width===1440?900:844});await p.emulateMedia({colorScheme});await p.evaluate(()=>document.fonts.ready);
+   await p.screenshot({path:path.join(output,'registered-account-'+width+'-'+colorScheme+'.png'),animations:'disabled'});
+  }
+  await p.setViewportSize({width:360,height:800});await p.emulateMedia({colorScheme:'light'});
+ }
  check(await p.locator('#accountName').innerText()==='בדיקה'&&await p.locator('#sEmail').innerText()==='qa@example.invalid'&&(await p.locator('#syncStatus').innerText()).includes('סנכרון אחרון'),'My Account displays name, email, state and last sync');
  await p.locator('#signOut').click();check(await p.locator('#welcome').isVisible()&&await p.evaluate(k=>!localStorage.getItem(k)&&!localStorage.getItem('cleantime-he-sync')&&!localStorage.getItem('cleantime-he-crypto')&&window.qaRemote.v===1,key),'Sign out clears device and retains cloud');await c.close();
  ({c,p}=await scenario(null,{date:'2024-01-01',from:'אחר',updatedAt:20}));await p.locator('#onboardingLogin').click();await fit(p);

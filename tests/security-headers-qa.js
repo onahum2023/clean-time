@@ -14,7 +14,7 @@ async(page)=>{
   const p=await context.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
   await p.addInitScript(()=>{window.qaViolations=[];document.addEventListener('securitypolicyviolation',e=>qaViolations.push(e.violatedDirective));});
   const response=await p.goto(origin);for(const header of headers)check(response.headers()[header.key.toLowerCase()]===header.value,'HTTP header '+header.key);
-  await p.locator('#welcomeStart').click();await p.locator('#oDate').fill('2025-01-01');await p.locator('#oFrom').selectOption('סמים');await p.locator('#guestForm button').click();
+  await p.locator('#welcomeStart').click();await p.locator('#oDate').fill('2025-01-01');await p.locator('#oRecoveryChoices input[value="סמים"]').check();await p.locator('#guestForm button').click();
   check(await p.locator('#counter').isVisible(),'Hashed static app boots and guest onboarding works');
   await p.locator('#counter [data-go=journal]').click();await p.locator('#jNew').click();await p.locator('#jText').fill('סינתטי');await p.locator('#jDone').click();await p.locator('#jEditor').waitFor({state:'hidden'});
   check(await p.evaluate(()=>JSON.parse(localStorage.getItem('cleantime-he-v1')).journal[0].text==='סינתטי'),'CSP permits local tool persistence');

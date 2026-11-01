@@ -15,7 +15,7 @@ async(page)=>{
  await page.locator('#welcomeStart').click();
  check(await page.locator('#languageSelector').isVisible(),'Language selector stays in setup');
  check(!await page.locator('#oAddSecond').isChecked()&&await page.locator('#oSecondFields').isHidden(),'Second timer is optional by default');
- await page.locator('#oDate').fill('2024-01-01');await page.locator('#oFrom').selectOption('סמים');await page.locator('#oAddSecond').check();
+ await page.locator('#oDate').fill('2024-01-01');await page.locator('#oRecoveryChoices input[value="סמים"]').check();await page.locator('#oAddSecond').check();
  check(await page.locator('#oSecondFields').isVisible()&&await page.locator('#oShowSecond').isChecked(),'Expanded second timer defaults to compact visibility on Home');
  await page.locator('#oSecondCategory').selectOption('drugs');await page.locator('#oSecondDate').fill('2025-01-01');await page.locator('#guestForm button[type=submit]').click();
  check(await page.locator('#oSecondError').isVisible()&&await page.evaluate(key=>!localStorage.getItem(key),key),'Duplicate blank recovery type rejected before persistence');
@@ -40,14 +40,14 @@ async(page)=>{
  for(const width of [360,1280]){
   await page.setViewportSize({width,height:800});
   const rects=await page.locator('#tabs button').evaluateAll(items=>items.map(el=>{const r=el.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right};}));
-  check(rects.length===5&&rects.every(r=>r.top===rects[0].top&&r.bottom===rects[0].bottom),'Five navigation choices occupy one row '+width);
-  check(rects.every((r,i)=>rects.every((other,j)=>i===j||r.right<=other.left||other.right<=r.left)),'Navigation targets never overlap '+width);
+  check(rects.length===5&&rects.every(r=>width>=1024?r.left===rects[0].left&&r.right===rects[0].right:r.top===rects[0].top&&r.bottom===rects[0].bottom),'Five navigation choices form a desktop column / mobile row '+width);
+  check(rects.every((r,i)=>rects.every((other,j)=>i===j||r.right<=other.left||other.right<=r.left||r.bottom<=other.top||other.bottom<=r.top)),'Navigation targets never overlap '+width);
  }
  await page.locator('#openAccount').click();check(await page.locator('#account').isVisible()&&await page.locator('#openAccount').getAttribute('aria-current')==='page','Account has its own direct navigation target');
  await page.locator('#openSettings').click();check(await page.locator('#settings').isVisible()&&await page.locator('#openSettings').getAttribute('aria-current')==='page','Settings has its own direct navigation target');
  check(await page.locator('#languageSelector').isVisible(),'Top language row remains after setup');
  // Creating a single timer still works with optional fields completely disabled.
- await page.evaluate(()=>localStorage.clear());await page.reload();await page.locator('#welcomeStart').click();await page.locator('#oDate').fill('2024-01-01');await page.locator('#oFrom').selectOption('סמים');await page.locator('#guestForm button[type=submit]').click();
+ await page.evaluate(()=>localStorage.clear());await page.reload();await page.locator('#welcomeStart').click();await page.locator('#oDate').fill('2024-01-01');await page.locator('#oRecoveryChoices input[value="סמים"]').check();await page.locator('#guestForm button[type=submit]').click();
  check(await page.locator('#counter').isVisible()&&await page.locator('#homeDisplay').isHidden(),'Single-timer setup stays simple');
  const context=await page.context().browser().newContext();
  try{
@@ -77,7 +77,7 @@ async(page)=>{
   await p.locator('#authBack').click();await p.locator('#openSettings').click();p.once('dialog',dialog=>dialog.accept());await p.locator('#reset').click();await p.locator('#welcomeStart').click();
   check(!await p.locator('#oAddSecond').isChecked()&&await p.locator('#aSecondFields').evaluate(el=>el.disabled)&&await p.locator('#aShowSecond').isChecked(),'Reset clears both onboarding timer drafts and restores compact visibility default');
   check(await p.locator('#aSecondLabel').inputValue()===''&&await p.locator('#aSecondDate').inputValue()===''&&await p.locator('#aSecondCategory').inputValue()==='','Deleted second-timer values are not exposed in another setup');
-  await p.locator('#oDate').fill('2024-02-01');await p.locator('#oFrom').selectOption('סמים');await p.locator('#oAddSecond').check();await p.locator('#oSecondCategory').selectOption('alcohol');await p.locator('#oSecondDate').fill('2025-02-01');await p.locator('#oSecondLabel').fill('Unfinished synthetic');
+  await p.locator('#oDate').fill('2024-02-01');await p.locator('#oRecoveryChoices input[value="סמים"]').check();await p.locator('#oAddSecond').check();await p.locator('#oSecondCategory').selectOption('alcohol');await p.locator('#oSecondDate').fill('2025-02-01');await p.locator('#oSecondLabel').fill('Unfinished synthetic');
   p.once('dialog',dialog=>dialog.dismiss());await p.locator('[data-language=en]').click();
   check(await p.locator('html').getAttribute('lang')==='he'&&await p.locator('#oSecondLabel').inputValue()==='Unfinished synthetic'&&await p.locator('#oDate').inputValue()==='2024-02-01','Canceling guest-setup language change preserves all timer fields');
   await p.locator('#onboarding [data-go=about]').click();p.once('dialog',dialog=>dialog.dismiss());await p.locator('[data-language=en]').click();
@@ -85,7 +85,7 @@ async(page)=>{
   await p.goBack();check(await p.locator('#onboarding').isVisible()&&await p.locator('#oDate').inputValue()==='2024-02-01','Back restores retained setup draft');
   await p.locator('#onboarding [data-go=about]').click();let confirmed=false;p.once('dialog',dialog=>{confirmed=true;return dialog.accept();});await p.locator('[data-language=en]').click();await p.waitForFunction(()=>document.documentElement.lang==='en');
   check(confirmed&&await p.locator('#welcome').isVisible()&&await p.evaluate(key=>!localStorage.getItem(key),key),'Only explicit confirmation discards retained setup after a detour');
-  await p.locator('#welcomeStart').click();await p.locator('#oDate').fill('2024-03-01');await p.locator('#oFrom').selectOption('סמים');await p.locator('#guestForm button[type=submit]').click();
+  await p.locator('#welcomeStart').click();await p.locator('#oDate').fill('2024-03-01');await p.locator('#oRecoveryChoices input[value="סמים"]').check();await p.locator('#guestForm button[type=submit]').click();
   check(await p.evaluate(key=>{const s=JSON.parse(localStorage.getItem(key));return s.timers.length===1&&s.timers[0].date==='2024-03-01'&&!JSON.stringify(s).includes('Synthetic second');},key),'Fresh setup after deletion never resurrects previous second timer');
  }finally{await context.close();}
  return {passed:results.length,results};
