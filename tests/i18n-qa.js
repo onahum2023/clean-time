@@ -32,7 +32,7 @@ async(page)=>{
     localStorage.setItem('cleantime-language',language);window.supabase={createClient:()=>({auth:{onAuthStateChange(){},getSession:async()=>({data:{session:null}}),signInWithOtp:async()=>({})}})};
     const append=Element.prototype.appendChild;Element.prototype.appendChild=function(el){if(el.tagName==='SCRIPT'&&el.src.includes('supabase-js')){setTimeout(()=>el.onload(),0);return el;}return append.call(this,el);};
    },language);
-   const p=await context.newPage();await p.goto(origin);await p.locator('#welcomeStart').click();await p.locator('#oFrom').selectOption('סמים');await p.locator('#oDate').fill('2025-01-01');
+   const p=await context.newPage();await p.goto(origin);await p.locator('#welcomeStart').click();await p.locator('#oRecoveryChoices input[value="סמים"]').check();await p.locator('#oDate').fill('2025-01-01');
    check(await p.locator('#oFrom').inputValue()==='סמים','Fresh guest option identifier is stable '+language);await p.locator('#guestForm button').click();
    check(await p.evaluate(key=>{const state=JSON.parse(localStorage.getItem(key));return state.from==='סמים'&&state.timers[0].category==='drugs';},key),'Fresh guest stores language-independent recovery category '+language);
    await p.evaluate(()=>localStorage.removeItem('cleantime-he-v1'));await p.reload();await p.locator('#onboardingLogin').click();await p.locator('#authCreate').click();await p.locator('#aFrom').selectOption('סמים');await p.locator('#aDate').fill('2025-01-01');await p.locator('#lEmail').fill('onboarding@example.invalid');

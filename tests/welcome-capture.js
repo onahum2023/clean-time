@@ -21,7 +21,7 @@ const output=path.resolve('docs/issue-77-visuals');fs.mkdirSync(output,{recursiv
    if(stage.startsWith('revised')){await p.locator('.welcome-privacy').scrollIntoViewIfNeeded();await p.screenshot({path:path.join(output,`${stage}-${width}-${colorScheme}-footer.png`)});}
    // Private local evidence: compare the untouched setup and Today byte for byte.
    const regression=path.resolve('qa-artifacts/issue-77');fs.mkdirSync(regression,{recursive:true});
-   await p.locator('#welcomeStart').click();await p.locator('#oDate').fill('2025-01-01');await p.locator('#oFrom').selectOption('אחר');
+   await p.locator('#welcomeStart').click();await p.locator('#oDate').fill('2025-01-01');await p.locator('#oRecoveryChoices input[value="אחר"]').check();
    await p.screenshot({path:path.join(regression,`${stage}-setup-${width}-${colorScheme}.png`),fullPage:true});
    await p.locator('#guestForm button[type=submit]').click();await p.locator('#counter').waitFor();
    await p.screenshot({path:path.join(regression,`${stage}-today-${width}-${colorScheme}.png`),fullPage:true});

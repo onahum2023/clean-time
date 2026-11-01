@@ -26,7 +26,7 @@ async (page) => {
   check(await page.locator('#welcome').isVisible(),'Account path returns to guest onboarding');
   for(const from of ['אלכוהול','סמים','עישון','אוכל','אחר']){
     await seed(null);
-    await page.locator('#welcomeStart').click();await page.locator('#oDate').fill('2025-01-01');await page.locator('#oFrom').selectOption(from);
+    await page.locator('#welcomeStart').click();await page.locator('#oDate').fill('2025-01-01');await page.locator('#oRecoveryChoices').getByRole('radio',{name:from,exact:true}).check();
     await page.locator('#guestForm button').click();
     const state=await read();check(state.date==='2025-01-01'&&state.from===from&&state.name===''&&await page.locator('#counter').isVisible(),`Guest onboarding: ${from}`);
   }
@@ -105,7 +105,7 @@ async (page) => {
   // Malformed local data must survive subsequent attempted saves unchanged.
   await page.evaluate(k=>{localStorage.clear();localStorage.setItem(k,'{broken');},key);await page.reload();
   check(await page.locator('#storageMsg').isVisible(),'Malformed storage shows warning');
-  await page.locator('#welcomeStart').click();await page.locator('#oDate').fill('2025-01-01');await page.locator('#oFrom').selectOption('אחר');await page.locator('#guestForm button').click();
+  await page.locator('#welcomeStart').click();await page.locator('#oDate').fill('2025-01-01');await page.locator('#oRecoveryChoices input[value="אחר"]').check();await page.locator('#guestForm button').click();
   check(await page.evaluate(k=>localStorage.getItem(k),key)==='{broken','Malformed original is never silently overwritten');
   // A fresh browser context mocks only the SDK/client; all network is still localhost-only.
   const context=await page.context().browser().newContext({viewport:{width:360,height:800}});

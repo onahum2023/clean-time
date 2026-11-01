@@ -1,5 +1,10 @@
 # Track B appearance
 
+Issue #80 adds optional coordinated palettes and brightness in a separate local
+key while retaining the legacy contract below. See the
+[pre-implementation compatibility design](ISSUE-80-APPEARANCE-COMPATIBILITY.md)
+and [integrated UAT gallery/checklist](ISSUE-80-INTEGRATED-UAT.md).
+
 Nine curated backgrounds, five font stacks, and five optional device-local accent
 overrides retain the existing background/Assistant/profile accent as defaults.
 All choices preview immediately; reset restores all three preferences. Existing

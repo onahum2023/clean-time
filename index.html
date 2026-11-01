@@ -8,6 +8,7 @@
 <script src="/assets/messages.js"></script>
 <script src="/assets/i18n.js"></script>
 <script src="/assets/appearance.js"></script>
+<script src="/assets/visual-theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -534,6 +535,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 }
 </style>
 <link rel="stylesheet" href="/assets/welcome.css">
+<link rel="stylesheet" href="/assets/visual-system.css">
 </head>
 <body>
 <div class="app">
@@ -560,7 +562,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
   <p class="note" id="offlineStatus" role="status" hidden></p>
   <p class="note" id="updateNotice" role="status" hidden><span data-i18n="יש גרסה חדשה. כדי לעבור אליה, אפשר לסגור את כל חלונות זמן נקי ולפתוח מחדש. אין צורך למחוק נתונים.">יש גרסה חדשה. כדי לעבור אליה, אפשר לסגור את כל חלונות זמן נקי ולפתוח מחדש. אין צורך למחוק נתונים.</span></p>
   <section id="startup" hidden aria-live="polite">
-    <h2><span data-i18n="בודקים את החשבון והגיבוי">בודקים את החשבון והגיבוי</span></h2>
+    <div class="page-heading"><h2><span data-i18n="בודקים את החשבון והגיבוי">בודקים את החשבון והגיבוי</span></h2><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
     <p class="sub"><span data-i18n="הנתונים במכשיר נשמרים. עוד רגע ממשיכים.">הנתונים במכשיר נשמרים. עוד רגע ממשיכים.</span></p>
     <button class="btn ghost" id="startupLocal" hidden><span data-i18n="להמשיך במכשיר הזה">להמשיך במכשיר הזה</span></button>
   </section>
@@ -626,7 +628,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
     </div>
   </section>
   <section id="onboarding" hidden>
-    <h2><span data-i18n="מתחילים בקצב שלך">מתחילים בקצב שלך</span></h2>
+    <div class="page-heading"><h2><span data-i18n="מתחילים בקצב שלך">מתחילים בקצב שלך</span></h2><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21v-9M12 16C5 16 3 11 3 7c5 0 9 2 9 7M12 12c0-6 4-9 9-9 0 5-2 9-9 9"/></svg></div>
     <p class="sub"><span data-i18n="בוחרים תאריך תחילת החלמה וסוג החלמה, וממשיכים ליום שלך.">בוחרים תאריך תחילת החלמה וסוג החלמה, וממשיכים ליום שלך.</span></p>
     <form id="guestForm">
       <label class="field"><span><span data-i18n="תאריך תחילת הניקיון / ההחלמה">תאריך תחילת הניקיון / ההחלמה</span></span><input type="date" id="oDate" required></label>
@@ -645,12 +647,18 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
   <!-- Counter -->
   <section id="counter" hidden>
     <div id="backupReminder" hidden><p id="backupReminderText" role="status"></p><button class="btn secondary" id="resumeBackup"><span data-i18n="השלמת הגיבוי המוצפן">השלמת הגיבוי המוצפן</span></button></div>
+    <div class="home-heading"><h2 data-i18n="היום">היום</h2></div>
+    <div class="home-recovery-column">
     <div class="recovery-summary" role="group" aria-label="זמן נקי" data-i18n-aria-label="זמן נקי">
+      <div class="home-card-context"><time id="homeDate"></time></div>
       <div class="summary-top">
         <div class="summary-primary">
+          <p class="home-greeting" id="homeGreeting"></p>
+          <p class="home-summary-title" data-i18n="הזמן הנקי שלך">הזמן הנקי שלך</p>
           <p class="summary-label" id="homePrimaryLabel"></p>
           <div class="summary-count" id="homePrimaryCount"></div>
           <p class="summary-since" id="homePrimarySince"></p>
+          <p class="home-identity" id="homeDesktopIdentity"></p>
         </div>
         <div id="milestone" class="milestone-badge" role="img" hidden>
           <svg viewBox="0 0 80 112" aria-hidden="true" focusable="false">
@@ -670,20 +678,27 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
       </div>
       <p class="secondary-summary" id="homeSecondary" hidden><span id="homeSecondaryLabel"></span><strong id="homeSecondaryDays"></strong></p>
     </div>
+    <div class="home-notes">
+      <article><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21V10M12 15C6 15 4 11 4 7c5 0 8 2 8 7M12 11c0-5 3-8 8-8 0 5-3 8-8 8"/></svg><h3 data-i18n="רק להיום">רק להיום</h3><p data-i18n="אפשר לתת מקום לרגע הזה.">אפשר לתת מקום לרגע הזה.</p></article>
+      <article><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="7" r="3"/><path d="M4 21v-3a6 6 0 0 1 12 0v3M17 4a3 3 0 0 1 0 6m2 3a6 6 0 0 1 3 5v3"/></svg><h3 data-i18n="את/ה לא לבד">את/ה לא לבד</h3><p data-i18n="יש עוד אנשים שהולכים בדרך הזאת.">יש עוד אנשים שהולכים בדרך הזאת.</p></article>
+      <article><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 21-8-8A5 5 0 0 1 12 6a5 5 0 0 1 8 7Z"/></svg><h3 data-i18n="את/ה חשוב/ה">את/ה חשוב/ה</h3><p data-i18n="יש מקום גם למה שעובר עליך היום.">יש מקום גם למה שעובר עליך היום.</p></article>
+    </div>
+    </div>
     <div class="today-actions">
       <h2><span data-i18n="היום שלי">היום שלי</span></h2>
       <div class="daily-cards" aria-label="פעולות יומיות" data-i18n-aria-label="פעולות יומיות">
         <a class="daily-card primary" id="dailyReading" href="https://www.naisrael.org.il/just-for-today/" target="_blank" rel="noopener noreferrer" aria-label="רק להיום — נפתח בחלון חדש" data-i18n-aria-label="רק להיום — נפתח בחלון חדש"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M22 13c-5-4-11-4-16-3v23c6-1 11 0 16 3 5-3 10-4 16-3V10c-5-1-11-1-16 3Zm0 0v23M11 17c3 0 5 0 7 1m8 0c2-1 4-1 7-1"/></svg><span><span class="daily-card-title" data-i18n="רק להיום">רק להיום</span><small><span data-i18n="קריאה יומית באתר NA">קריאה יומית באתר NA</span> <span id="readingLanguage"></span> <svg class="external-link-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3H3v10h10v-3M8 2h6v6M14 2 7 9"/></svg></small></span></a>
-        <button class="daily-card" data-go="planner"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg><span class="daily-card-title" data-i18n="תכנון יומי">תכנון יומי</span></button>
-        <button class="daily-card" data-go="gratitude"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg><span class="daily-card-title" data-i18n="הכרת תודה">הכרת תודה</span></button>
-        <button class="daily-card" data-go="journal"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg><span class="daily-card-title" data-i18n="ככה זה עכשיו">ככה זה עכשיו</span></button>
-        <button class="daily-card" data-go="inventory"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg><span class="daily-card-title" data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span></button>
+        <button class="daily-card" data-go="planner"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 36c-4-8 18-8 15-16s-10-2-8-9"/><path d="m17 12 3-3 3 3"/><path d="M8 36h7m14-17h7"/></svg><span class="daily-card-copy"><span class="daily-card-title" data-i18n="תכנון יומי">תכנון יומי</span><small class="home-action-description" data-i18n="מקום לתכנן את היום שלך.">מקום לתכנן את היום שלך.</small></span><span class="home-action-cue chevron" aria-hidden="true"></span></button>
+        <button class="daily-card" data-go="gratitude"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 34c2-12 8-17 18-24 2 14-4 23-15 20"/><path d="M17 27c-6 1-10-3-10-10 7 0 11 3 11 8m5-6 4 1"/></svg><span class="daily-card-copy"><span class="daily-card-title" data-i18n="הכרת תודה">הכרת תודה</span><small class="home-action-description" data-i18n="לכתוב את הדברים שמעריכים היום.">לכתוב את הדברים שמעריכים היום.</small></span><span class="home-action-cue chevron" aria-hidden="true"></span></button>
+        <button class="daily-card" data-go="journal"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M12 9h19a3 3 0 0 1 3 3v22H15a3 3 0 0 1-3-3V9Zm0 19h22M17 15h12m-12 6h8"/></svg><span class="daily-card-copy"><span class="daily-card-title" data-i18n="ככה זה עכשיו">ככה זה עכשיו</span><small class="home-action-description" data-i18n="יומן פרטי למחשבות ולמה שעובר עליך.">יומן פרטי למחשבות ולמה שעובר עליך.</small></span><span class="home-action-cue chevron" aria-hidden="true"></span></button>
+        <button class="daily-card" data-go="inventory"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M33 19A13 13 0 0 1 15 7a13 13 0 1 0 18 12Z"/><path d="M12 35h22m-17 4h12"/></svg><span class="daily-card-copy"><span class="daily-card-title" data-i18n="חשבון נפש יומי / צעד 10">חשבון נפש יומי / צעד 10</span><small class="home-action-description" data-i18n="שאלות וכתיבה להתבוננות ביום שעבר.">שאלות וכתיבה להתבוננות ביום שעבר.</small></span><span class="home-action-cue chevron" aria-hidden="true"></span></button>
       </div>
     </div>
+    <p class="home-reflection" data-i18n="לא צריך לפתור הכול היום. אפשר לפנות מקום לדבר אחד בכל פעם.">לא צריך לפתור הכול היום. אפשר לפנות מקום לדבר אחד בכל פעם.</p>
   </section>
 
   <section id="counterDetails" hidden>
-    <h2><span data-i18n="מונים ותצוגות">מונים ותצוגות</span></h2>
+    <div class="page-heading"><h2><span data-i18n="מונים ותצוגות">מונים ותצוגות</span></h2><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="8"/><path d="M12 9v5l3 2M9 2h6"/></svg></div>
     <button class="btn ghost" data-go="settings"><span data-i18n="חזרה להגדרות">חזרה להגדרות</span></button>
     <div class="home-display" id="homeDisplay" hidden>
       <label class="second-toggle"><input type="checkbox" id="showHomeTimers"><span data-i18n="הצגת מסלולים נוספים בבית">הצגת מסלולים נוספים בבית</span></label>
@@ -771,11 +786,11 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
   </section>
 
   <section id="tools" hidden>
-    <h2><span data-i18n="כלים להחלמה">כלים להחלמה</span></h2>
+    <div class="page-heading"><h2><span data-i18n="כלים להחלמה">כלים להחלמה</span></h2><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21v-9M12 16C5 16 3 11 3 7c5 0 9 2 9 7M12 12c0-6 4-9 9-9 0 5-2 9-9 9"/></svg></div>
     <p class="sub"><span data-i18n="מה שמתאים לך עכשיו.">מה שמתאים לך עכשיו.</span></p>
     <div class="tool-links" id="recoveryDestinations">
-      <button data-go="meditation"><span data-i18n="מדיטציה">מדיטציה</span></button>
-      <button data-go="bookmarks"><span data-i18n="הקישורים שלי">הקישורים שלי</span></button>
+      <button data-go="meditation"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><circle cx="22" cy="9" r="4"/><path d="M17 18c0-4 10-4 10 0l3 8 7 2M17 18l-3 8-7 2m12-2c-5 0-13 4-12 8 1 4 13 1 19-3m-1-5c5 0 13 4 12 8-1 4-13 1-19-3m1-11 1 6m5-6-1 6"/></svg><span data-i18n="מדיטציה">מדיטציה</span></button>
+      <button data-go="bookmarks"><svg class="page-art" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><path d="M13 8h18v29l-9-6-9 6Z"/></svg><span data-i18n="הקישורים שלי">הקישורים שלי</span></button>
     </div>
     <button class="btn ghost" data-go="readings"><span data-i18n="עריכת משאבי החלמה">עריכת משאבי החלמה</span></button>
   </section>
@@ -840,10 +855,11 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 
   <!-- Settings -->
   <section id="settings" hidden>
-    <h2 id="setTitle"><span data-i18n="הגדרות">הגדרות</span></h2>
+    <div class="page-heading"><h2 id="setTitle"><span data-i18n="הגדרות">הגדרות</span></h2><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="5"/></svg></div>
     <p class="sub" id="setSub"><span data-i18n="הכול נשמר רק במכשיר הזה.">הכול נשמר רק במכשיר הזה.</span></p>
     <button class="btn ghost" id="backToOnboarding" hidden><span data-i18n="חזרה להתחלה ללא חשבון">חזרה להתחלה ללא חשבון</span></button>
     <div class="settings-columns"><div>
+    <div class="settings-profile">
     <label class="field"><span><span data-i18n="שם (לא חובה)">שם (לא חובה)</span></span><input type="text" id="sName" maxlength="40"></label>
     <div class="row">
       <label class="field" style="flex:2"><span><span data-i18n="תאריך הניקיון">תאריך הניקיון</span></span><input type="date" id="sDate"></label>
@@ -855,6 +871,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
     </label>
     <div class="field"><span><span data-i18n="צבע">צבע</span></span><div class="swatches" id="swatches" role="radiogroup" aria-label="צבע" data-i18n-aria-label="צבע"></div></div>
     <button class="btn" id="saveSettings" style="width:100%;margin-top:8px"><span data-i18n="שמירת הגדרות החלמה">שמירת הגדרות החלמה</span></button>
+    </div>
     <div class="settings-foot" id="counterViewSettings">
       <h3><span data-i18n="מונים ותצוגות">מונים ותצוגות</span></h3>
       <button class="counter-detail-link" data-go="counterDetails"><span data-i18n="כל המונים והתצוגות">כל המונים והתצוגות</span><span class="chevron" aria-hidden="true"></span></button>
@@ -885,11 +902,21 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
       <p class="msg" role="status" id="milestoneStatus"></p>
       <h3><span data-i18n="מראה">מראה</span></h3>
       <p class="note"><span data-i18n="הבחירה נשמרת רק במכשיר הזה, גם עם חשבון.">הבחירה נשמרת רק במכשיר הזה, גם עם חשבון.</span></p>
-      <label class="field"><span><span data-i18n="רקע">רקע</span></span><select id="backgroundChoice"><option value="default">הרקע הנוכחי</option><option value="sage">מרווה בהירה</option><option value="sand">חול בהיר</option><option value="mist">ערפל</option><option value="lavender">לבנדר</option><option value="rose">ורוד עדין</option><option value="peach">אפרסק</option><option value="sky">שמיים</option><option value="stone">אבן</option></select></label>
+      <fieldset class="theme-choices" id="paletteChoices"><legend data-i18n="ערכת צבעים">ערכת צבעים</legend>
+        <label class="theme-option" data-palette="original"><input type="radio" name="palette" value="original"><span class="theme-sample" aria-hidden="true"></span><span data-i18n="מקורי">מקורי</span></label>
+        <label class="theme-option" data-palette="forest"><input type="radio" name="palette" value="forest"><span class="theme-sample" aria-hidden="true"></span><span data-i18n="יער">יער</span></label>
+        <label class="theme-option" data-palette="rainy"><input type="radio" name="palette" value="rainy"><span class="theme-sample" aria-hidden="true"></span><span data-i18n="גשם">גשם</span></label>
+        <label class="theme-option" data-palette="sunny"><input type="radio" name="palette" value="sunny"><span class="theme-sample" aria-hidden="true"></span><span data-i18n="שמש">שמש</span></label>
+      </fieldset>
+      <label class="field"><span data-i18n="בהירות">בהירות</span><select id="brightnessChoice"><option value="system" data-i18n="לפי המכשיר">לפי המכשיר</option><option value="light" data-i18n="בהיר">בהיר</option><option value="dark" data-i18n="כהה">כהה</option></select></label>
+      <p class="note" data-i18n="ערכת הצבעים אינה משנה את הגופן, הרקע או צבע ההדגשה שבחרת.">ערכת הצבעים אינה משנה את הגופן, הרקע או צבע ההדגשה שבחרת.</p>
+      <div class="appearance-customization"><h4 data-i18n="התאמות אישיות">התאמות אישיות</h4>
+      <label class="field"><span><span data-i18n="רקע חלופי (לא חובה)">רקע חלופי (לא חובה)</span></span><select id="backgroundChoice"><option value="default">רקע ערכת הצבעים</option><option value="sage">מרווה בהירה</option><option value="sand">חול בהיר</option><option value="mist">ערפל</option><option value="lavender">לבנדר</option><option value="rose">ורוד עדין</option><option value="peach">אפרסק</option><option value="sky">שמיים</option><option value="stone">אבן</option></select></label>
       <label class="field"><span><span data-i18n="גופן">גופן</span></span><select id="fontChoice"><option value="assistant">Assistant — הגופן הנוכחי</option><option value="arial">Arial — פשוט וברור</option><option value="serif">גופן ספר</option><option value="tahoma">Tahoma</option><option value="verdana">Verdana</option></select></label>
       <p class="note">גופני מערכת יוצגו אם הם זמינים במכשיר. אחרת יופיע גופן חלופי קריא.</p>
       <label class="field"><span>צבע הדגשה במכשיר הזה</span><select id="accentChoice"><option value="profile">הצבע הנוכחי</option><option value="teal">טורקיז</option><option value="sky">כחול</option><option value="plum">שזיף</option><option value="olive">זית</option><option value="rose">ורד</option></select></label>
 
+      </div>
       <p class="appearance-preview"><span data-i18n="זמן נקי — יום אחד בכל פעם. כך ייראה הטקסט שלך.">זמן נקי — יום אחד בכל פעם. כך ייראה הטקסט שלך.</span></p>
       <button class="btn ghost" id="resetAppearance"><span data-i18n="חזרה למראה המקורי">חזרה למראה המקורי</span></button>
       <p class="msg" role="status" id="appearanceStatus"></p>
@@ -907,7 +934,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
   </section>
   <!-- Account identity and encryption status are separate from recovery preferences. -->
   <section id="account" hidden>
-    <h2><span data-i18n="החשבון שלי">החשבון שלי</span></h2>
+    <div class="page-heading"><h2><span data-i18n="החשבון שלי">החשבון שלי</span></h2><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0116 0v2"/></svg></div>
     <div id="accountGuest">
       <p class="sub"><span data-i18n="הנתונים נשמרים בדפדפן במכשיר הזה. אין צורך בחשבון כדי להשתמש בזמן נקי.">הנתונים נשמרים בדפדפן במכשיר הזה. אין צורך בחשבון כדי להשתמש בזמן נקי.</span></p>
       <p class="note"><span data-i18n="אפשר לבחור חשבון לגיבוי מוצפן ולסנכרון. הנתונים המקומיים יישמרו גם בתהליך ההרשמה.">אפשר לבחור חשבון לגיבוי מוצפן ולסנכרון. הנתונים המקומיים יישמרו גם בתהליך ההרשמה.</span></p>
@@ -950,7 +977,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
     <button class="btn ghost" data-go="settings"><span data-i18n="הגדרות החלמה">הגדרות החלמה</span></button>
   </section>
   <section id="auth" hidden>
-    <h2 id="authTitle"><span data-i18n="יצירת חשבון">יצירת חשבון</span></h2>
+    <div class="page-heading"><h2 id="authTitle"><span data-i18n="יצירת חשבון">יצירת חשבון</span></h2><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></div>
     <p class="sub" id="authSub"></p>
     <div id="syncOut">
       <form id="loginForm">
@@ -971,7 +998,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
   </section>
   <section id="feedback" hidden>
     <button class="btn ghost" id="feedbackBack"><span data-i18n="חזרה לאודות">חזרה לאודות</span></button>
-    <h2><span data-i18n="משוב">משוב</span></h2>
+    <div class="page-heading"><h2><span data-i18n="משוב">משוב</span></h2><svg class="page-art" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg></div>
     <p><span data-i18n="מה עובד לך, ומה אפשר לשפר?">מה עובד לך, ומה אפשר לשפר?</span></p>
     <p class="note"><span data-i18n="אפשר לשלוח משוב במייל. עדיף לא לכלול פרטי החלמה אישיים או רגישים. אין צורך לצרף את הנתונים שלך.">אפשר לשלוח משוב במייל. עדיף לא לכלול פרטי החלמה אישיים או רגישים. אין צורך לצרף את הנתונים שלך.</span></p>
     <a class="btn" id="feedbackMail" href="mailto:hello@clean-time.app?subject=%D7%9E%D7%A9%D7%95%D7%91%20%D7%A2%D7%9C%20%D7%96%D7%9E%D7%9F%20%D7%A0%D7%A7%D7%99"><span data-i18n="פתיחת מייל למשוב">פתיחת מייל למשוב</span></a>
@@ -1040,7 +1067,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.10';
+const APP_VERSION='2026.11.01.15';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1179,6 +1206,7 @@ function show(tab,record=true){
   document.querySelectorAll('nav.tabs button').forEach(b=>{
     if(b.id==='openSettings'?['settings','counterDetails'].includes(tab):b.id==='openAccount'?['account','auth'].includes(tab):b.dataset.tab===active&&!['settings','counterDetails','account','auth'].includes(tab))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   });
+  if(tab==='onboarding')syncRecoveryChoices();
   if(tab==='settings')fillSettings();else applyColor();
   if(tab==='account')renderSync();
   if(tab==='counter'){render();renderSync();}
@@ -1190,7 +1218,7 @@ function show(tab,record=true){
   if(tab==='inventory')openInventory(todayKey());
   if(tab==='meditation')renderTimer();
   renderMilestone();
-  if(record){const heading=$(tab).querySelector('h1,h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}}
+  if(record){const heading=[...$(tab).querySelectorAll('h1,h2')].find(el=>el.getClientRects().length);if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}}
   analytics('navigate',tab,analyticsNavigationReady);
   window.scrollTo(0,0);
 }
@@ -1220,6 +1248,20 @@ $('aboutBack').onclick=()=>history.back();
 $('startupLocal').onclick=()=>show(S.date?'counter':'welcome');
 $('finishBackupLater').onclick=()=>show(S.date?'counter':'settings');
 $('resumeBackup').onclick=()=>show('account');
+// Native radios enhance the existing five option identities; the select remains
+// the internal source for the unchanged guest-save path, never a second UI.
+const recoveryChoices=document.createElement('fieldset');recoveryChoices.id='oRecoveryChoices';recoveryChoices.className='recovery-choices';
+const recoveryLegend=document.createElement('legend');recoveryLegend.dataset.i18n='החלמה מ־';recoveryLegend.textContent=translateUI('החלמה מ־');recoveryChoices.append(recoveryLegend);
+for(const option of [...$('oFrom').options].filter(o=>o.value)){
+ const label=document.createElement('label');label.className='recovery-choice';
+ const input=document.createElement('input');input.type='radio';input.name='oRecoveryType';input.value=option.value;input.required=true;input.setAttribute('aria-describedby','oFromError');
+ const text=document.createElement('span');text.dataset.i18n=option.textContent;text.textContent=translateUI(option.textContent);
+ input.onchange=()=>{if(input.checked){$('oFrom').value=input.value;$('oFrom').dispatchEvent(new Event('change',{bubbles:true}));}};
+ input.addEventListener('invalid',()=>{$('oFromError').hidden=false;});label.append(input,text);recoveryChoices.append(label);
+}
+$('oFrom').closest('label').after(recoveryChoices);$('oFrom').closest('label').hidden=true;$('oFrom').required=false;
+function syncRecoveryChoices(){for(const input of recoveryChoices.querySelectorAll('input'))input.checked=input.value===$('oFrom').value;}
+$('oFrom').addEventListener('change',syncRecoveryChoices);
 $('oFrom').setAttribute('aria-describedby','oFromError');
 $('oFrom').addEventListener('invalid',()=>{$('oFromError').hidden=false;});
 $('oFrom').addEventListener('change',()=>{$('oFromError').hidden=!!$('oFrom').value;});
@@ -1266,7 +1308,12 @@ function renderSetupDuration(){
   if(date){date.setFullYear(Number(parts[1]),Number(parts[2])-1,Number(parts[3]));date.setHours(0,0,0,0);}
   const valid=date&&input.validity.valid&&input.value<=todayKey()&&date.getFullYear()===Number(parts[1])&&date.getMonth()===Number(parts[2])-1&&date.getDate()===Number(parts[3]);
   preview.hidden=!valid;
-  preview.textContent=valid?translateUI('זמן נקי')+': '+new Intl.NumberFormat(CleanTimeI18n.locale,{style:'unit',unit:'day',unitDisplay:'long'}).format(totalDays(date,new Date())):'';
+  if(!valid){preview.textContent='';return;}
+  const now=new Date();let months=(now.getFullYear()-date.getFullYear())*12+now.getMonth()-date.getMonth();
+  if(CleanTimeDates.addMonths(date,months)>now)months--;
+  const years=Math.floor(months/12),remaining=months%12,days=totalDays(CleanTimeDates.addMonths(date,months),now),durationParts=[];
+  for(const [value,unit] of [[years,'year'],[remaining,'month'],[days,'day']])if(value||(!years&&!remaining&&unit==='day'))durationParts.push(new Intl.NumberFormat(CleanTimeI18n.locale,{style:'unit',unit,unitDisplay:'long'}).format(value));
+  preview.textContent=translateUI('זמן נקי')+': '+new Intl.ListFormat(CleanTimeI18n.locale,{style:'long',type:'conjunction'}).format(durationParts);
 }
 $('oDate').addEventListener('input',renderSetupDuration);
 $('oDate').addEventListener('change',renderSetupDuration);
@@ -1783,6 +1830,10 @@ function timerDescription(timer){
 }
 function renderHomeSummary(){
  const timers=S.timers||[],primary=timers.find(t=>t.id===S.primaryTimerId),now=new Date();
+ const name=typeof S.name==='string'?S.name.trim():'';
+ const hour=now.getHours(),greeting=hour>=5&&hour<12?'בוקר טוב':hour>=12&&hour<17?'צהריים טובים':hour>=17&&hour<24?'ערב טוב':'שלום';
+ $('homeGreeting').textContent=translateUI(greeting)+(name?', '+name:'');
+ $('homeDate').dateTime=todayKey();$('homeDate').textContent=now.toLocaleDateString(CleanTimeI18n.locale,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
  $('homePrimaryLabel').hidden=signedIn();
  if(!primary){$('homePrimaryCount').replaceChildren();$('homeSecondary').hidden=true;return;}
  $('homePrimaryLabel').textContent=translateUI('זמן נקי')+' · '+timerLabel(primary);
@@ -1793,8 +1844,18 @@ function renderHomeSummary(){
   if(elapsed.y||elapsed.m)parts.push(unit(fmt(elapsed.m),elapsed.m===1?'חודש':'חודשים'));
   parts.push(unit(fmt(elapsed.d),elapsed.d===1?'יום':'ימים'));
  }
- const count=$('homePrimaryCount'),html=parts.join('');
- if(count.innerHTML!==html)count.innerHTML=html;
+ const count=$('homePrimaryCount'),html='<span class="summary-mobile">'+parts.join('')+'</span>';
+ const desktop=document.createElement('span');desktop.className='summary-duration';
+ if(now<start)desktop.textContent=translateUI('התאריך שנבחר עוד לא הגיע');
+ else{
+  let months=(now.getFullYear()-start.getFullYear())*12+now.getMonth()-start.getMonth();
+  if(CleanTimeDates.addMonths(start,months)>now)months--;
+  const values=[[Math.floor(months/12),'year'],[months%12,'month'],[totalDays(CleanTimeDates.addMonths(start,months),now),'day']];
+  desktop.textContent=values.filter(([value,unit])=>value||(unit==='day'&&!months)).map(([value,unit])=>new Intl.NumberFormat(CleanTimeI18n.locale,{style:'unit',unit,unitDisplay:'long'}).format(value)).join(' ');
+ }
+ $('homeDesktopIdentity').textContent=timerLabel(primary);
+ $('homeDesktopIdentity').hidden=!!name&&timerLabel(primary)===name;
+ if(count.innerHTML!==html+desktop.outerHTML)count.innerHTML=html+desktop.outerHTML;
  $('homePrimarySince').textContent=translateUI('מאז ')+start.toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'});
  const secondary=timers.find(t=>t.id!==primary.id);
  $('homeSecondary').hidden=signedIn()||!secondary||!homeDisplay.show;
@@ -1884,6 +1945,7 @@ function fillSettings(){
   confirmRecoveryDate('sDate');pickColor=S.color; renderSwatches();
   $('showMilestones').checked=milestonesEnabled();
   const appearance=CleanTimeAppearance.read();$('backgroundChoice').value=appearance.background;$('fontChoice').value=appearance.font;$('accentChoice').value=appearance.accent;
+  const visual=CleanTimeVisualTheme.read();$('brightnessChoice').value=visual.mode;document.querySelectorAll('[name=palette]').forEach(e=>e.checked=e.value===visual.palette);
 }
 function renderSwatches(boxId='swatches'){
   const box=$(boxId);box.innerHTML='';
@@ -1912,8 +1974,15 @@ for(const id of ['backgroundChoice','fontChoice','accentChoice'])$(id).onchange=
   const ok=CleanTimeAppearance.save({background:$('backgroundChoice').value,font:$('fontChoice').value,accent:$('accentChoice').value});
   $('appearanceStatus').textContent=ok?translateUI('המראה נשמר במכשיר הזה.'):translateUI('המראה מוצג כרגע, אבל לא נשמר במכשיר.');
 };
+function previewVisualTheme(){
+ const selected=document.querySelector('[name=palette]:checked');
+ const ok=CleanTimeVisualTheme.save({palette:selected?.value||'original',mode:$('brightnessChoice').value});
+ $('appearanceStatus').textContent=ok?translateUI('המראה נשמר במכשיר הזה.'):translateUI('המראה מוצג כרגע, אבל לא נשמר במכשיר.');
+}
+$('paletteChoices').onchange=previewVisualTheme;$('brightnessChoice').onchange=previewVisualTheme;
 $('resetAppearance').onclick=()=>{
-  const ok=CleanTimeAppearance.save({background:'default',font:'assistant',accent:'profile'});$('backgroundChoice').value='default';$('fontChoice').value='assistant';$('accentChoice').value='profile';
+  const themeOK=CleanTimeVisualTheme.save({palette:'original',mode:'system'});$('brightnessChoice').value='system';document.querySelectorAll('[name=palette]').forEach(e=>e.checked=e.value==='original');
+  const legacyOK=CleanTimeAppearance.save({background:'default',font:'assistant',accent:'profile'}),ok=themeOK&&legacyOK;$('backgroundChoice').value='default';$('fontChoice').value='assistant';$('accentChoice').value='profile';
   $('appearanceStatus').textContent=ok?translateUI('המראה המקורי נשמר.'):translateUI('המראה הוחזר, אבל לא נשמר במכשיר.');
 };
 $('languageSelector').onclick=event=>{

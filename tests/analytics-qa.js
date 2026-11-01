@@ -94,7 +94,7 @@ async(page)=>{
  check(s.calls.filter(x=>!x.en).length===1&&s.calls[0].o===origin+'/app/auth','Initial callback visit produces one sanitized pageview');
  check(!JSON.stringify(s.calls).includes('PRIVATE'),'Initial request excludes callback/referrer/attribution identity');await s.c.close();
  s=await scenario();
- await s.p.locator('#welcomeStart').click();await s.p.locator('#oDate').fill('2025-01-01');await s.p.locator('#oFrom').selectOption({index:1});await s.p.locator('#guestForm button[type="submit"]').click();await s.settle();
+ await s.p.locator('#welcomeStart').click();await s.p.locator('#oDate').fill('2025-01-01');await s.p.locator('#oRecoveryChoices input').first().check();await s.p.locator('#guestForm button[type="submit"]').click();await s.settle();
  check(s.calls.filter(x=>x.en==='guest_started').length===1,'Successful guest onboarding emits once');
  check(s.calls.find(x=>x.en==='app_started')?.ed.mode==='visitor','New guest entry classification');
  await s.p.locator('#counter [data-go="journal"]').click();await s.settle();
@@ -135,7 +135,7 @@ async(page)=>{
  await s.p.locator('#counter [data-go="gratitude"]').click();
  await s.p.evaluate(()=>{window.qaOnline=true;dispatchEvent(new Event('online'));});await s.settle();
  check(s.calls.filter(x=>!x.en).length===1&&s.calls.find(x=>!x.en).o===origin+'/app/gratitude'&&!s.calls.some(x=>x.en==='tool_opened'),'Offline reconnect sends current view without old tool events');await s.c.close();
- s=await scenario({failProvider:true});await s.p.locator('#welcomeStart').click();await s.p.locator('#oDate').fill('2025-01-01');await s.p.locator('#oFrom').selectOption({index:1});await s.p.locator('#guestForm button[type="submit"]').click();
+ s=await scenario({failProvider:true});await s.p.locator('#welcomeStart').click();await s.p.locator('#oDate').fill('2025-01-01');await s.p.locator('#oRecoveryChoices input').first().check();await s.p.locator('#guestForm button[type="submit"]').click();
  check(await s.p.locator('#counter').isVisible()&&s.calls.length===0,'Blocked analytics cannot block guest onboarding');await s.c.close();
  s=await scenario({local,registered:true,callback:true,newRegistration:true});
  check(s.calls.filter(x=>x.en==='registration_completed').length===1&&s.calls.filter(x=>x.en==='guest_upgraded').length===1,'Same-tab magic-link document return preserves confirmed registration before deferred module');await s.c.close();

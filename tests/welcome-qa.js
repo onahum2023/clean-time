@@ -20,7 +20,7 @@ async(page)=>{
   await p.locator('#oDate').fill('2026-10-01');
   check((await p.locator('#oDateConfirmation').innerText()).includes('1 באוקטובר 2026'),'October 1 display across time zones '+timezoneId);
   await p.locator('#guestForm button').click();check(await p.locator('#oFromError').isVisible(),'Recovery type required in Hebrew');
-  await p.locator('#oFrom').selectOption('אחר');await p.locator('#setupBack').click();await p.locator('#welcomeStart').click();
+  await p.locator('#oRecoveryChoices input[value="אחר"]').check();await p.locator('#setupBack').click();await p.locator('#welcomeStart').click();
   check(await p.locator('#oDate').inputValue()==='2026-10-01'&&await p.locator('#oFrom').inputValue()==='אחר','Visible Back retains draft');
   await p.goBack();check(await p.locator('#welcome').isVisible(),'Browser Back returns Welcome');await p.goForward();
   await p.locator('#guestForm button').click();check(await p.locator('#counter').isVisible()&&await p.locator('#tabs').isVisible(),'Guest setup enters Today');
