@@ -441,6 +441,22 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 #counterDetails>.btn:last-child{margin-top:20px}
 @media(min-width:800px){#counter .today-actions{margin-top:28px}}
 
+/* A quiet visual layer that follows the selected accent and surface. */
+.recovery-summary{border-block:0;border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--surface);box-shadow:0 3px 12px rgb(0 0 0 / .045)}
+.summary-label{font-weight:600;color:var(--accent-ink);margin-bottom:6px}
+#counter .summary-count .num{font-weight:700;letter-spacing:-.025em}
+.summary-since{font-size:.95rem;line-height:1.5}
+.daily-card .page-art{padding:7px;border-radius:12px;background:color-mix(in srgb,var(--accent) 12%,var(--surface));flex:none}
+.daily-card:nth-child(2) .page-art{background:color-mix(in srgb,#668ca3 14%,var(--surface))}
+.daily-card:nth-child(3) .page-art{background:color-mix(in srgb,#78966d 14%,var(--surface))}
+.daily-card:nth-child(4) .page-art{background:color-mix(in srgb,#b78680 14%,var(--surface))}
+.daily-card:nth-child(5) .page-art{background:color-mix(in srgb,#8d84a8 14%,var(--surface))}
+.tool-links a[href^="https:"]::after,:root[dir="ltr"] .tool-links a[href^="https:"]::after{content:'↗';font-size:1.2rem}
+.tool-links a[href^="tel:"]::after,:root[dir="ltr"] .tool-links a[href^="tel:"]::after{content:'☎';font-size:1.1rem}
+.duration-preview{margin:-8px 0 16px;padding:10px 14px;border-radius:12px;background:var(--accent-soft);color:var(--ink);font-weight:600}
+.duration-preview[hidden]{display:none}
+.settings-foot h3{letter-spacing:-.01em}
+
 /* Shared responsive shell. Reading and writing retain a comfortable measure. */
 :root{--shell-width:1120px;--content-width:760px;--writing-width:800px;--page-gutter:20px}
 .app{padding-inline:var(--page-gutter);padding-bottom:calc(4rem + 24px + env(safe-area-inset-bottom,0px))}
@@ -550,6 +566,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
     <p class="sub"><span data-i18n="בוחרים תאריך תחילת החלמה וסוג החלמה, וממשיכים ליום שלך.">בוחרים תאריך תחילת החלמה וסוג החלמה, וממשיכים ליום שלך.</span></p>
     <form id="guestForm">
       <label class="field"><span><span data-i18n="תאריך תחילת הניקיון / ההחלמה">תאריך תחילת הניקיון / ההחלמה</span></span><input type="date" id="oDate" required></label>
+      <p id="oDurationPreview" class="duration-preview" role="status" hidden></p>
       <label class="field"><span><span data-i18n="החלמה מ־">החלמה מ־</span></span><select id="oFrom" required>
         <option value="" disabled selected data-i18n="בחירה">בחירה</option><option data-i18n="אלכוהול">אלכוהול</option><option data-i18n="סמים">סמים</option><option data-i18n="עישון">עישון</option><option data-i18n="אוכל">אוכל</option><option data-i18n="אחר">אחר</option>
       </select></label>
@@ -958,7 +975,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.5';
+const APP_VERSION='2026.11.01.6';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1170,6 +1187,16 @@ for(const id of ['oDate','aDate','sDate','tDate','oSecondDate','aSecondDate']){
   input.addEventListener('input',()=>{validateRecoveryDate(id,false);confirmRecoveryDate(id);});
   input.addEventListener('change',()=>confirmRecoveryDate(id));
 }
+function renderSetupDuration(){
+  const input=$('oDate'),preview=$('oDurationPreview'),parts=/^(\d{4})-(\d{2})-(\d{2})$/.exec(input.value);
+  const date=parts?new Date(0):null;
+  if(date){date.setFullYear(Number(parts[1]),Number(parts[2])-1,Number(parts[3]));date.setHours(0,0,0,0);}
+  const valid=date&&input.validity.valid&&input.value<=todayKey()&&date.getFullYear()===Number(parts[1])&&date.getMonth()===Number(parts[2])-1&&date.getDate()===Number(parts[3]);
+  preview.hidden=!valid;
+  preview.textContent=valid?translateUI('זמן נקי')+': '+new Intl.NumberFormat(CleanTimeI18n.locale,{style:'unit',unit:'day',unitDisplay:'long'}).format(totalDays(date,new Date())):'';
+}
+$('oDate').addEventListener('input',renderSetupDuration);
+$('oDate').addEventListener('change',renderSetupDuration);
 
 /* ---------- Theme ---------- */
 function applyColor(){document.documentElement.style.setProperty('--accent',COLORS[S.color]||COLORS.teal);}
@@ -1851,7 +1878,7 @@ function resetLocal(){
   try{localStorage.removeItem(KEY);localStorage.removeItem(INVENTORY_VIEW_KEY);}catch(e){}
   inventoryView={schema:2,sections:{},guidanceHidden:false};
   resetSetupTimers();
-  storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();$('oDate').value='';$('oFrom').value='';confirmRecoveryDate('oDate');show('welcome');
+  storageError='';storageNotice('');S=JSON.parse(JSON.stringify(DEFAULT));planSelected='';resetTimer();closeBookmarkForm();applyColor();renderG();renderL();renderBookmarks();renderP();renderJ();$('oDate').value='';$('oFrom').value='';confirmRecoveryDate('oDate');renderSetupDuration();show('welcome');
 }
 $('accountDelete').onclick=()=>$('reset').onclick();
 $('reset').onclick=async()=>{
