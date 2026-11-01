@@ -43,24 +43,26 @@ async(page)=>{
    check(await p.locator('#'+screen+' button:visible').evaluateAll(es=>es.every(e=>e.getBoundingClientRect().height>=44)),screen+' touch targets '+width+' '+colorScheme);
    if(screen==='welcome'){
     const layout=await p.evaluate(()=>{
-     const welcome=document.getElementById('welcome'),brand=welcome.querySelector('.welcome-brand'),logo=welcome.querySelector('img'),name=document.getElementById('welcomeTitle'),features=welcome.querySelector('.welcome-features'),entry=welcome.querySelector('.welcome-entry');
-     const rect=e=>e.getBoundingClientRect(),center=e=>rect(e).left+rect(e).width/2;
-     const icon=selector=>document.querySelector(selector).outerHTML;
-     const counterparts={planner:'#planner .page-heading .page-art',journal:'#journal .page-heading .page-art',gratitude:'#gratitude .page-heading .page-art'};
+     const welcome=document.getElementById('welcome'),brand=welcome.querySelector('.welcome-brand'),logo=welcome.querySelector('img'),name=document.getElementById('welcomeTitle'),features=welcome.querySelector('.welcome-features'),entry=welcome.querySelector('.welcome-entry'),hero=welcome.querySelector('.welcome-hero'),preview=welcome.querySelector('.welcome-preview');
+     const rect=e=>e.getBoundingClientRect();
      const items=[...welcome.querySelectorAll('[data-feature]')];
-     const expectedNames=['זמן נקי',...['planner','journal','gratitude'].map(id=>document.querySelector('#'+id+' .page-heading h2').textContent)];
+     const expected=['counter','reading','planner','gratitude','journal','inventory','tools'];
      const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
      const luminance=color=>{ctx.clearRect(0,0,1,1);ctx.fillStyle=color;ctx.fillRect(0,0,1,1);return [...ctx.getImageData(0,0,1,1).data].slice(0,3).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);};
      const contrast=(a,b)=>{const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);};
+     const color=e=>getComputedStyle(e).color,bg=e=>getComputedStyle(e).backgroundColor;
      return {
-      order:rect(brand).bottom<=rect(features).top&&rect(features).bottom<=rect(entry).top,
-      brand:Math.abs(center(logo)-center(welcome))<1&&Math.abs(center(name)-center(welcome))<1&&getComputedStyle(name).textAlign==='center'&&getComputedStyle(name).userSelect!=='none'&&getComputedStyle(name).fontSize!==getComputedStyle(welcome.querySelector('.welcome-origin')).fontSize,
-      logo:logo.naturalWidth===512&&rect(logo).width>=80&&logo.getAttribute('src')==='/icon-512.png',
+      order:rect(brand).bottom<rect(entry).top&&rect(entry).bottom<=rect(hero).bottom&&rect(hero).bottom<rect(features).top,
+      brand:getComputedStyle(brand).textAlign==='start'&&getComputedStyle(name).userSelect!=='none'&&parseFloat(getComputedStyle(name).fontSize)>=40,
+      logo:logo.naturalWidth===512&&rect(logo).width>=56&&logo.getAttribute('src')==='/icon-512.png',
       noDuplicateTitle:document.querySelector('header').hidden&&[...document.querySelectorAll('h1')].filter(e=>e.getBoundingClientRect().height>0).length===1,
-      items:items.length===4&&items.every((e,i)=>e.querySelector('h3').textContent===expectedNames[i]&&e.querySelector('p').textContent&&(e.dataset.feature==='counter'?e.querySelector('svg.daybreak')!==null:icon('[data-feature='+e.dataset.feature+'] svg')===icon(counterparts[e.dataset.feature]))),
-      static:!features.querySelector('a,button,input,[data-go],[data-tab],[tabindex],[role=button],[role=link]'),
-      readable:items.every(e=>['h3','p','svg'].every(tag=>contrast(getComputedStyle(e.querySelector(tag)).color,getComputedStyle(e).backgroundColor)>=4.5)),
-      oneAction:welcome.querySelectorAll('#welcomeStart').length===1&&welcome.querySelectorAll('#onboardingLogin').length===1&&[...entry.querySelectorAll('button')].every(e=>getComputedStyle(e).position!=='fixed'&&getComputedStyle(e).position!=='sticky')
+      items:items.length===7&&items.every((e,i)=>e.dataset.feature===expected[i]&&e.querySelector('h3').textContent&&e.querySelector('p').textContent&&e.querySelector('svg')),
+      static:!features.querySelector('a,button,input,[data-go],[data-tab],[tabindex],[role=button],[role=link]')&&!preview.querySelector('button,a,input,[data-go]')&&preview.querySelector('figcaption').textContent.includes('דוגמה בלבד'),
+      readable:items.every(e=>['h3','p'].every(tag=>contrast(color(e.querySelector(tag)),bg(e))>=4.5)&&contrast(color(e.querySelector('.welcome-icon')),bg(e.querySelector('.welcome-icon')))>=4.5)&&contrast(color(document.getElementById('welcomeStart')),bg(document.getElementById('welcomeStart')))>=4.5,
+      oneAction:welcome.querySelectorAll('#welcomeStart').length===1&&welcome.querySelectorAll('#onboardingLogin').length===1&&[...entry.querySelectorAll('button')].every(e=>getComputedStyle(e).position!=='fixed'&&getComputedStyle(e).position!=='sticky'),
+      composition:innerWidth<1024?rect(preview).top>=rect(entry).bottom:rect(preview).right<rect(entry).left,
+      primaryAboveFold:rect(document.getElementById('welcomeStart')).bottom<innerHeight,
+      exampleUnstored:!localStorage.getItem('cleantime-he-v1')&&preview.querySelector('.welcome-example-count').textContent==='3 חודשים'
      };
     });
     for(const [key,valid] of Object.entries(layout))check(valid,'Landing '+key+' '+width+' '+colorScheme);

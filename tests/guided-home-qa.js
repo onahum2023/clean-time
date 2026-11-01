@@ -62,9 +62,10 @@ async(page)=>{
     return r.length===5&&near(r[0].top,r[1].top)&&near(r[2].top,r[3].top)&&r[2].top>r[0].bottom&&near(r[0].left,r[2].left)&&near(r[1].left,r[3].left)&&(rtl?r[0].left>r[1].left:r[0].left<r[1].left)&&near(r[4].width,grid.width)&&near(r[4].top-Math.max(r[2].bottom,r[3].bottom),parseFloat(getComputedStyle(document.querySelector('.daily-cards')).rowGap))&&cards.every(e=>e.scrollWidth<=e.clientWidth&&e.getBoundingClientRect().height>=44);
    }),'Two by two cards in reading order followed immediately by full-width Step 10 '+language+' '+width+' '+colorScheme);
    check(await page.evaluate(()=>{
-    const card=document.querySelector('.daily-card'),welcome=document.querySelector('.welcome-feature-list li'),a=getComputedStyle(card),b=getComputedStyle(welcome);
-    return ['backgroundColor','borderWidth','borderRadius'].every(k=>a[k]===b[k])&&getComputedStyle(card.querySelector('.page-art')).color===getComputedStyle(welcome.querySelector('.page-art')).color;
-   }),'Home cards retain Welcome surface, corner and icon treatment '+language+' '+width+' '+colorScheme);
+    const card=document.querySelector('.daily-card'),style=getComputedStyle(card);
+    // Welcome now has its own visual foundation; Home retains the merged-main treatment.
+    return style.backgroundColor===getComputedStyle(document.querySelector('.recovery-summary')).backgroundColor&&style.borderWidth==='1px'&&style.borderRadius==='16px'&&getComputedStyle(card.querySelector('.page-art')).width==='40px';
+   }),'Home retains its existing surface, corners and icon sizing '+language+' '+width+' '+colorScheme);
    check(await page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.daily-card')].map(e=>getComputedStyle(e)),gap=parseFloat(getComputedStyle(document.querySelector('.daily-cards')).rowGap),badge=document.getElementById('milestone').getBoundingClientRect();
     return gap===(innerWidth<=340?12:16)&&cards.every(c=>c.borderColor===cards[0].borderColor&&c.boxShadow===cards[0].boxShadow&&c.boxShadow!=='none')&&badge.width>=50&&badge.height>=70;
