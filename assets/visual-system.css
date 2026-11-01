@@ -181,7 +181,7 @@
 .app :is(h1,h2,h3,h4,h5,h6,legend,label){min-width:0;overflow-wrap:anywhere}
 
 /* Desktop Home UAT revision. Mobile retains its approved summary and 2×2 grid. */
-.home-heading,.home-notes,.home-reflection,.home-summary-title,.home-identity,.summary-duration,.home-action-description,.home-action-cue{display:none}
+.home-card-context,.home-heading,.home-notes,.home-reflection,.home-summary-title,.home-identity,.summary-duration,.home-action-description,.home-action-cue{display:none}
 .home-recovery-column,.summary-mobile,.daily-card-copy{display:contents}
 .daily-card .home-action-description{display:none}
 @media(min-width:1024px){
@@ -189,10 +189,12 @@
  #counter{grid-template-columns:minmax(0,1.22fr) minmax(0,1fr);gap:24px;padding-top:20px}
  .home-heading{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:0;min-width:0;flex-wrap:wrap}
  .home-heading h2{font-size:2rem;line-height:1.25;margin:0;font-weight:700;letter-spacing:-.02em}
- .home-heading time{font-size:.9375rem;line-height:1.6;color:var(--muted)}
- .home-recovery-column{display:block;min-width:0}
- #counter .recovery-summary{padding:32px;background:color-mix(in srgb,var(--accent-soft) 65%,var(--surface));border-radius:20px;box-shadow:var(--card-shadow)}
- #counter .summary-top{align-items:center;gap:24px;min-height:204px}
+ .home-card-context{display:block;min-width:0;margin-bottom:20px;overflow-wrap:anywhere}
+ .home-card-context p{margin:0 0 4px;font-size:1.25rem;font-weight:600;line-height:1.4}
+ .home-card-context time{display:block;font-size:.9375rem;line-height:1.6;color:color-mix(in srgb,var(--muted) 85%,var(--ink))}
+ .home-recovery-column{display:flex;flex-direction:column;align-self:stretch;gap:20px;min-width:0}
+ #counter .recovery-summary{display:flex;flex-direction:column;flex:1.6 0 auto;min-height:360px;padding:32px;background:color-mix(in srgb,var(--accent-soft) 65%,var(--surface));border-radius:20px;box-shadow:var(--card-shadow)}
+ #counter .summary-top{flex:1;align-items:center;gap:24px;min-height:180px}
  #counter .summary-primary{flex:1}
  .home-summary-title{display:block;color:var(--accent-ink);font-size:1rem;font-weight:600;margin:0 0 18px}
  #counter .summary-label,#counter .summary-mobile{display:none}
@@ -203,8 +205,8 @@
  #counter .recovery-summary .milestone-badge{flex-basis:80px;width:80px;height:112px}
  #counter .secondary-summary>span{color:color-mix(in srgb,var(--muted) 85%,var(--ink))}
  #counter .secondary-summary{font-size:.9375rem;margin-top:20px;padding-top:16px;line-height:1.6}
- .home-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
- .home-notes article{padding:20px 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--card-shadow);min-width:0;overflow-wrap:anywhere}
+ .home-notes{display:grid;flex:1 0 auto;min-height:200px;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:0}
+ .home-notes article{padding:24px 16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--card-shadow);min-width:0;overflow-wrap:anywhere}
  .home-notes .page-art{width:40px;height:40px;padding:9px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);margin-bottom:12px}
  .home-notes h3{font-size:1rem;line-height:1.5;margin:0 0 6px;font-weight:600}
  .home-notes p{font-size:.875rem;line-height:1.7;color:var(--muted);margin:0}
@@ -225,7 +227,7 @@
 }
 @media(min-width:1024px) and (max-width:1199px){
  #counter{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:20px}
- #counter .recovery-summary{padding:24px}
+ #counter .recovery-summary{padding:24px;min-height:340px}
  #counter .summary-top{flex-direction:column-reverse;align-items:flex-start;gap:16px;min-height:0}
  #counter .recovery-summary .milestone-badge{width:64px;height:90px;flex-basis:auto;align-self:flex-end;margin-bottom:-58px}
  .home-summary-title{padding-inline-end:68px;min-height:40px;margin-bottom:12px}

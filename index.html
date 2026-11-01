@@ -647,9 +647,10 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
   <!-- Counter -->
   <section id="counter" hidden>
     <div id="backupReminder" hidden><p id="backupReminderText" role="status"></p><button class="btn secondary" id="resumeBackup"><span data-i18n="השלמת הגיבוי המוצפן">השלמת הגיבוי המוצפן</span></button></div>
-    <div class="home-heading"><h2 data-i18n="היום">היום</h2><time id="homeDate"></time></div>
+    <div class="home-heading"><h2 data-i18n="היום">היום</h2></div>
     <div class="home-recovery-column">
     <div class="recovery-summary" role="group" aria-label="זמן נקי" data-i18n-aria-label="זמן נקי">
+      <div class="home-card-context"><p id="homeGreeting"></p><time id="homeDate"></time></div>
       <div class="summary-top">
         <div class="summary-primary">
           <p class="home-summary-title" data-i18n="הזמן הנקי שלך">הזמן הנקי שלך</p>
@@ -1065,7 +1066,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.13';
+const APP_VERSION='2026.11.01.14';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1828,6 +1829,8 @@ function timerDescription(timer){
 }
 function renderHomeSummary(){
  const timers=S.timers||[],primary=timers.find(t=>t.id===S.primaryTimerId),now=new Date();
+ const name=typeof S.name==='string'?S.name.trim():'';
+ $('homeGreeting').textContent=translateUI('שלום')+(name?', '+name:'');
  $('homeDate').dateTime=todayKey();$('homeDate').textContent=now.toLocaleDateString(CleanTimeI18n.locale,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
  $('homePrimaryLabel').hidden=signedIn();
  if(!primary){$('homePrimaryCount').replaceChildren();$('homeSecondary').hidden=true;return;}
@@ -1849,6 +1852,7 @@ function renderHomeSummary(){
   desktop.textContent=values.filter(([value,unit])=>value||(unit==='day'&&!months)).map(([value,unit])=>new Intl.NumberFormat(CleanTimeI18n.locale,{style:'unit',unit,unitDisplay:'long'}).format(value)).join(' ');
  }
  $('homeDesktopIdentity').textContent=timerLabel(primary);
+ $('homeDesktopIdentity').hidden=!!name&&timerLabel(primary)===name;
  if(count.innerHTML!==html+desktop.outerHTML)count.innerHTML=html+desktop.outerHTML;
  $('homePrimarySince').textContent=translateUI('מאז ')+start.toLocaleDateString(CleanTimeI18n.locale,{day:'numeric',month:'long',year:'numeric'});
  const secondary=timers.find(t=>t.id!==primary.id);
