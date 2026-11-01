@@ -4,9 +4,10 @@ const fs=require('node:fs'),path=require('node:path'),{chromium}=require('playwr
 const origin=process.env.QA_BASE_URL||'https://clean-time-jyjp69cuk-nu-cielo.vercel.app';
 const url=new URL(origin),local=process.argv.includes('--local-check');
 if(url.origin!==origin||url.username||url.password||!(local?url.protocol==='http:'&&url.hostname==='127.0.0.1':url.protocol==='https:'&&url.hostname.endsWith('.vercel.app')))throw Error('Use an exact isolated Preview origin (or explicit --local-check loopback)');
+const executable=process.env.QA_CHROMIUM_EXECUTABLE||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined);
 const output=path.resolve('qa-artifacts/responsive/final-smoke'+(local?'-local':''));fs.mkdirSync(output,{recursive:true});
 (async()=>{
- const report={origin,mode:local?'LOCAL RUNNER VALIDATION':'DEPLOYED BROWSER',viewports:[],passed:0,status:'RUNNING'},browser=await chromium.launch({headless:true,executablePath:process.env.QA_CHROMIUM_EXECUTABLE||'/usr/bin/chromium',args:process.env.QA_NO_SANDBOX==='1'?['--no-sandbox']:[]});
+ const report={origin,mode:local?'LOCAL RUNNER VALIDATION':'DEPLOYED BROWSER',viewports:[],passed:0,status:'RUNNING'},browser=await chromium.launch({headless:true,...(executable?{executablePath:executable}:{}),args:process.env.QA_NO_SANDBOX==='1'?['--no-sandbox']:[]});
  try{
   for(const width of [1440,390]){
    const context=await browser.newContext({viewport:{width,height:width===1440?900:844},colorScheme:'light',locale:'he-IL',timezoneId:'Europe/Amsterdam',isMobile:width===390,hasTouch:width===390,acceptDownloads:true});
