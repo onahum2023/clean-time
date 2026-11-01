@@ -17,6 +17,10 @@ async(page)=>{
    check(await page.evaluate(()=>{const r=document.querySelector('#counter [data-go=inventory]').getBoundingClientRect(),nav=document.getElementById('tabs').getBoundingClientRect();return r.bottom<=nav.top+1}),'Last action clears fixed navigation: '+lang+' '+width);
   }
  }
+ await page.setViewportSize({width:1440,height:900});
+ check(await page.evaluate(()=>{const summary=document.querySelector('.recovery-summary').getBoundingClientRect(),actions=document.querySelector('.today-actions').getBoundingClientRect(),count=document.querySelector('#homePrimaryCount .num'),badge=document.getElementById('milestone').getBoundingClientRect(),since=document.getElementById('homePrimarySince').getBoundingClientRect(),secondary=document.getElementById('homeSecondary').getBoundingClientRect();return summary.height/actions.height>=.7&&summary.height/actions.height<=1.15&&summary.width/actions.width>=1&&parseFloat(getComputedStyle(count).fontSize)>=56&&badge.height>=95&&secondary.top>since.bottom&&summary.bottom>=secondary.bottom;}),'Desktop counter has substantial content and visual weight alongside actions');
+ await page.setViewportSize({width:1920,height:900});
+ check(await page.locator('#counter').evaluate(e=>e.getBoundingClientRect().width<=1080),'Desktop composition remains bounded on wider screens');
  await page.setViewportSize({width:1440,height:900});await page.addStyleTag({content:'html{font-size:200%}body{font-size:34px}'});
  check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Desktop enlarged text does not overflow');
  await page.locator('#counter [data-go=inventory]').focus();await page.keyboard.press('Enter');
