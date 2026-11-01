@@ -58,10 +58,12 @@ node --test tests/repository-hygiene.test.js
 VERCEL_ENV=preview node scripts/build-vercel.js
 ```
 
-Before/after screenshots cover Home, Step 10, Journal list/editor, Settings and
-Account at all five requested widths. Synthetic images and logs remain in
-ignored `qa-artifacts/responsive/`; an owner-facing comparison is supplied with
-the delivery rather than included in the deployed application.
+The [published Hebrew RTL comparison](responsive-review/README.md) contains
+reviewed synthetic before/after PNGs for desktop Home, Settings, Journal
+list/editor and Step 10, plus mobile Home and Step 10. These repository-hosted
+images are accessible through GitHub and are excluded from the deployed app by
+the existing asset allowlist. Captures are local Chromium evidence at the
+baseline and application commit `7c4f096`, not deployed-browser evidence.
 
 Validation: the final local Chromium run passes all 2,654 browser checks,
 including 791 new responsive checks and the expanded Welcome/public-page matrix.
@@ -72,8 +74,54 @@ are present and backend configuration remains `url:null`, `key:null`,
 `backupDisabled:true`. Browser interaction checks run against the loopback app;
 these HTTP checks establish the separate deployed-static-file boundary.
 
-Independent [Nora QA was requested](https://neotixhqworkspace.slack.com/archives/C0CAEEX3C4Q/p1793521200857239)
-on draft PR #72. Review is pending. Owner visual acceptance and physical-device
-keyboard/PWA acceptance remain release gates; browser viewport emulation does
-not establish physical-device acceptance. No merge or Production deployment was
-performed.
+## Final owner handoff (2026-11-01)
+
+Nora review is skipped at the owner's request. Issue #73's Lovable-inspired
+visual work is outside this PR. This finalization adds evidence/documentation
+and a reproducible deployed-browser smoke runner; application code remains at
+`7c4f096` / version `2026.11.01.5`.
+
+**Deployed browser smoke: BLOCKED by the Cloud environment network policy.**
+The actual Chromium attempt against the owner-requested
+`https://clean-time-jyjp69cuk-nu-cielo.vercel.app` failed before loading the app:
+`page.goto: net::ERR_TUNNEL_CONNECTION_FAILED`. A separate connection probe
+returned `CONNECT tunnel failed, response 403` from the environment's proxy.
+This is not a finding against the app or Vercel Deployment Protection. HTTP
+connector fetches and local tests do not substitute for this release gate.
+The environment must allow the Preview hostname before it can be completed.
+
+Reproduce actual browser interactions (no document/asset/backend mocks):
+
+```
+QA_BASE_URL=https://clean-time-jyjp69cuk-nu-cielo.vercel.app QA_NO_SANDBOX=1 node tests/deployed-responsive-smoke.js
+```
+
+The runner uses fresh synthetic guest contexts at 1440×900 and 390×844. It
+checks Home/daily-action order, all five bottom-nav options, Journal writing,
+scrolling and reload persistence, Step 10 answers/finish/print/PDF download,
+Settings dialogs/focus/last-action clearance, appearance persistence, all three
+language directions, guest Account, Recovery Tools and dark-mode layout.
+If needed, the existing short-lived Vercel OIDC credential is attached only to
+the exact tested origin; no credentials or browser profiles are published.
+
+Runner validation against loopback passes **102 checks**. This confirms the
+runner's interactions are executable; it does not establish deployed behavior.
+Fresh preservation rerun: **489 checks pass, zero failed suites**:
+
+| Preserved behavior | Local browser evidence |
+| --- | --- |
+| Five daily actions/order and bottom navigation | Navigation: 47; runner validation also checks both orders and viewport clearance |
+| Appearance/languages | Appearance: 59; i18n: 64 |
+| Guest storage | Runner validation includes Journal save/reload and appearance persistence |
+| Registered account/encrypted backup compatibility | Account: 27; Encryption: 147, using synthetic SDK mocks |
+| Step 10 content/save/print/PDF | Inventory: 33; original-language content: 84; print/PDF: 28 |
+
+Registered account/encrypted backup coverage uses synthetic SDK mocks; live
+registered sign-in/backup cannot be exercised on the intentionally guest-only
+Preview and was not pointed at Production.
+
+Owner visual acceptance and physical-device keyboard/PWA/safe-area acceptance
+remain release gates. Native mobile keyboard resizing, installed-PWA lifecycle,
+screen readers and physical printing require device/manual acceptance. Existing
+Step 10 downloaded PDFs use raster pages; their prior accessibility limitations
+are unchanged. Keep PR #72 in Draft. No merge or Production deployment performed.
