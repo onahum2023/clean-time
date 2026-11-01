@@ -169,3 +169,13 @@
  #settings .settings-profile{padding:24px}
 }
 @media(max-width:380px){#settings .settings-profile{padding:14px}}
+/* Long labels and enlarged text keep actions reachable without horizontal scroll. */
+.app.application-shell ul.list{grid-template-columns:minmax(0,1fr)}
+.app.application-shell ul.list li{min-width:0;flex-wrap:wrap}
+.app.application-shell ul.list li .txt{flex:1 1 min(12rem,calc(100% - 56px))}
+#about .help{grid-template-columns:minmax(0,1fr)}
+#about .help li{min-width:0}
+#about .help a{min-width:0;max-width:100%;flex-wrap:wrap;overflow-wrap:anywhere}
+#meditation .timer-actions .btn{flex:1 1 8rem}
+:is(.app.application-shell,#onboarding,#auth,.modal) .btn{overflow-wrap:anywhere;min-width:0}
+.app :is(h1,h2,h3,h4,h5,h6,legend,label){min-width:0;overflow-wrap:anywhere}
