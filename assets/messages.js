@@ -2,6 +2,9 @@
 window.CleanTimeMessages={
   "he": {},
   "en": {
+    "בוקר טוב": "Good morning",
+    "צהריים טובים": "Good afternoon",
+    "ערב טוב": "Good evening",
     "הזמן הנקי שלך": "Your clean time",
     "את/ה לא לבד": "You are not alone",
     "את/ה חשוב/ה": "You matter",
@@ -447,6 +450,9 @@ window.CleanTimeMessages={
     "הקובץ הועבר להורדה.": "The file was sent to downloads."
   },
   "ru": {
+    "בוקר טוב": "Доброе утро",
+    "צהריים טובים": "Добрый день",
+    "ערב טוב": "Добрый вечер",
     "שלום": "Здравствуйте",
     "הזמן הנקי שלך": "Ваше время трезвости",
     "את/ה לא לבד": "Вы не одни",

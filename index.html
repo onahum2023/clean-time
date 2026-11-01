@@ -650,9 +650,10 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
     <div class="home-heading"><h2 data-i18n="היום">היום</h2></div>
     <div class="home-recovery-column">
     <div class="recovery-summary" role="group" aria-label="זמן נקי" data-i18n-aria-label="זמן נקי">
-      <div class="home-card-context"><p id="homeGreeting"></p><time id="homeDate"></time></div>
+      <div class="home-card-context"><time id="homeDate"></time></div>
       <div class="summary-top">
         <div class="summary-primary">
+          <p class="home-greeting" id="homeGreeting"></p>
           <p class="home-summary-title" data-i18n="הזמן הנקי שלך">הזמן הנקי שלך</p>
           <p class="summary-label" id="homePrimaryLabel"></p>
           <div class="summary-count" id="homePrimaryCount"></div>
@@ -1066,7 +1067,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.14';
+const APP_VERSION='2026.11.01.15';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1830,7 +1831,8 @@ function timerDescription(timer){
 function renderHomeSummary(){
  const timers=S.timers||[],primary=timers.find(t=>t.id===S.primaryTimerId),now=new Date();
  const name=typeof S.name==='string'?S.name.trim():'';
- $('homeGreeting').textContent=translateUI('שלום')+(name?', '+name:'');
+ const hour=now.getHours(),greeting=hour>=5&&hour<12?'בוקר טוב':hour>=12&&hour<17?'צהריים טובים':hour>=17&&hour<24?'ערב טוב':'שלום';
+ $('homeGreeting').textContent=translateUI(greeting)+(name?', '+name:'');
  $('homeDate').dateTime=todayKey();$('homeDate').textContent=now.toLocaleDateString(CleanTimeI18n.locale,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
  $('homePrimaryLabel').hidden=signedIn();
  if(!primary){$('homePrimaryCount').replaceChildren();$('homeSecondary').hidden=true;return;}

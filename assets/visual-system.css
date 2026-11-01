@@ -181,7 +181,7 @@
 .app :is(h1,h2,h3,h4,h5,h6,legend,label){min-width:0;overflow-wrap:anywhere}
 
 /* Desktop Home UAT revision. Mobile retains its approved summary and 2×2 grid. */
-.home-card-context,.home-heading,.home-notes,.home-reflection,.home-summary-title,.home-identity,.summary-duration,.home-action-description,.home-action-cue{display:none}
+.home-greeting,.home-card-context,.home-heading,.home-notes,.home-reflection,.home-summary-title,.home-identity,.summary-duration,.home-action-description,.home-action-cue{display:none}
 .home-recovery-column,.summary-mobile,.daily-card-copy{display:contents}
 .daily-card .home-action-description{display:none}
 @media(min-width:1024px){
@@ -189,20 +189,20 @@
  #counter{grid-template-columns:minmax(0,1.22fr) minmax(0,1fr);gap:24px;padding-top:20px}
  .home-heading{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:0;min-width:0;flex-wrap:wrap}
  .home-heading h2{font-size:2rem;line-height:1.25;margin:0;font-weight:700;letter-spacing:-.02em}
- .home-card-context{display:block;min-width:0;margin-bottom:20px;overflow-wrap:anywhere}
- .home-card-context p{margin:0 0 4px;font-size:1.25rem;font-weight:600;line-height:1.4}
- .home-card-context time{display:block;font-size:.9375rem;line-height:1.6;color:color-mix(in srgb,var(--muted) 85%,var(--ink))}
+ .home-card-context{display:block;min-width:0;margin-bottom:12px;overflow-wrap:anywhere}
+ .home-greeting{display:block;margin:0 0 16px;font-size:1.25rem;font-weight:600;line-height:1.4}
+ .home-card-context time{display:block;text-align:left;font-size:.9375rem;line-height:1.6;color:color-mix(in srgb,var(--muted) 85%,var(--ink))}
  .home-recovery-column{display:flex;flex-direction:column;align-self:stretch;gap:20px;min-width:0}
  #counter .recovery-summary{display:flex;flex-direction:column;flex:1.6 0 auto;min-height:360px;padding:32px;background:color-mix(in srgb,var(--accent-soft) 65%,var(--surface));border-radius:20px;box-shadow:var(--card-shadow)}
  #counter .summary-top{flex:1;align-items:center;gap:24px;min-height:180px}
  #counter .summary-primary{flex:1}
- .home-summary-title{display:block;color:var(--accent-ink);font-size:1rem;font-weight:600;margin:0 0 18px}
+ .home-summary-title{display:block;color:var(--accent-ink);font-size:1rem;font-weight:600;margin:0 0 10px}
  #counter .summary-label,#counter .summary-mobile{display:none}
  #counter .summary-count{display:block}
  #counter .summary-duration{display:block;font-size:clamp(1.75rem,2.7vw,2.5rem);font-weight:700;line-height:1.4;letter-spacing:-.02em;text-wrap:balance}
  #counter .summary-since{color:color-mix(in srgb,var(--muted) 85%,var(--ink));font-size:.9375rem;line-height:1.7;margin-top:18px}
  .home-identity{display:block;color:color-mix(in srgb,var(--muted) 85%,var(--ink));font-size:.9375rem;line-height:1.6;margin:4px 0 0}
- #counter .recovery-summary .milestone-badge{flex-basis:80px;width:80px;height:112px}
+ #counter .recovery-summary .milestone-badge{flex-basis:100px;width:100px;height:140px;transform:translateY(-16px)}
  #counter .secondary-summary>span{color:color-mix(in srgb,var(--muted) 85%,var(--ink))}
  #counter .secondary-summary{font-size:.9375rem;margin-top:20px;padding-top:16px;line-height:1.6}
  .home-notes{display:grid;flex:1 0 auto;min-height:200px;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:0}
@@ -228,9 +228,8 @@
 @media(min-width:1024px) and (max-width:1199px){
  #counter{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:20px}
  #counter .recovery-summary{padding:24px;min-height:340px}
- #counter .summary-top{flex-direction:column-reverse;align-items:flex-start;gap:16px;min-height:0}
- #counter .recovery-summary .milestone-badge{width:64px;height:90px;flex-basis:auto;align-self:flex-end;margin-bottom:-58px}
- .home-summary-title{padding-inline-end:68px;min-height:40px;margin-bottom:12px}
+ #counter .summary-top{display:grid;grid-template-columns:minmax(0,1fr) 80px;align-items:start;gap:16px;min-height:0}
+ #counter .recovery-summary .milestone-badge{width:80px;height:112px;flex-basis:auto;align-self:start;transform:translateY(-8px)}
  #counter .today-actions{padding:20px 16px}
  #counter .daily-card,#counter .daily-card:last-child{padding:14px 12px;gap:10px}
  .home-notes{grid-template-columns:minmax(0,1fr);gap:10px}
