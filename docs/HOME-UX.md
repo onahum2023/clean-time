@@ -1,6 +1,6 @@
 # Guided daily Home — revised owner review
 
-**Desktop update (issue #75):** At widths of 1024px and above, Today places the recovery summary and milestone beside a vertical list of the five daily actions. Mobile retains the 2×2 grid and full-width Step 10. The fixed bottom navigation remains at all widths. Earlier evidence below describes the preceding layout.
+**Desktop update (issue #75):** At widths of 1024px and above, Today places the recovery summary and milestone beside a vertical list of the five daily actions. Mobile retains the 2×2 grid and full-width Step 10. A 224px navigation rail occupies the reading-start side on desktop (right in Hebrew, mirrored for LTR); the compact bottom navigation remains below 1024px. All five destinations, including Account, stay in the shared navigation. Welcome, setup and authentication use no application shell. See [the navigation-first revision](ISSUE-75-NAVIGATION-RAIL.md). Earlier evidence below describes the preceding layout.
 
 Home shows a compact recovery summary followed by four daily cards in a 2×2 grid and one full-width Step 10 card. This revision addresses the [owner's PR #68 feedback](https://github.com/onahum2023/clean-time/pull/68#pullrequestreview-5723184892).
 

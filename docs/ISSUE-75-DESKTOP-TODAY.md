@@ -1,5 +1,7 @@
 # Desktop Today composition — issue #75
 
+**Superseded navigation decision:** The owner now requires a desktop rail. The current [navigation-first revision and Preview evidence](ISSUE-75-NAVIGATION-RAIL.md) replace the fixed-desktop-footer design below. PR #78 remains HOLD for fresh visual approval.
+
 The desktop Today screen places the existing recovery summary, optional secondary counter and milestone beside the five daily actions. From 1024px the actions form a vertical list in the same reading and keyboard order. Below that breakpoint the approved 2×2 plus full-width Step 10 layout remains. The fixed bottom navigation and existing destinations remain in place. No recovery data or service behavior changes.
 
 ## Checkpoint A — navigation revision (2026-11-01)

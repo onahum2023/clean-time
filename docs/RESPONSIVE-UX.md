@@ -21,22 +21,30 @@ Production deployment and merge require owner approval.
 | Public About/Privacy | Separate responsive public stylesheet | Existing readable layout retained; covered by existing public-page/browser checks |
 | Confirmations | Centered dialog could exceed short/enlarged viewport | Bounded by dynamic viewport height; dialog contents scroll without losing keyboard focus trapping |
 
-Shared shell: 1120px ceiling, 16/20px mobile gutters and 32px from 600px.
-Fixed bottom navigation remains at every viewport width, with the original five
-options, order and active-page highlighting. Below 600px its items retain the
-compact centered 520px maximum. From 600px the navigation grows with the shell;
-from 1024px its edges match the Home region, bounded by the shared 1080px Home
-ceiling and the shell's inner width (1056px with the current 1120px shell and
-32px gutters). Desktop labels use 1rem, 64px minimum targets and a tinted current
-destination. Bottom content and scroll padding grow in rem units, include the
-device safe area and follow the actual footer height through ResizeObserver so
-wrapped translations at enlarged text sizes cannot cover the final page action.
-The language switcher retains its original sticky position. Reading order,
-accessible labels, history and focus behavior are unchanged.
+## Current navigation-first revision (#75 / PR #78)
 
-Writing width grows modestly rather than stretching to the whole desktop.
-No sidebars, extra choices or decorative features were added. Settings groups
-follow DOM order in both RTL and LTR; no CSS visual reordering is used.
+The owner's latest decision supersedes the desktop-bottom-navigation requirement.
+At >=1024px, the application uses a persistent 224px navigation rail on the
+reading-start side: right in Hebrew RTL, left in English/Russian LTR. The
+remaining content region uses 32px gutters (40px from 1280px) and comfortable
+per-screen reading/writing measures. Home has a 1040px ceiling with a 1.08:1
+two-column split, a 24px gap and counter sizing adapted for the 736px content
+region at a 1024px viewport. Its header, status notices and panels align.
+
+Below 1024px, retain the original compact centered bottom navigation, maximum
+520px. The same five buttons/handlers serve both layouts, with existing order,
+selected destinations and keyboard behavior. Rail identity/icons are hidden on
+mobile. Welcome, setup, startup and authentication stay outside the shell.
+Returning from authentication restores the appropriate application navigation.
+Modal focus trapping and print/PDF behavior are unchanged.
+
+Mobile bottom padding follows the measured footer height, including wrapped
+translations and device bottom insets. Desktop content uses ordinary bottom
+spacing without reserving a footer-height gap. Long rail labels and short
+windows scroll vertically within the rail, so keyboard focus can reach Account.
+See [current screenshots and validation](ISSUE-75-NAVIGATION-RAIL.md).
+
+## Earlier responsive implementation and evidence
 
 The implementation changes CSS and two structural grouping wrappers only.
 Application/worker versions and the inline-script CSP hash are updated. No
