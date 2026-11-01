@@ -52,7 +52,7 @@ async(page)=>{
  for(const language of ['he','en','ru']){
   await page.locator('[data-language='+language+']').click();await page.waitForFunction(l=>document.documentElement.lang===l,language);
   for(const colorScheme of ['light','dark'])for(const width of [320,360,390,1440]){
-   await page.emulateMedia({colorScheme});await page.setViewportSize({width,height:width===1440?900:800});
+   await page.emulateMedia({colorScheme});await page.setViewportSize({width,height:width===1440?900:800});await page.mouse.move(0,0);
    check(await page.evaluate(()=>{
     const first=document.getElementById('dailyReading').getBoundingClientRect(),footer=document.getElementById('tabs').getBoundingClientRect(),num=document.querySelector('#homePrimaryCount .num');
     return document.documentElement.scrollWidth<=innerWidth&&first.bottom<footer.top&&parseFloat(getComputedStyle(num).fontSize)<=36;

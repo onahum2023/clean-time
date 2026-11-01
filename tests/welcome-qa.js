@@ -35,7 +35,7 @@ async(page)=>{
   await p.locator('#authBack').click();check(await p.locator('#account').isVisible(),'Account form Back returns My Account');
   check(external.length===0&&errors.length===0,'Guest flow no third-party requests or JS errors');await c.close();
  }
- for(const width of [320,360,390,1280])for(const colorScheme of ['light','dark']){
+ for(const width of [320,360,390,768,1024,1280,1440])for(const colorScheme of ['light','dark']){
   const c=await browser.newContext({viewport:{width,height:800},colorScheme});const p=await c.newPage();await p.goto(origin);
   for(const screen of ['welcome','onboarding']){
    if(screen==='onboarding'){await p.locator('#welcomeStart').click();check(await p.locator('#oDate').evaluate((e,theme)=>getComputedStyle(e).colorScheme===theme,colorScheme),'Native date control theme '+width+' '+colorScheme);}
