@@ -57,8 +57,20 @@ One pre-existing suite remains red: `home-account-summary-qa.js` fails its compa
 
 ## Protected Preview
 
-The refreshed revision Preview URL, exact deployed commit and browser verification will be recorded after the branch build. Vercel Authentication remains enabled. Verification uses read-only, same-origin authenticated `vercel curl` asset requests through `tests/preview-cli-access.js`; credentials stay inside the CLI. No environment-variable download or public share token is needed.
+- **URL:** [Protected revised Preview](https://clean-time-5dq4v6wro-nu-cielo.vercel.app/)
+- **Status / target:** READY / Preview, `clean-time` in the NuCielo team.
+- **Deployed application commit:** `a69d3992e96fc2b3d61e95284d24c2c46183078d`.
+- **Build duration:** approximately 3 seconds.
 
-Fresh captures use the `revised` and `revised-preview` prefixes; `-footer.png` adds a useful viewport capture of the closing card, alongside initial viewport and full-page captures. The earlier `after` and `preview` images are retained as historical comparisons.
+Vercel Authentication remains enabled. Verification uses read-only, same-origin authenticated `vercel curl` asset requests through `tests/preview-cli-access.js`; credentials stay inside the CLI. No environment-variable download or public share token is needed.
+
+Fresh captures use the `revised` and `revised-preview` prefixes; `-footer.png` adds a useful viewport capture of the closing card, alongside initial viewport and full-page captures. All **12 deployed captures are byte-identical** to the matching local revision captures. The earlier `after` and `preview` images are retained as historical comparisons.
+
+| Closing card | Light | Dark |
+| --- | --- | --- |
+| 390px | [Mobile light](issue-77-visuals/revised-preview-390-light-footer.png) | [Mobile dark](issue-77-visuals/revised-preview-390-dark-footer.png) |
+| 1440px | [Desktop light](issue-77-visuals/revised-preview-1440-light-footer.png) | [Desktop dark](issue-77-visuals/revised-preview-1440-dark-footer.png) |
+
+The evidence-only follow-up commit changes documentation and screenshots, with application files identical to the deployed application commit above. The deployed Welcome, Welcome foundation, guided Home and visual-polish suites pass **822 assertions**, including both Start actions and the public Privacy route.
 
 **Keep draft. Renewed owner visual approval is required. No Nora review, merge or Production deployment.**
