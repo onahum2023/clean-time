@@ -52,6 +52,11 @@ fixture.timers.push({id:'second',category:'alcohol',label:'',date:'2026-05-01',t
     if(wanted('onboarding'))await capture('onboarding');
     if(wanted('onboarding-second')){await p.locator('#oAddSecond').check();await p.locator('#oSecondCategory').selectOption('alcohol');await p.locator('#oSecondDate').fill('2026-05-01');await p.locator('#oSecondFields').scrollIntoViewIfNeeded();await capture('onboarding-second');}
    }
+   if(wanted('signup')){
+    if(await p.locator('#onboarding').isVisible())await p.locator('#setupBack').click();
+    await p.locator('#onboardingLogin').click();await p.locator('#authCreate').click();await p.locator('#aDate').fill('2025-01-01');await p.locator('#aFrom').selectOption('סמים');
+    await capture('signup');await p.screenshot({path:path.join(output,`signup-${width}-${mode}-full.png`),fullPage:true,animations:'disabled'});
+   }
    await context.close();console.log('Captured synthetic Hebrew RTL '+width+' '+mode);
   }
  }finally{await browser.close();}
