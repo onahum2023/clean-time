@@ -1,5 +1,7 @@
 # PR #81 — desktop Home UAT revision
 
+**Historical revision. The [current column-balance refinement and fresh Preview](PR-81-HOME-BALANCE-UAT.md) supersede this desktop composition.**
+
 [Draft PR #81](https://github.com/onahum2023/clean-time/pull/81) ·
 [Updated protected Preview](https://clean-time-rdlptlvvg-nu-cielo.vercel.app/) ·
 [Integrated screen-by-screen UAT](ISSUE-80-INTEGRATED-UAT.md)
