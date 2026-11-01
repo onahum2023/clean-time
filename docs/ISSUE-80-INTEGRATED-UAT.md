@@ -1,10 +1,10 @@
 # Clean Time #80 — integrated visual UAT
 
 [Draft PR #81](https://github.com/onahum2023/clean-time/pull/81) ·
-[Protected application Preview](https://clean-time-9q38lwpjx-nu-cielo.vercel.app/)
+[Protected application Preview](https://clean-time-du8apw79u-nu-cielo.vercel.app/)
 
-**Integrated owner UAT: HOLD. Desktop Home revised following owner feedback.**
-See the [current Home balance refinement and fresh screenshots](PR-81-HOME-BALANCE-UAT.md).
+**Integrated owner UAT: HOLD. Desktop balance accepted; final counter polish awaits owner review.**
+See the [current Home counter polish and fresh screenshots](PR-81-HOME-BALANCE-UAT.md).
 No separate theme/screen approval gates. No Nora review, merge or Production
 deployment. Backend integration remains deferred until after visual UAT.
 
