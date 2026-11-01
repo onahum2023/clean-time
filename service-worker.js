@@ -1,5 +1,5 @@
 // Only this version's static shell is cached. Recovery/Auth responses never enter CacheStorage.
-const VERSION='2026.11.01.8';
+const VERSION='2026.11.01.10';
 const PREFIX='clean-time-shell-v1-',CACHE=PREFIX+VERSION;
 const SHELL=['/','/manifest.webmanifest','/icon-192.png','/icon-512.png','/icon-maskable-512.png','/apple-touch-icon.png','/assets/backend-config.js','/assets/sync-crypto.js','/assets/messages.js','/assets/i18n.js','/assets/appearance.js','/assets/welcome.css','/assets/analytics.js','/assets/recovery-dates.js','/assets/recovery-timers.js','/assets/inventory-content.js','/assets/inventory-output.js','/assets/fonts/Assistant-Variable.ttf','/assets/gong.wav'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{

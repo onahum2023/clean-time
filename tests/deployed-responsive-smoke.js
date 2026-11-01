@@ -2,6 +2,7 @@
 // Default target is the owner-requested guest-only PR #72 Preview.
 const fs=require('node:fs'),path=require('node:path'),{chromium}=require('playwright');
 const origin=process.env.QA_BASE_URL||'https://clean-time-jyjp69cuk-nu-cielo.vercel.app';
+const {navigationFits}=require('./navigation-layout.js');
 const url=new URL(origin),local=process.argv.includes('--local-check');
 if(url.origin!==origin||url.username||url.password||!(local?url.protocol==='http:'&&url.hostname==='127.0.0.1':url.protocol==='https:'&&url.hostname.endsWith('.vercel.app')))throw Error('Use an exact isolated Preview origin (or explicit --local-check loopback)');
 const executable=process.env.QA_CHROMIUM_EXECUTABLE||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined);
@@ -22,7 +23,7 @@ const output=path.resolve('qa-artifacts/responsive/final-smoke'+(local?'-local':
    const fit=async id=>{
     check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No horizontal overflow: '+id);
     check(await page.locator('#'+id+' input:visible,#'+id+' select:visible,#'+id+' textarea:visible,#'+id+' button:visible').evaluateAll(es=>es.every(e=>{const r=e.getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1;})),'Controls fit: '+id);
-    check(await page.locator('#tabs').evaluate(e=>getComputedStyle(e).position==='fixed'&&e.getBoundingClientRect().bottom===innerHeight),'Fixed bottom navigation: '+id);
+    check(await navigationFits(page),'Desktop rail / mobile bottom navigation: '+id);
    };
    const capture=name=>page.screenshot({path:path.join(output,name+'-'+width+'.png'),fullPage:true});
    const home=()=>page.locator('[data-tab=counter]').click();
@@ -45,7 +46,7 @@ const output=path.resolve('qa-artifacts/responsive/final-smoke'+(local?'-local':
    await page.locator('#openSettings').click();await fit('settings');await capture('settings');
    await page.locator('#sDate').fill('2024-01-01');await page.locator('#saveSettings').click();await page.locator('#ask').waitFor({state:'visible'});
    await page.locator('#askB button').last().focus();await page.keyboard.press('Tab');check(await page.locator('#ask').evaluate(e=>e.contains(document.activeElement)),'Confirmation traps keyboard focus');await page.locator('#askB button').last().click();check(await page.locator('#saveSettings').evaluate(e=>e===document.activeElement),'Cancel restores keyboard focus');
-   await page.locator('#reset').evaluate(e=>e.scrollIntoView({block:'end'}));check(await page.locator('#reset').evaluate(e=>e.getBoundingClientRect().bottom<=document.getElementById('tabs').getBoundingClientRect().top),'Bottom Settings action scrolls clear of navigation');
+   await page.locator('#reset').evaluate(e=>e.scrollIntoView({block:'end'}));check(await page.locator('#reset').evaluate(e=>innerWidth>=1024?e.getBoundingClientRect().bottom<=innerHeight:e.getBoundingClientRect().bottom<=document.getElementById('tabs').getBoundingClientRect().top),'Bottom Settings action scrolls clear of navigation');
    await page.locator('#backgroundChoice').selectOption('sage');await page.locator('#fontChoice').selectOption('tahoma');await page.locator('#accentChoice').selectOption('plum');await page.reload();
    check(await page.evaluate(()=>document.documentElement.dataset.background==='sage'&&document.documentElement.dataset.font==='tahoma'&&document.documentElement.dataset.accent==='plum'),'Appearance preferences persist');
    for(const language of ['en','ru','he']){await page.locator('[data-language='+language+']').click();check(await page.locator('html').getAttribute('dir')===(language==='he'?'rtl':'ltr'),'Language direction '+language);await fit('counter');}
