@@ -24,5 +24,7 @@
   "assets/fonts/Assistant-Variable.ttf",
   "assets/fonts/OFL.txt",
   "assets/inventory-content.js",
-  "assets/inventory-output.js"
+  "assets/inventory-output.js",
+  "assets/visual-theme.js",
+  "assets/visual-system.css"
 ]

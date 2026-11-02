@@ -65,12 +65,12 @@ async(page)=>{
    check(await page.evaluate(()=>{
     const card=document.querySelector('.daily-card'),style=getComputedStyle(card);
     // Welcome now has its own visual foundation; Home retains the merged-main treatment.
-    const surface=document.querySelector(innerWidth>=1024?'.today-actions':'.recovery-summary');
-    return style.backgroundColor===getComputedStyle(surface).backgroundColor&&style.borderWidth==='1px'&&style.borderRadius==='16px'&&getComputedStyle(card.querySelector('.page-art')).width==='40px';
-   }),'Home retains its existing surface, corners and icon sizing '+language+' '+width+' '+colorScheme);
+    const surface=document.querySelector('.recovery-summary');
+    return (innerWidth>=1024||style.backgroundColor===getComputedStyle(surface).backgroundColor)&&style.borderWidth==='1px'&&style.borderRadius===(innerWidth>=1024?'14px':'16px')&&getComputedStyle(card.querySelector('.page-art')).width===(innerWidth>=1024?'44px':'40px');
+   }),'Home uses reviewed desktop styling and preserves mobile surface, corners and icon sizing '+language+' '+width+' '+colorScheme);
    check(await page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.daily-card')].map(e=>getComputedStyle(e)),gap=parseFloat(getComputedStyle(document.querySelector('.daily-cards')).rowGap),badge=document.getElementById('milestone').getBoundingClientRect();
-    return gap===(innerWidth>=1024?10:innerWidth<=340?12:16)&&cards.every(c=>c.borderColor===cards[0].borderColor&&c.boxShadow===cards[0].boxShadow&&c.boxShadow!=='none')&&badge.width>=50&&badge.height>=70;
+    return gap===(innerWidth>=1024?12:innerWidth<=340?12:16)&&cards.every(c=>c.borderColor===cards[0].borderColor&&c.boxShadow===cards[0].boxShadow&&c.boxShadow!=='none')&&badge.width>=50&&badge.height>=70;
    }),'Consistent soft outlines and elevation, roomier gaps and readable badge '+language+' '+width+' '+colorScheme);
    await page.locator('#openSettings').click();await page.locator('#settings [data-go=counterDetails]').click();
    for(const mode of ['cards','compact','single']){

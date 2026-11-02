@@ -60,7 +60,9 @@ Open `http://127.0.0.1:8765`. See [current Track B isolation](docs/TRACK-B.md), 
 
 ## Local preferences and portability
 
-Settings offers a small device-local background/font palette, reset to the existing appearance, small milestone key-tag badges on Home (hideable in Settings), and confirmed recovery-date/time updates that retain all history. Preferences require no account and appearance/milestone choices do not sync. A full portable JSON download includes legacy/unknown recovery fields but excludes login/key stores. The export is unencrypted; keep the file private.
+Settings offers optional Original/Forest/Rainy/Sunny color palettes, independent system/light/dark brightness, all nine existing background choices, five font stacks and existing accent overrides. These remain device-local, with an explicit reset to the original defaults. It also offers small milestone key-tag badges on Home (hideable in Settings), and confirmed recovery-date/time updates that retain all history. Preferences require no account and appearance/milestone choices do not sync. A full portable JSON download includes legacy/unknown recovery fields but excludes login/key stores. The export is unencrypted; keep the file private.
+
+The coordinated #80 redesign awaits [integrated visual UAT and screenshot review](docs/ISSUE-80-INTEGRATED-UAT.md). See [appearance compatibility](docs/ISSUE-80-APPEARANCE-COMPATIBILITY.md) for additive storage, defaults and reset behavior. Backend integration remains deferred until after visual UAT.
 
 Track A delivery/reconciliation and acceptance boundaries: [docs/TRACK-A.md](docs/TRACK-A.md), [offline checks](docs/OFFLINE-QA.md). PIN is deferred; the complete Step 10 implementation remains subject to draft Preview QA and owner merge review.
 

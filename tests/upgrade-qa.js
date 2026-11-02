@@ -76,6 +76,9 @@ async(page)=>{
  check(same(exported.data,require(process.cwd()+'/assets/recovery-timers.js').normalize(full))&&s.calls.uploads.length===0,'Registered full export preserves recovery and causes no upload');
  await s.p.locator('#backgroundChoice').selectOption('sand');await s.p.locator('#fontChoice').selectOption('arial');
  check(same(await read(s.p),full)&&s.calls.uploads.length===0,'Registered appearance preferences leave recovery and uploads untouched');
+ await s.p.locator('[name=palette][value=rainy]').check();await s.p.locator('#brightnessChoice').selectOption('dark');
+ check(same(await read(s.p),full)&&s.calls.uploads.length===0,'Registered palette/mode preferences leave all recovery bytes and uploads untouched');
+ check(await s.p.evaluate(()=>{const d=JSON.parse(localStorage.getItem('cleantime-he-visual-theme'));return d.palette==='rainy'&&d.mode==='dark';}),'Registered palette/mode storage is device-local and separate');
  await s.p.locator('#myAccount').click();
  await s.p.goBack();await s.p.waitForFunction(()=>!document.getElementById('settings').hidden);
  check(await s.p.locator('#settings').isVisible(),'Registered My Account Back restores Settings');

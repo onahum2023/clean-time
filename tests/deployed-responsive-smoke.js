@@ -49,12 +49,17 @@ const output=path.resolve('qa-artifacts/responsive/final-smoke'+(local?'-local':
    await page.locator('#reset').evaluate(e=>e.scrollIntoView({block:'end'}));check(await page.locator('#reset').evaluate(e=>innerWidth>=1024?e.getBoundingClientRect().bottom<=innerHeight:e.getBoundingClientRect().bottom<=document.getElementById('tabs').getBoundingClientRect().top),'Bottom Settings action scrolls clear of navigation');
    await page.locator('#backgroundChoice').selectOption('sage');await page.locator('#fontChoice').selectOption('tahoma');await page.locator('#accentChoice').selectOption('plum');await page.reload();
    check(await page.evaluate(()=>document.documentElement.dataset.background==='sage'&&document.documentElement.dataset.font==='tahoma'&&document.documentElement.dataset.accent==='plum'),'Appearance preferences persist');
+   await page.locator('#openSettings').click();const beforeTheme=await page.evaluate(()=>localStorage.getItem('cleantime-he-v1'));
+   await page.locator('[name=palette][value=rainy]').check();await page.locator('#brightnessChoice').selectOption('dark');await page.reload();
+   check(await page.evaluate(()=>document.documentElement.dataset.palette==='rainy'&&document.documentElement.dataset.theme==='dark'),'Palette and brightness persist after reload');
+   check(await page.evaluate(()=>localStorage.getItem('cleantime-he-v1'))===beforeTheme,'Theme changes preserve exact recovery state');
+
    for(const language of ['en','ru','he']){await page.locator('[data-language='+language+']').click();check(await page.locator('html').getAttribute('dir')===(language==='he'?'rtl':'ltr'),'Language direction '+language);await fit('counter');}
    await page.locator('#openSettings').click();await page.locator('#resetAppearance').click();
    await page.locator('#myAccount').click();check(await page.locator('#accountGuest').isVisible(),'Guest Account available without registration');await fit('account');await capture('account');
    await page.locator('[data-tab=tools]').click();check(await page.locator('#recoveryDestinations [data-go=meditation]').isVisible()&&await page.locator('#recoveryDestinations [data-go=bookmarks]').isVisible(),'Recovery Tools remain available');await fit('tools');await capture('tools');
    await page.emulateMedia({colorScheme:'dark'});await home();await fit('counter');
-   check(errors.length===0,'No application JavaScript errors');check(requests.includes('/assets/backend-config.js')&&requests.includes('/assets/inventory-content.js'),'Browser fetched deployed application assets');
+   check(errors.length===0,'No application JavaScript errors');check(requests.includes('/assets/backend-config.js')&&requests.includes('/assets/inventory-content.js')&&requests.includes('/assets/visual-theme.js')&&requests.includes('/assets/visual-system.css'),'Browser fetched deployed application assets');
    report.viewports.push({width,checks,status:'PASS'});console.log(width+': '+checks.length+' '+(local?'local runner':'deployed')+' checks passed');await context.close();
   }
   report.status='PASS';

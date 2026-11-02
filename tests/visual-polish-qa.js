@@ -16,7 +16,7 @@ async(page)=>{
   const text=await preview.textContent(),label=lang==='en'?'Clean Time':'Чистое время';
   check(text.toLowerCase().includes(label.toLowerCase()),'Duration preview translated '+lang);
  }
- await page.locator('#oFrom').selectOption({index:1});await page.locator('#guestForm button[type=submit]').click();
+ await page.locator('#oRecoveryChoices input').first().check();await page.locator('#guestForm button[type=submit]').click();
  await page.locator('[data-tab=tools]').click();
  for(const link of await page.locator('#recoveryDestinations a').all()){
   const href=await link.getAttribute('href'),symbol=await link.evaluate(e=>getComputedStyle(e,'::after').content);

@@ -31,7 +31,7 @@ async(page)=>{
    await p.keyboard.press('Tab');await p.locator('#'+id).focus();
    check(await p.locator('#'+id).evaluate(e=>e===document.activeElement&&getComputedStyle(e).outlineStyle!=='none'),'Start focus visible '+id+' '+label);
    await p.keyboard.press('Enter');await p.locator('#onboarding').waitFor();
-   check(await p.locator('#guestForm').isVisible()&&await p.locator('#oDate').isVisible()&&await p.locator('#oFrom').isVisible()&&!await p.evaluate(()=>localStorage.getItem('cleantime-he-v1')),'Same unsaved guest setup '+id+' '+label);
+   check(await p.locator('#guestForm').isVisible()&&await p.locator('#oDate').isVisible()&&await p.locator('#oRecoveryChoices').isVisible()&&!await p.evaluate(()=>localStorage.getItem('cleantime-he-v1')),'Same unsaved guest setup '+id+' '+label);
    await p.locator('#setupBack').click();await p.locator('#welcome').waitFor();
   }
   await p.locator('#welcome a[href="/privacy/"]').click();
