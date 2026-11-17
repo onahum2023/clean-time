@@ -7,7 +7,6 @@ async(page)=>{
  await page.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
  await page.exposeFunction('summaryRead',()=>({data:cloud}));await page.exposeFunction('summaryWrite',row=>{cloud=row;return {data:[{user_id:row.user_id}]};});
  await page.addInitScript(({key,fixture})=>{
-  localStorage.setItem('cleantime-migration-notice','{"dismissed":true}');
   if(!localStorage.getItem(key)){localStorage.setItem(key,JSON.stringify(fixture));localStorage.setItem('cleantime-he-sync',JSON.stringify({uid:'summary-synthetic'}));}
   const write=row=>({eq(){return this;},select:()=>summaryWrite(row)});
   window.supabase={createClient:()=>({auth:{onAuthStateChange(){},getSession:async()=>({data:{session:{user:{id:'summary-synthetic',email:'summary@example.invalid'}}}})},from:()=>({select:()=>({eq:()=>({maybeSingle:()=>summaryRead()})}),update:write,insert:write})})};

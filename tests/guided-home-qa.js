@@ -6,7 +6,7 @@ async(page)=>{
  const fixture=normalize({date:'2025-01-01',time:'',from:'סמים',linksV:2,links:[],updatedAt:1,unknown:{keep:true},journal:[{id:1,text:'בדיקה',created:1}],inventory:{old:{answers:{legacy:'keep'}}}});
  fixture.timers.push({id:'second',category:'alcohol',label:'',date:'2026-05-01',time:''},{id:'third',category:'smoking',label:'',date:'2026-07-01',time:''});
  await page.route('**/*',r=>r.request().url().startsWith(origin)?r.fallback():r.abort());
- await page.addInitScript(({key,fixture})=>{localStorage.setItem('cleantime-migration-notice','{"dismissed":true}');if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(fixture));},{key,fixture});
+ await page.addInitScript(({key,fixture})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(fixture));},{key,fixture});
  await page.goto(origin);const saved=await page.evaluate(key=>localStorage.getItem(key),key);
  check(await page.locator('#homeSecondary').isVisible(),'A secondary counter is compact and visible by default');
  check(await page.locator('#counter input,#counter select,#counter [data-display]').count()===0,'Home presents no display decisions or setup controls');
