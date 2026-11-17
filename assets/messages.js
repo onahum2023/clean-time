@@ -2,6 +2,14 @@
 window.CleanTimeMessages={
   "he": {},
   "en": {
+    // Added with the new-version notice (Hebrew is the source).
+    "זמן נקי עובר לגרסה חדשה": "Clean Time is moving to a new version",
+    "אפשר להעביר אליה את היסטוריית ההחלמה שלך: מורידים את הנתונים כקובץ JSON, והגרסה החדשה יודעת לייבא אותו.": "Your recovery history can be transferred: download your data as a JSON file, and the new version can import it.",
+    "מי שרשום ממשיך עם אותו חשבון, ומי שמשתמש כאורח יכול להמשיך בלי להירשם.": "If you are registered, you keep the same account. Guests can continue without registering.",
+    "הקובץ כולל את מה שזמין במכשיר הזה. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.": "The file includes what is available on this device. Cloud backup that has not been unlocked on this device is not included.",
+    "הקובץ אינו מוצפן ומכיל מידע אישי על ההחלמה שלך. כדאי לשמור אותו במקום פרטי.": "The file is not encrypted and contains personal recovery information. Keep it private.",
+    "פתיחת הגרסה החדשה": "Open the new version",
+    "לא עכשיו": "Not now",
     "בוקר טוב": "Good morning",
     "צהריים טובים": "Good afternoon",
     "ערב טוב": "Good evening",
@@ -450,6 +458,14 @@ window.CleanTimeMessages={
     "הקובץ הועבר להורדה.": "The file was sent to downloads."
   },
   "ru": {
+    // Added with the new-version notice. Draft Russian: native-speaker review required.
+    "זמן נקי עובר לגרסה חדשה": "Чистое время переходит на новую версию",
+    "אפשר להעביר אליה את היסטוריית ההחלמה שלך: מורידים את הנתונים כקובץ JSON, והגרסה החדשה יודעת לייבא אותו.": "Историю вашего выздоровления можно перенести: скачайте данные в виде файла JSON, и новая версия сможет его импортировать.",
+    "מי שרשום ממשיך עם אותו חשבון, ומי שמשתמש כאורח יכול להמשיך בלי להירשם.": "Если вы зарегистрированы, вы продолжаете с тем же аккаунтом. Гости могут продолжить без регистрации.",
+    "הקובץ כולל את מה שזמין במכשיר הזה. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.": "В файл входит то, что доступно на этом устройстве. Облачная копия, которая не была открыта на этом устройстве, не включается.",
+    "הקובץ אינו מוצפן ומכיל מידע אישי על ההחלמה שלך. כדאי לשמור אותו במקום פרטי.": "Файл не зашифрован и содержит личную информацию о вашем выздоровлении. Храните его в личном месте.",
+    "פתיחת הגרסה החדשה": "Открыть новую версию",
+    "לא עכשיו": "Не сейчас",
     "בוקר טוב": "Доброе утро",
     "צהריים טובים": "Добрый день",
     "ערב טוב": "Добрый вечер",

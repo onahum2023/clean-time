@@ -4,7 +4,7 @@ async(page)=>{
  const {navigationFits}=require(process.cwd()+'/tests/navigation-layout.js');
  const check=(v,label)=>{if(!v)throw Error(label);results.push(label);};
  await page.route('**/*',r=>new URL(r.request().url()).origin===origin?r.fallback():r.abort());
- await page.addInitScript(()=>{if(!localStorage.getItem('cleantime-he-v1'))localStorage.setItem('cleantime-he-v1',JSON.stringify({date:'2025-01-01',from:'סמים',updatedAt:1}));});
+ await page.addInitScript(()=>{localStorage.setItem('cleantime-migration-notice','{"dismissed":true}');if(!localStorage.getItem('cleantime-he-v1'))localStorage.setItem('cleantime-he-v1',JSON.stringify({date:'2025-01-01',from:'סמים',updatedAt:1}));});
  await page.goto(origin);await page.locator('#counter').waitFor();await page.evaluate(()=>document.fonts.ready);
  const saved=await page.evaluate(()=>localStorage.getItem('cleantime-he-v1'));
  const language=async lang=>{await page.locator('[data-language='+lang+']').click();await page.waitForFunction(l=>document.documentElement.lang===l,lang);await page.locator('#counter').waitFor();};

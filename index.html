@@ -297,6 +297,15 @@ select{min-height:46px}
 .date-confirmation{display:block;color:var(--ink);font-weight:600;margin-top:8px}
 #backupReminder{padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:16px}
 #backupReminder .btn{margin-top:8px;width:100%;white-space:normal}
+#migrationNotice{padding:14px 16px;border:1px solid var(--line);border-radius:12px;margin-bottom:16px;background:var(--surface)}
+#migrationNotice[hidden]{display:none}
+#migrationNotice h3{font-size:1.05rem;line-height:1.4;margin:0 0 6px}
+#migrationNotice p{margin:0 0 8px;line-height:1.55;overflow-wrap:anywhere}
+#migrationNotice p.note{margin-top:0;color:var(--muted)}
+#migrationNotice p[hidden]{display:none}
+#migrationNotice .migration-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+#migrationNotice .btn{width:100%;white-space:normal;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+#migrationNotice .btn.ghost{min-height:44px}
 #account .btn{max-width:100%;white-space:normal}
 #accountGuest .btn,#finishBackupLater{width:100%;margin-bottom:12px}
 #onboarding .btn{width:100%;margin-bottom:12px;white-space:normal}
@@ -446,7 +455,9 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 /* Desktop Today: a prominent counter balances the daily action list. */
 @media (min-width:1024px){
   #counter{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:24px;align-items:start}
-  #counter #backupReminder{grid-column:1/-1;margin-bottom:0}
+  #counter #backupReminder,#counter #migrationNotice{grid-column:1/-1;margin-bottom:0}
+  #migrationNotice .migration-actions{flex-direction:row;flex-wrap:wrap;align-items:center}
+  #migrationNotice .btn{width:auto;min-width:12rem}
   #counter .recovery-summary{padding:clamp(20px,2.2vw,32px);background:var(--accent-soft)}
   #counter .summary-top{align-items:flex-start;gap:16px}
   #counter .summary-label{font-size:1.05rem;margin-bottom:24px}
@@ -647,6 +658,19 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
   <!-- Counter -->
   <section id="counter" hidden>
     <div id="backupReminder" hidden><p id="backupReminderText" role="status"></p><button class="btn secondary" id="resumeBackup"><span data-i18n="השלמת הגיבוי המוצפן">השלמת הגיבוי המוצפן</span></button></div>
+    <div id="migrationNotice" hidden role="region" aria-labelledby="migrationTitle">
+      <h3 id="migrationTitle" data-i18n="זמן נקי עובר לגרסה חדשה">זמן נקי עובר לגרסה חדשה</h3>
+      <p data-i18n="אפשר להעביר אליה את היסטוריית ההחלמה שלך: מורידים את הנתונים כקובץ JSON, והגרסה החדשה יודעת לייבא אותו.">אפשר להעביר אליה את היסטוריית ההחלמה שלך: מורידים את הנתונים כקובץ JSON, והגרסה החדשה יודעת לייבא אותו.</p>
+      <p data-i18n="מי שרשום ממשיך עם אותו חשבון, ומי שמשתמש כאורח יכול להמשיך בלי להירשם.">מי שרשום ממשיך עם אותו חשבון, ומי שמשתמש כאורח יכול להמשיך בלי להירשם.</p>
+      <p class="note" id="migrationDeviceNote" hidden data-i18n="הקובץ כולל את מה שזמין במכשיר הזה. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.">הקובץ כולל את מה שזמין במכשיר הזה. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.</p>
+      <p class="note" data-i18n="הקובץ אינו מוצפן ומכיל מידע אישי על ההחלמה שלך. כדאי לשמור אותו במקום פרטי.">הקובץ אינו מוצפן ומכיל מידע אישי על ההחלמה שלך. כדאי לשמור אותו במקום פרטי.</p>
+      <div class="migration-actions">
+        <button class="btn secondary" type="button" id="migrationExport"><span data-i18n="הורדת כל הנתונים כ־JSON">הורדת כל הנתונים כ־JSON</span></button>
+        <a class="btn secondary" id="migrationOpen" rel="noopener noreferrer" target="_blank"><span data-i18n="פתיחת הגרסה החדשה">פתיחת הגרסה החדשה</span></a>
+        <button class="btn ghost" type="button" id="migrationDismiss"><span data-i18n="לא עכשיו">לא עכשיו</span></button>
+      </div>
+      <p class="msg" id="migrationExportStatus" role="status"></p>
+    </div>
     <div class="home-heading"><h2 data-i18n="היום">היום</h2></div>
     <div class="home-recovery-column">
     <div class="recovery-summary" role="group" aria-label="זמן נקי" data-i18n-aria-label="זמן נקי">
@@ -1067,7 +1091,10 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.15';
+const APP_VERSION='2026.11.17.1';
+/* Final address of the new version: the owner must confirm before this is published. */
+const NEW_VERSION_URL='https://dev2.clean-time.app';
+const MIGRATION_NOTICE_KEY='cleantime-migration-notice';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -2005,16 +2032,31 @@ function portableRecovery(value){
   const reserved=new Set(['access_token','refresh_token','id_token','authorization','recoveryKey','dataKey','keyMaterial','pendingKey','rawDek','dek','wrappedKey','wrapIv','kdf','auth','session','crypto']);
   return JSON.parse(JSON.stringify(normalize(value),(key,item)=>reserved.has(key)?undefined:item));
 }
-$('exportRecovery').onclick=()=>{
-  if(storageError){$('exportStatus').textContent=translateUI('לא ניתן ליצור עותק מלא: יש לבדוק את הנתונים השמורים במכשיר.');return;}
+function exportRecovery(statusEl){
+  if(storageError){statusEl.textContent=translateUI('לא ניתן ליצור עותק מלא: יש לבדוק את הנתונים השמורים במכשיר.');return;}
   commitJ();
   try{
     const data={format:'clean-time-recovery',version:1,exportedAt:new Date().toISOString(),data:portableRecovery(S)};
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
     link.href=url;link.download='clean-time-'+todayKey()+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
     analytics('event','export_completed');
-    $('exportStatus').textContent=translateUI('הקובץ הועבר להורדה. אם לא נשמר, כדאי לנסות דרך דפדפן המכשיר.');
-  }catch(e){$('exportStatus').textContent=translateUI('לא הצלחנו ליצור את הקובץ. הנתונים במכשיר לא שונו.');}
+    statusEl.textContent=translateUI('הקובץ הועבר להורדה. אם לא נשמר, כדאי לנסות דרך דפדפן המכשיר.');
+  }catch(e){statusEl.textContent=translateUI('לא הצלחנו ליצור את הקובץ. הנתונים במכשיר לא שונו.');}
+}
+$('exportRecovery').onclick=()=>exportRecovery($('exportStatus'));
+/* One-time notice about the new version. Dismissal is a device-local display choice only:
+   never part of the recovery state, never synced, never exported. */
+function migrationDismissed(){try{return JSON.parse(localStorage.getItem(MIGRATION_NOTICE_KEY))?.dismissed===true;}catch(e){return false;}}
+function renderMigrationNotice(){
+  const show=hasData(S)&&!migrationDismissed();
+  $('migrationNotice').hidden=!show;
+  $('migrationDeviceNote').hidden=!signedIn();
+}
+$('migrationOpen').href=NEW_VERSION_URL;
+$('migrationExport').onclick=()=>exportRecovery($('migrationExportStatus'));
+$('migrationDismiss').onclick=()=>{
+  try{localStorage.setItem(MIGRATION_NOTICE_KEY,JSON.stringify({dismissed:true}));}catch(e){}
+  $('migrationNotice').hidden=true;
 };
 function resetLocal(){
   try{localStorage.removeItem(KEY);localStorage.removeItem(INVENTORY_VIEW_KEY);}catch(e){}
@@ -2139,6 +2181,7 @@ function renderSync(){
   $('accountState').textContent=user?translateUI('חשבון רשום · כניסה דרך קישור למייל'):translateUI('חשבון רשום · בודקים את החיבור');
   $('setSub').textContent=status.text;
   $('syncStatus').textContent=status.text+(M.lastSync&&keyMaterial?.confirmed?translateUI(' סנכרון אחרון: ')+new Date(M.lastSync).toLocaleString(CleanTimeI18n.locale,{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}):'');
+  renderMigrationNotice();
   $('backupReminder').hidden=!on||['active','attention','checking'].includes(status.state);
   $('backupReminderText').textContent=status.text;
   $('resumeBackup').textContent=status.state==='locked'?translateUI('פתיחת הגיבוי במכשיר הזה'):translateUI('השלמת הגיבוי המוצפן');
