@@ -297,6 +297,22 @@ select{min-height:46px}
 .date-confirmation{display:block;color:var(--ink);font-weight:600;margin-top:8px}
 #backupReminder{padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:16px}
 #backupReminder .btn{margin-top:8px;width:100%;white-space:normal}
+#migrationNotice{margin-top:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+#migrationNotice[hidden],#migrationDetails[hidden],#migrationDeviceNote[hidden]{display:none}
+#migrationNotice .migration-head{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:10px 14px;background:none;border:0;border-radius:12px;font:inherit;color:inherit;text-align:start;cursor:pointer}
+#migrationNotice .migration-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+#migrationNotice .migration-text strong{font-size:1rem;line-height:1.4}
+#migrationNotice .migration-text span{font-size:.9rem;line-height:1.4;color:var(--muted);overflow-wrap:anywhere}
+#migrationNotice .migration-more{display:inline-flex;align-items:center;gap:8px;color:var(--accent-ink);font-size:.9rem;font-weight:600;white-space:nowrap}
+#migrationNotice .migration-chevron{width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+#migrationNotice .migration-head[aria-expanded="true"] .migration-chevron{transform:translateY(2px) rotate(-135deg)}
+#migrationNotice .migration-chevron-box{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:1px solid var(--line);border-radius:50%}
+@media(max-width:479px){#migrationNotice .migration-more>span:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}}
+#migrationDetails{padding:0 14px 14px}
+#migrationDetails p{margin:0 0 8px;line-height:1.55;overflow-wrap:anywhere}
+#migrationDetails p.note{margin-top:0;color:var(--muted)}
+#migrationDetails .migration-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+#migrationDetails .btn{width:100%;white-space:normal;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 #account .btn{max-width:100%;white-space:normal}
 #accountGuest .btn,#finishBackupLater{width:100%;margin-bottom:12px}
 #onboarding .btn{width:100%;margin-bottom:12px;white-space:normal}
@@ -447,6 +463,9 @@ nav.tabs button span{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 @media (min-width:1024px){
   #counter{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:24px;align-items:start}
   #counter #backupReminder{grid-column:1/-1;margin-bottom:0}
+  #counter #migrationNotice{grid-column:1/-1;margin-top:0}
+  #migrationDetails .migration-actions{flex-direction:row;flex-wrap:wrap;align-items:center}
+  #migrationDetails .btn{width:auto;min-width:12rem}
   #counter .recovery-summary{padding:clamp(20px,2.2vw,32px);background:var(--accent-soft)}
   #counter .summary-top{align-items:flex-start;gap:16px}
   #counter .summary-label{font-size:1.05rem;margin-bottom:24px}
@@ -695,6 +714,23 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
       </div>
     </div>
     <p class="home-reflection" data-i18n="לא צריך לפתור הכול היום. אפשר לפנות מקום לדבר אחד בכל פעם.">לא צריך לפתור הכול היום. אפשר לפנות מקום לדבר אחד בכל פעם.</p>
+    <div id="migrationNotice" hidden role="region" aria-labelledby="migrationTitle">
+      <button class="migration-head" type="button" id="migrationToggle" aria-expanded="false" aria-controls="migrationDetails">
+        <span class="migration-text"><strong id="migrationTitle" data-i18n="זמן נקי מתחדש">זמן נקי מתחדש</strong><span data-i18n="גרסה חדשה של זמן נקי זמינה.">גרסה חדשה של זמן נקי זמינה.</span></span>
+        <span class="migration-more"><span data-i18n="פרטים">פרטים</span><span class="migration-chevron-box" aria-hidden="true"><span class="migration-chevron"></span></span></span>
+      </button>
+      <div id="migrationDetails" hidden>
+        <p data-i18n="כדי להעביר אליה את נתוני ההחלמה שלך, יש להוריד קובץ גיבוי ולייבא אותו בגרסה החדשה.">כדי להעביר אליה את נתוני ההחלמה שלך, יש להוריד קובץ גיבוי ולייבא אותו בגרסה החדשה.</p>
+        <p class="note" data-i18n="הקובץ מכיל מידע אישי ואינו מוצפן. חשוב לשמור אותו במקום פרטי.">הקובץ מכיל מידע אישי ואינו מוצפן. חשוב לשמור אותו במקום פרטי.</p>
+        <p class="note" id="migrationDeviceNote" hidden data-i18n="הקובץ כולל את מה שזמין במכשיר הזה. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.">הקובץ כולל את מה שזמין במכשיר הזה. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.</p>
+        <div class="migration-actions">
+          <button class="btn secondary" type="button" id="migrationExport"><span data-i18n="הורדת קובץ גיבוי">הורדת קובץ גיבוי</span></button>
+          <a class="btn secondary" id="migrationOpen" rel="noopener noreferrer" target="_blank"><span data-i18n="פתיחת הגרסה החדשה">פתיחת הגרסה החדשה</span></a>
+          <button class="btn ghost" type="button" id="migrationDismiss"><span data-i18n="לא עכשיו">לא עכשיו</span></button>
+        </div>
+        <p class="msg" id="migrationExportStatus" role="status"></p>
+      </div>
+    </div>
   </section>
 
   <section id="counterDetails" hidden>
@@ -1067,7 +1103,14 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.15';
+const APP_VERSION='2026.11.17.2';
+/* New-version notice release gate. The notice shows on Preview/local builds for review. In production it stays
+   hidden until the owner sets NEW_VERSION_NOTICE_PUBLISHED=true, which must wait until the CT2 migration flow
+   works end to end and NEW_VERSION_URL is the agreed final address (CT2 issue #81). */
+const NEW_VERSION_NOTICE_PUBLISHED=false;
+/* UAT placeholder only: NOT the final address. */
+const NEW_VERSION_URL='https://dev2.clean-time.app';
+const MIGRATION_NOTICE_KEY='cleantime-migration-notice';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -2005,16 +2048,32 @@ function portableRecovery(value){
   const reserved=new Set(['access_token','refresh_token','id_token','authorization','recoveryKey','dataKey','keyMaterial','pendingKey','rawDek','dek','wrappedKey','wrapIv','kdf','auth','session','crypto']);
   return JSON.parse(JSON.stringify(normalize(value),(key,item)=>reserved.has(key)?undefined:item));
 }
-$('exportRecovery').onclick=()=>{
-  if(storageError){$('exportStatus').textContent=translateUI('לא ניתן ליצור עותק מלא: יש לבדוק את הנתונים השמורים במכשיר.');return;}
+function exportRecovery(statusEl){
+  if(storageError){statusEl.textContent=translateUI('לא ניתן ליצור עותק מלא: יש לבדוק את הנתונים השמורים במכשיר.');return;}
   commitJ();
   try{
     const data={format:'clean-time-recovery',version:1,exportedAt:new Date().toISOString(),data:portableRecovery(S)};
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
     link.href=url;link.download='clean-time-'+todayKey()+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
     analytics('event','export_completed');
-    $('exportStatus').textContent=translateUI('הקובץ הועבר להורדה. אם לא נשמר, כדאי לנסות דרך דפדפן המכשיר.');
-  }catch(e){$('exportStatus').textContent=translateUI('לא הצלחנו ליצור את הקובץ. הנתונים במכשיר לא שונו.');}
+    statusEl.textContent=translateUI('הקובץ הועבר להורדה. אם לא נשמר, כדאי לנסות דרך דפדפן המכשיר.');
+  }catch(e){statusEl.textContent=translateUI('לא הצלחנו ליצור את הקובץ. הנתונים במכשיר לא שונו.');}
+}
+$('exportRecovery').onclick=()=>exportRecovery($('exportStatus'));
+/* One-time notice about the new version. Dismissal is a device-local display choice only:
+   never part of the recovery state, never synced, never exported. */
+function migrationDismissed(){try{return JSON.parse(localStorage.getItem(MIGRATION_NOTICE_KEY))?.dismissed===true;}catch(e){return false;}}
+function renderMigrationNotice(){
+  const show=(NEW_VERSION_NOTICE_PUBLISHED||!CleanTimeI18n.production)&&hasData(S)&&!migrationDismissed();
+  $('migrationNotice').hidden=!show;
+  $('migrationDeviceNote').hidden=!signedIn();
+}
+$('migrationOpen').href=NEW_VERSION_URL;
+$('migrationToggle').onclick=()=>{const open=$('migrationToggle').getAttribute('aria-expanded')!=='true';$('migrationToggle').setAttribute('aria-expanded',String(open));$('migrationDetails').hidden=!open;};
+$('migrationExport').onclick=()=>exportRecovery($('migrationExportStatus'));
+$('migrationDismiss').onclick=()=>{
+  try{localStorage.setItem(MIGRATION_NOTICE_KEY,JSON.stringify({dismissed:true}));}catch(e){}
+  $('migrationNotice').hidden=true;
 };
 function resetLocal(){
   try{localStorage.removeItem(KEY);localStorage.removeItem(INVENTORY_VIEW_KEY);}catch(e){}
@@ -2139,6 +2198,7 @@ function renderSync(){
   $('accountState').textContent=user?translateUI('חשבון רשום · כניסה דרך קישור למייל'):translateUI('חשבון רשום · בודקים את החיבור');
   $('setSub').textContent=status.text;
   $('syncStatus').textContent=status.text+(M.lastSync&&keyMaterial?.confirmed?translateUI(' סנכרון אחרון: ')+new Date(M.lastSync).toLocaleString(CleanTimeI18n.locale,{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}):'');
+  renderMigrationNotice();
   $('backupReminder').hidden=!on||['active','attention','checking'].includes(status.state);
   $('backupReminderText').textContent=status.text;
   $('resumeBackup').textContent=status.state==='locked'?translateUI('פתיחת הגיבוי במכשיר הזה'):translateUI('השלמת הגיבוי המוצפן');

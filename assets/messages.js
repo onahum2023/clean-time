@@ -2,6 +2,16 @@
 window.CleanTimeMessages={
   "he": {},
   "en": {
+    // Added with the new-version notice (Hebrew is the source).
+    "זמן נקי מתחדש": "Clean Time is renewing",
+    "גרסה חדשה של זמן נקי זמינה.": "A new version of Clean Time is available.",
+    "פרטים": "Details",
+    "כדי להעביר אליה את נתוני ההחלמה שלך, יש להוריד קובץ גיבוי ולייבא אותו בגרסה החדשה.": "To transfer your recovery data to it, download a backup file and import it in the new version.",
+    "הקובץ מכיל מידע אישי ואינו מוצפן. חשוב לשמור אותו במקום פרטי.": "The file contains personal information and is not encrypted. It is important to keep it somewhere private.",
+    "הקובץ כולל את מה שזמין במכשיר הזה. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.": "The file includes what is available on this device. Cloud backup that has not been unlocked on this device is not included.",
+    "הורדת קובץ גיבוי": "Download backup file",
+    "פתיחת הגרסה החדשה": "Open the new version",
+    "לא עכשיו": "Not now",
     "בוקר טוב": "Good morning",
     "צהריים טובים": "Good afternoon",
     "ערב טוב": "Good evening",
@@ -450,6 +460,16 @@ window.CleanTimeMessages={
     "הקובץ הועבר להורדה.": "The file was sent to downloads."
   },
   "ru": {
+    // Added with the new-version notice. Draft Russian: native-speaker review required.
+    "זמן נקי מתחדש": "Чистое время обновляется",
+    "גרסה חדשה של זמן נקי זמינה.": "Доступна новая версия «Чистого времени».",
+    "פרטים": "Подробнее",
+    "כדי להעביר אליה את נתוני ההחלמה שלך, יש להוריד קובץ גיבוי ולייבא אותו בגרסה החדשה.": "Чтобы перенести в неё данные о выздоровлении, скачайте файл резервной копии и импортируйте его в новой версии.",
+    "הקובץ מכיל מידע אישי ואינו מוצפן. חשוב לשמור אותו במקום פרטי.": "Файл содержит личную информацию и не зашифрован. Важно хранить его в личном месте.",
+    "הקובץ כולל את מה שזמין במכשיר הזה. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.": "В файл входит то, что доступно на этом устройстве. Облачная копия, которая не была открыта на этом устройстве, не включается.",
+    "הורדת קובץ גיבוי": "Скачать файл резервной копии",
+    "פתיחת הגרסה החדשה": "Открыть новую версию",
+    "לא עכשיו": "Не сейчас",
     "בוקר טוב": "Доброе утро",
     "צהריים טובים": "Добрый день",
     "ערב טוב": "Добрый вечер",
