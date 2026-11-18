@@ -482,6 +482,13 @@ html{scroll-padding-bottom:max(calc(4rem + 24px + env(safe-area-inset-bottom,0px
 .field,form,.settings-foot,.sync,.appearance-preview{min-width:0;max-width:100%}
 .settings-foot>.field,.settings-foot>form,.settings-foot>.list,.settings-foot>.appearance-preview{width:100%}
 .settings-foot p{margin-block:0}
+#upgradeNotice{width:100%;max-width:960px;margin:20px auto 0;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-align:start}
+#upgradeNotice[hidden]{display:none}
+#upgradeNotice h2{margin:0 0 8px;font-size:1.1rem}
+#upgradeNotice p{margin:0 0 8px;line-height:1.55}
+#upgradeNotice .btn{margin-top:4px;white-space:normal}
+#recoveryExport{scroll-margin-block:64px 20px}
+#exportRecovery:focus-visible{outline:2px solid var(--accent-ink);outline-offset:4px}
 .settings-foot .field:has(input[type="checkbox"])>span{display:flex;align-items:baseline;gap:8px}
 .settings-foot .field input[type="checkbox"]+span{display:inline}
 .settings-foot .field{margin-bottom:0}
@@ -921,7 +928,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
       <button class="btn ghost" id="resetAppearance"><span data-i18n="חזרה למראה המקורי">חזרה למראה המקורי</span></button>
       <p class="msg" role="status" id="appearanceStatus"></p>
     </div>
-    <div class="settings-foot">
+    <div class="settings-foot" id="recoveryExport">
       <h3><span data-i18n="עותק של הנתונים שלך">עותק של הנתונים שלך</span></h3>
       <p class="note"><span data-i18n="קובץ JSON של כל נתוני ההחלמה הזמינים במכשיר הזה, גם רשומות ישנות. קובץ זה אינו מוצפן — כדאי לשמור אותו במקום פרטי. הוא אינו כולל מפתחות שחזור או פרטי התחברות. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.">קובץ JSON של כל נתוני ההחלמה הזמינים במכשיר הזה, גם רשומות ישנות. קובץ זה אינו מוצפן — כדאי לשמור אותו במקום פרטי. הוא אינו כולל מפתחות שחזור או פרטי התחברות. גיבוי ענן שטרם נפתח במכשיר אינו נכלל.</span></p>
       <button class="btn secondary" id="exportRecovery"><span data-i18n="הורדת כל הנתונים כ־JSON">הורדת כל הנתונים כ־JSON</span></button>
@@ -1033,6 +1040,13 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
       <p><a href="/about/"><span data-i18n="אודות באתר">אודות באתר</span></a> · <a href="/privacy/"><span data-i18n="פרטיות באתר">פרטיות באתר</span></a></p>
       <p class="ver" id="appVer"></p>
   </section>
+  <aside id="upgradeNotice" hidden aria-labelledby="upgradeTitle">
+    <h2 id="upgradeTitle" data-i18n="עדכון חשוב לזמן נקי">עדכון חשוב לזמן נקי</h2>
+    <p data-i18n="בימים הקרובים אנחנו מתכננים שדרוג משמעותי לאפליקציית זמן נקי.">בימים הקרובים אנחנו מתכננים שדרוג משמעותי לאפליקציית זמן נקי.</p>
+    <p data-i18n="לקראת השדרוג, אנחנו ממליצים להוריד עותק של הנתונים שלכם ולשמור אותו במקום פרטי ובטוח במכשיר.">לקראת השדרוג, אנחנו ממליצים להוריד עותק של הנתונים שלכם ולשמור אותו במקום פרטי ובטוח במכשיר.</p>
+    <p data-i18n="פרטים נוספים על השדרוג יפורסמו בקרוב.">פרטים נוספים על השדרוג יפורסמו בקרוב.</p>
+    <button class="btn secondary" type="button" id="upgradeExport"><span data-i18n="ייצוא הנתונים שלי">ייצוא הנתונים שלי</span></button>
+  </aside>
 </div>
 
 <div class="editor" id="jEditor" hidden role="dialog" aria-modal="true" aria-label="רשומה ביומן" data-i18n-aria-label="רשומה ביומן">
@@ -1067,7 +1081,7 @@ h2,h3,p,.tool-links span,.editor time{overflow-wrap:anywhere}
 <script src="assets/inventory-output.js"></script>
 <script>
 (function(){
-const APP_VERSION='2026.11.01.15';
+const APP_VERSION='2026.11.18.1';
 const KEY='cleantime-he-v1';
 const translateUI=CleanTimeI18n.t;
 const CNAMES={teal:'טורקיז',sky:'כחול',indigo:'אינדיגו',plum:'שזיף',olive:'זית',rose:'ורד'};
@@ -1198,6 +1212,7 @@ function show(tab,record=true){
   document.querySelector('.app').classList.toggle('landing',tab==='welcome');
   $('greet').closest('header').hidden=tab==='welcome';
   const entering=(!S.date&&!signedIn())||['welcome','onboarding','startup','auth'].includes(tab);
+  $('upgradeNotice').hidden=entering;
   document.querySelector('.app').classList.toggle('application-shell',!entering);
   document.documentElement.classList.toggle('application-shell',!entering);
   $('tabs').hidden=entering;$('openSettings').hidden=entering;
@@ -1999,6 +2014,12 @@ $('feedbackBack').onclick=()=>history.back();
 $('copyFeedbackEmail').onclick=async()=>{
   try{await navigator.clipboard.writeText('hello@clean-time.app');$('feedbackStatus').textContent=translateUI('הכתובת הועתקה.');}
   catch(e){$('feedbackStatus').textContent=translateUI('אפשר לסמן ולהעתיק את הכתובת שמופיעה כאן.');}
+};
+$('upgradeExport').onclick=()=>{
+  show('settings');
+  // Show the existing privacy/cloud-availability warning before any download.
+  $('exportRecovery').focus({preventScroll:true});
+  $('recoveryExport').scrollIntoView({block:'start'});
 };
 function portableRecovery(value){
   // Full normalized recovery state, including unknown/legacy content; never enumerate other stores.
