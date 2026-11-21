@@ -8,6 +8,11 @@ async(page)=>{
  vm.runInNewContext(fs.readFileSync('assets/sync-crypto.js','utf8'),sandbox);
  const crypto=sandbox.window.SyncCrypto,created=await crypto.create(uid),time='2026-01-01T00:00:00.000Z';
  const row={user_id:uid,updated_at:time,data:await crypto.encrypt({date:'2024-01-01',journal:[{text:'SYNTHETIC_LOCKED_CLOUD_ONLY'}],updatedAt:Date.parse(time)},created.key,created.material,uid,time)};
+ const announcement={
+  he:{title:'זמן נקי מתחדש!',planned:'ביום ראשון, 22 בנובמבר, בשעות הערב, מתוכנן',downtime:'ייתכן שהאפליקציה לא תהיה זמינה',backup:'מומלץ להוריד כבר עכשיו',privacy:'אינו מוצפן',help:'בעמוד שחזור הנתונים או לשלוח לנו משוב',action:'ייצוא הנתונים שלי'},
+  en:{title:'Clean Time is getting an update!',planned:'planned for Sunday evening, November 22',downtime:'may be temporarily unavailable',backup:'We recommend downloading a backup',privacy:'is not encrypted',help:'use the data recovery page or send us feedback',action:'Export my data'},
+  ru:{title:'«Чистое время» обновляется!',planned:'запланирован на вечер воскресенья, 22 ноября',downtime:'может быть временно недоступно',backup:'Рекомендуем уже сейчас скачать резервную копию',privacy:'не зашифрован',help:'воспользоваться страницей восстановления данных или отправить нам отзыв',action:'Экспортировать мои данные'},
+ };
  const screenshots=process.env.QA_NOTICE_SCREENSHOTS;
  if(screenshots)fs.mkdirSync(screenshots,{recursive:true});
  for(const registered of [false,true])for(const language of ['he','en','ru'])for(const width of [320,360,1280]){
@@ -29,11 +34,14 @@ async(page)=>{
   await p.goto(origin);
   if(registered){await p.locator('#unlockRecovery').waitFor({state:'visible'});await p.locator('[data-tab=counter]').click();}
   const label=(registered?'registered locked':'guest')+' '+language+' '+width;
-  await p.locator('#upgradeNotice').waitFor({state:'visible'});
+  const notice=p.locator('#upgradeNotice'),copy=announcement[language];
+  check(await notice.count()===1,'Single upgrade notice: '+label);
+  await notice.waitFor({state:'visible'});
   check(await p.locator('html').getAttribute('dir')===(language==='he'?'rtl':'ltr'),'Language direction: '+label);
-  const noticeText=await p.locator('#upgradeNotice').innerText();
-  check(noticeText.includes({he:'עדכון חשוב לזמן נקי',en:'An important Clean Time update',ru:'Важное обновление'}[language])&&await p.locator('#upgradeNotice p').count()===3,'Approved notice and translation: '+label);
-  check(await p.locator('#upgradeNotice a').count()===0,'No CT2/external destination: '+label);
+  const paragraphs=await notice.locator('p').allTextContents();
+  check(await notice.getByRole('heading').innerText()===copy.title&&paragraphs.length===4&&paragraphs[0].includes(copy.planned)&&paragraphs[1].includes(copy.downtime)&&paragraphs[3].includes(copy.help),'Planned date, possible downtime, and post-cutover help localized: '+label);
+  check((await notice.locator('strong').innerText()).includes(copy.backup)&&paragraphs[2].includes(copy.privacy)&&await notice.getByRole('button',{name:copy.action,exact:true}).count()===1,'Backup emphasis, privacy warning, and export action localized: '+label);
+  check(await notice.locator('a').count()===0,'No CT2/external destination: '+label);
   const before=await p.evaluate(()=>JSON.stringify(Object.keys(localStorage).sort().map(k=>[k,localStorage.getItem(k)])));
   await p.locator('#upgradeExport').scrollIntoViewIfNeeded();
   check(await p.evaluate(()=>{const n=document.getElementById('upgradeNotice').getBoundingClientRect(),tabs=document.getElementById('tabs').getBoundingClientRect();return document.documentElement.scrollWidth<=innerWidth&&n.left>=0&&n.right<=innerWidth&&(innerWidth>=1024||n.bottom<=tabs.top); }),'Notice fits and clears navigation: '+label);
